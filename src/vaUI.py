@@ -1,12 +1,14 @@
-#!/usr/bin/python
+#!/opt/virtualenvs/ihme-va/bin/pythonw
+
+import os
+import wx
 
 # TODO: help should pop up window
 # TODO: bug in radio grouping
 # TODO: pull out all strings
 # TODO: why is the first button selected
 
-import os
-import wx
+
 
 APP_EXIT = 1
 APP_HELP = 2
@@ -57,7 +59,7 @@ class vaUI(wx.Frame):
 
         r1.AddStretchSpacer()
         r1.Add(wx.Button(panel, label="Help"), flag=wx.RIGHT, border=12)
-        
+        r1.Add(wx.Button(panel, label="Quit"), flag=wx.RIGHT, border=12)
         r2 = wx.BoxSizer(wx.HORIZONTAL)
 
         r2sb1 = wx.StaticBox(panel, label="1. Input file")
@@ -116,7 +118,7 @@ class vaUI(wx.Frame):
         chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
         r5sbs1.Add(chooseFolderButton, flag=wx.ALL, border=5)
 
-        self.choosenFolderText = wx.StaticText(panel, label="",size=(367, -1))
+        self.choosenFolderText = wx.StaticText(panel, label="",size=(349, -1))
         r5sbs1.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
         
         r5.Add(r5sbs1)
@@ -134,7 +136,7 @@ class vaUI(wx.Frame):
         r6sbs1.Add(self.statusTextCtrl,flag=wx.ALL,border=5)
         r6sbs1.AddSpacer(5)
 
-        self.statusGauge = wx.Gauge(panel,range=100,size=(471, -1))
+        self.statusGauge = wx.Gauge(panel,range=100,size=(472, -1))
         r6sbs1.Add(self.statusGauge,flag=wx.RIGHT|wx.LEFT, border=7)
         r6sbs1.AddSpacer(10)
 
