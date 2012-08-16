@@ -2,6 +2,9 @@
 
 import os
 import wx
+from wx import *
+import pyvaPackage
+from Tkinter import *
 
 # TODO: help should pop up window
 # TODO: bug in radio grouping
@@ -9,7 +12,10 @@ import wx
 # TODO: why is the first button selected
 
 
-
+root = Tk()
+status = StringVar()
+HCE = StringVar()
+HCE.set('HCE')
 APP_EXIT = 1
 APP_HELP = 2
 
@@ -28,6 +34,7 @@ class vaUI(wx.Frame):
         self.inputFilePath = ""
         self.outputFolderPath = ""
         self.statusLog = ""
+        self.selectedButton = "adult" # default selection
 
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
@@ -59,8 +66,11 @@ class vaUI(wx.Frame):
 
         r1.AddStretchSpacer()
         r1.Add(wx.Button(panel, label="Help"), flag=wx.RIGHT, border=12)
-        r1.Add(wx.Button(panel, label="Quit"), flag=wx.RIGHT, border=12)
+        quitButton = wx.Button(panel, label="Quit")
+        r1.Add(quitButton, flag=wx.RIGHT, border=12)
         r2 = wx.BoxSizer(wx.HORIZONTAL)
+        
+        quitButton.Bind(wx.EVT_BUTTON, self.onQuit)
 
         r2sb1 = wx.StaticBox(panel, label="1. Input file")
         r2sbs1 = wx.StaticBoxSizer(r2sb1, wx.HORIZONTAL)
@@ -86,13 +96,17 @@ class vaUI(wx.Frame):
         self.neonatalRadioButton = wx.RadioButton(panel, label="Neonatal")
         self.hceCheckBox = wx.CheckBox(panel, label="HCE variables")
         self.hceCheckBox.SetValue(True)
-
+        
         r4sbs1.Add(self.adultRadioButton, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.Add(self.childRadioButton, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.Add(self.neonatalRadioButton, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.AddSpacer(10) 
         r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.AddSpacer(3)
+        
+        self.Bind(wx.EVT_RADIOBUTTON, self.clickAdultButton, id=self.adultRadioButton.GetId())
+        self.Bind(wx.EVT_RADIOBUTTON, self.clickChildButton, id=self.childRadioButton.GetId())
+        self.Bind(wx.EVT_RADIOBUTTON, self.clickNeonatalButton, id=self.neonatalRadioButton.GetId())
 
         r4sb2 = wx.StaticBox(panel, label="3. Algorithm type",)
         r4sbs2 = wx.StaticBoxSizer(r4sb2, wx.VERTICAL)
@@ -228,9 +242,24 @@ class vaUI(wx.Frame):
         if(self.actionButton.GetLabel() == "Start"):
             self.statusGauge.SetValue(20)
             self.actionButton.SetLabel("Stop")
+            print "You selected the option " + self.selectedButton
+            
+            data = pyvaPackage.Data(root, status, module="Neonate", input_filename=self.inputFilePath, available_filename="/Users/carlhartung/Desktop/SmartVA/Examples/Neonate_available_symptoms.csv", HCE=HCE.get())
+            score_matrix = data.calc_rf_scores(root, status)
+          	
         elif (self.actionButton.GetLabel() == "Stop"):
             self.actionButton.SetLabel("Start")
             self.statusGauge.SetValue(0)
+            
+    def clickAdultButton(self, event):
+        self.selectedButton = "adult"
+    
+    def clickChildButton(self, event):
+        self.selectedButton = "child"
+    
+    def clickNeonatalButton(self, event):
+        self.selectedButton = "neonatal"
+  
 
     def onQuit(self, e):
         self.Close()
