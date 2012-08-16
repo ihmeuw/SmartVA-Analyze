@@ -5,6 +5,7 @@ import wx
 from wx import *
 import pyvaPackage
 from Tkinter import *
+import workerthread
 
 # TODO: help should pop up window
 # TODO: bug in radio grouping
@@ -12,10 +13,6 @@ from Tkinter import *
 # TODO: why is the first button selected
 
 
-root = Tk()
-status = StringVar()
-HCE = StringVar()
-HCE.set('HCE')
 APP_EXIT = 1
 APP_HELP = 2
 
@@ -35,6 +32,7 @@ class vaUI(wx.Frame):
         self.outputFolderPath = ""
         self.statusLog = ""
         self.selectedButton = "adult" # default selection
+        workerthread.EVT_RESULT(self,self.OnResult)
 
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
@@ -228,8 +226,7 @@ class vaUI(wx.Frame):
         """
         dlg = wx.DirDialog(
             self, message="Choose a folder",
-            style=wx.DD_DEFAULT_STYLE | wx.DD_CHANGE_DIR
-            )
+            style=wx.DD_DEFAULT_STYLE | wx.DD_CHANGE_DIR)
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.outputFolderPath = dlg.GetPath()
@@ -240,13 +237,17 @@ class vaUI(wx.Frame):
     
     def onAction(self, e):
         if(self.actionButton.GetLabel() == "Start"):
-            self.statusGauge.SetValue(20)
-            self.actionButton.SetLabel("Stop")
-            print "You selected the option " + self.selectedButton
+            #self.statusGauge.SetValue(20)
             
-            data = pyvaPackage.Data(root, status, module="Neonate", input_filename=self.inputFilePath, available_filename="/Users/carlhartung/Desktop/SmartVA/Examples/Neonate_available_symptoms.csv", HCE=HCE.get())
-            score_matrix = data.calc_rf_scores(root, status)
-          	
+            # make sure something is selected
+            if self.inputFilePath:
+                self.actionButton.SetLabel("Stop")
+                self.addText("You selected the option " + self.selectedButton + "\n")
+                print "You selected the option " + self.selectedButton
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath)
+            else:
+                print "error, no file selected. make a popup"
+                          	
         elif (self.actionButton.GetLabel() == "Stop"):
             self.actionButton.SetLabel("Start")
             self.statusGauge.SetValue(0)
@@ -259,10 +260,22 @@ class vaUI(wx.Frame):
     
     def clickNeonatalButton(self, event):
         self.selectedButton = "neonatal"
+        
+    def addText(self, newText):
+        self.statusTextCtrl.AppendText(newText)
+        #self.statusTextCtrl.Refresh()
+        
   
 
     def onQuit(self, e):
         self.Close()
+        
+    def OnResult(self, event):
+        print "got an update... " + event.data
+        self.statusTextCtrl.AppendText(event.data)
+        
+        
+  
 
 if __name__ == '__main__':
   
