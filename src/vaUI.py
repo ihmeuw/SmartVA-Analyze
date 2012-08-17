@@ -31,8 +31,10 @@ class vaUI(wx.Frame):
         self.inputFilePath = ""
         self.outputFolderPath = ""
         self.statusLog = ""
-        self.selectedButton = "adult" # default selection
+        self.selectedButton = "Adult" # default selection
+        self.hce = 'HCE'
         workerthread.EVT_RESULT(self,self.OnResult)
+        workerthread.EVT_PROGRESS(self, self.OnProgress)
 
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
@@ -105,13 +107,15 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_RADIOBUTTON, self.clickAdultButton, id=self.adultRadioButton.GetId())
         self.Bind(wx.EVT_RADIOBUTTON, self.clickChildButton, id=self.childRadioButton.GetId())
         self.Bind(wx.EVT_RADIOBUTTON, self.clickNeonatalButton, id=self.neonatalRadioButton.GetId())
+        self.Bind(wx.EVT_CHECKBOX, self.clickHCE, id=self.hceCheckBox.GetId())
 
         r4sb2 = wx.StaticBox(panel, label="3. Algorithm type",)
         r4sbs2 = wx.StaticBoxSizer(r4sb2, wx.VERTICAL)
 
         self.randomForestRadioButton = wx.RadioButton(panel, label="Random forest", style=wx.RB_GROUP)
         self.randomForestRadioButton.SetValue(True)
-        self.tariffRadioButton = wx.RadioButton(panel, label="Tariff")
+        self.tariffRadioButton = wx.RadioButton(panel, label="Tariff (future feature)")
+        self.tariffRadioButton.Enable(False)
 
         r4sbs2.Add(self.randomForestRadioButton, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs2.Add(self.tariffRadioButton, flag=wx.LEFT|wx.TOP, border=5)
@@ -244,22 +248,30 @@ class vaUI(wx.Frame):
                 self.actionButton.SetLabel("Stop")
                 self.addText("You selected the option " + self.selectedButton + "\n")
                 print "You selected the option " + self.selectedButton
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath)
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton)
             else:
                 print "error, no file selected. make a popup"
                           	
         elif (self.actionButton.GetLabel() == "Stop"):
             self.actionButton.SetLabel("Start")
             self.statusGauge.SetValue(0)
+            self.OnAbort()
             
     def clickAdultButton(self, event):
-        self.selectedButton = "adult"
+        self.selectedButton = "Adult"
     
     def clickChildButton(self, event):
-        self.selectedButton = "child"
+        self.selectedButton = "Child"
     
     def clickNeonatalButton(self, event):
-        self.selectedButton = "neonatal"
+        self.selectedButton = "Neonate"
+    
+    def clickHCE(self, event):
+        # just a toggle
+        if self.hce is 'HCE':
+            self.hce = None
+        else:
+            self.hce = "HCE"
         
     def addText(self, newText):
         self.statusTextCtrl.AppendText(newText)
@@ -271,8 +283,25 @@ class vaUI(wx.Frame):
         self.Close()
         
     def OnResult(self, event):
-        print "got an update... " + event.data
-        self.statusTextCtrl.AppendText(event.data)
+        if event.data is None:
+            self.statusTextCtrl.AppendText("computation successfully aborted\n")
+            self.actionButton.Enable(True)            
+        else :
+            print "got an update... " + event.data
+            self.statusTextCtrl.AppendText(event.data)
+    
+    def OnProgress(self, event):
+        self.statusGauge.SetRange(event.progressmax)
+        self.statusGauge.SetValue(event.progress)
+        
+    def OnAbort(self):
+        if self.worker:
+            self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
+            print "trying to cancel, please wait"
+            self.worker.abort()
+            self.actionButton.Enable(False)
+        else:
+            print "no worker?"
         
         
   

@@ -24,6 +24,7 @@ class Data:
 		"""
 	
 		self.module=module
+		self.cancelled = False
 		
 		if (HCE == 'HCE'):
 			self.suffixHCE = ''
@@ -61,10 +62,13 @@ class Data:
 		#fnameTest = '/home/j/Project/VA/FinalAnalysis/Data/Models/%s/splitCustom.csv'
 		#fnameTest = '/home/j/Project/VA/pyva/%suniformTrain.csv'
 		#self.test = mlab.csv2rec(fnameTest % (self.module))
+		updatestr = "calculating symptoms and deaths\n"
+		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+		wx.PostEvent(notify_window, workerthread.ProgressEvent(20, 100))
 		self.test = mlab.csv2rec(fnameTest)
 
 		
-	def features(self):
+	def features(self, notify_window):
 		""" reads data from the record, uses teh mapping of symptoms and construct an input matrix 
 		Parameters
 		----------
@@ -89,6 +93,9 @@ class Data:
 			print 'Are you sure you have it in the input file? maybe you chose a wrong age module'
 			#raise
 		print 'your data has %d deaths and %d symptoms'%(len(X), num)
+		updatestr = 'your data has %d deaths and %d symptoms\n'%(len(X), num)
+		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+		wx.PostEvent(notify_window, workerthread.ProgressEvent(20, 100))
 		return X
 		
 	
@@ -112,7 +119,7 @@ class Data:
 		score_matrix = pl.zeros([len(self.test), len(self.cause_list)+1])
 		
 		tmp_symptom_list = self.symptom_list_for_cause[:num_features, :]
-		features = self.features()
+		features = self.features(notify_window)
 		
 		#For processgin Neonate and Child, there is only one big rf model file that has to be read
 		if (self.module != 'Adult'):
@@ -120,20 +127,29 @@ class Data:
 			#status.set('please sit down and relax. we are reading the classifier file. this may take a few minutes ...')
 			updatestr = 'please sit down and relax. we are reading the classifier file. this may take a few minutes ...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+			wx.PostEvent(notify_window, workerthread.ProgressEvent(30, 100))
 			
 			pkfile = open('%s_rf%s.pkl'%(self.module, self.suffixHCE), 'rb')
 			self.rf = cPickle.load(pkfile)
 			pkfile.close()
-			
+			wx.PostEvent(notify_window, workerthread.ProgressEvent(100, 100))
+
 			print 'Processing input...'
 			#status.set('Processing input...')
 			updatestr = 'Processing input...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			
+			total = len(features) * len(self.cause_list) * len(self.cause_list)
+			current = 0
 			for i in xrange(len(features)):
 				for j1, cause1 in self.cause_list:
 					for j2, cause2 in self.cause_list:
-						if j1 < j2:
+					    current = current + 1
+					    wx.PostEvent(notify_window, workerthread.ProgressEvent(current, total))
+					    if (self.cancelled):
+					        wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+					        return
+					    if j1 < j2:
 							X = features[i]
 							X_i = X[pl.unique(tmp_symptom_list[:, [j1, j2]])]
 
@@ -146,7 +162,8 @@ class Data:
 					sys.stdout.flush()
 					#status.set('%d %%'% ((float(i) / len(features))*100))
 					updatestr = '%d %%\n'% ((float(i) / len(features))*100)
-					wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+					#wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+					#wx.PostEvent(notify_window, workerthread.ProgressEvent(float(i), len(features)))
 					
 			print
 		else:
@@ -336,6 +353,9 @@ class Data:
 
 		print 'mean concordance %.2f' % (pl.mean(concordance.values())*100)
 		return concordance	
+	
+	def setCancelled(self):
+	    self.cancelled = True;
 		
 if __name__ == '__main__':
 	""" This main functio is for use if you want to call ths without using the GUI
