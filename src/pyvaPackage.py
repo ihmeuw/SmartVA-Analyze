@@ -64,7 +64,7 @@ class Data:
 		#self.test = mlab.csv2rec(fnameTest % (self.module))
 		updatestr = "calculating symptoms and deaths\n"
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
-		wx.PostEvent(notify_window, workerthread.ProgressEvent(20, 100))
+		wx.PostEvent(notify_window, workerthread.ProgressEvent(None, None))
 		self.test = mlab.csv2rec(fnameTest)
 
 		
@@ -127,7 +127,7 @@ class Data:
 			#status.set('please sit down and relax. we are reading the classifier file. this may take a few minutes ...')
 			updatestr = 'please sit down and relax. we are reading the classifier file. this may take a few minutes ...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
-			wx.PostEvent(notify_window, workerthread.ProgressEvent(30, 100))
+			wx.PostEvent(notify_window, workerthread.ProgressEvent(None, None))
 			
 			pkfile = open('%s_rf%s.pkl'%(self.module, self.suffixHCE), 'rb')
 			self.rf = cPickle.load(pkfile)

@@ -291,8 +291,11 @@ class vaUI(wx.Frame):
             self.statusTextCtrl.AppendText(event.data)
     
     def OnProgress(self, event):
-        self.statusGauge.SetRange(event.progressmax)
-        self.statusGauge.SetValue(event.progress)
+        if event.progress is None:
+            self.statusGauge.Pulse()
+        else:    
+            self.statusGauge.SetRange(event.progressmax)
+            self.statusGauge.SetValue(event.progress)
         
     def OnAbort(self):
         if self.worker:

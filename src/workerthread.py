@@ -33,10 +33,8 @@ class ProgressEvent(wx.PyEvent):
         """Init Result Event."""
         wx.PyEvent.__init__(self)
         self.SetEventType(EVT_PROGRESS_ID)
-        if progress:
-            self.progress = progress
-        if max:
-            self.progressmax = progressmax
+        self.progress = progress
+        self.progressmax = progressmax
 
 # Thread class that executes processing
 class WorkerThread(Thread):
