@@ -1,4 +1,4 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
+#!/opt/local/bin/python
 
 import os
 import wx
@@ -11,6 +11,7 @@ import workerthread
 # TODO: bug in radio grouping
 # TODO: pull out all strings
 # TODO: why is the first button selected
+# TODO: disable start until all options are selected
 
 
 APP_EXIT = 1
