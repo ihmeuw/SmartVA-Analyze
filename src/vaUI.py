@@ -11,6 +11,7 @@ import workerthread
 # TODO: bug in radio grouping
 # TODO: pull out all strings
 # TODO: why is the first button selected
+# TODO: disable start until all options are selected
 
 
 APP_EXIT = 1
@@ -307,6 +308,7 @@ class vaUI(wx.Frame):
             self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
             print "trying to cancel, please wait"
             self.worker.abort()
+            self.actionButton.Enable(False)
         else:
             print "no worker?"
         
