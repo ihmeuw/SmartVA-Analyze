@@ -14,6 +14,12 @@ import workerthread
 # TODO: disable start until all options are selected
 
 
+if getattr(sys, 'frozen', None):
+     basedir = sys._MEIPASS
+else:
+     basedir = os.path.dirname(__file__)
+
+
 APP_EXIT = 1
 APP_HELP = 2
 
@@ -58,7 +64,7 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
-        imageFile = '../res/logo.png'
+        imageFile = os.path.join(basedir, 'res/logo.png')
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         r0.AddStretchSpacer()
