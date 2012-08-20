@@ -172,8 +172,12 @@ class Data:
 			updatstr = 'please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes)...'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			
+			
 			for j1, cause1 in self.cause_list:
 				print 'reading training file %d'%(j1-1)
+				updatestr = 'reading training file ' + str(j1) + ' of ' + str(len(self.cause_list)) + '\n'
+				wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
+				wx.PostEvent(notify_window, workerthread.ProgressEvent(j1, len(self.cause_list)))
 				pkfile = open('train_%d%s.pkl'%((j1-1), self.suffixHCE), 'rb') #needs fix for HCE
 				self.rf = cPickle.load(pkfile)
 				pkfile.close()
@@ -192,8 +196,8 @@ class Data:
 								# print '%d %%'% ((float(i) / len(features))*100)
 								# sys.stdout.flush()
 				done = ((91. - j1)*j1/2.) / 1035.
-				status.set('please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes). %f\%% done...'%done)
-				print '%f\%% done...'%done
+				#status.set('please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes). %f\%% done...'%done)
+				#print '%f\%% done...'%done
 		
 
 		return score_matrix

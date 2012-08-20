@@ -33,6 +33,7 @@ class vaUI(wx.Frame):
         self.statusLog = ""
         self.selectedButton = "Adult" # default selection
         self.hce = 'HCE'
+        self.running = False
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
@@ -248,6 +249,7 @@ class vaUI(wx.Frame):
                 self.actionButton.SetLabel("Stop")
                 self.addText("You selected the option " + self.selectedButton + "\n")
                 print "You selected the option " + self.selectedButton
+                self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton)
             else:
                 print "error, no file selected. make a popup"
@@ -280,15 +282,18 @@ class vaUI(wx.Frame):
   
 
     def onQuit(self, e):
+        #todo:  are you sure?
         self.Close()
         
     def OnResult(self, event):
         if event.data is None:
             self.statusTextCtrl.AppendText("computation successfully aborted\n")
-            self.actionButton.Enable(True)            
+            self.actionButton.Enable(True)        
+            self.running = False    
         else :
             print "got an update... " + event.data
             self.statusTextCtrl.AppendText(event.data)
+            #TODO.  Need a "done" event
     
     def OnProgress(self, event):
         if event.progress is None:
@@ -302,7 +307,6 @@ class vaUI(wx.Frame):
             self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
             print "trying to cancel, please wait"
             self.worker.abort()
-            self.actionButton.Enable(False)
         else:
             print "no worker?"
         
