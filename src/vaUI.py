@@ -13,7 +13,6 @@ import workerthread
 # TODO: disable start until all options are selected
 # TODO: disable buttons when app is running
 
-
 if getattr(sys, 'frozen', None):
      basedir = sys._MEIPASS
 else:
@@ -27,7 +26,7 @@ class vaUI(wx.Frame):
     
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(550, 760),style=wx.CAPTION)
+            size=(550, 760),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
             
         self.InitUI()
         self.Centre()
@@ -74,7 +73,11 @@ class vaUI(wx.Frame):
 
 
         r1.AddStretchSpacer()
-        r1.Add(wx.Button(self.parentPanel, label="Help"), flag=wx.RIGHT, border=12)
+
+        helpButton = wx.Button(self.parentPanel, label="Help")
+        r1.Add(helpButton, flag=wx.RIGHT, border=12)
+        helpButton.Bind(wx.EVT_BUTTON, self.onHelp)
+
         quitButton = wx.Button(self.parentPanel, label="Quit")
         r1.Add(quitButton, flag=wx.RIGHT, border=12)
         r2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -84,9 +87,9 @@ class vaUI(wx.Frame):
         r2sb1 = wx.StaticBox(self.parentPanel, label="1. Input file")
         r2sbs1 = wx.StaticBoxSizer(r2sb1, wx.HORIZONTAL)
 
-        chooseFileButton = wx.Button(self.parentPanel, label="Choose file...")
-        chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        r2sbs1.Add(chooseFileButton, flag=wx.ALL, border=5)
+        self.chooseFileButton = wx.Button(self.parentPanel, label="Choose file...")
+        self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
+        r2sbs1.Add(self.chooseFileButton, flag=wx.ALL, border=5)
 
         self.choosenFileText = wx.StaticText(self.parentPanel, label="",size=(367, -1))
         r2sbs1.Add(self.choosenFileText, proportion=1, flag=wx.ALL, border=5)
@@ -140,9 +143,9 @@ class vaUI(wx.Frame):
         r5sb1 = wx.StaticBox(self.parentPanel, label="4. Output folder")
         r5sbs1 = wx.StaticBoxSizer(r5sb1, wx.HORIZONTAL)
 
-        chooseFolderButton = wx.Button(self.parentPanel, label="Choose folder...")
-        chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
-        r5sbs1.Add(chooseFolderButton, flag=wx.ALL, border=5)
+        self.chooseFolderButton = wx.Button(self.parentPanel, label="Choose folder...")
+        self.chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
+        r5sbs1.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
 
         self.choosenFolderText = wx.StaticText(self.parentPanel, label="",size=(349, -1))
         r5sbs1.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
@@ -216,6 +219,7 @@ class vaUI(wx.Frame):
         else:
             return shortenedPath
 
+
     def onOpenFile(self, e):
         """
         Create and show the Open FileDialog
@@ -230,7 +234,7 @@ class vaUI(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             self.inputFilePath = dlg.GetPath()
             print "You chose the following file: " + self.inputFilePath
-            self.choosenFileText.SetLabel(self.shortenPath(self.inputFilePath,45))
+            self.choosenFileText.SetLabel(self.shortenPath(self.inputFilePath,42))
 
         dlg.Destroy()
     
@@ -245,7 +249,7 @@ class vaUI(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             self.outputFolderPath = dlg.GetPath()
             print "You chose the following folder: " + self.outputFolderPath
-            self.choosenFolderText.SetLabel(self.shortenPath(self.outputFolderPath,45))
+            self.choosenFolderText.SetLabel(self.shortenPath(self.outputFolderPath,42))
 
         dlg.Destroy()
     
@@ -253,20 +257,24 @@ class vaUI(wx.Frame):
         if(self.actionButton.GetLabel() == "Start"):
             #self.statusGauge.SetValue(20)
             
-            # make sure something is selected
-            if self.inputFilePath:
+            # Make sure you have an input and output path
+            if not self.inputFilePath:
+                self.ShowErrorMessage("Error!","Please select an input file.")
+            elif not self.outputFolderPath:
+                self.ShowErrorMessage("Error!","Please select an output folder.")
+            else:
                 self.actionButton.SetLabel("Stop")
                 self.addText("You selected the option " + self.selectedButton + "\n")
                 print "You selected the option " + self.selectedButton
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton)
-            else:
-                print "error, no file selected. make a popup"
+                #self.toggleControls(False)
                           	
         elif (self.actionButton.GetLabel() == "Stop"):
             self.actionButton.SetLabel("Start")
             self.statusGauge.SetValue(0)
             self.OnAbort()
+            #self.toggleControls(True)
             
     def clickAdultButton(self, event):
         self.selectedButton = "Adult"
@@ -283,17 +291,38 @@ class vaUI(wx.Frame):
             self.hce = None
         else:
             self.hce = "HCE"
-        
-    def addText(self, newText):
-        self.statusTextCtrl.AppendText(newText)
-        #self.statusTextCtrl.Refresh()
-        
-  
+       
+    def clearText():
+        self.statusTextCtrl.Clear()
 
+    def addText(self, newText):
+        self.statusTextCtrl.AppendText(newText+"\n")
+        #self.statusTextCtrl.Refresh()
+    
+    def ShowErrorMessage(self, title, message):
+        dialog = wx.MessageDialog(None, message, title, 
+            wx.OK | wx.ICON_ERROR)
+        dialog.ShowModal()
+
+    def toggleControls(self,enabled):
+        self.chooseFileButton.Enable(enabled);
+
+        self.adultRadioButton.Enable(enabled);
+        self.childRadioButton.Enable(enabled);
+        self.neonatalRadioButton.Enable(enabled);
+        self.hceCheckBox.Enable(enabled);
+        self.randomForestRadioButton.Enable(enabled);
+        
+        self.chooseFolderButton.Enable(enabled);
+  
     def onQuit(self, e):
         #todo:  are you sure?
         self.Close()
-        
+
+    def onHelp(self, e):
+        #TODO: create help
+        print "help"
+
     def OnResult(self, event):
         if event.data is None:
             self.statusTextCtrl.AppendText("computation successfully aborted\n")
