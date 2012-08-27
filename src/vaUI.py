@@ -16,14 +16,15 @@ if getattr(sys, 'frozen', None):
 else:
      basedir = os.path.dirname(__file__)
 
-
 APP_EXIT = 1
 APP_HELP = 2
 
- 
+APP_TITLE = "SmartVA"
+
 class vaHelp(wx.Frame):
+    
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title="Help", size=(600,600))
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + " Help", size=(600,600))
         html = wxHTML(self)
         html.SetStandardFonts()
         html.LoadPage(os.path.join(basedir, '../res/help.html'))
@@ -31,10 +32,10 @@ class vaHelp(wx.Frame):
 class wxHTML(wx.html.HtmlWindow):
      
      def OnLinkClicked(self, link):
-         LaunchDefaultBrowser(link.GetHref())
+        LaunchDefaultBrowser(link.GetHref())
     
 class vaUI(wx.Frame):
-    
+
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
             size=(550, 760),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
@@ -302,12 +303,9 @@ class vaUI(wx.Frame):
             self.hce = None
         else:
             self.hce = "HCE"
-       
-    def clearText():
-        self.statusTextCtrl.Clear()
 
     def addText(self, newText):
-        self.statusTextCtrl.AppendText(newText+"\n")
+        self.statusTextCtrl.AppendText(newText)
         #self.statusTextCtrl.Refresh()
     
     def ShowErrorMessage(self, title, message):
@@ -329,7 +327,10 @@ class vaUI(wx.Frame):
     def onQuit(self, e):
         #todo:  are you sure?
         self.Close()
-        self.helpWindow.Close()
+        
+        # is the help window open?
+        if hasattr(self,'helpWindow'):
+            self.helpWindow.Close()
 
     def onHelp(self, e):
         self.helpWindow = vaHelp(None)
@@ -361,12 +362,11 @@ class vaUI(wx.Frame):
             self.actionButton.Enable(False)
         else:
             print "no worker?"
-        
-        
   
 
 if __name__ == '__main__':
   
     app = wx.App()
-    vaUI(None, title='SmartVA by IHME')
+    app.SetAppName(APP_TITLE)
+    vaUI(None, title=APP_TITLE)
     app.MainLoop()
