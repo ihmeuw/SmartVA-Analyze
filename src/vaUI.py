@@ -7,10 +7,8 @@ import pyvaPackage
 from Tkinter import *
 import workerthread
 
-# TODO: help should pop up window
 # TODO: pull out all strings
 # TODO: why is the first button selected
-# TODO: disable start until all options are selected
 # TODO: disable buttons when app is running
 
 if getattr(sys, 'frozen', None):
@@ -22,6 +20,19 @@ else:
 APP_EXIT = 1
 APP_HELP = 2
 
+ 
+class vaHelp(wx.Frame):
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title="Help", size=(600,600))
+        html = wxHTML(self)
+        html.SetStandardFonts()
+        html.LoadPage(os.path.join(basedir, '../res/help.html'))
+ 
+class wxHTML(wx.html.HtmlWindow):
+     
+     def OnLinkClicked(self, link):
+         LaunchDefaultBrowser(link.GetHref())
+    
 class vaUI(wx.Frame):
     
     def __init__(self, parent, title):
@@ -64,7 +75,7 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
-        imageFile = os.path.join(basedir, 'res/logo.png')
+        imageFile = os.path.join(basedir, '../res/logo.png')
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         r0.AddStretchSpacer()
@@ -318,10 +329,12 @@ class vaUI(wx.Frame):
     def onQuit(self, e):
         #todo:  are you sure?
         self.Close()
+        self.helpWindow.Close()
 
     def onHelp(self, e):
-        #TODO: create help
-        print "help"
+        self.helpWindow = vaHelp(None)
+        self.helpWindow.Centre()
+        self.helpWindow.Show()
 
     def OnResult(self, event):
         if event.data is None:
