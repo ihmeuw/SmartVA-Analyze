@@ -5,6 +5,7 @@ import wx
 from wx import *
 import pyvaPackage
 from threading import *
+import neonate_validator
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -57,12 +58,17 @@ class WorkerThread(Thread):
         #score_matrix = data.calc_rf_scores(update=self.addText)
         
         filename = ''
+        validated = False
         if self.module is "Adult":
             filename = "Adult_available_symptoms.csv"
         elif self.module is "Child":
             filename = "Child_available_symptoms.csv"
         elif self.module is "Neonate":
             filename = "Neonate_available_symptoms.csv"
+            #validated = neonate_validator.validate(notify_window=self._notify_window, inputfile=self.inputFilePath)
+            
+        #if not validated:
+            #return
         
         self.data = pyvaPackage.Data(notify_window=self._notify_window, module=self.module, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
         if (self._want_abort):

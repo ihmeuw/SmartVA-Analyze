@@ -6,15 +6,13 @@ from wx import *
 import pyvaPackage
 from Tkinter import *
 import workerthread
+import config
 
 # TODO: pull out all strings
 # TODO: why is the first button selected
 # TODO: disable buttons when app is running
 
-if getattr(sys, 'frozen', None):
-     basedir = sys._MEIPASS
-else:
-     basedir = os.path.dirname(__file__)
+
 
 APP_EXIT = 1
 APP_HELP = 2
@@ -27,7 +25,7 @@ class vaHelp(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + " Help", size=(600,600))
         html = wxHTML(self)
         html.SetStandardFonts()
-        html.LoadPage(os.path.join(basedir, '../res/help.html'))
+        html.LoadPage(os.path.join(config.basedir, 'res/help.html'))
  
 class wxHTML(wx.html.HtmlWindow):
      
@@ -76,7 +74,7 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
-        imageFile = os.path.join(basedir, '../res/logo.png')
+        imageFile = os.path.join(config.basedir, 'res/logo.png')
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         r0.AddStretchSpacer()

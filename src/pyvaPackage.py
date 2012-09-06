@@ -5,6 +5,7 @@ import matplotlib.mlab as mlab
 import cPickle
 import wx
 import workerthread
+import config
 
 import my_randomforest as randomforest  # for easy development
 reload(randomforest) # to get any new changes
@@ -33,12 +34,12 @@ class Data:
 			
 		print self.suffixHCE
 		#this file contains information about the cause list
-		pkfile = open('%s_causelist%s.pkl'%(self.module, self.suffixHCE), 'rb')
+		pkfile = open(config.basedir + "/pkl/"+'%s_causelist%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		self.cause_list = cPickle.load(pkfile)
 		pkfile.close()
 		
 		#this file contains the list of symptoms used in PHMRC data
-		pkfile = open('%s_symptomlist%s.pkl'%(self.module, self.suffixHCE), 'rb')
+		pkfile = open(config.basedir + "/pkl/"+'%s_symptomlist%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		self.symptom_list = cPickle.load(pkfile)
 		pkfile.close()		
 		
@@ -53,7 +54,7 @@ class Data:
 			print '%d - %s'%(i, cause)
 
 		#this csv file is the mapping between input data fields and PHMRC fields, 0 means symptom is not avaialble
-		symptomfile = available_filename
+		symptomfile = config.basedir + "/pkl/"+available_filename
 		self.symptom_list_available = mlab.csv2rec(symptomfile)
 		
 		#this csv file is the input va file, each row is one death
@@ -106,7 +107,7 @@ class Data:
 		score_matrix : N x (J+1) array   ??
 		"""
 		#we use only highest tariff symptoms
-		pkfile = open('%s_tariff%s.pkl'%(self.module, self.suffixHCE), 'rb')
+		pkfile = open(config.basedir + "/pkl/"+'%s_tariff%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		tariff_matrix = cPickle.load(pkfile)
 		pkfile.close()
 	
@@ -129,7 +130,7 @@ class Data:
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			wx.PostEvent(notify_window, workerthread.ProgressEvent(None, None))
 			
-			pkfile = open('%s_rf%s.pkl'%(self.module, self.suffixHCE), 'rb')
+			pkfile = open(config.basedir + "/pkl/"+'%s_rf%s.pkl'%(self.module, self.suffixHCE), 'rb')
 			self.rf = cPickle.load(pkfile)
 			pkfile.close()
 			wx.PostEvent(notify_window, workerthread.ProgressEvent(100, 100))
@@ -178,7 +179,7 @@ class Data:
 				updatestr = 'reading training file ' + str(j1) + ' of ' + str(len(self.cause_list)) + '\n'
 				wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 				wx.PostEvent(notify_window, workerthread.ProgressEvent(j1, len(self.cause_list)))
-				pkfile = open('train_%d%s.pkl'%((j1-1), self.suffixHCE), 'rb') #needs fix for HCE
+				pkfile = open(config.basedir + "/pkl/"+'train_%d%s.pkl'%((j1-1), self.suffixHCE), 'rb') #needs fix for HCE
 				self.rf = cPickle.load(pkfile)
 				pkfile.close()
 				for j2, cause2 in self.cause_list:
@@ -251,7 +252,7 @@ class Data:
 		
 		"""
 		
-		pkfile = open('%s_uniformTrainScore%s.pkl'%(self.module, self.suffixHCE), 'rb')
+		pkfile = open(config.basedir + "/pkl/"+'%s_uniformTrainScore%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		uniform_train_scores = cPickle.load(pkfile)
 		pkfile.close()
 		
@@ -375,7 +376,7 @@ if __name__ == '__main__':
 	score_matrix = data.calc_rf_scores()
 	
 	if (status == 'trainingscores'):
-		outputScore = open('%s_unifromTrainScore.pkl'%module, 'wb')
+		outputScore = open(config.basedir + "/pkl/"+'%s_unifromTrainScore.pkl'%module, 'wb')
 		cPickle.dump(score_matrix, outputScore, 2)
 		outputScore.close()
 	
