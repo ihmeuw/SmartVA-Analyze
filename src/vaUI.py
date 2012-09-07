@@ -339,11 +339,14 @@ class vaUI(wx.Frame):
         if event.data is None:
             self.statusTextCtrl.AppendText("computation successfully aborted\n")
             self.actionButton.Enable(True)        
-            self.running = False    
-        else :
+            self.running = False   
+        elif event.data is "Done":
+            self.statusGauge.SetValue(0)
+            self.statusTextCtrl.AppendText("Process Complete")
+        else:
             print "got an update... " + event.data
             self.statusTextCtrl.AppendText(event.data)
-            #TODO.  Need a "done" event
+            self.actionButton.SetLabel("Start")
     
     def OnProgress(self, event):
         if event.progress is None:
@@ -360,6 +363,7 @@ class vaUI(wx.Frame):
             self.actionButton.Enable(False)
         else:
             print "no worker?"
+            
   
 
 if __name__ == '__main__':

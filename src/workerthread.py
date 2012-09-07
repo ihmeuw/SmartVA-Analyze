@@ -6,6 +6,7 @@ from wx import *
 import pyvaPackage
 from threading import *
 import neonate_validator
+from time import gmtime, strftime
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -75,6 +76,12 @@ class WorkerThread(Thread):
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
         score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
+        prediction = self.data.rank_against_train_prediction(score_matrix)
+        self.data.save_scores('results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
+
+        wx.PostEvent(self._notify_window, ResultEvent("Done"))
+    	print "done" 
+    	#status.set('Done. Results are written to results.csv')
 
     def abort(self):
         """abort worker thread."""
