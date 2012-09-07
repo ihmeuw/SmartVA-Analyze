@@ -187,8 +187,9 @@ class Data:
 			updatestr = 'please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes)...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			
-			total = len(features) * len(self.cause_list) * len(self.cause_list)
+			total = len(self.cause_list) * len(self.cause_list)
 			current = 0
+			wx.PostEvent(notify_window, workerthread.ProgressEvent(0, 100))
 			for j1, cause1 in self.cause_list:
 				print 'reading training file %d'%(j1-1)
 				updatestr = 'reading training file ' + str(j1) + ' of ' + str(len(self.cause_list)) + '\n'
@@ -197,6 +198,9 @@ class Data:
 				pkfile = open(config.basedir + "/pkl/"+'train_%d%s.pkl'%((j1-1), self.suffixHCE), 'rb') #needs fix for HCE
 				self.rf = cPickle.load(pkfile)
 				pkfile.close()
+				
+				updatestr = 'Calculating for training file ' + str(j1)
+				wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 				
 				for j2, cause2 in self.cause_list:
 				    current = current + 1
