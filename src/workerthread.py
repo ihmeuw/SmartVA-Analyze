@@ -41,7 +41,7 @@ class ProgressEvent(wx.PyEvent):
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, hce, module):
+    def __init__(self, notify_window, input_file, hce, module, output_dir):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self._notify_window = notify_window
@@ -50,6 +50,7 @@ class WorkerThread(Thread):
         self.data = None
         self.hce = hce
         self.module = module
+        self.output_dir = output_dir
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         self.start()
@@ -77,7 +78,7 @@ class WorkerThread(Thread):
             return
         score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
         prediction = self.data.rank_against_train_prediction(score_matrix)
-        self.data.save_scores('results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
+        self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
     	print "done" 

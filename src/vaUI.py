@@ -277,7 +277,7 @@ class vaUI(wx.Frame):
                 self.addText("You selected the option " + self.selectedButton + "\n")
                 print "You selected the option " + self.selectedButton
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton)
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton, self.outputFolderPath)
                 #self.toggleControls(False)
                           	
         elif (self.actionButton.GetLabel() == "Stop"):
