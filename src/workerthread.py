@@ -77,7 +77,13 @@ class WorkerThread(Thread):
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
         score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
+        if (self._want_abort):
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
         prediction = self.data.rank_against_train_prediction(score_matrix)
+        if (self._want_abort):
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
         self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
@@ -93,5 +99,5 @@ class WorkerThread(Thread):
             self.data.setCancelled();
         else:
             print "no data"
-            wx.PostEvent(self._notify_window, ResultEvent(None))
+            #wx.PostEvent(self._notify_window, ResultEvent(None))
             

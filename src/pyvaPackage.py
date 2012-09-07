@@ -93,6 +93,9 @@ class Data:
 			print 'It seems there is something wrong with %s'%symptom
 			print 'Are you sure you have it in the input file? maybe you chose a wrong age module'
 			#raise
+		if (self.cancelled):
+		    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+		    return
 		print 'your data has %d deaths and %d symptoms'%(len(X), num)
 		updatestr = 'your data has %d deaths and %d symptoms\n'%(len(X), num)
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
@@ -110,6 +113,10 @@ class Data:
 		pkfile = open(config.basedir + "/pkl/"+'%s_tariff%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		tariff_matrix = cPickle.load(pkfile)
 		pkfile.close()
+		
+		if (self.cancelled):
+		    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+		    return
 	
 		abs_tariff = True
 		if abs_tariff:
@@ -121,6 +128,10 @@ class Data:
 		
 		tmp_symptom_list = self.symptom_list_for_cause[:num_features, :]
 		features = self.features(notify_window)
+		
+		if (self.cancelled):
+		    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+		    return
 		
 		#For processgin Neonate and Child, there is only one big rf model file that has to be read
 		if (self.module != 'Adult'):
@@ -134,6 +145,9 @@ class Data:
 			self.rf = cPickle.load(pkfile)
 			pkfile.close()
 			wx.PostEvent(notify_window, workerthread.ProgressEvent(100, 100))
+			if (self.cancelled):
+			    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+			    return
 
 			print 'Processing input...'
 			#status.set('Processing input...')
@@ -148,7 +162,7 @@ class Data:
 					    current = current + 1
 					    wx.PostEvent(notify_window, workerthread.ProgressEvent(current, total))
 					    if (self.cancelled):
-					        wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+					        #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
 					        return
 					    if j1 < j2:
 							X = features[i]
@@ -170,20 +184,27 @@ class Data:
 		else:
 			#for Adult module, ther are 46 rf file that we need to read. each one is read and used next, then scores are accumulated.
 			print 'reading the classifier file and processing the input. This may take a few minutes...'
-			updatstr = 'please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes)...'
+			updatestr = 'please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes)...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			
-			
+			total = len(features) * len(self.cause_list) * len(self.cause_list)
+			current = 0
 			for j1, cause1 in self.cause_list:
 				print 'reading training file %d'%(j1-1)
 				updatestr = 'reading training file ' + str(j1) + ' of ' + str(len(self.cause_list)) + '\n'
 				wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
-				wx.PostEvent(notify_window, workerthread.ProgressEvent(j1, len(self.cause_list)))
+				#wx.PostEvent(notify_window, workerthread.ProgressEvent(j1, len(self.cause_list)))
 				pkfile = open(config.basedir + "/pkl/"+'train_%d%s.pkl'%((j1-1), self.suffixHCE), 'rb') #needs fix for HCE
 				self.rf = cPickle.load(pkfile)
 				pkfile.close()
+				
 				for j2, cause2 in self.cause_list:
-					if j1 < j2:
+				    current = current + 1
+				    wx.PostEvent(notify_window, workerthread.ProgressEvent(current, total))
+				    if (self.cancelled):
+				        #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
+				        return
+				    if j1 < j2:
 						for i in xrange(len(features)):
 							X = features[i]
 							X_i = X[pl.unique(tmp_symptom_list[:, [j1, j2]])]
