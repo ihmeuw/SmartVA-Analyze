@@ -1,7 +1,6 @@
 #!/opt/local/bin/python
 
 import os
-import wx
 from wx import *
 import pyvaPackage
 from Tkinter import *
@@ -243,7 +242,7 @@ class vaUI(wx.Frame):
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.inputFilePath = dlg.GetPath()
-            print "You chose the following file: " + self.inputFilePath
+            #print "You chose the following file: " + self.inputFilePath
             self.choosenFileText.SetLabel(self.shortenPath(self.inputFilePath,42))
 
         dlg.Destroy()
@@ -258,7 +257,7 @@ class vaUI(wx.Frame):
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.outputFolderPath = dlg.GetPath()
-            print "You chose the following folder: " + self.outputFolderPath
+            #print "You chose the following folder: " + self.outputFolderPath
             self.choosenFolderText.SetLabel(self.shortenPath(self.outputFolderPath,42))
 
         dlg.Destroy()
@@ -275,7 +274,7 @@ class vaUI(wx.Frame):
             else:
                 self.actionButton.SetLabel("Stop")
                 self.addText("You selected the option " + self.selectedButton + "\n")
-                print "You selected the option " + self.selectedButton
+                #print "You selected the option " + self.selectedButton
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton, self.outputFolderPath)
                 #self.toggleControls(False)
@@ -346,7 +345,7 @@ class vaUI(wx.Frame):
             self.statusTextCtrl.AppendText("Process Complete\n")
             self.actionButton.SetLabel("Start")
         else:
-            print "got an update... " + event.data
+            #print "got an update... " + event.data
             self.statusTextCtrl.AppendText(event.data)
             
     
@@ -360,7 +359,7 @@ class vaUI(wx.Frame):
     def OnAbort(self):
         if self.worker:
             self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
-            print "trying to cancel, please wait"
+            #print "trying to cancel, please wait"
             self.worker.abort()
             self.actionButton.Enable(False)
         else:

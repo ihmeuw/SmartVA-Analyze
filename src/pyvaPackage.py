@@ -32,7 +32,6 @@ class Data:
 		else:
 			self.suffixHCE = '_noHCE'
 			
-		print self.suffixHCE
 		#this file contains information about the cause list
 		pkfile = open(config.basedir + "/pkl/"+'%s_causelist%s.pkl'%(self.module, self.suffixHCE), 'rb')
 		self.cause_list = cPickle.load(pkfile)
@@ -43,15 +42,15 @@ class Data:
 		self.symptom_list = cPickle.load(pkfile)
 		pkfile.close()		
 		
-		print '%s module contains %d distinct causes of death' % (self.module, len(self.cause_list))
+		#print '%s module contains %d distinct causes of death' % (self.module, len(self.cause_list))
 		#status.set('%s module contains %d distinct causes of death' % (self.module, len(self.cause_list)))
 		#update('%s module contains %d distinct causes of death\n' % (self.module, len(self.cause_list)))
 		updatestr = '%s module contains %d distinct causes of death\n' % (self.module, len(self.cause_list))
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 		
-		print 'Label - Cause Name'
-		for i, cause in self.cause_list:
-			print '%d - %s'%(i, cause)
+		#print 'Label - Cause Name'
+		#for i, cause in self.cause_list:
+		#	print '%d - %s'%(i, cause)
 
 		#this csv file is the mapping between input data fields and PHMRC fields, 0 means symptom is not avaialble
 		symptomfile = config.basedir + "/pkl/"+available_filename
@@ -59,7 +58,7 @@ class Data:
 		
 		#this csv file is the input va file, each row is one death
 		fnameTest = input_filename
-		print "testing " + fnameTest
+		#print "testing " + fnameTest
 		#fnameTest = '/home/j/Project/VA/FinalAnalysis/Data/Models/%s/splitCustom.csv'
 		#fnameTest = '/home/j/Project/VA/pyva/%suniformTrain.csv'
 		#self.test = mlab.csv2rec(fnameTest % (self.module))
@@ -90,13 +89,13 @@ class Data:
 		except:
 			print '-----error occured in extracting input data.-----'
 			#print 'number of mapped symptoms: %d'%sum([(i != 0) for i in self.symptom_list_available[0]])
-			print 'It seems there is something wrong with %s'%symptom
-			print 'Are you sure you have it in the input file? maybe you chose a wrong age module'
+			#print 'It seems there is something wrong with %s'%symptom
+			#print 'Are you sure you have it in the input file? maybe you chose a wrong age module'
 			#raise
 		if (self.cancelled):
 		    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
 		    return
-		print 'your data has %d deaths and %d symptoms'%(len(X), num)
+		#print 'your data has %d deaths and %d symptoms'%(len(X), num)
 		updatestr = 'your data has %d deaths and %d symptoms\n'%(len(X), num)
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 		wx.PostEvent(notify_window, workerthread.ProgressEvent(20, 100))
@@ -135,7 +134,7 @@ class Data:
 		
 		#For processgin Neonate and Child, there is only one big rf model file that has to be read
 		if (self.module != 'Adult'):
-			print 'please sit down and relax. we are reading the classifier file. This may take a few minutes ...'
+			#print 'please sit down and relax. we are reading the classifier file. This may take a few minutes ...'
 			#status.set('please sit down and relax. we are reading the classifier file. this may take a few minutes ...')
 			updatestr = 'please sit down and relax. we are reading the classifier file. this may take a few minutes ...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
@@ -149,7 +148,7 @@ class Data:
 			    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
 			    return
 
-			print 'Processing input...'
+			#print 'Processing input...'
 			#status.set('Processing input...')
 			updatestr = 'Processing input...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
@@ -173,17 +172,17 @@ class Data:
 							score_matrix[i, j2] += v
 							score_matrix[i, j1] += num_trees-v
 				if ((int)((float(i) / len(features))*100 ) % 10) == 0:
-					print '%d %%'% ((float(i) / len(features))*100)
+					#print '%d %%'% ((float(i) / len(features))*100)
 					sys.stdout.flush()
 					#status.set('%d %%'% ((float(i) / len(features))*100))
 					updatestr = '%d %%\n'% ((float(i) / len(features))*100)
 					#wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 					#wx.PostEvent(notify_window, workerthread.ProgressEvent(float(i), len(features)))
 					
-			print
+			
 		else:
 			#for Adult module, ther are 46 rf file that we need to read. each one is read and used next, then scores are accumulated.
-			print 'reading the classifier file and processing the input. This may take a few minutes...'
+			#print 'reading the classifier file and processing the input. This may take a few minutes...'
 			updatestr = 'please stay relaxed. we are reading the classifier file. this may take a few minutes (around 25 minutes)...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			
@@ -191,7 +190,7 @@ class Data:
 			current = 0
 			wx.PostEvent(notify_window, workerthread.ProgressEvent(0, 100))
 			for j1, cause1 in self.cause_list:
-				print 'reading training file %d'%(j1-1)
+				#print 'reading training file %d'%(j1-1)
 				updatestr = 'reading training file ' + str(j1) + ' of ' + str(len(self.cause_list)) + '\n'
 				wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 				#wx.PostEvent(notify_window, workerthread.ProgressEvent(j1, len(self.cause_list)))

@@ -2,7 +2,6 @@
 
 import os
 import wx
-from wx import *
 import pyvaPackage
 from threading import *
 import neonate_validator
@@ -87,7 +86,7 @@ class WorkerThread(Thread):
         self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
-    	print "done" 
+    	#print "done" 
     	#status.set('Done. Results are written to results.csv')
 
     def abort(self):
@@ -95,7 +94,7 @@ class WorkerThread(Thread):
         #Method for use by main thread to signal an abort
         self._want_abort = 1
         if self.data:
-            print "trying to cancel"
+            #print "trying to cancel"
             self.data.setCancelled();
         else:
             print "no data"
