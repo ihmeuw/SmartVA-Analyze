@@ -1,9 +1,8 @@
 #!/opt/local/bin/python
 
 import os
-from wx import *
-import pyvaPackage
-from Tkinter import *
+import wx
+import wx.html
 import workerthread
 import config
 
@@ -24,7 +23,8 @@ class vaHelp(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + " Help", size=(600,600))
         html = wxHTML(self)
         html.SetStandardFonts()
-        html.LoadPage(os.path.join(config.basedir, 'res/help.html'))
+        helpfile = 'res' +  str(os.path.sep) + 'help.html'
+        html.LoadPage(os.path.join(config.basedir, helpfile))
  
 class wxHTML(wx.html.HtmlWindow):
      
@@ -73,7 +73,9 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
-        imageFile = os.path.join(config.basedir, 'res/logo.png')
+        fname = 'res' + str(os.path.sep) + 'logo.png'
+        #imageFile = os.path.join(config.basedir, 'res/logo.png')
+        imageFile = os.path.join(config.basedir, fname)
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         r0.AddStretchSpacer()
@@ -167,7 +169,7 @@ class vaUI(wx.Frame):
         r6sb1 = wx.StaticBox(self.parentPanel, label="5. Analysis status")
         r6sbs1 = wx.StaticBoxSizer(r6sb1, wx.VERTICAL)
         
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE|wx.TE_CENTER)
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
 
@@ -277,6 +279,7 @@ class vaUI(wx.Frame):
                 #print "You selected the option " + self.selectedButton
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton, self.outputFolderPath)
+                self.EnableUI(False)
                 #self.toggleControls(False)
                           	
         elif (self.actionButton.GetLabel() == "Stop"):
@@ -312,13 +315,11 @@ class vaUI(wx.Frame):
 
     def toggleControls(self,enabled):
         self.chooseFileButton.Enable(enabled);
-
         self.adultRadioButton.Enable(enabled);
         self.childRadioButton.Enable(enabled);
         self.neonatalRadioButton.Enable(enabled);
         self.hceCheckBox.Enable(enabled);
         self.randomForestRadioButton.Enable(enabled);
-        
         self.chooseFolderButton.Enable(enabled);
   
     def onQuit(self, e):
@@ -340,10 +341,12 @@ class vaUI(wx.Frame):
             self.actionButton.Enable(True)        
             self.running = False   
             self.statusGauge.SetValue(0)
+            self.EnableUI(True)
         elif event.data is "Done":
             self.statusGauge.SetValue(0)
             self.statusTextCtrl.AppendText("Process Complete\n")
             self.actionButton.SetLabel("Start")
+            self.EnableUI(True)
         else:
             #print "got an update... " + event.data
             self.statusTextCtrl.AppendText(event.data)
@@ -357,6 +360,7 @@ class vaUI(wx.Frame):
             self.statusGauge.SetValue(event.progress)
         
     def OnAbort(self):
+        #print "oh geez"
         if self.worker:
             self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
             #print "trying to cancel, please wait"
@@ -365,11 +369,32 @@ class vaUI(wx.Frame):
         else:
             print "no worker?"
             
+    
+    def EnableUI(self, enable):
+        self.chooseFileButton.Enable(enable)
+        self.adultRadioButton.Enable(enable)
+        self.childRadioButton.Enable(enable)
+        self.neonatalRadioButton.Enable(enable)
+        self.hceCheckBox.Enable(enable)
+        self.randomForestRadioButton.Enable(enable)
+        self.chooseFolderButton.Enable(enable)
+            
   
 
 if __name__ == '__main__':
-  
-    app = wx.App()
-    app.SetAppName(APP_TITLE)
-    vaUI(None, title=APP_TITLE)
-    app.MainLoop()
+    
+    windebug = 0
+    if windebug is 1:    
+        try:
+            app = wx.App()
+            app.SetAppName(APP_TITLE)
+            vaUI(None, title=APP_TITLE)
+            app.MainLoop()
+        except Exception as ex:
+            print ex
+            raw_input()
+    else:
+        app = wx.App()
+        app.SetAppName(APP_TITLE)
+        vaUI(None, title=APP_TITLE)
+        app.MainLoop()

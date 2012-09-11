@@ -96,7 +96,7 @@ class WorkerThread(Thread):
         if self.data:
             #print "trying to cancel"
             self.data.setCancelled();
-        else:
-            print "no data"
+        #else:
+            #print "no data"
             #wx.PostEvent(self._notify_window, ResultEvent(None))
             

@@ -62,7 +62,7 @@ class Data:
 		#fnameTest = '/home/j/Project/VA/FinalAnalysis/Data/Models/%s/splitCustom.csv'
 		#fnameTest = '/home/j/Project/VA/pyva/%suniformTrain.csv'
 		#self.test = mlab.csv2rec(fnameTest % (self.module))
-		updatestr = "calculating symptoms and deaths\n"
+		updatestr = "Counting symptoms and deaths\n"
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 		wx.PostEvent(notify_window, workerthread.ProgressEvent(None, None))
 		self.test = mlab.csv2rec(fnameTest)
@@ -96,7 +96,7 @@ class Data:
 		    #wx.PostEvent(notify_window, workerthread.ResultEvent(None))
 		    return
 		#print 'your data has %d deaths and %d symptoms'%(len(X), num)
-		updatestr = 'your data has %d deaths and %d symptoms\n'%(len(X), num)
+		updatestr = 'Your data has %d deaths and %d symptoms\n'%(len(X), num)
 		wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 		wx.PostEvent(notify_window, workerthread.ProgressEvent(20, 100))
 		return X
@@ -136,7 +136,7 @@ class Data:
 		if (self.module != 'Adult'):
 			#print 'please sit down and relax. we are reading the classifier file. This may take a few minutes ...'
 			#status.set('please sit down and relax. we are reading the classifier file. this may take a few minutes ...')
-			updatestr = 'please sit down and relax. we are reading the classifier file. this may take a few minutes ...\n'
+			updatestr = 'Reading the classifier file. this may take a few minutes ...\n'
 			wx.PostEvent(notify_window, workerthread.ResultEvent(updatestr))
 			wx.PostEvent(notify_window, workerthread.ProgressEvent(None, None))
 			
@@ -321,7 +321,6 @@ class Data:
 		
 		"""
 		import os
-		print 'saving results to %s...'%os.path.abspath(os.curdir)
 		import csv
 
 		f = open(fname, 'w')
@@ -336,7 +335,7 @@ class Data:
 			score_list.append([row.sid] + list(self.ranks[i, 1:]) + [prediction[i]])
 		csv_f.writerows(score_list)
 		f.close()
-		print 'done.'
+
 		
 	def calc_concordance(self, prediction):
 		""" Calculate average concordance of predictions and self.test
