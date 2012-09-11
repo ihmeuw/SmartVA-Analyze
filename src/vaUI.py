@@ -73,9 +73,8 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
-        fname = 'res' + str(os.path.sep) + 'logo.png'
-        #imageFile = os.path.join(config.basedir, 'res/logo.png')
-        imageFile = os.path.join(config.basedir, fname)
+        imageFilename = 'res' + str(os.path.sep) + 'logo.png'
+        imageFile = os.path.join(config.basedir, imageFilename)
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
         r0.AddStretchSpacer()
@@ -246,7 +245,6 @@ class vaUI(wx.Frame):
             self.inputFilePath = dlg.GetPath()
             #print "You chose the following file: " + self.inputFilePath
             self.choosenFileText.SetLabel(self.shortenPath(self.inputFilePath,42))
-
         dlg.Destroy()
     
     def onOpenFolder(self, e):
@@ -259,15 +257,11 @@ class vaUI(wx.Frame):
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.outputFolderPath = dlg.GetPath()
-            #print "You chose the following folder: " + self.outputFolderPath
             self.choosenFolderText.SetLabel(self.shortenPath(self.outputFolderPath,42))
-
         dlg.Destroy()
     
     def onAction(self, e):
-        if(self.actionButton.GetLabel() == "Start"):
-            #self.statusGauge.SetValue(20)
-            
+        if(self.actionButton.GetLabel() == "Start"):            
             # Make sure you have an input and output path
             if not self.inputFilePath:
                 self.ShowErrorMessage("Error!","Please select an input file.")
@@ -276,17 +270,14 @@ class vaUI(wx.Frame):
             else:
                 self.actionButton.SetLabel("Stop")
                 self.addText("You selected the option " + self.selectedButton + "\n")
-                #print "You selected the option " + self.selectedButton
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton, self.outputFolderPath)
                 self.EnableUI(False)
-                #self.toggleControls(False)
                           	
         elif (self.actionButton.GetLabel() == "Stop"):
             self.actionButton.SetLabel("Start")
             self.statusGauge.SetValue(0)
             self.OnAbort()
-            #self.toggleControls(True)
             
     def clickAdultButton(self, event):
         self.selectedButton = "Adult"
@@ -306,7 +297,6 @@ class vaUI(wx.Frame):
 
     def addText(self, newText):
         self.statusTextCtrl.AppendText(newText)
-        #self.statusTextCtrl.Refresh()
     
     def ShowErrorMessage(self, title, message):
         dialog = wx.MessageDialog(None, message, title, 
@@ -337,40 +327,43 @@ class vaUI(wx.Frame):
 
     def OnResult(self, event):
         if event.data is None:
+            # If it's none we got an abort
             self.statusTextCtrl.AppendText("computation successfully aborted\n")
             self.actionButton.Enable(True)        
             self.running = False   
             self.statusGauge.SetValue(0)
             self.EnableUI(True)
         elif event.data is "Done":
+            # if it's done, then the algorithm is complete
             self.statusGauge.SetValue(0)
             self.statusTextCtrl.AppendText("Process Complete\n")
             self.actionButton.SetLabel("Start")
             self.EnableUI(True)
         else:
-            #print "got an update... " + event.data
+            # everything else is update status text
             self.statusTextCtrl.AppendText(event.data)
             
     
     def OnProgress(self, event):
         if event.progress is None:
+            # if it's none, we have no idea how long it takes
             self.statusGauge.Pulse()
         else:    
+            # everything else gives us a progress and a max
             self.statusGauge.SetRange(event.progressmax)
             self.statusGauge.SetValue(event.progress)
         
     def OnAbort(self):
-        #print "oh geez"
         if self.worker:
+            # if the thread is running, don't just stop
             self.statusTextCtrl.AppendText("attempting to cancel, please wait...\n")
-            #print "trying to cancel, please wait"
             self.worker.abort()
             self.actionButton.Enable(False)
-        else:
-            print "no worker?"
-            
+            # do we need an else?  doesn't seem like it
+        
     
     def EnableUI(self, enable):
+        # Turns UI elements on an doff
         self.chooseFileButton.Enable(enable)
         self.adultRadioButton.Enable(enable)
         self.childRadioButton.Enable(enable)
