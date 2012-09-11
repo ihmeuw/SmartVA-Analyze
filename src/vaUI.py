@@ -49,6 +49,7 @@ class vaUI(wx.Frame):
         self.selectedButton = "Adult" # default selection
         self.hce = 'HCE'
         self.running = False
+        self.worker = None
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
@@ -313,12 +314,19 @@ class vaUI(wx.Frame):
         self.chooseFolderButton.Enable(enabled);
   
     def onQuit(self, e):
-        #todo:  are you sure?
-        self.Close()
+        quitDialog = wx.MessageDialog(self, 'Are you sure you want to Quit?', 'Exit Application?', wx.YES_NO | wx.NO_DEFAULT)
+        pressed = quitDialog.ShowModal()
         
-        # is the help window open?
-        if hasattr(self,'helpWindow'):
-            self.helpWindow.Close()
+        if pressed == wx.ID_YES:
+            self.OnAbort()
+            self.Close()
+            if hasattr(self,'helpWindow'):
+                self.helpWindow.Close()
+        # do nothing
+        #elif pressed == wx.ID_NO:
+        #    print "NO"
+        
+
 
     def onHelp(self, e):
         self.helpWindow = vaHelp(None)
