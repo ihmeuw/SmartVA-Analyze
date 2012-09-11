@@ -7,6 +7,7 @@ coll = COLLECT(exe,
                a.zipfiles,
                a.datas,
                [('res/logo.png', '/Users/carlhartung/workspace/ihme-va/src/res/logo.png', 'DATA')],
+               [('res/help.html', '/Users/carlhartung/workspace/ihme-va/src/res/help.html', 'DATA')],
                [('pkl/Adult_causelist_noHCE.pkl', '/Users/carlhartung/workspace/ihme-va/src/pkl/Adult_causelist_noHCE.pkl', 'DATA')],
                [('pkl/Adult_causelist.pkl', '/Users/carlhartung/workspace/ihme-va/src/pkl/Adult_causelist.pkl', 'DATA')],
                [('pkl/Adult_symptomlist_noHCE.pkl', '/Users/carlhartung/workspace/ihme-va/src/pkl/Adult_symptomlist_noHCE.pkl', 'DATA')],
@@ -138,6 +139,7 @@ python pyinstaller.py -w ~/Desktop/pyinstaller-2.0/vaUI/vaUI.spec
 
 
 			[('res/logo.png', 'c:/Documents and Settings/Administrator/Desktop/ihme-va/src/res/logo.png', 'DATA')],
+			[('res/help.html', 'c:/Documents and Settings/Administrator/Desktop/ihme-va/src/res/help.html', 'DATA')],
                [('pkl/Adult_causelist_noHCE.pkl', 'c:/Documents and Settings/Administrator/Desktop/ihme-va/src/pkl/Adult_causelist_noHCE.pkl', 'DATA')],
                [('pkl/Adult_causelist.pkl', 'c:/Documents and Settings/Administrator/Desktop/ihme-va/src/pkl/Adult_causelist.pkl', 'DATA')],
                [('pkl/Adult_symptomlist_noHCE.pkl', 'c:/Documents and Settings/Administrator/Desktop/ihme-va/src/pkl/Adult_symptomlist_noHCE.pkl', 'DATA')],
