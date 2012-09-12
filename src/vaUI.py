@@ -134,7 +134,6 @@ class vaUI(wx.Frame):
 
         r4sb2 = wx.StaticBox(self.parentPanel, label="3. Algorithm type",)
         r4sbs2 = wx.StaticBoxSizer(r4sb2, wx.VERTICAL)
-        r4sbs2.AddSpacer(50)
 
         r4.Add(r4sbs1,proportion=1,flag=wx.RIGHT, border=10)
         r4.Add(r4sbs2,proportion=1,flag=wx.RIGHT, border=10)
@@ -142,7 +141,7 @@ class vaUI(wx.Frame):
         # Bug in radio grouping requires two panels in OS X 10.8
         # http://trac.wxwidgets.org/ticket/14605
         self.algorithmPanel = wx.Panel(self.parentPanel, size=(200,40))
-        self.algorithmPanel.SetPosition((298,243))
+        r4sbs2.Add(self.algorithmPanel, 0, wx.ALL|wx.LEFT, 5)
 
         self.randomForestRadioButton = wx.RadioButton(self.algorithmPanel, label='Random forest', style=wx.RB_GROUP)
         self.randomForestRadioButton.SetValue(True)
@@ -320,7 +319,7 @@ class vaUI(wx.Frame):
         if pressed == wx.ID_YES:
             self.OnAbort()
             self.Close()
-            if hasattr(self,'helpWindow'):
+            if self.helpWindow:
                 self.helpWindow.Close()
         # do nothing
         #elif pressed == wx.ID_NO:
