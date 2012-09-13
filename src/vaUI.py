@@ -50,6 +50,7 @@ class vaUI(wx.Frame):
         self.hce = 'HCE'
         self.running = False
         self.worker = None
+        self.helpWindow = None
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
