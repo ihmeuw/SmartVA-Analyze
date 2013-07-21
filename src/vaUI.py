@@ -10,8 +10,6 @@ import config
 # TODO: why is the first button selected
 # TODO: disable buttons when app is running
 
-
-
 APP_EXIT = 1
 APP_HELP = 2
 
@@ -35,7 +33,7 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(550, 760),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
+            size=(550, 650),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
             
         self.InitUI()
         self.Centre()
@@ -46,7 +44,6 @@ class vaUI(wx.Frame):
         self.inputFilePath = ""
         self.outputFolderPath = ""
         self.statusLog = ""
-        self.selectedButton = "Adult" # default selection
         self.hce = 'HCE'
         self.running = False
         self.worker = None
@@ -57,147 +54,118 @@ class vaUI(wx.Frame):
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
         helpMenu = wx.Menu()
+
         qmi = wx.MenuItem(fileMenu, APP_EXIT, '&Quit\tCtrl+Q')
         hmi = wx.MenuItem(helpMenu, APP_HELP, '&Help')
+
         fileMenu.AppendItem(qmi)
         helpMenu.AppendItem(hmi)
+        
         menubar.Append(fileMenu, '&File')
         menubar.Append(helpMenu, '&Help')
         
         self.Bind(wx.EVT_MENU, self.onQuit, id=APP_EXIT)
         self.SetMenuBar(menubar)
-
         self.parentPanel = wx.Panel(self)
         
         vbox = wx.BoxSizer(wx.VERTICAL)
-
-        r0 = wx.BoxSizer(wx.HORIZONTAL)
-        r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         scaleSize = .35
         imageFilename = 'res' + str(os.path.sep) + 'logo.png'
         imageFile = os.path.join(config.basedir, imageFilename)
         image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
         scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        
+
+        r0 = wx.BoxSizer(wx.HORIZONTAL)
+
         r0.AddStretchSpacer()
         r0.Add(wx.StaticBitmap(self.parentPanel,-1,scaled_image),flag=wx.RIGHT, border=12)
         r0.AddStretchSpacer()
 
 
-        r1.AddStretchSpacer()
+        r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         helpButton = wx.Button(self.parentPanel, label="Help")
-        r1.Add(helpButton, flag=wx.RIGHT, border=12)
-        helpButton.Bind(wx.EVT_BUTTON, self.onHelp)
-
         quitButton = wx.Button(self.parentPanel, label="Quit")
-        r1.Add(quitButton, flag=wx.RIGHT, border=12)
-        r2 = wx.BoxSizer(wx.HORIZONTAL)
-        
+
+        helpButton.Bind(wx.EVT_BUTTON, self.onHelp)
         quitButton.Bind(wx.EVT_BUTTON, self.onQuit)
 
-        r2sb1 = wx.StaticBox(self.parentPanel, label="1. Input file")
+        r1.AddStretchSpacer()
+        r1.Add(helpButton, flag=wx.RIGHT, border=12)
+        r1.Add(quitButton, flag=wx.RIGHT, border=12)
+
+        r2 = wx.BoxSizer(wx.HORIZONTAL)
+        r2sb1 = wx.StaticBox(self.parentPanel, label="1. Choose input file")
         r2sbs1 = wx.StaticBoxSizer(r2sb1, wx.HORIZONTAL)
 
         self.chooseFileButton = wx.Button(self.parentPanel, label="Choose file...")
         self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        r2sbs1.Add(self.chooseFileButton, flag=wx.ALL, border=5)
-
         self.choosenFileText = wx.StaticText(self.parentPanel, label="",size=(367, -1))
+
+        r2sbs1.Add(self.chooseFileButton, flag=wx.ALL, border=5)
         r2sbs1.Add(self.choosenFileText, proportion=1, flag=wx.ALL, border=5)
-        
         r2.Add(r2sbs1)
 
 
-        r4 = wx.BoxSizer(wx.HORIZONTAL)        
-
-        r4sb1 = wx.StaticBox(self.parentPanel, label="2. Input type")
-        r4sbs1 = wx.StaticBoxSizer(r4sb1, wx.VERTICAL)
-
-        self.adultRadioButton = wx.RadioButton(self.parentPanel, label="Adult", style=wx.RB_GROUP)
-        self.adultRadioButton.SetValue(True)
-        self.childRadioButton = wx.RadioButton(self.parentPanel, label="Child")
-        self.neonatalRadioButton = wx.RadioButton(self.parentPanel, label="Neonatal")
-        self.hceCheckBox = wx.CheckBox(self.parentPanel, label="HCE variables")
-        self.hceCheckBox.SetValue(True)
-        
-        r4sbs1.Add(self.adultRadioButton, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.Add(self.childRadioButton, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.Add(self.neonatalRadioButton, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.AddSpacer(10) 
-        r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.AddSpacer(3)
-        
-        self.Bind(wx.EVT_RADIOBUTTON, self.clickAdultButton, id=self.adultRadioButton.GetId())
-        self.Bind(wx.EVT_RADIOBUTTON, self.clickChildButton, id=self.childRadioButton.GetId())
-        self.Bind(wx.EVT_RADIOBUTTON, self.clickNeonatalButton, id=self.neonatalRadioButton.GetId())
-        self.Bind(wx.EVT_CHECKBOX, self.clickHCE, id=self.hceCheckBox.GetId())
-
-        r4sb2 = wx.StaticBox(self.parentPanel, label="3. Algorithm type",)
-        r4sbs2 = wx.StaticBoxSizer(r4sb2, wx.VERTICAL)
-
-        r4.Add(r4sbs1,proportion=1,flag=wx.RIGHT, border=10)
-        r4.Add(r4sbs2,proportion=1,flag=wx.RIGHT, border=10)
-
-        # Bug in radio grouping requires two panels in OS X 10.8
-        # http://trac.wxwidgets.org/ticket/14605
-        self.algorithmPanel = wx.Panel(self.parentPanel, size=(200,40))
-        r4sbs2.Add(self.algorithmPanel, 0, wx.ALL|wx.LEFT, 5)
-
-        self.randomForestRadioButton = wx.RadioButton(self.algorithmPanel, label='Random forest', style=wx.RB_GROUP)
-        self.randomForestRadioButton.SetValue(True)
-        self.tariffRadioButton = wx.RadioButton(self.algorithmPanel, label='Tariff (future feature)',pos=(-1, 22))
-        self.tariffRadioButton.Enable(False)
-
-        r5 = wx.BoxSizer(wx.HORIZONTAL)
-
-        r5sb1 = wx.StaticBox(self.parentPanel, label="4. Output folder")
-        r5sbs1 = wx.StaticBoxSizer(r5sb1, wx.HORIZONTAL)
+        r3 = wx.BoxSizer(wx.HORIZONTAL)
+        r3sb1 = wx.StaticBox(self.parentPanel, label="2. Choose output folder")
+        r3sbs1 = wx.StaticBoxSizer(r3sb1, wx.HORIZONTAL)
 
         self.chooseFolderButton = wx.Button(self.parentPanel, label="Choose folder...")
         self.chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
-        r5sbs1.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
-
         self.choosenFolderText = wx.StaticText(self.parentPanel, label="",size=(349, -1))
-        r5sbs1.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
+
+        r3sbs1.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
+        r3sbs1.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
+        r3.Add(r3sbs1)
+
+
+        r4 = wx.BoxSizer(wx.HORIZONTAL)        
+        r4sb1 = wx.StaticBox(self.parentPanel, label="3. Set processing options")
+        r4sbs1 = wx.StaticBoxSizer(r4sb1, wx.VERTICAL)
+
+        self.hceCheckBox = wx.CheckBox(self.parentPanel, label="HCE variables")
+        self.hceCheckBox.SetValue(True)
+        self.Bind(wx.EVT_CHECKBOX, self.clickHCE, id=self.hceCheckBox.GetId())
+
+        r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        r4sbs1.AddSpacer(3)
+        r4.Add(r4sbs1,proportion=1,flag=wx.RIGHT, border=10)
+
+        r5 = wx.BoxSizer(wx.HORIZONTAL)
+        r5sb1 = wx.StaticBox(self.parentPanel, label="4. Start analysis")
+        r5sbs1 = wx.StaticBoxSizer(r5sb1, wx.VERTICAL)
         
-        r5.Add(r5sbs1)
-
-
-        r6 = wx.BoxSizer(wx.HORIZONTAL)
-
-        r6sb1 = wx.StaticBox(self.parentPanel, label="5. Analysis status")
-        r6sbs1 = wx.StaticBoxSizer(r6sb1, wx.VERTICAL)
-        
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE)
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE|wx.TE_CENTER)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
-
-        r6sbs1.Add(self.statusTextCtrl,flag=wx.ALL,border=5)
-        r6sbs1.AddSpacer(5)
-
-        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(472, -1))
-        r6sbs1.Add(self.statusGauge,flag=wx.RIGHT|wx.LEFT, border=7)
-        r6sbs1.AddSpacer(10)
-
+        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(375, -1))
         self.actionButton = wx.Button(self.parentPanel, label="Start")
         self.actionButton.Bind(wx.EVT_BUTTON, self.onAction)
 
+        r6c1 = wx.BoxSizer(wx.HORIZONTAL);
+        r6c1.Add(self.statusGauge,flag=wx.LEFT, border=7)
+        r6c1.AddSpacer(10)
+        r6c1.Add(self.actionButton,flag=wx.LEFT, border=5)
 
-        r6sbs1.Add(self.actionButton,flag=wx.RIGHT|wx.LEFT|wx.BOTTOM, border=5)
-
-        r6.Add(r6sbs1)
+        r5sbs1.AddSpacer(5)
+        r5sbs1.Add(r6c1)
+        r5sbs1.AddSpacer(5)
+        r5sbs1.Add(self.statusTextCtrl,flag=wx.ALL,border=5)
+        r5sbs1.AddSpacer(5)
+        r5.Add(r5sbs1)
 
         vbox.Add(r0,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.Add(r1,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-
         vbox.Add(r2, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(10)
+        vbox.AddSpacer(3)
+        vbox.Add(r3, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.AddSpacer(3)
         vbox.Add(r4, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(10)
+        vbox.AddSpacer(3)
         vbox.Add(r5, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(10)
-        vbox.Add(r6, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
 
         self.parentPanel.SetSizer(vbox)
 
@@ -373,11 +341,7 @@ class vaUI(wx.Frame):
     def EnableUI(self, enable):
         # Turns UI elements on an doff
         self.chooseFileButton.Enable(enable)
-        self.adultRadioButton.Enable(enable)
-        self.childRadioButton.Enable(enable)
-        self.neonatalRadioButton.Enable(enable)
         self.hceCheckBox.Enable(enable)
-        self.randomForestRadioButton.Enable(enable)
         self.chooseFolderButton.Enable(enable)
             
   

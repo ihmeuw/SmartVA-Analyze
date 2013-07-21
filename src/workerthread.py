@@ -4,7 +4,7 @@ import os
 import wx
 import pyvaPackage
 from threading import *
-import neonate_validator
+#import neonate_validator
 from time import gmtime, strftime
 
 EVT_RESULT_ID = wx.NewId()
