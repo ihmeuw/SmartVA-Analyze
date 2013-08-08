@@ -136,7 +136,7 @@ class vaUI(wx.Frame):
         r4bs2.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
         r4bs2.Add(self.countryComboBox)
 
-        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Use HCE variables')
+        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Use Health Care Experience (HCE) variables')
         self.hceCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleHCE, id=self.hceCheckBox.GetId())
 
