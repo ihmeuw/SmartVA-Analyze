@@ -250,24 +250,14 @@ class vaUI(wx.Frame):
                 self.ShowErrorMessage('Error!','Please select an output folder.')
             else:
                 self.actionButton.SetLabel('Stop')
-                self.addText('You selected the option ' + self.selectedButton + '\n')
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.selectedButton, self.outputFolderPath)
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath)
                 self.EnableUI(False)
                           	
         elif (self.actionButton.GetLabel() == 'Stop'):
             self.actionButton.SetLabel('Start')
             self.statusGauge.SetValue(0)
             self.OnAbort()
-            
-    def clickAdultButton(self, event):
-        self.selectedButton = 'Adult'
-    
-    def clickChildButton(self, event):
-        self.selectedButton = 'Child'
-    
-    def clickNeonatalButton(self, event):
-        self.selectedButton = 'Neonate'
     
     def toggleHCE(self, event):
         # just a toggle
@@ -293,9 +283,6 @@ class vaUI(wx.Frame):
 
     def toggleControls(self,enabled):
         self.chooseFileButton.Enable(enabled);
-        self.adultRadioButton.Enable(enabled);
-        self.childRadioButton.Enable(enabled);
-        self.neonatalRadioButton.Enable(enabled);
         self.hceCheckBox.Enable(enabled);
         self.randomForestRadioButton.Enable(enabled);
         self.chooseFolderButton.Enable(enabled);

@@ -40,7 +40,7 @@ class ProgressEvent(wx.PyEvent):
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, hce, module, output_dir):
+    def __init__(self, notify_window, input_file, hce, output_dir):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self._notify_window = notify_window
@@ -48,7 +48,6 @@ class WorkerThread(Thread):
         self.inputFilePath = input_file
         self.data = None
         self.hce = hce
-        self.module = module
         self.output_dir = output_dir
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
@@ -60,18 +59,11 @@ class WorkerThread(Thread):
         
         filename = ''
         validated = False
-        if self.module is "Adult":
-            filename = "Adult_available_symptoms.csv"
-        elif self.module is "Child":
-            filename = "Child_available_symptoms.csv"
-        elif self.module is "Neonate":
-            filename = "Neonate_available_symptoms.csv"
-            #validated = neonate_validator.validate(notify_window=self._notify_window, inputfile=self.inputFilePath)
-            
+              
         #if not validated:
             #return
         
-        self.data = pyvaPackage.Data(notify_window=self._notify_window, module=self.module, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
+        self.data = pyvaPackage.Data(notify_window=self._notify_window, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
         if (self._want_abort):
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
