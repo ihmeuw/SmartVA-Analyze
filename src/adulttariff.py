@@ -16,11 +16,13 @@ import platform
 
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
-    def __init__(self, causescores, cause, sid):
+    def __init__(self, causescores, cause, sid, age, gender):
         self.causescores = causescores #dict of {"cause1" : value, "cause2" :...}
         self.cause = cause #int
         self.ranklist = {}
         self.sid = sid
+        self.age = age
+        self.gender = gender
             
 
 class Tariff():
@@ -144,7 +146,7 @@ class Tariff():
                         causeval = causeval + float(tariff)
                 causedict[cause] = causeval
             sid = row[headers.index('sid')]
-            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid)
+            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])
             vacauselist.append(va)
             
        
@@ -172,7 +174,7 @@ class Tariff():
                         causeval = causeval + float(tariff)
                 causedict[cause] = causeval
             sid = row[validatedheaders.index('sid')]
-            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid)
+            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, 0, 0)
             vavalidatedcauselist.append(va)
                     
         #print "len causelist %s" % (len(vavalidatedcauselist))
@@ -465,20 +467,25 @@ class Tariff():
         
         
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-causes.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34'])    
+        rankwriter.writerow(['sid', 'cause', 'cause34', 'real_age', 'real_gender'])    
         for va in vacauselist:
             causescore = lowest
-            causelist = []
-            causereductionlist = []
+            realcause = 'undetermined'
+            cause34 = ''
+            multiple = {}
             for cause in va.ranklist:
                 if float(va.ranklist[cause]) < causescore:
                     causescore = float(va.ranklist[cause])
-                    causelist = [cause]
-                    causereductionlist = [causereduction[cause]]
-                elif causescore == float(va.ranklist[cause]):
-                    causelist.append(cause)
-                    causereductionlist.append(causereduction[cause])
-            rankwriter.writerow([va.sid, causelist, causereductionlist])
+                    realcause = cause
+                    cause34 = causereduction[cause]
+                    multiple[va.sid] = [cause]
+                elif causescore == float(va.ranklist[cause]) and causescore != lowest:
+                    multiple[va.sid].append(cause)
+            for vakey in multiple.keys():
+                if len(multiple[vakey]) > 1:
+                    updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
                     
         
         
