@@ -161,7 +161,7 @@ class vaUI(wx.Frame):
         r5sb1 = wx.StaticBox(self.parentPanel, label='4. Start analysis')
         r5sbs1 = wx.StaticBoxSizer(r5sb1, wx.VERTICAL)
         
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE|wx.TE_CENTER)
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE|wx.TE_LEFT)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
         self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(375, -1))
@@ -360,8 +360,10 @@ class vaUI(wx.Frame):
     def EnableUI(self, enable):
         # Turns UI elements on an doff
         self.chooseFileButton.Enable(enable)
-        self.hceCheckBox.Enable(enable)
         self.chooseFolderButton.Enable(enable)
+        self.countryComboBox.Enable(enable)
+        self.hceCheckBox.Enable(enable)
+        self.freetextCheckBox.Enable(enable)
   
 
 if __name__ == '__main__':

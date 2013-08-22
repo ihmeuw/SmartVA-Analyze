@@ -14,6 +14,7 @@ import childsymptom
 import childtariff
 import neonatepresymptom
 import neonatesymptom
+import causegraphs
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -62,7 +63,7 @@ class WorkerThread(Thread):
         self.start()
 
     def run(self):
-        
+
         #makes cleanheaders.csv
         cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
         cleanheaders.run()
@@ -103,6 +104,10 @@ class WorkerThread(Thread):
         neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         neonatesym.run()
         
+        # makes cause graphs
+        causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "adult-tariff-causes.csv", self.output_dir)
+        causegraph.run()
+
         #creates neonate output files
         #neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir)
         #neonateresults.run()
