@@ -66,7 +66,7 @@ class WorkerThread(Thread):
         #makes cleanheaders.csv
         cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
         cleanheaders.run()
-        
+
         #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
         prep.run()

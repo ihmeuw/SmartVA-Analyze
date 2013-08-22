@@ -50,7 +50,8 @@ class vaUI(wx.Frame):
         self.inputFilePath = '/Users/carlhartung/Desktop/runva/before.csv'
         self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
         self.statusLog = ''
-        self.hce =  None
+        self.hce = None
+        self.freetext = None
         self.country = None
         self.running = False
         self.worker = None
@@ -137,13 +138,19 @@ class vaUI(wx.Frame):
         r4bs2.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
         r4bs2.Add(self.countryComboBox)
 
-        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Use Health Care Experience (HCE) variables')
+        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Include Health Care Experience (HCE) variables')
         self.hceCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleHCE, id=self.hceCheckBox.GetId())
+
+        self.freetextCheckBox = wx.CheckBox(self.parentPanel, label='Include free text variables')
+        self.freetextCheckBox.SetValue(True)
+        self.Bind(wx.EVT_CHECKBOX, self.toggleFreetext, id=self.freetextCheckBox.GetId())
 
         r4sbs1.Add(r4bs2)
         r4sbs1.AddSpacer(5)
         r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        r4sbs1.AddSpacer(3)
+        r4sbs1.Add(self.freetextCheckBox, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.AddSpacer(3)
 
         r4.Add(r4sbs1,proportion=1,flag=wx.RIGHT, border=10)
@@ -262,10 +269,17 @@ class vaUI(wx.Frame):
     
     def toggleHCE(self, event):
         # just a toggle
-        if self.hce is 'HCE':
+        if self.hce is 'hce':
             self.hce = None
         else:
-            self.hce = 'HCE'
+            self.hce = 'hce'
+    
+    def toggleFreetext(self, event):
+        # just a toggle
+        if self.freetext is 'freetext':
+            self.freetext = None
+        else:
+            self.freetext = 'freetext'
 
     def changeCountry(self,event):
         if (event.GetString() != COUNTRY_DEFAULT):
