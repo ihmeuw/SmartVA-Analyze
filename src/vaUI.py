@@ -47,8 +47,10 @@ class vaUI(wx.Frame):
     def InitUI(self):
         
         #TODO: make both of these empty when done
-        self.inputFilePath = '/Users/carlhartung/Desktop/runva/before.csv'
-        self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
+        #self.inputFilePath = '/Users/carlhartung/Desktop/runva/before.csv'
+        #self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
+        self.inputFilePath = ''
+        self.outputFolderPath = ''
         self.statusLog = ''
         self.hce = None
         self.freetext = None
