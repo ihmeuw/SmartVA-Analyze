@@ -2,10 +2,18 @@
 
 import os
 import wx
-import pyvaPackage
 from threading import *
-#import neonate_validator
 from time import gmtime, strftime
+import headers
+import vaprep
+import adultpresymptom
+import adultsymptom
+import adulttariff
+import childpresymptom
+import childsymptom
+import childtariff
+import neonatepresymptom
+import neonatesymptom
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -40,7 +48,7 @@ class ProgressEvent(wx.PyEvent):
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, hce, module, output_dir):
+    def __init__(self, notify_window, input_file, hce, output_dir):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self._notify_window = notify_window
@@ -48,42 +56,83 @@ class WorkerThread(Thread):
         self.inputFilePath = input_file
         self.data = None
         self.hce = hce
-        self.module = module
         self.output_dir = output_dir
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         self.start()
 
     def run(self):
-        #data = pyvaPackage.Data(update=self.addText, module="Neonate", input_filename=self.inputFilePath, available_filename="/Users/carlhartung/Desktop/SmartVA/Examples/Neonate_available_symptoms.csv", HCE="HCE")
-        #score_matrix = data.calc_rf_scores(update=self.addText)
         
-        filename = ''
-        validated = False
-        if self.module is "Adult":
-            filename = "Adult_available_symptoms.csv"
-        elif self.module is "Child":
-            filename = "Child_available_symptoms.csv"
-        elif self.module is "Neonate":
-            filename = "Neonate_available_symptoms.csv"
-            #validated = neonate_validator.validate(notify_window=self._notify_window, inputfile=self.inputFilePath)
-            
-        #if not validated:
-            #return
+        #makes cleanheaders.csv
+        cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
+        cleanheaders.run()
         
-        self.data = pyvaPackage.Data(notify_window=self._notify_window, module=self.module, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
-        if (self._want_abort):
-            wx.PostEvent(self._notify_window, ResultEvent(None))
-            return
-        score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
-        if (self._want_abort):
-            wx.PostEvent(self._notify_window, ResultEvent(None))
-            return
-        prediction = self.data.rank_against_train_prediction(score_matrix)
-        if (self._want_abort):
-            wx.PostEvent(self._notify_window, ResultEvent(None))
-            return
-        self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
+        #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
+        prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
+        prep.run()
+        
+        #makes adult-presymptom.csv
+        adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
+        adultpresym.run()
+        
+        #makes adult-symptom.csv
+        adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
+        adultsym.run()
+        
+        #creates adult output files
+        adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir)
+        adultresults.run()
+        
+        #makes child-presymptom.csv
+        childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
+        childpresym.run()
+        
+        #makes child-symptom.csv
+        childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
+        childsym.run()
+        
+        #creates child output files
+        #childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir)
+        #childresults.run()
+        
+        #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
+        neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
+        neonatepresym.run()
+       
+        #makes neonate-symptom.csv
+        neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
+        neonatesym.run()
+        
+        #creates neonate output files
+        #neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir)
+        #neonateresults.run()
+        
+       
+        
+        # filename = ''
+        #         validated = False
+        #         if self.module is "Adult":
+        #             filename = "Adult_available_symptoms.csv"
+        #         elif self.module is "Child":
+        #             filename = "Child_available_symptoms.csv"
+        #         elif self.module is "Neonate":
+        #             filename = "Neonate_available_symptoms.csv"
+
+
+        
+        # self.data = pyvaPackage.Data(notify_window=self._notify_window, module=self.module, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
+        #         if (self._want_abort):
+        #             wx.PostEvent(self._notify_window, ResultEvent(None))
+        #             return
+        #         score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
+        #         if (self._want_abort):
+        #             wx.PostEventent(self._notify_window, ResultEvent(None))
+        #             return
+        #         prediction = self.data.rank_against_train_prediction(score_matrix)
+        #         if (self._want_abort):
+        #             wx.PostEvent(self._notify_window, ResultEvent(None))
+        #             return
+        #         self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
     	#print "done" 
