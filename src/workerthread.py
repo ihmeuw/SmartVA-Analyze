@@ -110,8 +110,8 @@ class WorkerThread(Thread):
         neonateresults.run()
         
         # makes cause graphs
-        # causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "neonate-tariff-causes.csv", self.output_dir)
-        #         causegraph.run()
+        causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "neonate-tariff-causes.csv", self.output_dir)
+        causegraph.run()
         
         # filename = ''
         #         validated = False
