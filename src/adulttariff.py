@@ -11,6 +11,9 @@ import workerthread
 import os
 import sys
 import platform
+from operator import itemgetter
+
+import adultuniformtrain
 
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
@@ -212,26 +215,24 @@ class Tariff():
         
                                 
         #print "sample %s" % samplesize        
-        #create new uniform training set such that each cause has samplessize VAs
-        random.seed(123)
+        #create new uniform training set using the frequencies file
         uniformtrain = {}
         for cause in range(1, 47):
             uniformtrain[str(cause)] = []
             #indexes of all VAs of a certain cause
             for causeindex in causeindexes[str(cause)]:
-                # first add all of the VAs per cause to make sure they're included at least once
-                uniformtrain[str(cause)].append(vavalidatedcauselist[causeindex])
-            # fill the rest so it gets up to sample size
-            for i in range(len(causeindexes[str(cause)]), samplesize):
-                #print validatedmatrix[choice(causeindexes[str(cause)])]
-                uniformtrain[str(cause)].append(vavalidatedcauselist[random.choice(causeindexes[str(cause)])])
+                va = validatedmatrix[causeindex]
+                sid = va[validatedheaders.index('sid')]
+                count = int(adultuniformtrain.frequencies[sid])
+                for i in range(0, count):
+                    uniformtrain[str(cause)].append(vavalidatedcauselist[causeindex])
 
-        vas = []
-        for row in uniformtrain['1']:
-            vas.append(row.sid)
-        asdf = vas.sort()
-        print asdf
-        
+        # vas = []
+        #         print "len uniform train : %s" % (len(uniformtrain['1']))
+        #         for row in uniformtrain['1']:
+        #             vas.append(row.sid)
+        #             vas.sort()
+        #         print vas
         
         # uniform train
         # key == 1, 2, 3 (causes)
@@ -287,24 +288,27 @@ class Tariff():
 
                 # sort them and calculate absolute value of tariff-deathscore
                 sortedtariffs = sorted(tariffs, reverse=True)
+
                 for idx, val in enumerate(sortedtariffs):
                     sortedtariffs[idx] = math.fabs(val-deathscore)
 
                 minlist = []
-                minval = 10000
+                minval = None
                 
                 # loop through all the new scores, find the minimum value, store that index
                 # if there are multiple minimum values that are the same, take the mean of the indexes
                 for index, val in enumerate(sortedtariffs):
                     #print "trying %s and %s" % (index, val)
-                    if val < minval:
+                    if val < minval or minval is None:
                         minval = val
                         minlist = [index]
                     elif val == minval:
                         minlist.append(index)
                 
                 index = sum(minlist)/float(len(minlist))
-                ranklist[cause] = index
+                # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
+                # answer as the original stata tool
+                ranklist[cause] = index+1
             va.ranklist = ranklist
             
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
@@ -372,14 +376,32 @@ class Tariff():
             causelist = []
             for va in uniformlist:
                 causelist.append([va.cause, va.causescores["cause" + str(i)], va.sid, va])
+                
+                # causelist.append((va.cause, va.causescores["cause" + str(i)], va.sid, va))
+                #                 presort = sorted(causelist, itemgetter(2))
+                #                 sortedlist = sorted(presort, itemgetter(1), reverse=True)
             #print "causelistlen = %s" % (len(causelist))
             #print "causelist = %s" % causelist
-            sortedlist = sorted(causelist, key=lambda t: (t[1], t[2]), reverse=True)
+            
+#             sorted(student_tuples, key=itemgetter(2), reverse=True)
+# [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+# 
+# >>> sorted(student_objects, key=attrgetter('age'), reverse=True)
+# [('john', 'A', 15), ('jane', 'B', 12), ('dave', 'B', 10)]
+# 
+# >>> s = sorted(student_objects, key=attrgetter('age'))     # sort on secondary key
+# >>> sorted(s, key=attrgetter('grade'), reverse=True)       # now sort on primary key, descending
+# [('dave', 'B', 10), ('jane', 'B', 12), ('john', 'A', 15)]
+#            
+
+            
+            #sortedlist = sorted(causelist, key=lambda t: (t[1], t[2]), reverse=True)
+            causelist.sort(key=lambda t: t[2])
+            causelist.sort(key=lambda t: t[1], reverse=True)
+            sortedlist = causelist
             #print "sortedlistlen %s" % len(sortedlist)
             #print "ALSDKFJSLKDFJSLDKJF %s" % sortedlist
             
-            #print "SORTEDLIST %s" % sortedlist
-
             locallist = []
             for j, va in enumerate(sortedlist):
                 #0 == actualcause
@@ -387,8 +409,13 @@ class Tariff():
                 if va[0] == str(i):
                     #print "adding index %s" % j
                     # j is the "rank"
-                    locallist.append(j)
-            index = int(len(locallist) * .89)
+                    # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same numbers
+                    # as the original stata tool
+                    locallist.append(j+1)
+
+            asdf = float(len(locallist) * .89)
+            #make it an int, don't round
+            index = int(len(locallist) * .89)  
             #print "trying index %s" % index
             #print "locallistlen %s" % len(locallist)
             #print locallist
@@ -406,7 +433,6 @@ class Tariff():
         for va in vacauselist:
             for cause in va.ranklist.keys():
                 if float(va.ranklist[cause]) > 0 and float(va.ranklist[cause]) > lowest:
-                        print "lowest found for cause %s in coda %s" % (va.sid, cause)
                         lowest = float(va.ranklist[cause])
         lowest = lowest + 1
         

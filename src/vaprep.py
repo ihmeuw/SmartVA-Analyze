@@ -255,7 +255,7 @@ class VaPrep():
             if str(1) in val:
                 subindex = headers.index("childabnorm31")
                 row[subindex] = 1
-            if str(12) in val:
+            if str(2) in val:
                 subindex = headers.index("childabnorm32")
                 row[subindex] = 1
             if str(3) in val:
@@ -446,9 +446,7 @@ class VaPrep():
         
         updatestr = "Text substitution\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        wordSubs = {'abdomin':'abdomen', 'abdominal':'abdomen', 'accidentally':'accident', 'accidently':'accident', 'accidental':'accident', 'accidently':'accident', 'acute myocardial infarction':'ami', 'aids':'hiv', 'anaemia':'anemia', 'anemic':'anemia', 'baby\'s':'babi', 'babies':'babi', 'baby':'babi', 'bit':'bite', 'bitten':'bite', 'bleed':'blood', 'bleeding':'blood', 'blood pressure':'Hypertension', 'burn':'fire', 'burns':'fire', 'burnt':'fire', 'burned':'fire', 'burning':'fire', 'burnings':'fire', 'c section':'csection', 'caesarean':'cesarean', 'caesarian':'cesarean', 'cancerous':'cancer', 'carcinoma':'cancer', 'cardiac':'cardio', 'cardiogenic':'cardio', 'cerebrovascular':'cerebral', 'cervical':'cervix', 'cesarian':'cesarean', 'comatose':'coma', 'convulsions':'convulsion', 'death':'dead', 'dehydrated':'dehydrate', 'dehydration':'dehydrate', 'delivered':'deliver', 'deliveries':'deliver', 'delivery':'deliver', 'diarrheal':'diarrhea', 'difficult breath':'dyspnea', 'difficult breathing':'dyspnea', 'difficulty ':'difficult', 'digestion':'digest', 'digestive':'digest', 'dog bite':'dogbite', 'drank':'drink', 'drawn':'drown', 'drowned':'drown', 'drowning':'drown', 'drunk':'drink', 'dysentary':'diarrhea', 'dyspneic':'dyspnea', 'eclaupsia':'eclampsia', 'edemata':'edema', 'edematous':'edema', 'edoema':'edema', 'ekg':'ecg', 'esophageal':'esophag', 'esophagus':'esophag', 'fallen':'fall', 'falling':'fall', 'feet':'foot', 'fell':'fall', 'heart attack':'ami', 'herniation':'hernia', 'hypertensive':'hypertension', 'incubator':'incubate', 'infected':'infect', 'infectious':'infect', 'injured':'injury', 'injured':'injury', 'injures':'injury', 'injuries':'injury', 'ischemic':'ischemia', 'labour':'labor', 'maternity':'maternal', 'msb':'stillbirth', 'oxygenated':'oxygen', 'paralysis':'paralyze', 'poisoning':'poison', 'poisonous':'poison', 'pregnant':'pregnancy', 'premature':'preterm', 'prematurity':'preterm', 'septic':'sepsis', 'septicaemia':'septicemia', 'septicaemia':'sepsis', 'septicemia':'sepsis', 'smoker':'smoke', 'stroked':'stroke', 'swollen':'swell', 'tb':'tb', 't.b':'tb', 't.b.':'tb', 'transfussed':'transfuse', 'transfussion':'transfuse', 'tuberculosis':'tb', 'urinary':'urine', 'venomous':'venom', 'violent':'violence', 'vomits':'vomit', 'vomitting':'vomit', 'yellowish':'yellow'}
-        
-        wordKeys = wordSubs.keys()        
+        wordSubs = {'abdomin':'abdomen', 'abdominal':'abdomen', 'accidentally':'accident', 'accidently':'accident', 'accidental':'accident', 'accidently':'accident', 'acute myocardial infarction':'ami', 'aids':'hiv', 'anaemia':'anemia', 'anemic':'anemia', 'baby\'s':'babi', 'babies':'babi', 'baby':'babi', 'bit':'bite', 'bitten':'bite', 'bleed':'blood', 'bleeding':'blood', 'blood pressure':'hypertension', 'burn':'fire', 'burns':'fire', 'burnt':'fire', 'burned':'fire', 'burning':'fire', 'burnings':'fire', 'c section':'csection', 'caesarean':'cesarean', 'caesarian':'cesarean', 'cancerous':'cancer', 'carcinoma':'cancer', 'cardiac':'cardio', 'cardiogenic':'cardio', 'cerebrovascular':'cerebral', 'cervical':'cervix', 'cesarian':'cesarean', 'comatose':'coma', 'convulsions':'convulsion', 'death':'dead', 'dehydrated':'dehydrate', 'dehydration':'dehydrate', 'delivered':'deliver', 'deliveries':'deliver', 'delivery':'deliver', 'diarrheal':'diarrhea', 'difficult breath':'dyspnea', 'difficult breathing':'dyspnea', 'difficulty ':'difficult', 'digestion':'digest', 'digestive':'digest', 'dog bite':'dogbite', 'drank':'drink', 'drawn':'drown', 'drowned':'drown', 'drowning':'drown', 'drunk':'drink', 'dysentary':'diarrhea', 'dyspneic':'dyspnea', 'eclaupsia':'eclampsia', 'edemata':'edema', 'edematous':'edema', 'edoema':'edema', 'ekg':'ecg', 'esophageal':'esophag', 'esophagus':'esophag', 'fallen':'fall', 'falling':'fall', 'feet':'foot', 'fell':'fall', 'heart attack':'ami', 'herniation':'hernia', 'hypertensive':'hypertension', 'incubator':'incubate', 'infected':'infect', 'infectious':'infect', 'injured':'injury', 'injured':'injury', 'injures':'injury', 'injuries':'injury', 'ischemic':'ischemia', 'labour':'labor', 'maternity':'maternal', 'msb':'stillbirth', 'oxygenated':'oxygen', 'paralysis':'paralyze', 'poisoning':'poison', 'poisonous':'poison', 'pregnant':'pregnancy', 'premature':'preterm', 'prematurity':'preterm', 'septic':'sepsis', 'septicaemia':'septicemia', 'septicaemia':'sepsis', 'septicemia':'sepsis', 'smoker':'smoke', 'stroked':'stroke', 'swollen':'swell', 'tb':'tb', 't.b':'tb', 't.b.':'tb', 'transfussed':'transfuse', 'transfussion':'transfuse', 'tuberculosis':'tb', 'urinary':'urine', 'venomous':'venom', 'violent':'violence', 'vomits':'vomit', 'vomitting':'vomit', 'yellowish':'yellow'}
         
         freeText = ['adult_5_2a', 'adult_6_8',  'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15', 'a7_01', 'a7_02', 'a7_03', 'child_5_9',  'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'c6_01', 'c6_02', 'c6_03']
         
@@ -457,12 +455,13 @@ class VaPrep():
             index = headers.index(question)
             for row in matrix:
                 answer = row[index]
-                answerArray = answer.split(' ')
-                for i, word in enumerate(answerArray):
-                    if word.lower() in wordKeys:
-                        answerArray[i] = wordSubs[word.lower()]
-                answer = ' '.join(answerArray)
-                row[index] = answer
+                newanswer = answer.lower()
+                # check to see if any of the keys exist in the freetext
+                for key in wordSubs.keys():
+                    if key in newanswer:
+                        # if it exists, replace it with the word(s) from the dictionary
+                        newanswer = string.replace(newanswer, key, wordSubs[key])
+                row[index] = newanswer
         
         updatestr = "Writing adult, child, neonate prepped.csv files\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
