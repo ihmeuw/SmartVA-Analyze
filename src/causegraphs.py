@@ -60,7 +60,7 @@ def make_cause_graph(cause_key, output_dir):
     female_data = graph_data[cause_key]['female'].values()
     unknown_data = graph_data[cause_key]['unknown'].values()
     
-    graph_title = cause_key +' deaths by age group and gender'
+    graph_title = cause_key +' deaths by age and gender'
     graph_filename = re.sub('[^\w\-_\. ]', ' ', cause_key).rstrip()
 
     max_value = max(max(male_data),max(female_data),max(unknown_data))
@@ -79,19 +79,22 @@ def make_cause_graph(cause_key, output_dir):
     
     ax.set_xticklabels(age_labels,rotation=45)
     ax.set_xticks(xlocations+bar_width)
-    # TODO prevent legend from overlapping
-    ax.legend((rects1[0],rects2[0],rects3[0]), gender_labels)
+
+    # push legend outside of the plot
+    ax.legend((rects1[0],rects2[0],rects3[0]), gender_labels,loc='upper center', bbox_to_anchor=(0.5, -0.375),ncol=3)
     
     # add whitespace at top of bar
     ax.set_ylim(top=max_value + .5)
     
     # add whitespace before first bar and after last
     plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
-    
-    plt.tight_layout()
+
+    # add some spacing for rotated xlabels
+    plt.subplots_adjust(bottom=0.35)
 
     # clean up filenames
-    plt.savefig(output_dir + os.sep + graph_filename+' graph.png',dpi=100)    
+    plt.savefig(output_dir + os.sep + graph_filename+' graph.png',dpi=150)
+    plt.close() 
 
 # labels for dict
 global module_labels

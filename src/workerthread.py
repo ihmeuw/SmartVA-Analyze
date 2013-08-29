@@ -109,7 +109,7 @@ class WorkerThread(Thread):
         neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir)
         neonateresults.run()
         
-        # generate all cause graphs
+        #generate all cause graphs
         causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         causegraph.run()
         
