@@ -23,7 +23,6 @@ binaryVars = ['s7', 's17', 's18', 's19', 's110', 's112', 's115', 's118', 's120',
 
 class ChildSymptomPrep():
     def __init__(self, notify_window, input_file, output_dir):
-        self.inputFilePath = input_file
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir

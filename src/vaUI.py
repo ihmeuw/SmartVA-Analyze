@@ -358,7 +358,7 @@ class vaUI(wx.Frame):
             # do we need an else?  doesn't seem like it
     
     def EnableUI(self, enable):
-        # Turns UI elements on an doff
+        # Turns UI elements on and off
         self.chooseFileButton.Enable(enable)
         self.chooseFolderButton.Enable(enable)
         self.countryComboBox.Enable(enable)

@@ -30,7 +30,6 @@ class ScoredVA:
 
 class Tariff():
     def __init__(self, notify_window, input_file, output_dir):
-        self.inputFilePath = input_file
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir

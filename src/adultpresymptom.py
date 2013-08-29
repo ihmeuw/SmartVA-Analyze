@@ -27,7 +27,6 @@ conversionVars = {'sid':'sid', 'gen_2_1':'g2_01', 'gen_2_2a':'g2_02', 'gen_3_1':
 
 class PreSymptomPrep():
     def __init__(self, notify_window, input_file, output_dir):
-        self.inputFilePath = input_file
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
