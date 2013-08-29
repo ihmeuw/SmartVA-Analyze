@@ -65,59 +65,53 @@ class WorkerThread(Thread):
 
     def run(self):
 
-        # #makes cleanheaders.csv
-        # cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
-        # cleanheaders.run()
+        #makes cleanheaders.csv
+        cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
+        cleanheaders.run()
 
-        # #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
-        # prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
-        # prep.run()
+        #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
+        prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
+        prep.run()
         
-        # # #makes adult-presymptom.csv
-        # adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
-        # adultpresym.run()
-        # # 
-        # # #makes adult-symptom.csv
-        # adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
-        # adultsym.run()
-        # # 
-        # # #creates adult output files
-        # adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir)
-        # adultresults.run()
-        # # 
-        # #makes child-presymptom.csv
-        # childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
-        # childpresym.run()
+        # #makes adult-presymptom.csv
+        adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
+        adultpresym.run()
+        # 
+        # #makes adult-symptom.csv
+        adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
+        adultsym.run()
+        # 
+        # #creates adult output files
+        adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir)
+        adultresults.run()
+        # 
+        #makes child-presymptom.csv
+        childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
+        childpresym.run()
         
-        # #makes child-symptom.csv
-        # childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
-        # childsym.run()
+        #makes child-symptom.csv
+        childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
+        childsym.run()
         
-        # #creates child output files
-        # childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir)
-        # childresults.run()
+        #creates child output files
+        childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir)
+        childresults.run()
         
-        # #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
-        # neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
-        # neonatepresym.run()
+        #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
+        neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
+        neonatepresym.run()
        
-        # #makes neonate-symptom.csv
-        # neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
-        # neonatesym.run()
+        #makes neonate-symptom.csv
+        neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
+        neonatesym.run()
         
-        # #creates neonate output files
-        # neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir)
-        # neonateresults.run()
+        #creates neonate output files
+        neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir)
+        neonateresults.run()
         
-        # makes cause graphs
-        adultcausegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "adult-tariff-causes.csv", self.output_dir)
-        adultcausegraph.run()
-        
-        childcausegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "child-tariff-causes.csv", self.output_dir)
-        childcausegraph.run()
-        
-        neonatecausegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + "neonate-tariff-causes.csv", self.output_dir)
-        neonatecausegraph.run()
+        # generate all cause graphs
+        causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        causegraph.run()
         
         # filename = ''
         #         validated = False
