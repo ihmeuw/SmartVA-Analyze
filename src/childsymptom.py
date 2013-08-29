@@ -117,7 +117,17 @@ class ChildSymptomPrep():
             elif float(row[index]) > 7:
                 row[s2995index] = 1
             
-
+            # change sex from female = 2, male = 1 to female = 1, male = 0
+            # if unkonwn sex will default to 0 so it does not factor into analysis
+            index = headers.index('sex')
+            val = int(row[index])
+            if val == 2:
+                row[index] = 1
+            elif val == 1:
+                row[index] = 0
+            elif val == 9:
+                row[index] = 0
+                
             #make new variables to store the real age and gender, but do it after we've modified the sex vars from 2, 1 to 1, 0
             ageindex = headers.index('real_age')
             genderindex = headers.index('real_gender')
@@ -149,17 +159,6 @@ class ChildSymptomPrep():
 	            # 30 is the injury cutoff
 	            if float(row[injury_cut_index]) > 10:
 	                row[index] = 0
-	                    
-	        # change sex from female = 2, male = 1 to female = 1, male = 0
-            # if unkonwn sex will default to 0 so it does not factor into analysis
-            index = headers.index('sex')
-            val = int(row[index])
-            if val == 2:
-                row[index] = 1
-            elif val == 1:
-                row[index] = 0
-            elif val == 9:
-                row[index] = 0
                 
             
             #dichotimize!
