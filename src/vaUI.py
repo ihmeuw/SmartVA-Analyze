@@ -47,10 +47,10 @@ class vaUI(wx.Frame):
     def InitUI(self):
         
         #TODO: make both of these empty when done
-        #self.inputFilePath = '/Users/carlhartung/Desktop/runva/before.csv'
-        #self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
-        self.inputFilePath = ''
-        self.outputFolderPath = ''
+        self.inputFilePath = '/Users/carlhartung/Desktop/runva/before.csv'
+        self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
+        #self.inputFilePath = ''
+        #self.outputFolderPath = ''
         self.statusLog = ''
         self.hce = None
         self.freetext = None
@@ -261,7 +261,7 @@ class vaUI(wx.Frame):
             else:
                 self.actionButton.SetLabel('Stop')
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath)
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext)
                 self.EnableUI(False)
                           	
         elif (self.actionButton.GetLabel() == 'Stop'):

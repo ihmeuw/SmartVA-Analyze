@@ -12,6 +12,8 @@ import os
 import sys
 import platform
 import childuniformtrain
+from hce_variables import child_hce
+from freetext_vars import child_freetext
 
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
@@ -39,10 +41,12 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir):
+    def __init__(self, notify_window, input_file, output_dir, hce, freetext):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
+        self.hce = hce
+        self.freetext = freetext
         
 
     def run(self):
@@ -111,6 +115,60 @@ class Tariff():
                     
             else:
                 validatedmatrix.append(row)
+        
+        if self.hce is None:
+            print "removing hce vars"
+            # remove all hce variables
+            headers_copy = copy.deepcopy(headers)
+            for col in headers_copy:
+                if col in child_hce:
+                    index = headers.index(col)
+                    for row in matrix:
+                        del row[index]
+                    headers.remove(col)
+                
+            tariffheaders_copy = copy.deepcopy(tariffheaders)
+            for col in tariffheaders_copy:
+                if col in child_hce:
+                    index = tariffheaders.index(col)
+                    for row in tariffmatrix:
+                        del row[index]
+                    tariffheaders.remove(col)
+            
+            validatedheaders_copy = copy.deepcopy(validatedheaders)
+            for col in headers_copy:
+                if col in child_hce:
+                    index = validatedheaders.index(col)
+                    for row in validatedmatrix:
+                        del row[index]
+                    validatedheaders.remove(col)
+        
+        if self.freetext is None and self.hce is 'hce':
+            print 'removing freetext vars'
+            # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
+            headers_copy = copy.deepcopy(headers)
+            for col in headers_copy:
+                if col in child_freetext:
+                    index = headers.index(col)
+                    for row in matrix:
+                        del row[index]
+                    headers.remove(col)
+                
+            tariffheaders_copy = copy.deepcopy(tariffheaders)
+            for col in tariffheaders_copy:
+                if col in child_freetext:
+                    index = tariffheaders.index(col)
+                    for row in tariffmatrix:
+                        del row[index]
+                    tariffheaders.remove(col)
+            
+            validatedheaders_copy = copy.deepcopy(validatedheaders)
+            for col in validatedheaders_copy:
+                if col in child_freetext:
+                    index = validatedheaders.index(col)
+                    for row in validatedmatrix:
+                        del row[index]
+                    validatedheaders.remove(col)  
         
         # list of cause1: s1, s2, s50, ... top 40 svars per cause        
         cause40s = {}        
