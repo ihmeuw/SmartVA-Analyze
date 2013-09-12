@@ -115,7 +115,11 @@ class Tariff():
                     
             else:
                 validatedmatrix.append(row)
-        
+                
+        if len(matrix) == 0:
+            #no entries, just return
+            return
+            
         if self.hce is None:
             print "removing hce vars"
             # remove all hce variables

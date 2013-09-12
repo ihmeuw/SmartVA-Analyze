@@ -208,7 +208,7 @@ class PreSymptomPrep():
                         
         updatestr = "Analyzing free text\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01', 'c6_02', 'c6_02', 'c6_03']
+        freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
         
         
         
@@ -410,7 +410,7 @@ class PreSymptomPrep():
                 
                 #identify most recent medical record
                 #gen max_age = max(mofm1, mofm2)
-                max_age = max(age_at_e1, age_at_e2)
+                max_age = max(mofm1, mofm2)
                 
                 month = max_age - mofd
                 

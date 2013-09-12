@@ -52,8 +52,8 @@ class vaUI(wx.Frame):
         #self.inputFilePath = ''
         #self.outputFolderPath = ''
         self.statusLog = ''
-        self.hce = None
-        self.freetext = None
+        self.hce = 'hce'
+        self.freetext = 'freetext'
         self.country = None
         self.running = False
         self.worker = None

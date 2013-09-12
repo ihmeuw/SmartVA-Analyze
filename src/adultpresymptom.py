@@ -198,7 +198,7 @@ class PreSymptomPrep():
         
         updatestr = "Analyzing free text\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
-        freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01', 'a7_02', 'a7_03']
+        freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
         
         keyWords = adult_wordsToVars.keys()
         
@@ -506,7 +506,7 @@ class PreSymptomPrep():
                 headers.remove(col)
 
         #free text
-        #a5_01_9b, a6_08,  a6_11, a6_12, a6_13, a6_14, a6_15, a7_01, a7_02, a7_03
+        #a5_01_9b, a6_08,  a6_11, a6_12, a6_13, a6_14, a6_15, a7_01
         #child/neonate c5_09,  c5_12, c5_13, c5_14, c5_15, c5_16, c6_01, c6_02, c6_03
         
         updatestr = "Writing adult-presymptom.csv\n"
