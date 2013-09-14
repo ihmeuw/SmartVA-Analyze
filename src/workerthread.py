@@ -139,8 +139,8 @@ class WorkerThread(Thread):
         #         self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
-    	#print "done" 
     	#status.set('Done. Results are written to results.csv')
+    	return
 
     def abort(self):
         """abort worker thread."""

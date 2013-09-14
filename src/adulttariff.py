@@ -40,8 +40,6 @@ class Tariff():
         
 
     def run(self):
-        
-        print "just checking %s and %s" % (self.hce, self.freetext)
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
         
@@ -113,7 +111,6 @@ class Tariff():
                 
         
         if self.hce is None:
-            print "removing hce vars"
             # remove all hce variables
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:
@@ -140,7 +137,6 @@ class Tariff():
                     validatedheaders.remove(col)
         
         if self.freetext is None and self.hce is 'hce':
-            print 'removing freetext vars'
             # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:
