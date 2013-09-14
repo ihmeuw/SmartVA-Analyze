@@ -470,19 +470,30 @@ class VaPrep():
         childwriter.writerow(headers)
         neonatewriter.writerow(headers)
         
+        
         # write out data by row into appropriate age range (adult, child, neonate)
+        # blank values have already been replaced with '0' here
         for a in matrix:
-            ageindex = headers.index("gen_5_4a")
-            age = int(a[ageindex])
-            if age >= 12:
-                adultwriter.writerow(a)
-            else:
-                days = int(a[headers.index("gen_5_4c")])
-                months = int(a[headers.index("gen_5_4b")])
-                if days <= 28 and months == 0 and age == 0:
+            age = a[headers.index("gen_5_4a")]
+            days = a[headers.index("gen_5_4c")]
+            months = a[headers.index("gen_5_4b")]
+            
+            if age == '0' and days == '0' and months == '0':
+                module = a[headers.index("gen_5_4d")]
+                if module == '1':
                     neonatewriter.writerow(a)
-                else:
+                elif module == '2':
                     childwriter.writerow(a)
+                elif module == '3':
+                    adultwriter.writerow(a)
+            else:
+                if age >= '12':
+                    adultwriter.writerow(a)
+                else:    
+                    if days <= '28' and months == '0' and age == '0':
+                        neonatewriter.writerow(a)
+                    else:
+                        childwriter.writerow(a)
                
         return 1
     	

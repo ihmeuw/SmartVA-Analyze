@@ -376,7 +376,6 @@ if __name__ == '__main__':
             vaUI(None, title=APP_TITLE)
             app.MainLoop()
         except Exception as ex:
-            print ex
             raw_input()
     else:
         app = wx.App()

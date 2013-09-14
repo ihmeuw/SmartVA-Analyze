@@ -94,7 +94,7 @@ def make_cause_graph(cause_key, output_dir):
 
     # clean up filenames
     plt.savefig(output_dir + os.sep + graph_filename+' graph.png',dpi=150)
-    plt.close() 
+    #plt.close(fig) 
 
 # labels for dict
 global module_labels
