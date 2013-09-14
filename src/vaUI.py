@@ -340,15 +340,9 @@ class vaUI(wx.Frame):
         else:
             # everything else is update status text
             self.statusTextCtrl.AppendText(event.data)
-    
+
     def OnProgress(self, event):
-        if event.progress is None:
-            # if it's none, we have no idea how long it takes
-            self.statusGauge.Pulse()
-        else:    
-            # everything else gives us a progress and a max
-            self.statusGauge.SetRange(event.progressmax)
-            self.statusGauge.SetValue(event.progress)
+        self.statusGauge.Pulse()
         
     def OnAbort(self):
         if self.worker:

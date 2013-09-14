@@ -3,7 +3,6 @@
 import os
 import wx
 from threading import *
-from time import gmtime, strftime
 import headers
 import vaprep
 import adultpresymptom
@@ -73,47 +72,47 @@ class WorkerThread(Thread):
         #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
         prep.run()
-        
+
         # #makes adult-presymptom.csv
         adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
         adultpresym.run()
-        # 
+        #
         # #makes adult-symptom.csv
         adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
         adultsym.run()
-        # 
+        #
         # #creates adult output files
         adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext)
         adultresults.run()
-        # 
+        #
         #makes child-presymptom.csv
         childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
         childpresym.run()
-        
+
         #makes child-symptom.csv
         childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
         childsym.run()
-        
+
         #creates child output files
         childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext)
         childresults.run()
-        
+
         #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
         neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
         neonatepresym.run()
-       
+
         #makes neonate-symptom.csv
         neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         neonatesym.run()
-        
+
         #creates neonate output files
         neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
         neonateresults.run()
-        
+
         #generate all cause graphs
         causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         causegraph.run()
-        
+
         # filename = ''
         #         validated = False
         #         if self.module is "Adult":

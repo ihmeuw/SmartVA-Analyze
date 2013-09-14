@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 import csv
-import matplotlib.pyplot as plt
-import numpy as np
 import os
 import re
-import workerthread
-import wx
-from collections import Counter
+import sys
 from collections import defaultdict
 from collections import OrderedDict
-from time import sleep
-import causegraphs
-import pygal
-from pygal.style import RedBlueStyle
+
+import matplotlib.pyplot as plt
+import numpy as np
+import wx
+
+import workerthread
 
 # default dict for each cause of death
 def get_default_dict():
@@ -67,18 +65,51 @@ def make_cause_graph(cause_key, output_dir):
     graph_title = cause_key +' deaths by age and gender'
     graph_filename = re.sub('[^\w\-_\. ]', ' ', cause_key).rstrip()
 
-    bar_chart = pygal.Bar(style=RedBlueStyle)   
-    bar_chart.title = graph_title      
-    bar_chart.y_title = 'number of VAs'
-    bar_chart.x_labels = age_labels
-    bar_chart.x_label_rotation = 45
-    bar_chart.print_values = False
-
-    bar_chart.add('male', male_data)  # Add some values
-    bar_chart.add('female', female_data)  # Add some values
-    bar_chart.add('unknown', unknown_data)  # Add some values    
+    max_value = max(max(male_data),max(female_data),max(unknown_data))
+    xlocations = np.arange(len(age_labels))    # the x locations for the groups
     
-    bar_chart.render_to_file(output_dir + os.sep + graph_filename+' graph.svg')  
+    bar_width = 0.35 # the width of the bars
+
+    # interactive mode off
+    plt.ioff()
+
+    fig, ax = plt.subplots()
+
+    rects1 = ax.bar(xlocations, male_data, bar_width, color='#C44440')
+    rects2 = ax.bar(xlocations+bar_width, female_data, bar_width, color='#1D72AA')
+    rects3 = ax.bar(xlocations+bar_width*2, unknown_data, bar_width, color='#8CBB4E')
+    
+    ax.set_title(graph_title)
+    ax.set_ylabel('number of VAs')
+    ax.yaxis.grid()
+    
+    ax.set_xticklabels(age_labels,rotation=45)
+    ax.set_xticks(xlocations+bar_width)
+
+    #push legend outside of the plot
+    ax.legend((rects1[0],rects2[0],rects3[0]), gender_labels,loc='upper center', bbox_to_anchor=(0.5, -0.375),ncol=3)
+    
+    #add whitespace at top of bar
+    ax.set_ylim(top=max_value + .5)
+    
+    #add whitespace before first bar and after last
+    plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
+
+    #add some spacing for rotated xlabels
+    plt.subplots_adjust(bottom=0.35)
+
+    # clean up filenames
+    plt.savefig(output_dir + os.sep + graph_filename+' graph.png',dpi=150)
+
+    # clear the current figure
+    plt.clf()
+
+    # plt.close() causes a crash in os x.
+    if sys.platform == 'darwin':
+        del fig # cleans up the memory
+    else:
+        plt.close()
+
 
 # labels for dict
 global module_labels
@@ -93,6 +124,7 @@ global graph_data
 graph_data = defaultdict(get_default_dict)
 
 class CauseGraphs():
+
     def __init__(self, notify_window, input_file, output_dir):
         self._notify_window = notify_window
         self.inputFilePath = input_file
@@ -110,7 +142,7 @@ class CauseGraphs():
                 
                 updatestr = 'Making cause graphs for ' + module_key + '\n' 
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                
+
                 for row in csv_file:
                     age_key = get_age_key(module_key,float(row['real_age']))
                     gender_key = get_gender_key(int(row['real_gender']))
@@ -121,12 +153,9 @@ class CauseGraphs():
             except IOError:
                 print module_key+'-tariff-causes.csv not found'
 
-            
         # generate cause of death graphs
         for cause_key in graph_data.keys():
             make_cause_graph(cause_key,self.output_dir)
-    
+
         updatestr = 'Finished making cause graphs\n' 
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-
-
