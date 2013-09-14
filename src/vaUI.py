@@ -260,6 +260,7 @@ class vaUI(wx.Frame):
                 self.ShowErrorMessage('Error!','Please select an output folder.')
             else:
                 self.actionButton.SetLabel('Stop')
+                self.statusGauge.Pulse()
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext)
                 self.EnableUI(False)
