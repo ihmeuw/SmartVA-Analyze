@@ -35,7 +35,7 @@ class Tariff():
         self.output_dir = output_dir
         self.hce = hce
         self.freetext = freetext
-        
+        self.want_abort = 0
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -218,9 +218,17 @@ class Tariff():
         #print tariffmatrix[0]
         
         vavalidatedcauselist = []
+        total = len(validatedmatrix) * 6
+        cnt = 0
         for i, row in enumerate(validatedmatrix):
             causedict = {}
             for causenum in range(1,7):
+                if (self.want_abort == 1):
+                    return
+                cnt = cnt + 1
+                progress = "Processing %s of %s" % (cnt, total)
+                if (cnt % 1000 == 0):
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -235,6 +243,8 @@ class Tariff():
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
+        progress = "Processing %s of %s\n" % (total, total)
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                     
         #print "len causelist %s" % (len(vavalidatedcauselist))
         #print "validated va1 = %s" % vavalidatedcauselist[1]
@@ -324,10 +334,18 @@ class Tariff():
         updatestr = "Generating cause rankings. (This takes a few minutes)\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
+        total = len(vacauselist) * 6
+        cnt = 0
         for va in vacauselist:
             sortedtariffs = []
             ranklist = {}
             for i in range(1, 7):
+                if (self.want_abort == 1):
+                    return
+                cnt = cnt + 1
+                progress = "Processing %s of %s" % (cnt, total)
+                if (cnt % 10 == 0):
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -359,6 +377,8 @@ class Tariff():
                 # answer as the original stata tool
                 ranklist[cause] = index+1
             va.ranklist = ranklist
+        progress = "Processing %s of %s\n" % (total, total)
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
             
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
@@ -588,6 +608,8 @@ class Tariff():
     def round5(self, value):
         return round(value/Decimal(.5))*.5
         
+    def abort(self):
+        self.want_abort = 1
     
         
         

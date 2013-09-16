@@ -28,6 +28,7 @@ class NeonateSymptomPrep():
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
+        self.want_abort = 0
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -420,6 +421,9 @@ class NeonateSymptomPrep():
         #no s4 for them.. age?..yup
         #i have 2 sex variables..?        
                     
-        return 1    	
+        return 1
+    
+    def abort(self):
+        self.want_abort = 1    	
         
         

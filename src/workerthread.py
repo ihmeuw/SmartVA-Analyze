@@ -61,57 +61,95 @@ class WorkerThread(Thread):
         self.freetext = freetext
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
+        
+        #set up the function calls
+        self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
+        self.prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
+        self.adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
+        self.adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
+        self.adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext)
+        self.childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
+        self.childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
+        self.childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext)
+        self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
+        self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
+        self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
+        self.causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         self.start()
 
     def run(self):
 
         #makes cleanheaders.csv
-        cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
-        cleanheaders.run()
+        self.cleanheaders.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
-        prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
-        prep.run()
+        self.prep.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         # #makes adult-presymptom.csv
-        adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir)
-        adultpresym.run()
+        self.adultpresym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
         #
         # #makes adult-symptom.csv
-        adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
-        adultsym.run()
+        self.adultsym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
         #
         # #creates adult output files
-        adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext)
-        adultresults.run()
+        self.adultresults.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
         #
         #makes child-presymptom.csv
-        childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir)
-        childpresym.run()
+        self.childpresym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #makes child-symptom.csv
-        childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
-        childsym.run()
+        self.childsym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #creates child output files
-        childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext)
-        childresults.run()
+        self.childresults.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
-        neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir)
-        neonatepresym.run()
+        self.neonatepresym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #makes neonate-symptom.csv
-        neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
-        neonatesym.run()
+        self.neonatesym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #creates neonate output files
-        neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
-        neonateresults.run()
+        self.neonateresults.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         #generate all cause graphs
-        causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
-        causegraph.run()
+        self.causegraph.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
 
         # filename = ''
         #         validated = False
@@ -146,6 +184,18 @@ class WorkerThread(Thread):
         """abort worker thread."""
         #Method for use by main thread to signal an abort
         self._want_abort = 1
+        self.cleanheaders.abort()
+        self.prep.abort()
+        self.adultpresym.abort()
+        self.adultsym.abort()
+        self.adultresults.abort()
+        self.childpresym.abort()
+        self.childsym.abort()
+        self.childresults.abort()
+        self.neonatepresym.abort()
+        self.neonatesym.abort()
+        self.neonateresults.abort()
+        self.causegraph.abort()
         if self.data:
             #print "trying to cancel"
             self.data.setCancelled();

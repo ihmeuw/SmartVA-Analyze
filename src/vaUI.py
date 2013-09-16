@@ -7,6 +7,7 @@ import wx.html
 import workerthread
 import config
 import re
+import threading
 
 # TODO: pull out all strings
 # TODO: why is the first button selected
@@ -264,10 +265,11 @@ class vaUI(wx.Frame):
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext)
                 self.EnableUI(False)
+                self.incrementProgressBar()
                           	
         elif (self.actionButton.GetLabel() == 'Stop'):
             self.actionButton.SetLabel('Start')
-            self.statusGauge.SetValue(0)
+            self.statusGauge.SetValue(1)
             self.OnAbort()
     
     def toggleHCE(self, event):
@@ -329,17 +331,31 @@ class vaUI(wx.Frame):
             self.statusTextCtrl.AppendText('computation successfully aborted\n')
             self.actionButton.Enable(True)        
             self.running = False   
-            self.statusGauge.SetValue(0)
             self.EnableUI(True)
+            self.statusGauge.SetValue(1)
         elif event.data is 'Done':
             # if it's done, then the algorithm is complete
-            self.statusGauge.SetValue(0)
+            self.statusGauge.SetValue(1)
             self.statusTextCtrl.AppendText('Process Complete\n')
             self.actionButton.SetLabel('Start')
             self.EnableUI(True)
+            self.statusGauge.SetValue(1)
+            
         else:
             # everything else is update status text
-            self.statusTextCtrl.AppendText(event.data)
+            if event.data.startswith('Processing'):
+                lastline = self.statusTextCtrl.GetLineText(long(self.statusTextCtrl.GetNumberOfLines()-1))
+                if lastline.startswith('Processing'):
+                    # replace
+                    position = self.statusTextCtrl.GetLastPosition()
+                    self.statusTextCtrl.Remove(position - len(lastline), position)
+                    self.statusTextCtrl.AppendText(event.data)
+                else: 
+                    # append
+                    self.statusTextCtrl.AppendText(event.data)
+                
+            else:    
+                self.statusTextCtrl.AppendText(event.data)
 
     def OnProgress(self, event):
         self.statusGauge.Pulse()
@@ -359,6 +375,16 @@ class vaUI(wx.Frame):
         self.countryComboBox.Enable(enable)
         self.hceCheckBox.Enable(enable)
         self.freetextCheckBox.Enable(enable)
+    
+    def incrementProgressBar(self):
+        if self.worker is not None and self.worker.isAlive():
+            self.statusGauge.Pulse()
+            # call f() again in 60 seconds
+            threading.Timer(.01, self.incrementProgressBar).start()
+        else:
+            self.statusGauge.SetValue(1)
+
+
   
 
 if __name__ == '__main__':

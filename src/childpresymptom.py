@@ -27,6 +27,7 @@ class PreSymptomPrep():
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
+        self.want_abort = 0
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -1716,6 +1717,9 @@ class PreSymptomPrep():
         for row in matrix:
             childwriter.writerow(row)
                     
-        return 1    	
+        return 1
+    
+    def abort(self):
+        self.want_abort = 1    	
         
         

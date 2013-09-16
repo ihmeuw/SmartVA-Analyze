@@ -129,6 +129,7 @@ class CauseGraphs():
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
+        self.want_abort = 0
 
 
     def run(self):
@@ -144,6 +145,8 @@ class CauseGraphs():
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
                 for row in csv_file:
+                    if self.want_abort == 1:
+                        return
                     age_key = get_age_key(module_key,float(row['real_age']))
                     gender_key = get_gender_key(int(row['real_gender']))
                     cause_key = row['cause']
@@ -159,3 +162,6 @@ class CauseGraphs():
 
         updatestr = 'Finished making cause graphs\n' 
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+    
+    def abort(self):
+        self.want_abort = 1
