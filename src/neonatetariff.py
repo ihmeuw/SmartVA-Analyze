@@ -14,6 +14,7 @@ import platform
 import neonateuniformtrain
 from hce_variables import neonate_hce
 from freetext_vars import neonate_freetext
+from vacauses import neonatecauses
 
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
@@ -504,7 +505,7 @@ class Tariff():
         
         #TODO, what here?
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-tariff-causes.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34', 'real_age', 'real_gender'])    
+        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
             realcause = 'undetermined'
@@ -522,12 +523,10 @@ class Tariff():
                 if len(multiple[vakey]) > 1:
                     updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            #replace number with word for cause:
+            cause34 = neonatecauses[cause34]
             rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
-                    
-        
-        
-        
-                    
+                            
         
         # rankings is a list of VAs, and for each va you have {cause, rank}
 
@@ -588,15 +587,8 @@ class Tariff():
         
       
         
-        
-        
-        
-        
-        
-        
-        
+                
         #end
-        
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)

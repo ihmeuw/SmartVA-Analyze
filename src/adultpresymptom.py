@@ -16,15 +16,17 @@ generatedHeaders = ['g4_03b', 'a2_01b', 'a2_22b', 'a2_24b', 'a2_26b', 'a2_28b', 
 
 
 class PreSymptomPrep():
-    def __init__(self, notify_window, input_file, output_dir):
+    def __init__(self, notify_window, input_file, output_dir, warningfile):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
+        self.warningfile = warningfile
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-presymptom.csv', 'wb', buffering=0))
+        self.warningfile.write("Adult presymptom warnings:\n")
         
         matrix = list()
         headers = list()
@@ -74,7 +76,11 @@ class PreSymptomPrep():
         #create the placeholders in our matrix for new headers
         for row in matrix:
             for h in generatedHeaders:
-                row.append("0")  
+                #special case for injuries
+                if h == 'a5_04b':
+                    row.append("")
+                else:
+                    row.append("0")  
         
         error = 0
         updatestr = "Verifying answers fall within legal bounds\n"
@@ -86,11 +92,13 @@ class PreSymptomPrep():
                 if col != '':
                     # if it's empty, we just skip it.  not sure there's a "required"
                     rangetest = adult_rangelist.get(header)
-                    if not (rangetest is None or rangetest == '') and int(col) not in rangetest:
-                        #ERROR
-                        updatestr = "value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values\n" % (col, j+2, i+1, header)
-                        print updatestr
-                        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    if not (rangetest is None or rangetest == ''):
+                        answerArray = col.split(' ')
+                        for answer in answerArray:
+                            if int(answer) not in rangetest:
+                                #ERROR
+                                updatestr = "value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values\n" % (col, j+2, i+1, header)
+                                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         if error == 0:
             updatestr = "answers verified\n"
             wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -100,962 +108,9 @@ class PreSymptomPrep():
             return 0
             
             
-                      
-        # skip patterns...
-        
-        for i, row in enumerate(matrix):
-            # i starts at 0, header row is 1 in excel, so do i+2 for the actual data row
-            a2_02 = row[headers.index('a2_02')]
-            if a2_02 != '1':
-                a2_03a = row[headers.index('a2_03a')]
-                if not (a2_03a is None or a2_03a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_03a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_03a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_03a = ''
-                a2_03b = row[headers.index('a2_03b')]
-                if not (a2_03b is None or a2_03b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_03b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_03b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_03b = ''
-                a2_04 = row[headers.index('a2_04')]
-                if not (a2_04 is None or a2_04 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_04'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_04 = ''
-                a2_05 = row[headers.index('a2_04')]
-                if not (a2_05 is None or a2_05 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_05'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_05 = ''
-                a2_06 = row[headers.index('a2_04')]
-                if not (a2_06 is None or a2_06 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_06'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_06 = ''
-                
-            a2_07 = row[headers.index('a2_07')]
-            if a2_07 != '1':        
-                a2_08a = row[headers.index('a2_08a')]
-                if not (a2_08a is None or a2_08a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_08a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_08a = ''
-                a2_08b = row[headers.index('a2_08b')]
-                if not (a2_08b is None or a2_08b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_08b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_08b = ''
-                a2_09_1a = row[headers.index('a2_09_1a')]
-                if not (a2_09_1a is None or a2_09_1a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_09_1a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_1a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_09_1a = ''
-                a2_09_1b = row[headers.index('a2_09_1b')]
-                if not (a2_09_1b is None or a2_09_1b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_09_1b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_1b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_09_1b = ''
-                a2_09_2a = row[headers.index('a2_09_2a')]
-                if not (a2_09_2a is None or a2_09_2a == '' or a2_09_2a == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_09_2a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_2a'))
-                    print "because a2_07 was %s" % a2_07
-                    print " and value was %s" % a2_09_2a
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_09_2a = ''
-                # doesn't exist in electronic version
-                # a2_09_2b = row[headers.index('a2_09_2b')]
-                #                if not (a2_09_2b is None or a2_09_2b == ''):
-                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_2b'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                    a2_09_2b = ''
-            a2_10 = row[headers.index('a2_10')]
-            if a2_10 != '1':   
-                a2_11 = row[headers.index('a2_11')]
-                if not (a2_11 is None or a2_11 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_11'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_11 = ''
-            a2_13 = row[headers.index('a2_13')]
-            if a2_13 != '1':   
-                a2_14 = row[headers.index('a2_14')]
-                if not (a2_14 is None or a2_14 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_14'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_14 = ''
-            a2_14 = row[headers.index('a2_14')]
-            if a2_13 != '1' or a2_14 != '1':
-                a2_15a = row[headers.index('a2_15a')]
-                if not (a2_15a is None or a2_15a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_15a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_15a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_15a = ''
-                a2_15b = row[headers.index('a2_15b')]
-                if not (a2_15b is None or a2_15b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_15b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_15b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_15b = ''
-            a2_18 = row[headers.index('a2_18')]
-            if a2_18 != '1':   
-                a2_19 = row[headers.index('a2_19')]
-                if not (a2_19 is None or a2_19 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_19 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_19'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_19 = ''
-            a2_21 = row[headers.index('a2_21')]
-            if a2_21 != '1': 
-                a2_22a = row[headers.index('a2_22a')]
-                if not (a2_22a is None or a2_22a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_22a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_22a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_22a = ''
-                a2_22b = row[headers.index('a2_22b')]
-                if not (a2_22b is None or a2_22b == '' or a2_22b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_22b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_22b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_22b = ''
-                    print "because alue was %s" % a2_22b
-            a2_23 = row[headers.index('a2_23')]
-            if a2_23 != '1': 
-                a2_24a = row[headers.index('a2_24a')]
-                if not (a2_24a is None or a2_24a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_24a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_24a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_24a = ''
-                a2_24b = row[headers.index('a2_24b')]
-                if not (a2_24b is None or a2_24b == '' or a2_24b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_24b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_24b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_24b = ''
-            a2_25 = row[headers.index('a2_25')]
-            if a2_25 != '1': 
-                a2_26a = row[headers.index('a2_26a')]
-                if not (a2_26a is None or a2_26a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_26a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_26a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_26a = ''
-                a2_26b = row[headers.index('a2_26b')]
-                if not (a2_26b is None or a2_26b == '' or a2_26b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_26b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_26b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_26b = ''
-            a2_27 = row[headers.index('a2_27')]
-            if a2_27 != '1': 
-                a2_28a = row[headers.index('a2_28a')]
-                if not (a2_28a is None or a2_28a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_28a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_28a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_28a = ''
-                a2_28b = row[headers.index('a2_28b')]
-                if not (a2_28b is None or a2_28b == '' or a2_28b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_28b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_28b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_28b = ''
-            a2_32 = row[headers.index('a2_32')]
-            if a2_32 != '1': 
-                a2_33a = row[headers.index('a2_33a')]
-                if not (a2_33a is None or a2_33a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_33a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_33a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_33a = ''
-                a2_33b = row[headers.index('a2_33b')]
-                if not (a2_33b is None or a2_33b == '' or a2_33b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_33b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_33b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_33b = ''
-                a2_34 = row[headers.index('a2_34')]
-                if not (a2_34 is None or a2_34 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_34 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_34'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_34 = ''
-                a2_35 = row[headers.index('a2_35')]
-                if not (a2_35 is None or a2_35 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_35 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_35'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_35 = ''
-            a2_36 = row[headers.index('a2_36')]
-            if a2_36 != '1': 
-                a2_37a = row[headers.index('a2_37a')]
-                if not (a2_37a is None or a2_37a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_37a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_37a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_37a = ''
-                a2_37b = row[headers.index('a2_37b')]
-                if not (a2_37b is None or a2_37b == '' or a2_37b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_37b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_37b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_37b = ''
-                a2_38 = row[headers.index('a2_38')]
-                if not (a2_38 is None or a2_38 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_38 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_38'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_38 = ''
-                a2_39_1 = row[headers.index('a2_39_1')]
-                if not (a2_39_1 is None or a2_39_1 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_39_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_1'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_39_1 = ''
-                # doesn't exist in electronic version    
-                # a2_39_2 = row[headers.index('a2_39_2')]
-                #                if not (a2_39_2 is None or a2_39_2 == ''):
-                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_2'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                    a2_39_2 = ''
-            a2_40 = row[headers.index('a2_40')]
-            if a2_40 != '1': 
-                a2_41a = row[headers.index('a2_41a')]
-                if not (a2_41a is None or a2_41a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_41a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_41a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_41a = ''
-                a2_41b = row[headers.index('a2_41b')]
-                if not (a2_41b is None or a2_41b == '' or a2_41b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_41b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_41b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_41b = ''
-            a2_43 = row[headers.index('a2_43')]
-            if a2_43 != '1': 
-                a2_44 = row[headers.index('a2_44')]
-                if not (a2_44 is None or a2_44 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_44 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_44'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_44 = ''
-                a2_45 = row[headers.index('a2_45')]
-                if not (a2_45 is None or a2_45 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_45 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_45'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_45 = ''
-                a2_46a = row[headers.index('a2_46a')]
-                if not (a2_46a is None or a2_46a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_46a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_46a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_46a = ''
-                a2_46b = row[headers.index('a2_46b')]
-                if not (a2_46b is None or a2_46b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_46b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_46b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_46b = ''
-            a2_47 = row[headers.index('a2_47')]
-            if a2_47 != '1': 
-                a2_48a = row[headers.index('a2_48a')]
-                if not (a2_48a is None or a2_48a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_48a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_48a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_48a = ''
-                a2_48b = row[headers.index('a2_48b')]
-                if not (a2_48b is None or a2_48b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_48b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_48b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_48b = ''
-            a2_50 = row[headers.index('a2_50')]
-            if a2_50 != '1': 
-                a2_51 = row[headers.index('a2_51')]
-                if not (a2_51 is None or a2_51 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_51 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_50'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_51 = ''
-            a2_53 = row[headers.index('a2_53')]
-            if a2_53 != '1':
-                a2_54a = row[headers.index('a2_54a')]
-                if not (a2_54a is None or a2_54a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_54a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_54a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_54a = ''
-                a2_54b = row[headers.index('a2_54b')]
-                if not (a2_54b is None or a2_54b == '' or a2_54b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_54b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_54b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_54b = '' 
-                a2_55 = row[headers.index('a2_55')]
-                if not (a2_55 is None or a2_55 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_55 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_55'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_55 = ''
-                a2_56 = row[headers.index('a2_56')]
-                if not (a2_56 is None or a2_56 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_56 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_56'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_56 = ''
-            a2_57 = row[headers.index('a2_57')]
-            if a2_57 != '1':
-                a2_58a = row[headers.index('a2_58a')]
-                if not (a2_58a is None or a2_58a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_58a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_58a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_58a = ''
-                a2_58b = row[headers.index('a2_58b')]
-                if not (a2_58b is None or a2_58b == '' or a2_58b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_58b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_58b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_58b = '' 
-                a2_59 = row[headers.index('a2_59')]
-                if not (a2_59 is None or a2_59 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_59 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_59'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_59 = ''
-            a2_61 = row[headers.index('a2_61')]
-            if a2_61 != '1': 
-                a2_62a = row[headers.index('a2_62a')]
-                if not (a2_62a is None or a2_62a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_62a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_62a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_62a = ''
-                a2_62b = row[headers.index('a2_62b')]
-                if not (a2_62b is None or a2_62b == '' or a2_62b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_62b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_62b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_62b = ''
-                a2_63_1 = row[headers.index('a2_63_1')]
-                if not (a2_63_1 is None or a2_63_1 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_63_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_1'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_63_1 = ''
-                # not in electronic version
-                # a2_63_2 = row[headers.index('a2_63_2')]
-                #                if not (a2_63_2 is None or a2_63_2 == ''):
-                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_2'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                    a2_63_2 = ''
-            a2_64 = row[headers.index('a2_64')]
-            if a2_64 != '1': 
-                a2_65a = row[headers.index('a2_65a')]
-                if not (a2_65a is None or a2_65a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_65a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_65a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_65a = ''
-                a2_65b = row[headers.index('a2_65b')]
-                if not (a2_65b is None or a2_65b == '' or a2_65b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_65b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_65b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_65b = ''
-                a2_66 = row[headers.index('a2_66')]
-                if not (a2_66 is None or a2_66 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_66 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_66'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_66 = ''
-            a2_67 = row[headers.index('a2_67')]
-            if a2_67 != '1': 
-                a2_68a = row[headers.index('a2_68a')]
-                if not (a2_68a is None or a2_68a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_68a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_68a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_68a = ''
-                a2_68b = row[headers.index('a2_68b')]
-                if not (a2_68b is None or a2_68b == '' or a2_68b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_68b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_68b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_68b = ''
-            a2_69 = row[headers.index('a2_69')]
-            if a2_69 != '1': 
-                a2_70a = row[headers.index('a2_70a')]
-                if not (a2_70a is None or a2_70a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_70a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_70a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_70a = ''
-                a2_70b = row[headers.index('a2_70b')]
-                if not (a2_70b is None or a2_70b == '' or a2_70b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_70b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_70b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_70b = ''
-                a2_71 = row[headers.index('a2_71')]
-                if not (a2_71 is None or a2_71 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_71 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_71'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_71 = ''
-            a2_72 = row[headers.index('a2_72')]
-            if a2_72 != '1': 
-                a2_73a = row[headers.index('a2_73a')]
-                if not (a2_73a is None or a2_73a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_73a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_73a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_73a = ''
-                a2_73b = row[headers.index('a2_73b')]
-                if not (a2_73b is None or a2_73b == '' or a2_73b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_73b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_73b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_73b = ''
-            a2_74 = row[headers.index('a2_74')]
-            if a2_74 != '1': 
-                a2_76a = row[headers.index('a2_76a')]
-                if not (a2_76a is None or a2_76a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_76a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_76a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_76a = ''
-                a2_76b = row[headers.index('a2_76b')]
-                if not (a2_76b is None or a2_76b == '' or a2_76b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_76b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_76b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_76b = ''
-                a2_75 = row[headers.index('a2_75')]
-                if not (a2_75 is None or a2_75 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_75 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_75'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_75 = ''
-                a2_77 = row[headers.index('a2_77')]
-                if not (a2_77 is None or a2_77 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_77 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_77'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_77 = ''
-            a2_78 = row[headers.index('a2_78')]
-            if a2_78 != '1': 
-                a2_79a = row[headers.index('a2_79a')]
-                if not (a2_79a is None or a2_79a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_79a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_79a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_79a = ''
-                a2_79b = row[headers.index('a2_79b')]
-                if not (a2_79b is None or a2_79b == '' or a2_79b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_79b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_79b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_79b = ''
-                a2_80 = row[headers.index('a2_80')]
-                if not (a2_80 is None or a2_80 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_80 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_80'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_80 = ''
-            a2_82 = row[headers.index('a2_82')]
-            if a2_82 != '1': 
-                a2_83a = row[headers.index('a2_83a')]
-                if not (a2_83a is None or a2_83a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_83a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_83a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_83a = ''
-                a2_83b = row[headers.index('a2_83b')]
-                if not (a2_83b is None or a2_83b == '' or a2_83b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_83b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_83b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_83b = ''
-                a2_84 = row[headers.index('a2_84')]
-                if not (a2_84 is None or a2_84 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_84 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_84'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_84 = ''
-            a2_85 = row[headers.index('a2_85')]
-            if a2_85 != '1': 
-                a2_86a = row[headers.index('a2_86a')]
-                if not (a2_86a is None or a2_86a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_86a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_86a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_86a = ''
-                a2_86b = row[headers.index('a2_86b')]
-                if not (a2_86b is None or a2_86b == '' or a2_86b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_86b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_86b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_86b = ''
-                a2_87_1 = row[headers.index('a2_87_1')]
-                if not (a2_87_1 is None or a2_87_1 == '' or a2_87_1  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_1'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    print "because a2_87_1 was %s" % a2_87_1
-                    a2_87_1 = ''
-                a2_87_10a = row[headers.index('a2_87_10a')]
-                if not (a2_87_10a is None or a2_87_10a == '' or a2_87_10a  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_10a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_10a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_10a = ''
-                a2_87_10b = row[headers.index('a2_87_10b')]
-                if not (a2_87_10b is None or a2_87_10b == '' or a2_87_10b  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_10b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_10b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_10b = ''
-                a2_87_2 = row[headers.index('a2_87_2')]
-                if not (a2_87_2 is None or a2_87_2 == '' or a2_87_2  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_2'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_2 = ''
-                a2_87_3 = row[headers.index('a2_87_3')]
-                if not (a2_87_3 is None or a2_87_3 == '' or a2_87_3  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_3'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_3 = ''
-                a2_87_4 = row[headers.index('a2_87_4')]
-                if not (a2_87_4 is None or a2_87_4 == '' or a2_87_4  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_4'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_4 = ''
-                a2_87_5 = row[headers.index('a2_87_5')]
-                if not (a2_87_5 is None or a2_87_5 == '' or a2_87_5  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_5'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_5 = ''
-                a2_87_6 = row[headers.index('a2_87_6')]
-                if not (a2_87_6 is None or a2_87_6 == '' or a2_87_6  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_6'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_6 = ''
-                a2_87_7 = row[headers.index('a2_87_7')]
-                if not (a2_87_7 is None or a2_87_7 == '' or a2_87_7  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_7'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_7 = ''
-                a2_87_8 = row[headers.index('a2_87_8')]
-                if not (a2_87_8 is None or a2_87_8 == '' or a2_87_8  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_8'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_8 = ''
-                a2_87_9 = row[headers.index('a2_87_9')]
-                if not (a2_87_9 is None or a2_87_9 == '' or a2_87_9  == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a2_87_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_9'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a2_87_9 = ''
-            a4_01 = row[headers.index('a4_01')]
-            if a4_01 != '1': 
-                a4_02_1 = row[headers.index('a4_02_1')]
-                if not (a4_02_1 is None or a4_02_1 == '' or a4_02_1 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_1'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_1 = ''
-                a4_02_2 = row[headers.index('a4_02_2')]
-                if not (a4_02_2 is None or a4_02_2 == '' or a4_02_2 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_2'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_2 = ''
-                a4_02_3 = row[headers.index('a4_02_3')]
-                if not (a4_02_3 is None or a4_02_3 == '' or a4_02_3 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_3'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_3 = ''
-                a4_02_4 = row[headers.index('a4_02_4')]
-                if not (a4_02_4 is None or a4_02_4 == '' or a4_02_4 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_4'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_4 = ''
-                a4_02_5a = row[headers.index('a4_02_5a')]
-                if not (a4_02_5a is None or a4_02_5a == '' or a4_02_5a == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_5a should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_5a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_5a = ''
-                a4_02_5b = row[headers.index('a4_02_5b')]
-                if not (a4_02_5b is None or a4_02_5b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_5b should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_5b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_5b = ''
-                a4_02_6 = row[headers.index('a4_02_6')]
-                if not (a4_02_6 is None or a4_02_6 == '' or a4_02_6 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_6'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_6 = ''
-                a4_02_7 = row[headers.index('a4_02_7')]
-                if not (a4_02_7 is None or a4_02_7 == '' or a4_02_7 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_02_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_7'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_02_7 = ''
-            a4_02_1 = row[headers.index('a4_02_1')]
-            if a4_02_1 != '1' or a4_01 != '1': 
-                a4_04 = row[headers.index('a4_04')]
-                if not (a4_04 is None or a4_04 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_04'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_04 = ''
-            a4_05 = row[headers.index('a4_05')]
-            if a4_05 != '1': 
-                a4_06 = row[headers.index('a4_06')]
-                if not (a4_06 is None or a4_06 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a4_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_06'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a4_06 = ''
-            a5_01_8 = row[headers.index('a5_01_8')]
-            if a5_01_8 == '1': 
-                a5_04a = row[headers.index('a5_04a')]
-                if not (a5_04a is None or a5_04a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a5_04a should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_04a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a5_04a = ''
-                a5_04b = row[headers.index('a5_04b')]
-                if not (a5_04b is None or a5_04b == '' or a5_04b == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a5_04b should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_04b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a5_04b = ''
-                a5_02 = row[headers.index('a5_02')]
-                if not (a5_02 is None or a5_02 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a5_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_02'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a5_02 = ''
-            a5_02 = row[headers.index('a5_02')]
-            if a5_02 == '1' or a5_01_8 == '1': 
-                a5_03 = row[headers.index('a5_03')]
-                if not (a5_03 is None or a5_03 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a5_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_03'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a5_03 = ''
-            a6_01 = row[headers.index('a6_01')]
-            if a6_01 != '1': 
-                a6_02_1 = row[headers.index('a6_02_1')]
-                if not (a6_02_1 is None or a6_02_1 == '' or a6_02_1 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_1'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_1 = ''
-                a6_02_2 = row[headers.index('a6_02_2')]
-                if not (a6_02_2 is None or a6_02_2 == '' or a6_02_2 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_2'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_2 = ''
-                a6_02_3 = row[headers.index('a6_02_3')]
-                if not (a6_02_3 is None or a6_02_3 == '' or a6_02_3 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_3'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_3 = ''
-                a6_02_4 = row[headers.index('a6_02_4')]
-                if not (a6_02_4 is None or a6_02_4 == '' or a6_02_4 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_4'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_4 = ''
-                a6_02_5 = row[headers.index('a6_02_5')]
-                if not (a6_02_5 is None or a6_02_5 == '' or a6_02_5 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_5'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_5 = ''
-                a6_02_6 = row[headers.index('a6_02_6')]
-                if not (a6_02_6 is None or a6_02_6 == '' or a6_02_6 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_6'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_6 = ''
-                # not in electronic version
-                # a6_02_7 = row[headers.index('a6_02_7')]
-                #                 if not (a6_02_7 is None or a6_02_7 == ''):
-                #                     updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_7'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                     a6_02_7 = ''
-                a6_02_8 = row[headers.index('a6_02_8')]
-                if not (a6_02_8 is None or a6_02_8 == '' or a6_02_8 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_8'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_8 = ''
-                a6_02_9 = row[headers.index('a6_02_9')]
-                if not (a6_02_9 is None or a6_02_9 == '' or a6_02_9 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_9 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_9'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_9 = ''
-                a6_02_10 = row[headers.index('a6_02_10')]
-                if not (a6_02_10 is None or a6_02_10 == '' or a6_02_10 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_10'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_10 = ''
-                a6_02_11 = row[headers.index('a6_02_11')]
-                if not (a6_02_11 is None or a6_02_11 == '' or a6_02_11 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_11'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_11 = ''
-                a6_02_12a = row[headers.index('a6_02_12a')]
-                if not (a6_02_12a is None or a6_02_12a == '' or a6_02_12a == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_12a should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_12a = ''
-                # not in electronic version
-                # a6_02_12b = row[headers.index('a6_02_12b')]
-                #                 if not (a6_02_12b is None or a6_02_12b == ''):
-                #                     updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12b'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                     a6_02_12b = ''
-                a6_02_13 = row[headers.index('a6_02_13')]
-                if not (a6_02_13 is None or a6_02_13 == '' or a6_02_13 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_13'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_13 = ''
-                a6_02_14 = row[headers.index('a6_02_14')]
-                if not (a6_02_14 is None or a6_02_14 == '' or a6_02_14 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_14'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_14 = ''
-                a6_02_15 = row[headers.index('a6_02_15')]
-                if not (a6_02_15 is None or a6_02_15 == '' or a6_02_15 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_02_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_15'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_02_15 = ''
-                a6_03 = row[headers.index('a6_03')]    
-                if not (a6_03 is None or a6_03 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_03'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_03 = ''
-            a6_04 = row[headers.index('a6_04')]
-            if a6_04 != '1': 
-                a6_05 = row[headers.index('a6_05')]
-                if not (a6_05 is None or a6_05 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_05'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_05 = ''
-            a6_05 = row[headers.index('a6_05')]
-            if a6_05 != '1' or a6_04 != '1': 
-                a6_06_1d = row[headers.index('a6_06_1d')]
-                if not (a6_06_1d is None or a6_06_1d == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1d'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_1d = ''
-                a6_06_1m = row[headers.index('a6_06_1m')]
-                if not (a6_06_1m is None or a6_06_1m == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1m'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_1m = ''
-                a6_06_1y = row[headers.index('a6_06_1y')]
-                if not (a6_06_1y is None or a6_06_1y == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1y'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_1y = ''
-                a6_06_2d = row[headers.index('a6_06_2d')]
-                if not (a6_06_2d is None or a6_06_2d == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2d'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_2d = ''
-                a6_06_2m = row[headers.index('a6_06_2m')]
-                if not (a6_06_2m is None or a6_06_2m == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2m'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_2m = ''
-                a6_06_2y = row[headers.index('a6_06_2y')]
-                if not (a6_06_2y is None or a6_06_2y == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2y'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_06_2y = ''
-                a6_07d = row[headers.index('a6_07d')]
-                if not (a6_07d is None or a6_07d == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_07d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07d'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_07d = ''
-                a6_07m = row[headers.index('a6_07m')]
-                if not (a6_07m is None or a6_07m == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_07m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07m'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_07m = ''
-                a6_07y = row[headers.index('a6_07y')]
-                if not (a6_07y is None or a6_07y == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_07y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07y'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_07y = ''
-                a6_08 = row[headers.index('a6_08')]
-                if not (a6_08 is None or a6_08 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_08'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_08 = ''
-            a6_09 = row[headers.index('a6_09')]
-            if a6_09 != '1': 
-                a6_10 = row[headers.index('a6_10')]
-                if not (a6_10 is None or a6_10 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_10'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_10 = ''
-            a6_10 = row[headers.index('a6_10')]
-            if a6_10 != '1' or a6_09 != '1': 
-                a6_11 = row[headers.index('a6_11')]
-                if not (a6_11 is None or a6_11 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_11'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_11 = ''
-                a6_12 = row[headers.index('a6_12')]
-                if not (a6_12 is None or a6_12 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_12'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_12 = ''
-                a6_13 = row[headers.index('a6_13')]
-                if not (a6_13 is None or a6_13 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_13'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_13 = ''
-                a6_14 = row[headers.index('a6_14')]
-                if not (a6_14 is None or a6_14 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_14'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_14 = ''
-                a6_15 = row[headers.index('a6_15')]
-                if not (a6_15 is None or a6_15 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a6_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_15'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a6_15 = ''
-            g5_02 = row[headers.index('g5_02')]
-            if g5_02 != '2': 
-                a3_01 = row[headers.index('a3_01')]
-                if not (a3_01 is None or a3_01 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_01 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_01'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_01 = ''
-                a3_02 = row[headers.index('a3_02')]
-                if not (a3_02 is None or a3_02 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_02'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_02 = ''
-                a3_03 = row[headers.index('a3_03')]
-                if not (a3_03 is None or a3_03 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_03'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_03 = ''
-            a3_03 = row[headers.index('a3_03')]
-            if g5_02 != '2' or a3_03 != '0': 
-                a3_05 = row[headers.index('a3_05')]
-                if not (a3_05 is None or a3_05 == '' or a3_05 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_05'))
-                    print "because value is %s" % a3_05
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_05 = ''
-                a3_06 = row[headers.index('a3_06')]
-                if not (a3_06 is None or a3_06 == '' or a3_06 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_06'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_06 = ''
-                a3_07 = row[headers.index('a3_07')]
-                if not (a3_07 is None or a3_07 == '' or a3_07 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_07 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_07'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_07 = ''
-                a3_10 = row[headers.index('a3_10')]
-                if not (a3_10 is None or a3_10 == '' or a3_10 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_10'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_10 = ''
-            a3_07 = row[headers.index('a3_07')]
-            if g5_02 != '2' or a3_03 != '0' or a3_07 != '1': 
-                a3_08a = row[headers.index('a3_08a')]
-                if not (a3_08a is None or a3_08a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_08a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_08a = ''
-                a3_08b = row[headers.index('a3_08b')]
-                if not (a3_08b is None or a3_08b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_08b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_08b = ''
-                a3_09 = row[headers.index('a3_09')]
-                if not (a3_09 is None or a3_09 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_09'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_09 = ''
-            a3_10 = row[headers.index('a3_10')]
-            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1':
-                a3_11a = row[headers.index('a3_11a')]
-                if not (a3_11a is None or a3_11a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_11a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_11a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_11a = ''
-                a3_11b = row[headers.index('a3_11b')]
-                if not (a3_11b is None or a3_11b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_11b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_11b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_11b = ''
-                a3_12 = row[headers.index('a3_12')]
-                if not (a3_12 is None or a3_12 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_12'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_12 = ''
-            a3_12 = row[headers.index('a3_12')]
-            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1' or a3_12 == '1':
-                a3_13 = row[headers.index('a3_13')]
-                if not (a3_13 is None or a3_13 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_13'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_13 = ''
-                a3_14 = row[headers.index('a3_14')]
-                if not (a3_14 is None or a3_14 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_14'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_14 = ''
-                a3_15 = row[headers.index('a3_15')]
-                if not (a3_15 is None or a3_15 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_15'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_15 = ''
-                a3_16a = row[headers.index('a3_16a')]
-                if not (a3_16a is None or a3_16a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_16a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_16a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_16a = ''
-                a3_16b = row[headers.index('a3_16b')]
-                if not (a3_16b is None or a3_16b == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_16b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_16b'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_16b = ''
-            a3_15 = row[headers.index('a3_15')]
-            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1':
-                a3_17 = row[headers.index('a3_17')]
-                if not (a3_17 is None or a3_17 == '' or a3_17 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_17'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_17 = ''
-            a3_17 = row[headers.index('a3_17')]
-            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1' or a3_17 == '1':
-                a3_18 = row[headers.index('a3_18')]
-                if not (a3_18 is None or a3_18 == '' or a3_18 == '0'):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_18'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_18 = ''
-            a3_18 = row[headers.index('a3_18')]
-            if g5_02 != '2' or a3_03 != '0' or a3_15 == '1' or a3_18 != '1':
-                a3_19 = row[headers.index('a3_19')]
-                if not (a3_19 is None or a3_19 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_19 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_19'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_19 = ''
-                a3_20 = row[headers.index('a3_20')]
-                if not (a3_20 is None or a3_20 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_20 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_20'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_20 = ''
-                    
-            if g5_02 != '2' or a3_03 == '0':
-                a3_04 = row[headers.index('a3_04')]
-                if not (a3_04 is None or a3_04 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable a3_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_04'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    a3_04 = ''
-                    
-                    
-            #general vars
-            # not in electronic version
-            # g1_07a = row[headers.index('g1_07a')]
-            #            if g1_07a < '12' or g1_07a == '999':
-            #                g1_08 = row[headers.index('g1_08')]
-            #                if not (g1_08 is None or g1_08 == ''):
-            #                    updatestr = "WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('g1_08'))
-            #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-            #                    g1_08 = ''
-            g5_04a = row[headers.index('g5_04a')]
-            if g5_04a < '12' or g5_04a == '999':
-                g5_05 = row[headers.index('g5_05')]
-                if not (g5_05 is None or g5_05 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable g5_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_05'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    g5_05 = ''
-            if g5_04a < '5' or g5_04a == '999':
-                g5_06a = row[headers.index('g5_06a')]
-                if not (g5_06a is None or g5_06a == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable g5_06a should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06a'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    g5_06a = ''
-                # not in electronic version    
-                # g5_06b = row[headers.index('g5_06b')]
-                #                 if not (g5_06b is None or g5_06b == ''):
-                #                     updatestr = "WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06b'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #                     g5_06b = ''
-
-       
-        
-        updatestr = "Filling in default values for empty columns\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        # fill in missing default values:
-        for row in matrix:
-            for i, col in enumerate(row):
-                header = headers[i]
-                default = adult_defaultFill.get(header)
-                if default is not None and col == '':
-                        row[i] = adult_defaultFill[header]
-                          
-        updatestr = "Analyzing free text\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
-        freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
-        
-        keyWords = adult_wordsToVars.keys()
-        
-        for question in freeText:
-            index = headers.index(question)
-            for row in matrix:
-                answer = row[index]
-                answerArray = answer.split(' ')
-                for word in answerArray:
-                    for keyword in keyWords:
-                        if word.lower().startswith(keyword):
-                            svar = adult_wordsToVars[keyword.lower()]
-                            sindex = headers.index(svar)
-                            row[sindex] = '1'
-                        
-                        
-        #now do the calculations for the generated variables:
+            
+        #calculations for the generated variables:
+        #do this before skip patterns so generted variabels aren't 0
         for row in matrix:
             index = headers.index('g4_03b')
             if row[headers.index('g4_03a')] == str(11):
@@ -1083,9 +138,9 @@ class PreSymptomPrep():
             
             
             index = headers.index('a2_24b')
-            if row[headers.index('a2_22a')] == str(4):
+            if row[headers.index('a2_24a')] == str(4):
                 row[index] = row[headers_old.index('adult_2_24a')]
-            if row[headers.index('a2_22a')] == str(2):
+            if row[headers.index('a2_24a')] == str(2):
                 row[index] = row[headers_old.index('adult_2_24b')]
                 
             
@@ -1094,6 +149,12 @@ class PreSymptomPrep():
                 row[index] = row[headers_old.index('adult_2_26a')]
             if row[headers.index('a2_26a')] == str(2):
                 row[index] = row[headers_old.index('adult_2_26b')]
+                
+            index = headers.index('a2_28b')
+            if row[headers.index('a2_28a')] == str(4):
+                row[index] = row[headers_old.index('adult_2_28a')]
+            if row[headers.index('a2_28a')] == str(2):
+                row[index] = row[headers_old.index('adult_2_28b')]
                 
             index = headers.index('a2_33b')
             if row[headers.index('a2_33a')] == str(4):
@@ -1162,7 +223,7 @@ class PreSymptomPrep():
             
             index = headers.index('a2_76b')
             if row[headers.index('a2_76a')] == str(4):
-                row[index] = row[headers_old.index('adult_2_76b')]
+                row[index] = row[headers_old.index('adult_2_76a')]
             if row[headers.index('a2_76a')] == str(2):
                 row[index] = row[headers_old.index('adult_2_76b')] 
                 
@@ -1189,23 +250,23 @@ class PreSymptomPrep():
             #adult_4_2 can have multiple answers    
             adult42list = row[headers_old.index('adult_4_2')].split(' ')    
             if str(1) in adult42list:
-                row[headers.index('a4_02_1')] = 1
+                row[headers.index('a4_02_1')] = '1'
             if str(2) in adult42list:
-                row[headers.index('a4_02_2')] = 1
+                row[headers.index('a4_02_2')] = '1'
             if str(3) in adult42list:
-                row[headers.index('a4_02_3')] = 1
+                row[headers.index('a4_02_3')] = '1'
             if str(4) in adult42list:
-                row[headers.index('a4_02_4')] = 1
+                row[headers.index('a4_02_4')] = '1'
             if str(11) in adult42list:
-                row[headers.index('a4_02_5a')] = 1
+                row[headers.index('a4_02_5a')] = '1'
             if str(8) in adult42list:
-                row[headers.index('a4_02_6')] = 5
+                row[headers.index('a4_02_6')] = '5'
             if str(9) in adult42list:
-                row[headers.index('a4_02_7')] = 5
+                row[headers.index('a4_02_7')] = '5'
             
             index = headers.index('a5_01_8')
             if row[headers.index('adult_5_1')] == str(0):
-                row[index] = 1
+                row[index] = '1'
         
                 
             index = headers.index('a5_04b')
@@ -1247,7 +308,1126 @@ class PreSymptomPrep():
             if str(88) in adult62list:
                 row[headers.index('a6_02_14')] = 1
             if str(99) in adult62list:
-                row[headers.index('a6_02_15')] = 1
+                row[headers.index('a6_02_15')] = 1    
+            
+        
+                      
+        # skip patterns...
+        
+        for i, row in enumerate(matrix):
+            # i starts at 0, header row is 1 in excel, so do i+2 for the actual data row
+            a2_02 = row[headers.index('a2_02')]
+            if a2_02 != '1':
+                a2_03a = row[headers.index('a2_03a')]
+                if not (a2_03a is None or a2_03a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_03a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_03a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_03a')] = ''
+                a2_03b = row[headers.index('a2_03b')]
+                if not (a2_03b is None or a2_03b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_03b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_03b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_03b')] = ''
+                a2_04 = row[headers.index('a2_04')]
+                if not (a2_04 is None or a2_04 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_04'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_04')] = ''
+                a2_05 = row[headers.index('a2_04')]
+                if not (a2_05 is None or a2_05 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_05'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_05')] = ''
+                a2_06 = row[headers.index('a2_04')]
+                if not (a2_06 is None or a2_06 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_06'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_06')] = ''
+                
+            a2_07 = row[headers.index('a2_07')]
+            if a2_07 != '1':        
+                a2_08a = row[headers.index('a2_08a')]
+                if not (a2_08a is None or a2_08a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_08a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_08a')] = ''
+                a2_08b = row[headers.index('a2_08b')]
+                if not (a2_08b is None or a2_08b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_08b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_08b')] = ''
+                a2_09_1a = row[headers.index('a2_09_1a')]
+                if not (a2_09_1a is None or a2_09_1a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_09_1a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_1a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_09_1a')] = ''
+                a2_09_1b = row[headers.index('a2_09_1b')]
+                if not (a2_09_1b is None or a2_09_1b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_09_1b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_1b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_09_1b')] = ''
+                a2_09_2a = row[headers.index('a2_09_2a')]
+                if not (a2_09_2a is None or a2_09_2a == '' or a2_09_2a == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_09_2a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_2a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_09_2a')] = ''
+                # doesn't exist in electronic version
+                # a2_09_2b = row[headers.index('a2_09_2b')]
+                #                if not (a2_09_2b is None or a2_09_2b == ''):
+                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_2b'))
+                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                #                    a2_09_2b')] = ''
+            a2_10 = row[headers.index('a2_10')]
+            if a2_10 != '1':   
+                a2_11 = row[headers.index('a2_11')]
+                if not (a2_11 is None or a2_11 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_11'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_11')] = ''
+            a2_13 = row[headers.index('a2_13')]
+            if a2_13 != '1':   
+                a2_14 = row[headers.index('a2_14')]
+                if not (a2_14 is None or a2_14 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_14'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_14')] = ''
+            a2_14 = row[headers.index('a2_14')]
+            if a2_13 != '1' or a2_14 != '1':
+                a2_15a = row[headers.index('a2_15a')]
+                if not (a2_15a is None or a2_15a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_15a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_15a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_15a')] = ''
+                a2_15b = row[headers.index('a2_15b')]
+                if not (a2_15b is None or a2_15b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_15b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_15b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_15b')] = ''
+            a2_18 = row[headers.index('a2_18')]
+            if a2_18 != '1':   
+                a2_19 = row[headers.index('a2_19')]
+                if not (a2_19 is None or a2_19 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_19 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_19'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_19')] = ''
+            a2_21 = row[headers.index('a2_21')]
+            if a2_21 != '1': 
+                a2_22a = row[headers.index('a2_22a')]
+                if not (a2_22a is None or a2_22a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_22a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_22a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_22a')] = ''
+                a2_22b = row[headers.index('a2_22b')]
+                if not (a2_22b is None or a2_22b == '' or a2_22b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_22b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_22b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_22b')] = ''
+            a2_23 = row[headers.index('a2_23')]
+            if a2_23 != '1': 
+                a2_24a = row[headers.index('a2_24a')]
+                if not (a2_24a is None or a2_24a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_24a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_24a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_24a')] = ''
+                a2_24b = row[headers.index('a2_24b')]
+                if not (a2_24b is None or a2_24b == '' or a2_24b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_24b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_24b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_24b')] = ''
+            a2_25 = row[headers.index('a2_25')]
+            if a2_25 != '1': 
+                a2_26a = row[headers.index('a2_26a')]
+                if not (a2_26a is None or a2_26a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_26a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_26a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_26a')] = ''
+                a2_26b = row[headers.index('a2_26b')]
+                if not (a2_26b is None or a2_26b == '' or a2_26b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_26b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_26b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_26b')] = ''
+            a2_27 = row[headers.index('a2_27')]
+            if a2_27 != '1': 
+                a2_28a = row[headers.index('a2_28a')]
+                if not (a2_28a is None or a2_28a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_28a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_28a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_28a')] = ''
+                a2_28b = row[headers.index('a2_28b')]
+                if not (a2_28b is None or a2_28b == '' or a2_28b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_28b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_28b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_28b')] = ''
+            a2_32 = row[headers.index('a2_32')]
+            if a2_32 != '1': 
+                a2_33a = row[headers.index('a2_33a')]
+                if not (a2_33a is None or a2_33a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_33a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_33a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_33a')] = ''
+                a2_33b = row[headers.index('a2_33b')]
+                if not (a2_33b is None or a2_33b == '' or a2_33b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_33b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_33b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_33b')] = ''
+                a2_34 = row[headers.index('a2_34')]
+                if not (a2_34 is None or a2_34 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_34 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_34'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_34')] = ''
+                a2_35 = row[headers.index('a2_35')]
+                if not (a2_35 is None or a2_35 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_35 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_35'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_35')] = ''
+            a2_36 = row[headers.index('a2_36')]
+            if a2_36 != '1': 
+                a2_37a = row[headers.index('a2_37a')]
+                if not (a2_37a is None or a2_37a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_37a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_37a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_37a')] = ''
+                a2_37b = row[headers.index('a2_37b')]
+                if not (a2_37b is None or a2_37b == '' or a2_37b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_37b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_37b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_37b')] = ''
+                a2_38 = row[headers.index('a2_38')]
+                if not (a2_38 is None or a2_38 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_38 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_38'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_38')] = ''
+                a2_39_1 = row[headers.index('a2_39_1')]
+                if not (a2_39_1 is None or a2_39_1 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_39_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_1'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_39_1')] = ''
+                # doesn't exist in electronic version    
+                # a2_39_2 = row[headers.index('a2_39_2')]
+                #                if not (a2_39_2 is None or a2_39_2 == ''):
+                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_2'))
+                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                #                    a2_39_2')] = ''
+            a2_40 = row[headers.index('a2_40')]
+            if a2_40 != '1': 
+                a2_41a = row[headers.index('a2_41a')]
+                if not (a2_41a is None or a2_41a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_41a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_41a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_41a')] = ''
+                a2_41b = row[headers.index('a2_41b')]
+                if not (a2_41b is None or a2_41b == '' or a2_41b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_41b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_41b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_41b')] = ''
+            a2_43 = row[headers.index('a2_43')]
+            if a2_43 != '1': 
+                a2_44 = row[headers.index('a2_44')]
+                if not (a2_44 is None or a2_44 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_44 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_44'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_44')] = ''
+                a2_45 = row[headers.index('a2_45')]
+                if not (a2_45 is None or a2_45 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_45 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_45'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_45')] = ''
+                a2_46a = row[headers.index('a2_46a')]
+                if not (a2_46a is None or a2_46a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_46a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_46a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_46a')] = ''
+                a2_46b = row[headers.index('a2_46b')]
+                if not (a2_46b is None or a2_46b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_46b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_46b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_46b')] = ''
+            a2_47 = row[headers.index('a2_47')]
+            if a2_47 != '1': 
+                a2_48a = row[headers.index('a2_48a')]
+                if not (a2_48a is None or a2_48a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_48a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_48a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_48a')] = ''
+                a2_48b = row[headers.index('a2_48b')]
+                if not (a2_48b is None or a2_48b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_48b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_48b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_48b')] = ''
+            a2_50 = row[headers.index('a2_50')]
+            if a2_50 != '1': 
+                a2_51 = row[headers.index('a2_51')]
+                if not (a2_51 is None or a2_51 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_51 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_50'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_51')] = ''
+            a2_53 = row[headers.index('a2_53')]
+            if a2_53 != '1':
+                a2_54a = row[headers.index('a2_54a')]
+                if not (a2_54a is None or a2_54a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_54a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_54a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_54a')] = ''
+                a2_54b = row[headers.index('a2_54b')]
+                if not (a2_54b is None or a2_54b == '' or a2_54b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_54b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_54b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_54b')] = '' 
+                a2_55 = row[headers.index('a2_55')]
+                if not (a2_55 is None or a2_55 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_55 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_55'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_55')] = ''
+                a2_56 = row[headers.index('a2_56')]
+                if not (a2_56 is None or a2_56 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_56 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_56'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_56')] = ''
+            a2_57 = row[headers.index('a2_57')]
+            if a2_57 != '1':
+                a2_58a = row[headers.index('a2_58a')]
+                if not (a2_58a is None or a2_58a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_58a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_58a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_58a')] = ''
+                a2_58b = row[headers.index('a2_58b')]
+                if not (a2_58b is None or a2_58b == '' or a2_58b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_58b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_58b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_58b')] = '' 
+                a2_59 = row[headers.index('a2_59')]
+                if not (a2_59 is None or a2_59 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_59 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_59'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_59')] = ''
+            a2_61 = row[headers.index('a2_61')]
+            if a2_61 != '1': 
+                a2_62a = row[headers.index('a2_62a')]
+                if not (a2_62a is None or a2_62a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_62a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_62a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_62a')] = ''
+                a2_62b = row[headers.index('a2_62b')]
+                if not (a2_62b is None or a2_62b == '' or a2_62b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_62b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_62b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_62b')] = ''
+                a2_63_1 = row[headers.index('a2_63_1')]
+                if not (a2_63_1 is None or a2_63_1 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_63_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_1'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_63_1')] = ''
+                # not in electronic version
+                # a2_63_2 = row[headers.index('a2_63_2')]
+                #                if not (a2_63_2 is None or a2_63_2 == ''):
+                #                    updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_2'))
+                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                #                    a2_63_2')] = ''
+            a2_64 = row[headers.index('a2_64')]
+            if a2_64 != '1': 
+                a2_65a = row[headers.index('a2_65a')]
+                if not (a2_65a is None or a2_65a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_65a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_65a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_65a')] = ''
+                a2_65b = row[headers.index('a2_65b')]
+                if not (a2_65b is None or a2_65b == '' or a2_65b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_65b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_65b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_65b')] = ''
+                a2_66 = row[headers.index('a2_66')]
+                if not (a2_66 is None or a2_66 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_66 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_66'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_66')] = ''
+            a2_67 = row[headers.index('a2_67')]
+            if a2_67 != '1': 
+                a2_68a = row[headers.index('a2_68a')]
+                if not (a2_68a is None or a2_68a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_68a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_68a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_68a')] = ''
+                a2_68b = row[headers.index('a2_68b')]
+                if not (a2_68b is None or a2_68b == '' or a2_68b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_68b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_68b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_68b')] = ''
+            a2_69 = row[headers.index('a2_69')]
+            if a2_69 != '1': 
+                a2_70a = row[headers.index('a2_70a')]
+                if not (a2_70a is None or a2_70a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_70a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_70a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_70a')] = ''
+                a2_70b = row[headers.index('a2_70b')]
+                if not (a2_70b is None or a2_70b == '' or a2_70b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_70b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_70b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_70b')] = ''
+                a2_71 = row[headers.index('a2_71')]
+                if not (a2_71 is None or a2_71 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_71 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_71'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_71')] = ''
+            a2_72 = row[headers.index('a2_72')]
+            if a2_72 != '1': 
+                a2_73a = row[headers.index('a2_73a')]
+                if not (a2_73a is None or a2_73a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_73a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_73a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_73a')] = ''
+                a2_73b = row[headers.index('a2_73b')]
+                if not (a2_73b is None or a2_73b == '' or a2_73b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_73b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_73b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_73b')] = ''
+            a2_74 = row[headers.index('a2_74')]
+            if a2_74 != '1': 
+                a2_76a = row[headers.index('a2_76a')]
+                if not (a2_76a is None or a2_76a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_76a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_76a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_76a')] = ''
+                a2_76b = row[headers.index('a2_76b')]
+                if not (a2_76b is None or a2_76b == '' or a2_76b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_76b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_76b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_76b')] = ''
+                a2_75 = row[headers.index('a2_75')]
+                if not (a2_75 is None or a2_75 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_75 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_75'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_75')] = ''
+                a2_77 = row[headers.index('a2_77')]
+                if not (a2_77 is None or a2_77 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_77 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_77'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_77')] = ''
+            a2_78 = row[headers.index('a2_78')]
+            if a2_78 != '1': 
+                a2_79a = row[headers.index('a2_79a')]
+                if not (a2_79a is None or a2_79a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_79a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_79a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_79a')] = ''
+                a2_79b = row[headers.index('a2_79b')]
+                if not (a2_79b is None or a2_79b == '' or a2_79b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_79b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_79b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_79b')] = ''
+                a2_80 = row[headers.index('a2_80')]
+                if not (a2_80 is None or a2_80 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_80 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_80'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_80')] = ''
+            a2_82 = row[headers.index('a2_82')]
+            if a2_82 != '1': 
+                a2_83a = row[headers.index('a2_83a')]
+                if not (a2_83a is None or a2_83a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_83a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_83a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_83a')] = ''
+                a2_83b = row[headers.index('a2_83b')]
+                if not (a2_83b is None or a2_83b == '' or a2_83b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_83b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_83b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_83b')] = ''
+                a2_84 = row[headers.index('a2_84')]
+                if not (a2_84 is None or a2_84 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_84 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_84'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_84')] = ''
+            a2_85 = row[headers.index('a2_85')]
+            if a2_85 != '1': 
+                a2_86a = row[headers.index('a2_86a')]
+                if not (a2_86a is None or a2_86a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_86a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_86a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_86a')] = ''
+                a2_86b = row[headers.index('a2_86b')]
+                if not (a2_86b is None or a2_86b == '' or a2_86b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_86b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_86b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_86b')] = ''
+                a2_87_1 = row[headers.index('a2_87_1')]
+                if not (a2_87_1 is None or a2_87_1 == '' or a2_87_1  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_1'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_1')] = ''
+                a2_87_10a = row[headers.index('a2_87_10a')]
+                if not (a2_87_10a is None or a2_87_10a == '' or a2_87_10a  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_10a should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_10a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_10a')] = ''
+                a2_87_10b = row[headers.index('a2_87_10b')]
+                a2_87_10b_split = a2_87_10b.split(' ')
+                if not (a2_87_10b is None or a2_87_10b == '' or '0' in a2_87_10b_split):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_10b should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_10b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_10b')] = ''
+                a2_87_2 = row[headers.index('a2_87_2')]
+                if not (a2_87_2 is None or a2_87_2 == '' or a2_87_2  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_2'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_2')] = ''
+                a2_87_3 = row[headers.index('a2_87_3')]
+                if not (a2_87_3 is None or a2_87_3 == '' or a2_87_3  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_3'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_3')] = ''
+                a2_87_4 = row[headers.index('a2_87_4')]
+                if not (a2_87_4 is None or a2_87_4 == '' or a2_87_4  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_4'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_4')] = ''
+                a2_87_5 = row[headers.index('a2_87_5')]
+                if not (a2_87_5 is None or a2_87_5 == '' or a2_87_5  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_5'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_5')] = ''
+                a2_87_6 = row[headers.index('a2_87_6')]
+                if not (a2_87_6 is None or a2_87_6 == '' or a2_87_6  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_6'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_6')] = ''
+                a2_87_7 = row[headers.index('a2_87_7')]
+                if not (a2_87_7 is None or a2_87_7 == '' or a2_87_7  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_7'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_7')] = ''
+                a2_87_8 = row[headers.index('a2_87_8')]
+                if not (a2_87_8 is None or a2_87_8 == '' or a2_87_8  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_8'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_8')] = ''
+                a2_87_9 = row[headers.index('a2_87_9')]
+                if not (a2_87_9 is None or a2_87_9 == '' or a2_87_9  == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a2_87_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_87_9'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a2_87_9')] = ''
+            a4_01 = row[headers.index('a4_01')]
+            if a4_01 != '1': 
+                a4_02_1 = row[headers.index('a4_02_1')]
+                if not (a4_02_1 is None or a4_02_1 == '' or a4_02_1 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_1'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_1')] = ''
+                a4_02_2 = row[headers.index('a4_02_2')]
+                if not (a4_02_2 is None or a4_02_2 == '' or a4_02_2 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_2'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_2')] = ''
+                a4_02_3 = row[headers.index('a4_02_3')]
+                if not (a4_02_3 is None or a4_02_3 == '' or a4_02_3 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_3'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_3')] = ''
+                a4_02_4 = row[headers.index('a4_02_4')]
+                if not (a4_02_4 is None or a4_02_4 == '' or a4_02_4 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_4'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_4')] = ''
+                a4_02_5a = row[headers.index('a4_02_5a')]
+                if not (a4_02_5a is None or a4_02_5a == '' or a4_02_5a == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_5a should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_5a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_5a')] = ''
+                a4_02_5b = row[headers.index('a4_02_5b')]
+                if not (a4_02_5b is None or a4_02_5b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_5b should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_5b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_5b')] = ''
+                a4_02_6 = row[headers.index('a4_02_6')]
+                if not (a4_02_6 is None or a4_02_6 == '' or a4_02_6 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_6'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_6')] = ''
+                a4_02_7 = row[headers.index('a4_02_7')]
+                if not (a4_02_7 is None or a4_02_7 == '' or a4_02_7 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_02_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_02_7'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_02_7')] = ''
+            a4_02_1 = row[headers.index('a4_02_1')]
+            if a4_02_1 != '1' or a4_01 != '1': 
+                a4_04 = row[headers.index('a4_04')]
+                if not (a4_04 is None or a4_04 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_04'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_04')] = ''
+            a4_05 = row[headers.index('a4_05')]
+            if a4_05 != '1': 
+                a4_06 = row[headers.index('a4_06')]
+                if not (a4_06 is None or a4_06 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a4_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_06'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_06')] = ''
+            a5_01_8 = row[headers.index('a5_01_8')]
+            if a5_01_8 == '1': 
+                a5_04a = row[headers.index('a5_04a')]
+                if not (a5_04a is None or a5_04a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a5_04a should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_04a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a5_04a')] = ''
+                a5_04b = row[headers.index('a5_04b')]
+                if not (a5_04b is None or a5_04b == '' or a5_04b == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a5_04b should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_04b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a5_04b')] = ''
+                a5_02 = row[headers.index('a5_02')]
+                if not (a5_02 is None or a5_02 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a5_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_02'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a5_02')] = ''
+            a5_02 = row[headers.index('a5_02')]
+            if a5_02 == '1' or a5_01_8 == '1': 
+                a5_03 = row[headers.index('a5_03')]
+                if not (a5_03 is None or a5_03 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a5_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a5_03'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a5_03')] = ''
+            a6_01 = row[headers.index('a6_01')]
+            if a6_01 != '1': 
+                a6_02_1 = row[headers.index('a6_02_1')]
+                if not (a6_02_1 is None or a6_02_1 == '' or a6_02_1 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_1'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_1')] = ''
+                a6_02_2 = row[headers.index('a6_02_2')]
+                if not (a6_02_2 is None or a6_02_2 == '' or a6_02_2 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_2'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_2')] = ''
+                a6_02_3 = row[headers.index('a6_02_3')]
+                if not (a6_02_3 is None or a6_02_3 == '' or a6_02_3 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_3'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_3')] = ''
+                a6_02_4 = row[headers.index('a6_02_4')]
+                if not (a6_02_4 is None or a6_02_4 == '' or a6_02_4 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_4'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_4')] = ''
+                a6_02_5 = row[headers.index('a6_02_5')]
+                if not (a6_02_5 is None or a6_02_5 == '' or a6_02_5 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_5'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_5')] = ''
+                a6_02_6 = row[headers.index('a6_02_6')]
+                if not (a6_02_6 is None or a6_02_6 == '' or a6_02_6 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_6'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_6')] = ''
+                # not in electronic version
+                # a6_02_7 = row[headers.index('a6_02_7')]
+                #                 if not (a6_02_7 is None or a6_02_7 == ''):
+                #                     updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_7'))
+                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                #    self.warningfile.write(updatestr)
+                #                     a6_02_7')] = ''
+                a6_02_8 = row[headers.index('a6_02_8')]
+                if not (a6_02_8 is None or a6_02_8 == '' or a6_02_8 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_8'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_8')] = ''
+                a6_02_9 = row[headers.index('a6_02_9')]
+                if not (a6_02_9 is None or a6_02_9 == '' or a6_02_9 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_9 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_9'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_9')] = ''
+                a6_02_10 = row[headers.index('a6_02_10')]
+                if not (a6_02_10 is None or a6_02_10 == '' or a6_02_10 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_10'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_10')] = ''
+                a6_02_11 = row[headers.index('a6_02_11')]
+                if not (a6_02_11 is None or a6_02_11 == '' or a6_02_11 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_11'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_11')] = ''
+                a6_02_12a = row[headers.index('a6_02_12a')]
+                if not (a6_02_12a is None or a6_02_12a == '' or a6_02_12a == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_12a should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_12a')] = ''
+                # not in electronic version
+                # a6_02_12b = row[headers.index('a6_02_12b')]
+                #                 if not (a6_02_12b is None or a6_02_12b == ''):
+                #                     updatestr = "WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12b'))
+                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                #    self.warningfile.write(updatestr)
+                #                     a6_02_12b')] = ''
+                a6_02_13 = row[headers.index('a6_02_13')]
+                if not (a6_02_13 is None or a6_02_13 == '' or a6_02_13 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_13'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_13')] = ''
+                a6_02_14 = row[headers.index('a6_02_14')]
+                if not (a6_02_14 is None or a6_02_14 == '' or a6_02_14 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_14'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_14')] = ''
+                a6_02_15 = row[headers.index('a6_02_15')]
+                if not (a6_02_15 is None or a6_02_15 == '' or a6_02_15 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_02_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_15'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_02_15')] = ''
+                a6_03 = row[headers.index('a6_03')]    
+                if not (a6_03 is None or a6_03 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_03'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_03')] = ''
+            a6_04 = row[headers.index('a6_04')]
+            if a6_04 != '1': 
+                a6_05 = row[headers.index('a6_05')]
+                if not (a6_05 is None or a6_05 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_05'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_05')] = ''
+            a6_05 = row[headers.index('a6_05')]
+            if a6_05 != '1' or a6_04 != '1': 
+                a6_06_1d = row[headers.index('a6_06_1d')]
+                if not (a6_06_1d is None or a6_06_1d == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1d'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_1d')] = ''
+                a6_06_1m = row[headers.index('a6_06_1m')]
+                if not (a6_06_1m is None or a6_06_1m == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1m'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_1m')] = ''
+                a6_06_1y = row[headers.index('a6_06_1y')]
+                if not (a6_06_1y is None or a6_06_1y == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_1y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_1y'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_1y')] = ''
+                a6_06_2d = row[headers.index('a6_06_2d')]
+                if not (a6_06_2d is None or a6_06_2d == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2d'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_2d')] = ''
+                a6_06_2m = row[headers.index('a6_06_2m')]
+                if not (a6_06_2m is None or a6_06_2m == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2m'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_2m')] = ''
+                a6_06_2y = row[headers.index('a6_06_2y')]
+                if not (a6_06_2y is None or a6_06_2y == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_06_2y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_06_2y'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_06_2y')] = ''
+                a6_07d = row[headers.index('a6_07d')]
+                if not (a6_07d is None or a6_07d == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_07d should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07d'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_07d')] = ''
+                a6_07m = row[headers.index('a6_07m')]
+                if not (a6_07m is None or a6_07m == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_07m should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07m'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_07m')] = ''
+                a6_07y = row[headers.index('a6_07y')]
+                if not (a6_07y is None or a6_07y == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_07y should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_07y'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_07y')] = ''
+                a6_08 = row[headers.index('a6_08')]
+                if not (a6_08 is None or a6_08 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_08'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_08')] = ''
+            a6_09 = row[headers.index('a6_09')]
+            if a6_09 != '1': 
+                a6_10 = row[headers.index('a6_10')]
+                if not (a6_10 is None or a6_10 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_10'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_10')] = ''
+            a6_10 = row[headers.index('a6_10')]
+            if a6_10 != '1' or a6_09 != '1': 
+                a6_11 = row[headers.index('a6_11')]
+                if not (a6_11 is None or a6_11 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_11'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_11')] = ''
+                a6_12 = row[headers.index('a6_12')]
+                if not (a6_12 is None or a6_12 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_12'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_12')] = ''
+                a6_13 = row[headers.index('a6_13')]
+                if not (a6_13 is None or a6_13 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_13'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_13')] = ''
+                a6_14 = row[headers.index('a6_14')]
+                if not (a6_14 is None or a6_14 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_14'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_14')] = ''
+                a6_15 = row[headers.index('a6_15')]
+                if not (a6_15 is None or a6_15 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a6_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_15'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a6_15')] = ''
+            g5_02 = row[headers.index('g5_02')]
+            if g5_02 != '2': 
+                a3_01 = row[headers.index('a3_01')]
+                if not (a3_01 is None or a3_01 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_01 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_01'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_01')] = ''
+                a3_02 = row[headers.index('a3_02')]
+                if not (a3_02 is None or a3_02 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_02'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_02')] = ''
+                a3_03 = row[headers.index('a3_03')]
+                if not (a3_03 is None or a3_03 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_03'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_03')] = ''
+            a3_03 = row[headers.index('a3_03')]
+            if g5_02 != '2' or a3_03 != '0': 
+                a3_05 = row[headers.index('a3_05')]
+                if not (a3_05 is None or a3_05 == '' or a3_05 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_05'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_05')] = ''
+                a3_06 = row[headers.index('a3_06')]
+                if not (a3_06 is None or a3_06 == '' or a3_06 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_06'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_06')] = ''
+                a3_07 = row[headers.index('a3_07')]
+                if not (a3_07 is None or a3_07 == '' or a3_07 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_07 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_07'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_07')] = ''
+                a3_10 = row[headers.index('a3_10')]
+                if not (a3_10 is None or a3_10 == '' or a3_10 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_10'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_10')] = ''
+            a3_07 = row[headers.index('a3_07')]
+            if g5_02 != '2' or a3_03 != '0' or a3_07 != '1': 
+                a3_08a = row[headers.index('a3_08a')]
+                if not (a3_08a is None or a3_08a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_08a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_08a')] = ''
+                a3_08b = row[headers.index('a3_08b')]
+                if not (a3_08b is None or a3_08b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_08b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_08b')] = ''
+                a3_09 = row[headers.index('a3_09')]
+                if not (a3_09 is None or a3_09 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_09'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_09')] = ''
+            a3_10 = row[headers.index('a3_10')]
+            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1':
+                a3_11a = row[headers.index('a3_11a')]
+                if not (a3_11a is None or a3_11a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_11a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_11a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_11a')] = ''
+                a3_11b = row[headers.index('a3_11b')]
+                if not (a3_11b is None or a3_11b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_11b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_11b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_11b')] = ''
+                a3_12 = row[headers.index('a3_12')]
+                if not (a3_12 is None or a3_12 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_12'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_12')] = ''
+            a3_12 = row[headers.index('a3_12')]
+            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1' or a3_12 == '1':
+                a3_13 = row[headers.index('a3_13')]
+                if not (a3_13 is None or a3_13 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_13'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_13')] = ''
+                a3_14 = row[headers.index('a3_14')]
+                if not (a3_14 is None or a3_14 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_14'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_14')] = ''
+                a3_15 = row[headers.index('a3_15')]
+                if not (a3_15 is None or a3_15 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_15'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_15')] = ''
+                a3_16a = row[headers.index('a3_16a')]
+                if not (a3_16a is None or a3_16a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_16a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_16a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_16a')] = ''
+                a3_16b = row[headers.index('a3_16b')]
+                if not (a3_16b is None or a3_16b == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_16b should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_16b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_16b')] = ''
+            a3_15 = row[headers.index('a3_15')]
+            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1':
+                a3_17 = row[headers.index('a3_17')]
+                if not (a3_17 is None or a3_17 == '' or a3_17 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_17'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_17')] = ''
+            a3_17 = row[headers.index('a3_17')]
+            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1' or a3_17 == '1':
+                a3_18 = row[headers.index('a3_18')]
+                if not (a3_18 is None or a3_18 == '' or a3_18 == '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_18'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_18')] = ''
+            a3_18 = row[headers.index('a3_18')]
+            if (g5_02 != '2' or a3_03 != '0' or a3_15 == '1' or a3_18 != '1') and a3_17 != '1':
+                a3_19 = row[headers.index('a3_19')]
+                if not (a3_19 is None or a3_19 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_19 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_19'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_19')] = ''
+                a3_20 = row[headers.index('a3_20')]
+                if not (a3_20 is None or a3_20 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_20 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_20'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_20')] = ''
+                    
+            if g5_02 != '2' or a3_03 == '0':
+                a3_04 = row[headers.index('a3_04')]
+                if not (a3_04 is None or a3_04 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable a3_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_04'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a3_04')] = ''
+                    
+                    
+            #general vars
+            # not in electronic version
+            # g1_07a = row[headers.index('g1_07a')]
+            #            if g1_07a < '12' or g1_07a == '999':
+            #                g1_08 = row[headers.index('g1_08')]
+            #                if not (g1_08 is None or g1_08 == ''):
+            #                    updatestr = "WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('g1_08'))
+            #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+            #                    g1_08 = ''
+            g5_04a = row[headers.index('g5_04a')]
+            if g5_04a is not None and g5_04a != '':
+                g5_04a = int(g5_04a)
+            else:
+                g5_04a = 0
+            if g5_04a < 12 or g5_04a == 999:
+                g5_05 = row[headers.index('g5_05')]
+                if not (g5_05 is None or g5_05 == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable g5_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_05'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('g5_05')] = ''
+            if g5_04a < 5 or g5_04a == 999:
+                g5_06a = row[headers.index('g5_06a')]
+                if not (g5_06a is None or g5_06a == ''):
+                    updatestr = "WARNING: value at row %s col %s for variable g5_06a should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06a'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('g5_06a')] = ''
+                # not in electronic version    
+                # g5_06b = row[headers.index('g5_06b')]
+                #                 if not (g5_06b is None or g5_06b == ''):
+                #                     updatestr = "WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06b'))
+                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                #    self.warningfile.write(updatestr)
+                #                     g5_06b')] = ''
+
+       
+        
+        updatestr = "Filling in default values for empty columns\n"
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        # fill in missing default values:
+        for row in matrix:
+            for i, col in enumerate(row):
+                header = headers[i]
+                default = adult_defaultFill.get(header)
+                if default is not None and col == '':
+                        row[i] = adult_defaultFill[header]
+                          
+        updatestr = "Analyzing free text\n"
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
+        freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
+        
+        keyWords = adult_wordsToVars.keys()
+        
+        for question in freeText:
+            index = headers.index(question)
+            for row in matrix:
+                answer = row[index]
+                answerArray = answer.split(' ')
+                for word in answerArray:
+                    for keyword in keyWords:
+                        if word.lower().startswith(keyword):
+                            svar = adult_wordsToVars[keyword.lower()]
+                            sindex = headers.index(svar)
+                            row[sindex] = '1'
+                        
+                        
+        
             
         updatestr = "Processing duration variables\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))                
@@ -1274,7 +1454,7 @@ class PreSymptomPrep():
                 value = row[bindex]
                 v2 = row[aindex]
                 
-                if (value == '' or value == str(0)) and var == "a5_04":
+                if (value == '') and var == "a5_04":
                     # special case for injuries
                     row[index] = 999
                 else:                    

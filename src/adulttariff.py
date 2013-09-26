@@ -14,6 +14,7 @@ import platform
 from operator import itemgetter
 from freetext_vars import adult_freetext
 from hce_variables import adult_hce
+from vacauses import adultcauses
 
 import adultuniformtrain
 
@@ -575,7 +576,7 @@ class Tariff():
         
         
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-causes.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34', 'real_age', 'real_gender'])    
+        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
             realcause = 'undetermined'
@@ -593,6 +594,7 @@ class Tariff():
                 if len(multiple[vakey]) > 1:
                     updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            cause34 = adultcauses[cause34]
             rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
                     
         
@@ -668,6 +670,7 @@ class Tariff():
         
         #end
         
+        #change real_age and real_sex to just age and sex
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)

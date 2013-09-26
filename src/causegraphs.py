@@ -147,8 +147,8 @@ class CauseGraphs():
                 for row in csv_file:
                     if self.want_abort == 1:
                         return
-                    age_key = get_age_key(module_key,float(row['real_age']))
-                    gender_key = get_gender_key(int(row['real_gender']))
+                    age_key = get_age_key(module_key,float(row['age']))
+                    gender_key = get_gender_key(int(row['sex']))
                     cause_key = row['cause']
                     graph_data[cause_key][gender_key][age_key] += 1
                     # data for all causes combined

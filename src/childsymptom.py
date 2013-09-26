@@ -273,15 +273,26 @@ class ChildSymptomPrep():
             if '1' in val:
                 row[index] = 1
                 
-                
+            #s141 can me multiple, but we only care if 1 is selected
+            #not anymore... changed it per bug sheet
             index = headers.index('s141991')
             val = row[headers.index('s141')]
             if val == '':
-                val = 0
+               val = ['0']
             else:
-                val = int(val)
-            if (val == 1):
-                row[index] = 1
+               val = val.split(' ')
+            if '1' in val:
+               row[index] = 1
+           
+            #make this change once they update the data se.  actually, this change doesn't matter.
+            # index = headers.index('s141991')
+            #            val = row[headers.index('s141')]
+            #            if val == '':
+            #                val = 0
+            #            else:
+            #                val = int(val)
+            #            if (val == 1):
+            #                row[index] = 1
             
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:

@@ -14,7 +14,7 @@ import platform
 import childuniformtrain
 from hce_variables import child_hce
 from freetext_vars import child_freetext
-
+from vacauses import childcauses
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
 # data structure we use to keep track of an manipulate data
@@ -513,7 +513,7 @@ class Tariff():
         
         #TODO, what here?
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-causes.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34', 'real_age', 'real_gender'])    
+        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
             realcause = 'undetermined'
@@ -531,6 +531,7 @@ class Tariff():
                 if len(multiple[vakey]) > 1:
                     updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            cause34 = childcauses[cause34]
             rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
                     
         
@@ -605,7 +606,6 @@ class Tariff():
         
         
         #end
-        
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)
