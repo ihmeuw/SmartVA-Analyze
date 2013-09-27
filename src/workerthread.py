@@ -15,6 +15,7 @@ import neonatepresymptom
 import neonatesymptom
 import neonatetariff
 import causegraphs
+import csmfgraphs
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -76,6 +77,7 @@ class WorkerThread(Thread):
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
         self.causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        #self.csmfgraph = csmfgraphs.CSMFGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         self.start()
 
     def run(self):

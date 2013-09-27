@@ -39,7 +39,7 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(550, 650),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
+            size=(550, 730),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
             
         self.InitUI()
         self.Centre()
@@ -55,6 +55,7 @@ class vaUI(wx.Frame):
         self.statusLog = ''
         self.hce = 'hce'
         self.freetext = 'freetext'
+        self.malaria = 'malaria'
         self.country = None
         self.running = False
         self.worker = None
@@ -149,8 +150,15 @@ class vaUI(wx.Frame):
         self.freetextCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleFreetext, id=self.freetextCheckBox.GetId())
 
+        self.malariaCheckBox = wx.CheckBox(self.parentPanel, label='Data collected in area with endemic malaria')
+        self.malariaCheckBox.SetValue(False)
+        self.Bind(wx.EVT_CHECKBOX, self.toggleMalaria, id=self.malariaCheckBox.GetId())
+
+
         r4sbs1.Add(r4bs2)
         r4sbs1.AddSpacer(5)
+        r4sbs1.Add(self.malariaCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        r4sbs1.AddSpacer(3)
         r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
         r4sbs1.AddSpacer(3)
         r4sbs1.Add(self.freetextCheckBox, flag=wx.LEFT|wx.TOP, border=5)
@@ -286,6 +294,13 @@ class vaUI(wx.Frame):
         else:
             self.freetext = 'freetext'
 
+    def toggleMalaria(self, event):
+        # just a toggle
+        if self.malaria is 'malaria':
+            self.malaria = None
+        else:
+            self.malaria = 'malaria'
+
     def changeCountry(self,event):
         if (event.GetString() != COUNTRY_DEFAULT):
             match = re.search('\(([A-Z]{3})\)$',event.GetString())
@@ -301,12 +316,6 @@ class vaUI(wx.Frame):
             wx.OK | wx.ICON_ERROR)
         dialog.ShowModal()
 
-    def toggleControls(self,enabled):
-        self.chooseFileButton.Enable(enabled);
-        self.hceCheckBox.Enable(enabled);
-        self.randomForestRadioButton.Enable(enabled);
-        self.chooseFolderButton.Enable(enabled);
-  
     def onQuit(self, e):
         quitDialog = wx.MessageDialog(self, 'Are you sure you want to Quit?', 'Exit Application?', wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
