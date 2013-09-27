@@ -531,7 +531,10 @@ class Tariff():
                 if len(multiple[vakey]) > 1:
                     updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-            cause34 = childcauses[cause34]
+            if cause34 == '':
+                cause34 = 'undetermined'
+            else:
+                cause34 = childcauses[cause34]
             rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
                     
         
