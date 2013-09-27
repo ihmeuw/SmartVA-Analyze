@@ -32,13 +32,14 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, hce, freetext):
+    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.hce = hce
         self.freetext = freetext
         self.want_abort = 0
+        self.malaria = malaria
         
 
     def run(self):
@@ -559,6 +560,8 @@ class Tariff():
                 for cancer in cancers:
                     rankingsrow["cause" + str(cause)] = lowest
 
+            if self.malaria is None:
+                rankingsrow["cause29"] = lowest
             #cutoff = 89
             #abs_cutoff = .18
             

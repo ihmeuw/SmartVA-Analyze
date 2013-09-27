@@ -1861,6 +1861,9 @@ class PreSymptomPrep():
                 knownAge = False
                             
             if knownAge:
+                #if day is unknown, just default to 1
+                if row[g5_01d] == '0' or  row[g5_01d] == 0:
+                    row[g5_01d] = '1'
                 #generate how many months after Jan 1 1960 they were born - This is a specific stata function
                 #gen mofd = mofd(mdy(c1_10m, c1_10d, c1_10y))
                 
@@ -1887,8 +1890,8 @@ class PreSymptomPrep():
                 
                 month = max_age - mofd
                 
-                # only keep going if they have a positive age
-                if month >= 0:
+                # only keep going if they have a positive age within range
+                if month >= 0 and month <= 60:
                     #only neonate
                     if row[headers.index('c5_07_2b')] == '' or row[headers.index('c5_07_2b')] == None or row[headers.index('c5_07_1b')] == '' or row[headers.index('c5_07_1b')] == None:
                             month = 0
@@ -1906,15 +1909,15 @@ class PreSymptomPrep():
                     female_sd2 = {0 : 2.4, 1 : 3.2, 2 : 3.9, 3 : 4.5, 4 : 5, 5 : 5.4, 6 : 5.7, 7 : 6, 8 : 6.3, 9 : 6.5, 10 : 6.7, 11 : 6.9, 12 : 7, 13 : 7.2, 14 : 7.4, 15 : 7.6, 16 : 7.7, 17 : 7.9, 18 : 8.1, 19 : 8.2, 20 : 8.4, 21 : 8.6, 22 : 8.7, 23 : 8.9, 24 : 9, 25 : 9.2, 26 : 9.4, 27 : 9.5, 28 : 9.7, 29 : 9.8, 30 : 10, 31 : 10.1, 32 : 10.3, 33 : 10.4, 34 : 10.5, 35 : 10.7, 36 : 10.8, 37 : 10.9, 38 : 11.1, 39 : 11.2, 40 : 11.3, 41 : 11.5, 42 : 11.6, 43 : 11.7, 44 : 11.8, 45 : 12, 46 : 12.1, 47 : 12.2, 48 : 12.3, 49 : 12.4, 50 : 12.6, 51 : 12.7, 52 : 12.8, 53 : 12.9, 54 : 13, 55 : 13.2, 56 : 13.3, 57 : 13.4, 58 : 13.5, 59 : 13.6, 60 : 13.7}
             
                     sex = row[headers.index('g5_02')]
-                    if sex == 1:
-                        if weight_kg < male_sd3[max_age]:
+                    if sex == '1':
+                        if weight_kg < male_sd3[month]:
                             row[headers.index('s181')] = 1
-                        if weight_kg < male_sd2[max_age]:
+                        if weight_kg < male_sd2[month]:
                             row[headers.index('s180')] = 1
-                    elif sex == 2:
-                        if weight_kg < female_sd3[max_age]:
+                    elif sex == '2':
+                        if weight_kg < female_sd3[month]:
                             row[headers.index('s181')] = 1
-                        if weight_kg < female_sd2[max_age]:
+                        if weight_kg < female_sd2[month]:
                             row[headers.index('s180')] = 1
                         
                         

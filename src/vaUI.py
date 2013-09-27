@@ -55,7 +55,7 @@ class vaUI(wx.Frame):
         self.statusLog = ''
         self.hce = 'hce'
         self.freetext = 'freetext'
-        self.malaria = 'malaria'
+        self.malaria = None
         self.country = None
         self.running = False
         self.worker = None
@@ -271,7 +271,7 @@ class vaUI(wx.Frame):
                 self.actionButton.SetLabel('Stop')
                 self.statusGauge.Pulse()
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext)
+                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext, self.malaria)
                 self.EnableUI(False)
                 self.incrementProgressBar()
                           	

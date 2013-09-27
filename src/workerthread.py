@@ -50,7 +50,7 @@ class ProgressEvent(wx.PyEvent):
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, hce, output_dir, freetext):
+    def __init__(self, notify_window, input_file, hce, output_dir, freetext, malaria):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self._notify_window = notify_window
@@ -61,18 +61,19 @@ class WorkerThread(Thread):
         self.output_dir = output_dir
         self.freetext = freetext
         self.warningfile = open(self.output_dir + os.sep + 'warnings.txt', 'w')
+        self.malaria = malaria
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         
         #set up the function calls
         self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
-        self.prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir)
+        self.prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir, self.warningfile)
         self.adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir, self.warningfile)
         self.adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
-        self.adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext)
+        self.adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria)
         self.childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir, self.warningfile)
         self.childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
-        self.childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext)
+        self.childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria)
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir, self.warningfile)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
@@ -81,7 +82,6 @@ class WorkerThread(Thread):
         self.start()
 
     def run(self):
-
         #makes cleanheaders.csv
         self.cleanheaders.run()
         if self._want_abort == 1:

@@ -1891,9 +1891,9 @@ class PreSymptomPrep():
                 max_age = max(mofm1, mofm2)
                 
                 month = max_age - mofd
-                
-                # only keep going if they have a positive age
-                if month >= 0:
+                 
+                # only keep going if they have a positive age in the right range
+                if month >= 0 and month <= 60:
             
                     # only neonate
                     #if row[headers.index('c5_07_2b')] == '' or row[headers.index('c5_07_2b')] == None or row[headers.index('c5_07_1b')] == '' or row[headers.index('c5_07_1b')] == None:
@@ -1906,7 +1906,6 @@ class PreSymptomPrep():
                     elif max_age == mofm2:
                         weight_kg = float(row[headers.index('c5_07_2b')])/1000
             
-            
                     # input months, output 3rd standard deviation below
                     male_sd3 = {0 : 2.1, 1 : 2.9, 2 : 3.8, 3 : 4.4, 4 : 4.9, 5 : 5.3, 6 : 5.7, 7 : 5.9, 8 : 6.2, 9 : 6.4, 10 : 6.6, 11 : 6.8, 12 : 6.9, 13 : 7.1, 14 : 7.2, 15 : 7.4, 16 : 7.5, 17 : 7.7, 18 : 7.8, 19 : 8, 20 : 8.1, 21 : 8.2, 22 : 8.4, 23 : 8.5, 24 : 8.6, 25 : 8.8, 26 : 8.9, 27 : 9, 28 : 9.1, 29 : 9.2, 30 : 9.4, 31 : 9.5, 32 : 9.6, 33 : 9.7, 34 : 9.8, 35 : 9.9, 36 : 10, 37 : 10.1, 38 : 10.2, 39 : 10.3, 40 : 10.4, 41 : 10.5, 42 : 10.6, 43 : 10.7, 44 : 10.8, 45 : 10.9, 46 : 11, 47 : 11.1, 48 : 11.2, 49 : 11.3, 50 : 11.4, 51 : 11.5, 52 : 11.6, 53 : 11.7, 54 : 11.8, 55 : 11.9, 56 : 12, 57 : 12.1, 58 : 12.2, 59 : 12.3, 60 : 12.4}
       
@@ -1916,16 +1915,17 @@ class PreSymptomPrep():
 
                     female_sd2 = {0 : 2.4, 1 : 3.2, 2 : 3.9, 3 : 4.5, 4 : 5, 5 : 5.4, 6 : 5.7, 7 : 6, 8 : 6.3, 9 : 6.5, 10 : 6.7, 11 : 6.9, 12 : 7, 13 : 7.2, 14 : 7.4, 15 : 7.6, 16 : 7.7, 17 : 7.9, 18 : 8.1, 19 : 8.2, 20 : 8.4, 21 : 8.6, 22 : 8.7, 23 : 8.9, 24 : 9, 25 : 9.2, 26 : 9.4, 27 : 9.5, 28 : 9.7, 29 : 9.8, 30 : 10, 31 : 10.1, 32 : 10.3, 33 : 10.4, 34 : 10.5, 35 : 10.7, 36 : 10.8, 37 : 10.9, 38 : 11.1, 39 : 11.2, 40 : 11.3, 41 : 11.5, 42 : 11.6, 43 : 11.7, 44 : 11.8, 45 : 12, 46 : 12.1, 47 : 12.2, 48 : 12.3, 49 : 12.4, 50 : 12.6, 51 : 12.7, 52 : 12.8, 53 : 12.9, 54 : 13, 55 : 13.2, 56 : 13.3, 57 : 13.4, 58 : 13.5, 59 : 13.6, 60 : 13.7}
             
+                    
                     sex = row[headers.index('g5_02')]
-                    if sex == 1:
-                        if weight_kg < male_sd3[max_age]:
+                    if sex == '1':
+                        if weight_kg < male_sd3[month]:
                             row[headers.index('s181')] = 1
-                        if weight_kg < male_sd2[max_age]:
+                        if weight_kg < male_sd2[month]:
                             row[headers.index('s180')] = 1
-                    elif sex == 2:
-                        if weight_kg < female_sd3[max_age]:
+                    elif sex == '2':
+                        if weight_kg < female_sd3[month]:
                             row[headers.index('s181')] = 1
-                        if weight_kg < female_sd2[max_age]:
+                        if weight_kg < female_sd2[month]:
                             row[headers.index('s180')] = 1
 
             #only neonate

@@ -11,11 +11,12 @@ import workerthread
 # Thread class that executes processing
 class VaPrep():
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, output_dir):
+    def __init__(self, notify_window, input_file, output_dir, warningfile):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
+        self.warningfile = warningfile
 
     def run(self):
         # read stocks data, print status messages
@@ -488,6 +489,11 @@ class VaPrep():
                     childwriter.writerow(a)
                 elif module == '3':
                     adultwriter.writerow(a)
+                else:
+                    updatestr = "SID: %s has no values for age, defaulting to neonate\n" % a[headers.index('sid')]
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    neonatewriter.writerow(a)
             else:
                 if age >= 12:
                     adultwriter.writerow(a)

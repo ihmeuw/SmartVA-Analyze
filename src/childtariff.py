@@ -41,13 +41,14 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, hce, freetext):
+    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.hce = hce
         self.freetext = freetext
         self.want_abort = 0
+        self.malaria = malaria
         
 
     def run(self):
@@ -494,6 +495,12 @@ class Tariff():
                 if float(va.ranklist[cause]) > 0 and float(va.ranklist[cause]) > lowest:
                         lowest = float(va.ranklist[cause])
         lowest = lowest + 1
+        
+        # check malaria vaue
+        if self.malaria is None:
+            for i, row in enumerate(matrix):
+                rankingsrow = vacauselist[i].ranklist
+                rankingsrow["cause29"] = lowest
         
         # if a VA has a tariff score less than 0 for a certain cause,
         # replace the rank for that cause with the lowest possible rank
