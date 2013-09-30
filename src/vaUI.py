@@ -278,6 +278,7 @@ class vaUI(wx.Frame):
         elif (self.actionButton.GetLabel() == 'Stop'):
             self.actionButton.SetLabel('Start')
             self.statusGauge.SetValue(1)
+            self.statusGauge.SetValue(0)
             self.OnAbort()
     
     def toggleHCE(self, event):
@@ -342,6 +343,7 @@ class vaUI(wx.Frame):
             self.running = False   
             self.EnableUI(True)
             self.statusGauge.SetValue(1)
+            self.statusGauge.SetValue(0)
         elif event.data is 'Done':
             # if it's done, then the algorithm is complete
             self.statusGauge.SetValue(1)
@@ -349,6 +351,7 @@ class vaUI(wx.Frame):
             self.actionButton.SetLabel('Start')
             self.EnableUI(True)
             self.statusGauge.SetValue(1)
+            self.statusGauge.SetValue(0)
             
         else:
             # everything else is update status text
@@ -392,6 +395,7 @@ class vaUI(wx.Frame):
             threading.Timer(.01, self.incrementProgressBar).start()
         else:
             self.statusGauge.SetValue(1)
+            self.statusGauge.SetValue(0)
 
 
   

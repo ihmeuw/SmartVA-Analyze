@@ -12,6 +12,7 @@ from defaultfill import neonate_defaultFill
 from answer_ranges import neonate_rangelist
 from presymptom_conversions import neonate_conversionVars
 from word_conversions import neonate_wordsToVars
+from stemming.porter2 import stem
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -1743,6 +1744,7 @@ class PreSymptomPrep():
         
         keyWords = neonate_wordsToVars.keys()
         
+        # we've already lowercased and removed numbers at this point
         for question in freeText:
             index = headers.index(question)
             for row in matrix:
@@ -1750,8 +1752,9 @@ class PreSymptomPrep():
                 answerArray = answer.split(' ')
                 for word in answerArray:
                     for keyword in keyWords:
-                        if word.lower().startswith(keyword):
-                            svar = neonate_wordsToVars[keyword.lower()]
+                        stemmed = stem(word)
+                        if stemmed == keyword:
+                            svar = neonate_wordsToVars[keyword]
                             sindex = headers.index(svar)
                             row[sindex] = '1'
                         

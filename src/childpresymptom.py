@@ -12,6 +12,7 @@ from defaultfill import child_defaultFill
 from answer_ranges import child_rangelist
 from presymptom_conversions import child_conversionVars
 from word_conversions import child_wordsToVars
+from stemming.porter2 import stem
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -1688,9 +1689,9 @@ class PreSymptomPrep():
         
         
         
-        #TODO figure out accident...
         keyWords = child_wordsToVars.keys()
         
+       # we've already lowercased and removed numbers at this point
         for question in freeText:
             index = headers.index(question)
             for row in matrix:
@@ -1698,8 +1699,9 @@ class PreSymptomPrep():
                 answerArray = answer.split(' ')
                 for word in answerArray:
                     for keyword in keyWords:
-                        if word.lower().startswith(keyword):
-                            svar = child_wordsToVars[keyword.lower()]
+                        stemmed = stem(word)
+                        if stemmed == keyword:
+                            svar = child_wordsToVars[keyword]
                             sindex = headers.index(svar)
                             row[sindex] = '1'
                         
