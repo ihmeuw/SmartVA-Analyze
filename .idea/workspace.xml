@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/csmfgraphs.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ihme-va.iml" afterPath="$PROJECT_DIR$/.idea/ihme-va.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/vaUI.py" afterPath="$PROJECT_DIR$/src/vaUI.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/csmfgraphs.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/workerthread.py" afterPath="$PROJECT_DIR$/src/workerthread.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/causegraphs.py" afterPath="$PROJECT_DIR$/src/grapher.py" />
     </list>
     <ignored path="ihme-va.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -18,7 +17,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1380307553873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$test.coverage" NAME="test Coverage Results" MODIFIED="1380582750362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1380583058414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -31,48 +31,30 @@
     <favorites_list name="ihme-va" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="causegraphs.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="160" column="0" selection-start="5372" selection-end="5427" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2415">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/vaUI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="26" selection-start="6244" selection-end="6244" vertical-scroll-proportion="0.69721115" vertical-offset="0" max-vertical-offset="6195">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="workerthread.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/workerthread.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="64" selection-start="4063" selection-end="4063" vertical-scroll-proportion="0.0" vertical-offset="435" max-vertical-offset="2970">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="HgRememberedInputs">
+    <option name="repositoryUrls">
+      <list>
+        <option value="ssh://hg@bitbucket.org/nafundi/ihme-va" />
+      </list>
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/causegraphs.py" />
         <option value="$PROJECT_DIR$/src/csmfgraphs.py" />
-        <option value="$PROJECT_DIR$/src/workerthread.py" />
         <option value="$PROJECT_DIR$/src/vaUI.py" />
+        <option value="$PROJECT_DIR$/src/causegraphs.py" />
+        <option value="$PROJECT_DIR$/src/outputgraphs.py" />
+        <option value="$PROJECT_DIR$/src/test.py" />
+        <option value="$PROJECT_DIR$/src/workerthread.py" />
+        <option value="$PROJECT_DIR$/src/grapher.py" />
       </list>
     </option>
   </component>
@@ -89,7 +71,7 @@
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
     <ConfirmationsSetting value="2" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
+    <ConfirmationsSetting value="2" id="Remove" />
   </component>
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
@@ -107,6 +89,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -141,25 +124,22 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
     <property name="last_opened_file_path" value="/opt/local/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
+  <component name="PublishConfig" persistUploadOnCheckin="false" />
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
-      <PyConsoleSettings />
-    </option>
-    <option name="myDjangoConsoleState">
       <PyConsoleSettings />
     </option>
   </component>
@@ -175,7 +155,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -274,9 +254,6 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
-      <method />
-    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -298,6 +275,9 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -373,6 +353,11 @@
       <created>1379169349919</created>
       <updated>1379169349919</updated>
     </task>
+    <task id="LOCAL-00001" summary="First pass at CSMF graphs. Add endemic malaria option.">
+      <created>1380307625132</created>
+      <updated>1380307625132</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -384,16 +369,17 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21503131" sideWeight="0.73314863" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29489604" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21503131" sideWeight="0.73314863" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29455218" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26685134" sideWeight="0.19572026" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26685134" sideWeight="0.80427974" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26685134" sideWeight="0.80427974" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -403,20 +389,25 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="First pass at CSMF graphs. Add endemic malaria option." />
+    <option name="LAST_COMMIT_MESSAGE" value="First pass at CSMF graphs. Add endemic malaria option." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="7" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="84" selection-end="84" vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="2400">
-          <folding />
+          <folding>
+            <element signature="e#40#49#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -425,17 +416,22 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
+    <entry file="file://$PROJECT_DIR$/src/grapher.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="116" column="20" selection-start="3553" selection-end="3553" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+            <marker date="1380582996000" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="84" selection-end="84" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#40#49#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -444,10 +440,13 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
+    <entry file="file://$PROJECT_DIR$/src/grapher.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="116" column="20" selection-start="3553" selection-end="3553" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+            <marker date="1380582996000" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -456,17 +455,22 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
+    <entry file="file://$PROJECT_DIR$/src/grapher.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="122" column="0" selection-start="3799" selection-end="3799" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+            <marker date="1380582996000" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="124" column="0" selection-start="4988" selection-end="4988" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#40#49#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -475,10 +479,13 @@
         <state line="12" column="43" selection-start="242" selection-end="242" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
+    <entry file="file://$PROJECT_DIR$/src/grapher.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="104" column="0" selection-start="3373" selection-end="3373" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+            <marker date="1380582996000" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -487,33 +494,29 @@
         <state line="793" column="36" selection-start="28433" selection-end="28433" vertical-scroll-proportion="0.20194986" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/csmfgraphs.py">
+    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="61" selection-start="2589" selection-end="2589" vertical-scroll-proportion="0.0" vertical-offset="700" max-vertical-offset="1755">
+        <state line="93" column="58" selection-start="8052" selection-end="8052" vertical-scroll-proportion="0.8565737" vertical-offset="660" max-vertical-offset="6255">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/grapher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="60" selection-start="1999" selection-end="2064" vertical-scroll-proportion="0.3929504" vertical-offset="704" max-vertical-offset="3600">
           <folding>
             <element signature="e#22#32#0" expanded="true" />
+            <marker date="1380582996000" expanded="true" signature="-1:-1" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="64" selection-start="4063" selection-end="4063" vertical-scroll-proportion="0.0" vertical-offset="122" max-vertical-offset="3195">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegraphs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="160" column="0" selection-start="5372" selection-end="5427" vertical-scroll-proportion="0.0" vertical-offset="1649" max-vertical-offset="2415">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="26" selection-start="6244" selection-end="6244" vertical-scroll-proportion="0.69721115" vertical-offset="0" max-vertical-offset="6195">
-          <folding />
+        <state line="88" column="0" selection-start="4135" selection-end="4135" vertical-scroll-proportion="0.5509138" vertical-offset="898" max-vertical-offset="3180">
+          <folding>
+            <element signature="e#40#49#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

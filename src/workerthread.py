@@ -14,8 +14,7 @@ import childtariff
 import neonatepresymptom
 import neonatesymptom
 import neonatetariff
-import causegraphs
-import csmfgraphs
+import grapher
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -77,7 +76,7 @@ class WorkerThread(Thread):
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir, self.warningfile)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
-        self.causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        self.grapher = grapher.Grapher(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         #self.csmfgraph = csmfgraphs.CSMFGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         self.start()
 
@@ -149,7 +148,7 @@ class WorkerThread(Thread):
             return
 
         #generate all cause graphs
-        self.causegraph.run()
+        self.grapher.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
@@ -198,7 +197,7 @@ class WorkerThread(Thread):
         self.neonatepresym.abort()
         self.neonatesym.abort()
         self.neonateresults.abort()
-        self.causegraph.abort()
+        self.grapher.abort()
         if self.data:
             #print "trying to cancel"
             self.data.setCancelled();
