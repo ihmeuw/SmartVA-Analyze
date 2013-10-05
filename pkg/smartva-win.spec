@@ -1,32 +1,29 @@
 # -*- mode: python -*-
-a = Analysis(['c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\vaUI.py'],
-             pathex=['C:\\Documents and Settings\\Administrator\\Desktop\\pyinstaller-2.0'],
+a = Analysis(['src/vaUI.py'],
+             pathex=['Z:\\ihme-va'],
              hiddenimports=[],
-             hookspath=None)
+             hookspath=None,
+             runtime_hooks=None)
+for d in a.datas:
+  if 'pyconfig' in d[0]:
+    a.datas.remove(d)
+    break
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=1,
-          name=os.path.join('build\\pyi.win32\\vaUI', 'vaUI.exe'),
+          a.binaries,
+          a.zipfiles,
+          a.datas,
+		  [('res\\logo.png', 'Z:\\ihme-va\\src\\res\\logo.png', 'DATA')],
+		  [('res\\help.html', 'Z:\\ihme-va\\src\\res\\help.html', 'DATA')],
+		  [('tariffs-adult.csv', 'Z:\\ihme-va\\src\\tariffs-adult.csv', 'DATA')],
+		  [('tariffs-child.csv', 'Z:\\ihme-va\\src\\tariffs-child.csv', 'DATA')],
+		  [('tariffs-neonate.csv', 'Z:\\ihme-va\\src\\tariffs-neonate.csv', 'DATA')],
+		  [('validated-adult.csv', 'Z:\\ihme-va\\src\\validated-adult.csv', 'DATA')],
+		  [('validated-child.csv', 'Z:\\ihme-va\\src\\validated-child.csv', 'DATA')],
+		  [('validated-neonate.csv', 'Z:\\ihme-va\\src\\validated-neonate.csv', 'DATA')],
+          name='SmartVA.exe',
           debug=False,
           strip=None,
-          upx=True,
-          console=False )
-coll = COLLECT(exe,
-
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-			   [('res\\logo.png', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\res\\logo.png', 'DATA')],
-               [('res\\help.html', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\res\\help.html', 'DATA')],
-			   [('tariffs-adult.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\tariffs-adult.csv', 'DATA')],
-			   [('tariffs-child.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\tariffs-child.csv', 'DATA')],
-			   [('tariffs-neonate.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\tariffs-neonate.csv', 'DATA')],
-			   [('validated-adult.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\validated-adult.csv', 'DATA')],
-			   [('validated-child.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\validated-child.csv', 'DATA')],
-			   [('validated-neonate.csv', 'c:\\Documents and Settings\\Administrator\\Desktop\\ihme-va\\src\\validated-neonate.csv', 'DATA')],
-               strip=None,
-               upx=True,
-               name=os.path.join('dist', 'vaUI'))
-app = BUNDLE(coll,
-             name=os.path.join('dist', 'vaUI.app'))
+          upx=False,
+          console=False,icon='pkg\\icon.ico')

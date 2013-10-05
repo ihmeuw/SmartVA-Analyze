@@ -43,6 +43,11 @@
                     <destination>${installdir}</destination>
                     <name>programfileswindows</name>
                     <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>../dist/SmartVA.exe</origin>
+                        </distributionFile>
+                    </distributionFileList>
                 </folder>
                 <folder>
                     <description>Program Files</description>
@@ -51,7 +56,7 @@
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>../dist/Smart VA.app</origin>
+                            <origin>../dist/SmartVA.app</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
