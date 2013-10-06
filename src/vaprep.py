@@ -209,8 +209,7 @@ class VaPrep():
             adultrash2index = headers.index("adultrash2")
             adultrash3index = headers.index("adultrash3")
 
-            # this is a little weird.
-            # basically if 1, 2, and 3 are selected, then change the value to 4 (all)
+            # if 1, 2, and 3 are selected, then change the value to 4 (all)
             if str(1) in val and str(2) in val and str(3) in val:
                 # first see if anything else is selected
                 row[index] = 4
@@ -424,27 +423,6 @@ class VaPrep():
                 row[index57f] = float(row[index57g]) * 1000
                 row[index] = 1
 
-        # end loop
-        
-        # keepColumns = ['sid', 'gen_2_1', 'gen_2_2a', 'gen_3_1', 'gen_4_2', 'gen_4_3', 'gen_4_4', 'gen_4_5', 'gen_4_6', 'gen_4_7', 'gen_4_8', 'gen_5_1c', 'gen_5_1b', 'gen_5_1a', 'gen_5_2', 'gen_5_3c', 'gen_5_3b', 'gen_5_3a', 'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_5', 'gen_5_6', 'gen_5_7', 'gen_5_8', 'adult_1_1a', 'adult_1_1b', 'adult_1_1c', 'adult_1_1d', 'adult_1_1e', 'adult_1_1f', 'adult_1_1g', 'adult_1_1h', 'adult_1_1i', 'adult_1_1j', 'adult_1_1k', 'adult_1_1l', 'adult_1_1m', 'adult_1_1n', 'adult_2_1', 'adult_2_2', 'adult_2_3', 'adult_2_3a', 'adult_2_4', 'adult_2_5', 'adult_2_6', 'adult_2_7', 'adult_2_8', 'adult_2_8a', 'adultrash1', 'adult_2_9a', 'adultrash2', 'adultrash3', 'adult_2_10', 'adult_2_11', 'adult_2_12', 'adult_2_13', 'adult_2_14', 'adult_2_15', 'adult_2_15a', 'adult_2_16', 'adult_2_17', 'adult_2_18', 'adult_2_19', 'adult_2_20', 'adult_2_21', 'adult_2_22', 'adult_2_23', 'adult_2_24', 'adult_2_25', 'adult_2_26', 'adult_2_27', 'adult_2_28', 'adult_2_29', 'adult_2_30', 'adult_2_31', 'adult_2_32', 'adult_2_33', 'adult_2_34', 'adult_2_35', 'adult_2_36', 'adult_2_37', 'adult_2_38', 'adult_2_39', 'adult_2_40', 'adult_2_41', 'adult_2_42', 'adult_2_43', 'adult_2_44', 'adult_2_45', 'adult_2_46', 'adult_2_46a', 'adult_2_47', 'adult_2_48', 'adult_2_48a', 'adult_2_49', 'adult_2_50', 'adult_2_51', 'adult_2_52', 'adult_2_53', 'adult_2_54', 'adult_2_55', 'adult_2_56', 'adult_2_57', 'adult_2_58', 'adult_2_59', 'adult_2_60', 'adult_2_61', 'adult_2_62', 'adult_2_63', 'adult_2_64', 'adult_2_65', 'adult_2_66', 'adult_2_67', 'adult_2_68', 'adult_2_69', 'adult_2_70', 'adult_2_71', 'adult_2_72', 'adult_2_73', 'adult_2_74', 'adult_2_75', 'adult_2_76', 'adult_2_77', 'adult_2_78', 'adult_2_79', 'adult_2_80', 'adult_2_81', 'adult_2_82', 'adult_2_83', 'adult_2_84', 'adult_2_85', 'adult_2_86', 'adultparalysis1', 'adultparalysis2', 'adultparalysis3', 'adultparalysis4', 'adultparalysis5', 'adultparalysis6', 'adultparalysis7', 'adultparalysis8', 'adultparalysis9', 'adultparalysis10', 'adult_2_87a', 'adult_3_1', 'adult_3_2', 'adult_3_3', 'adult_3_4', 'adult_3_5', 'adult_3_6', 'adult_3_7', 'adult_3_8', 'adult_3_8a', 'adult_3_9', 'adult_3_10', 'adult_3_11', 'adult_3_11a', 'adult_3_12', 'adult_3_13', 'adult_3_14', 'adult_3_15', 'adult_3_16', 'adult_3_16a', 'adult_3_17', 'adult_3_18', 'adult_3_19', 'adult_3_20', 'adult_4_1', 'adult_4_2', 'adult_4_2a', 'adult_4_3a', 'adult_4_4a', 'adult_4_5', 'adult_4_6', 'adultinjury1', 'adultinjury2', 'adultinjury3', 'adultinjury4', 'adultinjury5', 'adultinjury6', 'adultinjury7', 'adultinjury8', 'adult_5_2a', 'adult_5_3', 'adult_5_4', 'adult_5_5', 'adult_6_1', 'adult_6_3', 'adult_6_4', 'adult_6_5', 'adult_6_6d', 'adult_6_6c', 'adult_6_6b', 'adult_6_6h', 'adult_6_6g', 'adult_6_6f', 'adult_6_7c', 'adult_6_7b', 'adult_6_7a', 'adult_6_8', 'adult_6_9', 'adult_6_10', 'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15', 'a7_01', 'a7_02', 'a7_03', 'child_1_1', 'child_1_2', 'child_1_3', 'child_1_4', 'child_1_5', 'child_1_6', 'child_1_6a', 'child_1_7', 'child_1_8', 'child_1_8a', 'child_1_11', 'child_1_12', 'child_1_13', 'child_1_14', 'child_1_15', 'child_1_16', 'child_1_17', 'child_1_18', 'childabnorm1', 'childabnorm2', 'childabnorm3', 'childabnorm4', 'child119a', 'childabnorm5', 'child_1_20', 'child_1_21', 'child_1_22', 'child_1_22a', 'child_1_23', 'complications1', 'complications2', 'complications3', 'complications4', 'complications5', 'complications6', 'complications7', 'complications8', 'complications9', 'complications10', 'complications11', 'complications12', 'child_2_2', 'child_2_2a', 'child_2_3', 'child_2_4', 'child_2_5', 'child_2_6', 'child_2_7', 'child_2_8', 'child_2_8a', 'child_2_9', 'child_2_10', 'child_2_10a', 'child_2_11', 'child_2_12', 'child_2_15', 'child_2_15a', 'child_2_17', 'child_2_18', 'child_3_1', 'child_3_2', 'childabnorm31', 'childabnorm32', 'childabnorm33', 'childabnorm34', 'child_3_3a', 'childabnorm35', 'child_3_4', 'child_3_5', 'child_3_6', 'child_3_7', 'child_3_8', 'child_3_9', 'child_3_10', 'child_3_11', 'child_3_12', 'child_3_13', 'child_3_14', 'child_3_14a', 'child_3_15', 'child_3_16', 'child_3_17', 'child_3_18', 'child_3_18a', 'child_3_19', 'child_3_19a', 'child_3_20', 'child_3_21', 'child_3_21a', 'child_3_22', 'child_3_22a', 'child_3_23', 'child_3_24', 'child_3_25', 'child_3_26', 'child_3_27', 'child_3_27a', 'child_3_28', 'child_3_28a', 'child_3_29', 'child_3_30', 'child_3_30a', 'child_3_31', 'child_3_31a', 'child_3_32', 'child_3_33', 'child_3_34', 'child_3_35', 'child_3_36', 'child_3_37', 'child_3_38', 'child_3_39', 'child_3_40', 'child_3_41', 'child_3_42', 'child_3_43', 'child_3_44', 'child_3_45', 'child_3_45a', 'child_3_46', 'child_3_47', 'child_3_48', 'child_3_49', 'child_4_1', 'child_4_2', 'child_4_2a', 'child_4_3', 'child_4_4', 'child_4_5', 'child_4_6', 'child_4_7', 'child_4_7a', 'child_4_8', 'child_4_8a', 'child_4_9', 'child_4_10', 'child_4_10a', 'child_4_11', 'child_4_12', 'child_4_13', 'child_4_13a', 'child_4_14', 'child_4_15', 'child_4_16', 'child_4_17', 'child_4_17a', 'child_4_18', 'child_4_19', 'child_4_19a', 'child_4_20', 'child_4_22', 'child_4_23', 'child_4_24', 'child_4_25', 'child_4_26', 'child_4_27', 'child_4_28', 'child_4_29', 'child_4_30', 'child_4_31', 'child_4_32', 'child_4_33', 'child_4_33a', 'child_4_34', 'child_4_35', 'child_4_36', 'child_4_37', 'child_4_38', 'child_4_39', 'child_4_40', 'child_4_41', 'child_4_42', 'child_4_43', 'child_4_44', 'child_4_45', 'child_4_46', 'childinjury1', 'childinjury2', 'childinjury3', 'childinjury4', 'childinjury5', 'childinjury6', 'childinjury7', 'childinjury8', 'child_4_48a', 'childinjury10', 'childinjury9', 'child_4_49', 'child_4_50', 'child_5_1', 'provider1', 'provider2', 'provider3', 'provider4', 'provider5', 'provider6', 'provider7', 'provider8', 'provider9', 'provider10', 'provider11', 'provider12', 'provider13', 'provider14', 'child_5_3', 'child_5_4', 'child_5_5', 'child_5_6d', 'child_5_6c', 'child_5_6b', 'child_5_7d', 'child_5_7c', 'child_5_7b', 'child_5_6e', 'child_5_6f', 'child_5_7e', 'child_5_7f', 'child_5_8c', 'child_5_8b', 'child_5_8a', 'child_5_9', 'child_5_10', 'child_5_11', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'child_5_17', 'child_5_18', 'child_5_19', 'c6_01', 'c6_02', 'c6_03', 'adult_4_2', 'adult_5_1', 'adult_6_2', 'child_4_47']
-        # 
-        #       
-        #  # make a list of columns to drop because we don't need them for processing
-        #  droplist = list()
-        #          
-        #  for word in headers:
-        #      if word not in keepColumns:
-        #          index = headers.index(word)
-        #          droplist.append(index)
-        #  
-        #  #reverse the list so as to not screw up indexes as we drop things
-        #  droplist.sort(reverse=True)
-        #  for dropindex in droplist:
-        #      # remove the header
-        #      del headers[dropindex]
-        #      # then remove the corresponding value in all of our rows
-        #      for row in matrix:
-        #          del row[dropindex]
         
         updatestr = "Text substitution\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -462,20 +440,20 @@ class VaPrep():
                 lower = answer.lower()
                 #remove numbers and punctuation
                 nonum = self.stripNumbers(lower)
-                #split on space
-                answerarray = nonum.split(' ')
-                # check to see if any of the keys exist in the freetext
+ 
+                newanswer = nonum
+                # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
                 for key in wordSubs.keys():
-                    for i, word in enumerate(answerarray):
-                        # remove leading and trailing whitespace
-                        stripped = word.strip()
-                        if key == stripped:
-                            # if it exists, replace it with the word(s) from the dictionary
-                            answerarray[i] = wordSubs[key]
-                        else:
-                            # otherwise replace the word without the whitespace
-                            answerarray[i] = stripped
-                row[index] = ' '.join(answerarray)
+                    if key in newanswer:
+                        # if it exists, replace it with the word(s) from the dictionary
+                        newanswer = string.replace(newanswer, key, wordSubs[key])
+                
+                #now make sure we get rid of all extra whitespace
+                newanswerarray = newanswer.split(' ')
+                for i, word in enumerate(newanswerarray):
+                    newanswerarray[i] = word.strip()
+                row[index] = ' '.join(newanswerarray)
+                    
         # going forward, now all of the answers are lowercase, without numbers or punctuation, and whitespace has been eliminated, so it's just a 
         # list of words separated by spaces
         

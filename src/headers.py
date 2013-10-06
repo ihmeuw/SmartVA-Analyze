@@ -16,7 +16,6 @@ class Headers():
         self.want_abort = 0
 
     def run(self):
-        # read stocks data, print status messages
         reader = csv.reader(open( self.inputFilePath, 'Ub'))
         writer = csv.writer(open(self.output_dir + os.sep + 'cleanheaders.csv', 'wb', buffering=0))
         
@@ -40,18 +39,10 @@ class Headers():
                 writer.writerow(newrow)
             else:
                 writer.writerow(row)
-#            print '%s is %s (%s%%)' % (name, status, pct)
 
-        # write stocks data as comma-separated values
-        # writer.writerows([
-        # ('GOOG', 'Google, Inc.', 505.24, 0.47, 0.09),
-        # ('YHOO', 'Yahoo! Inc.', 27.38, 0.33, 1.22),
-        # ('CNET', 'CNET Networks, Inc.', 8.62, -0.13, -1.49)
-        # ])
 
         return 1
-    	#print "done" 
-    	#status.set('Done. Results are written to results.csv')
+
     	
     def abort(self):
         self.want_abort = 1

@@ -51,10 +51,7 @@ class NeonateSymptomPrep():
             else:
                 matrix.append(row)
                 
-        #Do age thing here first...
-        
-        
-        #drop unused variables
+        #Add svars for text
         keys = neonate_conversionVars.keys()
         keys.extend(['s99991', 's999910', 's999911', 's999912', 's999913', 's999914', 's999915', 's999916', 's999917', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's99994', 's99995', 's99996', 's99997', 's99998', 's99999'])
         headers_copy = copy.deepcopy(headers)
@@ -87,13 +84,6 @@ class NeonateSymptomPrep():
             else:
                 row[index] = .01
         
-            # this gets changed?
-            # sex = row[headers.index('g5_02')]
-            #             if sex == '' or sex == str(9):
-            #                 sex = 1
-            #             row[headers.index('sex')] = sex
-            
-
             # recode sex variable
             sex = row[headers.index('sex')]
             if sex == str(9) or sex == str(1):
@@ -146,10 +136,7 @@ class NeonateSymptomPrep():
                 row[s4993index] = 1
             elif float(row[index]) > 2:
                 row[s4994index] = 1
-            #and not blank and not== 999?
-    
-        
-            
+                    
             #make new variables to store the real age and gender, but do it after we've modified the sex vars from 2, 1 to 1, 0
             ageindex = headers.index('real_age')
             genderindex = headers.index('real_gender')
@@ -169,7 +156,6 @@ class NeonateSymptomPrep():
                 else:
                     row[index] = 0
                     
-                #rename s4 age?
             #dichotimize!
             index = headers.index('s5_1')
             val = row[headers.index('s5')]
@@ -276,7 +262,7 @@ class NeonateSymptomPrep():
                 val = 0
             else:
                 val = int(val)
-            if (val == 2):
+            if val == 2:
                 row[index] = 1
                 
             index = headers.index('s51991')
@@ -396,8 +382,8 @@ class NeonateSymptomPrep():
             
                 
             
-        #not in electronic s56
-        #drop s15 because it's not there
+        # not in electronic s56
+        # drop s15 because it's not there
         # drop 'age' because it was just used for a calculation, and will be replaced with a new 'age'
         droplist = ['s2', 's3', 's5', 's6', 's8', 's11', 's13', 's16', 's30', 's46', 's49', 's50', 's51', 's55', 's57', 's58', 's69', 's71', 's76', 's105', 'age']
         for d in droplist:
@@ -416,11 +402,7 @@ class NeonateSymptomPrep():
         for row in matrix:
             adultwriter.writerow(row)
         
-                
-        #s180, s181, s31, s32
-        #no s4 for them.. age?..yup
-        #i have 2 sex variables..?        
-                    
+            
         return 1
     
     def abort(self):

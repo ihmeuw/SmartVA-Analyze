@@ -14,7 +14,8 @@ import childtariff
 import neonatepresymptom
 import neonatesymptom
 import neonatetariff
-import grapher
+import causegraphs
+import csmfgraphs
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -49,7 +50,7 @@ class ProgressEvent(wx.PyEvent):
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, hce, output_dir, freetext, malaria):
+    def __init__(self, notify_window, input_file, hce, output_dir, freetext, malaria, country):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self._notify_window = notify_window
@@ -61,6 +62,7 @@ class WorkerThread(Thread):
         self.freetext = freetext
         self.warningfile = open(self.output_dir + os.sep + 'warnings.txt', 'w')
         self.malaria = malaria
+        self.country = country
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         
@@ -69,14 +71,14 @@ class WorkerThread(Thread):
         self.prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir, self.warningfile)
         self.adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-prepped.csv", self.output_dir, self.warningfile)
         self.adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, self.output_dir + os.sep + "adult-presymptom.csv", self.output_dir)
-        self.adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria)
+        self.adultresults = adulttariff.Tariff(self._notify_window, self.output_dir + os.sep + "adult-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria, self.country)
         self.childpresym = childpresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-prepped.csv", self.output_dir, self.warningfile)
         self.childsym = childsymptom.ChildSymptomPrep(self._notify_window, self.output_dir + os.sep + "child-presymptom.csv", self.output_dir)
-        self.childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria)
+        self.childresults = childtariff.Tariff(self._notify_window, self.output_dir + os.sep + "child-symptom.csv", self.output_dir, self.hce, self.freetext, self.malaria, self.country)
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir, self.warningfile)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
-        self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext)
-        self.grapher = grapher.Grapher(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext, self.country)
+        self.causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         #self.csmfgraph = csmfgraphs.CSMFGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
         self.start()
 
@@ -148,35 +150,10 @@ class WorkerThread(Thread):
             return
 
         #generate all cause graphs
-        self.grapher.run()
+        self.causegraph.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-
-        # filename = ''
-        #         validated = False
-        #         if self.module is "Adult":
-        #             filename = "Adult_available_symptoms.csv"
-        #         elif self.module is "Child":
-        #             filename = "Child_available_symptoms.csv"
-        #         elif self.module is "Neonate":
-        #             filename = "Neonate_available_symptoms.csv"
-
-
-        
-        # self.data = pyvaPackage.Data(notify_window=self._notify_window, module=self.module, input_filename=self.inputFilePath, available_filename=filename, HCE=self.hce)
-        #         if (self._want_abort):
-        #             wx.PostEvent(self._notify_window, ResultEvent(None))
-        #             return
-        #         score_matrix = self.data.calc_rf_scores(notify_window=self._notify_window)
-        #         if (self._want_abort):
-        #             wx.PostEventent(self._notify_window, ResultEvent(None))
-        #             return
-        #         prediction = self.data.rank_against_train_prediction(score_matrix)
-        #         if (self._want_abort):
-        #             wx.PostEvent(self._notify_window, ResultEvent(None))
-        #             return
-        #         self.data.save_scores(self.output_dir + '/results %s.csv'%strftime("%Y-%m-%d %H-%M-%S", gmtime()), prediction, score_matrix)
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
     	#status.set('Done. Results are written to results.csv')
@@ -197,7 +174,7 @@ class WorkerThread(Thread):
         self.neonatepresym.abort()
         self.neonatesym.abort()
         self.neonateresults.abort()
-        self.grapher.abort()
+        self.causegraph.abort()
         if self.data:
             #print "trying to cancel"
             self.data.setCancelled();

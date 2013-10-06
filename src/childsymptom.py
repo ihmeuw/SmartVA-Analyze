@@ -48,10 +48,7 @@ class ChildSymptomPrep():
             else:
                 matrix.append(row)
                 
-        #Do age thing here first...
-        
-        
-        #drop unused variables
+        #Add svars for text
         keys = child_conversionVars.keys()
         keys.extend(['s99991', 's999910', 's999911', 's999912', 's999913', 's999914', 's999915', 's999916', 's999917', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's999938', 's999939', 's99994', 's999940', 's999941', 's999942', 's999943', 's999944', 's999945', 's999946', 's999947', 's999948', 's99995', 's99996', 's99997', 's99998', 's99999'])
         headers_copy = copy.deepcopy(headers)
@@ -146,9 +143,6 @@ class ChildSymptomPrep():
                 else:
                     row[index] = 0
             
-    
-        
-        
             # The "varlist" variables in the loop below are all indicators for different questions about injuries (road traffic, fall, fires)
 	        # We only want to give a VA a "1"/yes response for that question if the injury occured within 10 days of death (i.e. s166<=10)
 	        # Otherwise, we could have people who responded that they were in a car accident 20 years prior to death be assigned to road traffic deaths
@@ -273,27 +267,17 @@ class ChildSymptomPrep():
             if '1' in val:
                 row[index] = 1
                 
-            #s141 can me multiple, but we only care if 1 is selected
-            #not anymore... changed it per bug sheet
+            #s141 can me multiple, but we only care if 1 (and only 1) is selected
             index = headers.index('s141991')
             val = row[headers.index('s141')]
             if val == '':
                val = ['0']
             else:
                val = val.split(' ')
-            if '1' in val:
+            if '1' in val and len(val) == 1:
                row[index] = 1
            
-            #make this change once they update the data se.  actually, this change doesn't matter.
-            # index = headers.index('s141991')
-            #            val = row[headers.index('s141')]
-            #            if val == '':
-            #                val = 0
-            #            else:
-            #                val = int(val)
-            #            if (val == 1):
-            #                row[index] = 1
-            
+         
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:
                 val = row[headers.index(bin)]

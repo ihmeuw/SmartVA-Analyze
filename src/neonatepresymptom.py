@@ -186,7 +186,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c1_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_02'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_02')] = ''
+                    row[headers.index('c1_02')] = str(neonate_defaultFill.get('c1_02'))
             c1_03 = row[headers.index('c1_03')]
             if c1_03 == '1':
                 c1_04 = row[headers.index('c1_04')]
@@ -194,7 +194,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c1_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_04'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_04')] = ''
+                    row[headers.index('c1_04')] = str(neonate_defaultFill.get('c1_04'))
             c1_04 = row[headers.index('c1_04')]
             if c1_04 == '1' or c1_03 == '1':
                 c1_05a = row[headers.index('c1_05a')]
@@ -202,13 +202,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c1_05a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_05a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_05a')] = ''
+                    row[headers.index('c1_05a')] = str(neonate_defaultFill.get('c1_05a'))
                 c1_05b = row[headers.index('c1_05b')]
                 if not (c1_05b is None or c1_05b == '' or c1_05b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_05b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_05b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_05b')] = ''
+                    row[headers.index('c1_05b')] = str(neonate_defaultFill.get('c1_05b'))
             c1_15 = row[headers.index('c1_15')]
             if c1_15 == '0':
                 c1_16 = row[headers.index('c1_16')]
@@ -216,19 +216,19 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c1_16 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_16'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_16')] = ''
+                    row[headers.index('c1_16')] = str(neonate_defaultFill.get('c1_16'))
                 c1_17 = row[headers.index('c1_17')]
                 if not (c1_17 is None or c1_17 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_17'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_17')] = ''
+                    row[headers.index('c1_17')] = str(neonate_defaultFill.get('c1_17'))
                 c1_18 = row[headers.index('c1_18')]
                 if not (c1_18 is None or c1_18 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_18'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_18')] = ''
+                    row[headers.index('c1_18')] = str(neonate_defaultFill.get('c1_18'))
             c1_18 = row[headers.index('c1_18')]
             if c1_15 == '0' or c1_18 != '1':
                 c1_19_1 = row[headers.index('c1_19_1')]
@@ -236,130 +236,130 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_1')] = ''
+                    row[headers.index('c1_19_1')] = str(neonate_defaultFill.get('c1_19_1'))
                 c1_19_2 = row[headers.index('c1_19_2')]
                 if not (c1_19_2 is None or c1_19_2 == '' or c1_19_2 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_2'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_2')] = ''
+                    row[headers.index('c1_19_2')] = str(neonate_defaultFill.get('c1_19_2'))
                 c1_19_3 = row[headers.index('c1_19_3')]
                 if not (c1_19_3 is None or c1_19_3 == '' or c1_19_3 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_3'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_3')] = ''
+                    row[headers.index('c1_19_3')] = str(neonate_defaultFill.get('c1_19_3'))
                 c1_19_4a = row[headers.index('c1_19_4a')]
                 if not (c1_19_4a is None or c1_19_4a == '' or c1_19_4a == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_4a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_4a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_4a')] = ''
+                    row[headers.index('c1_19_4a')] = str(neonate_defaultFill.get('c1_19_4a'))
                 c1_19_4b = row[headers.index('c1_19_4b')]
                 if not (c1_19_4b is None or c1_19_4b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_4b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_4b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_4b')] = ''
+                    row[headers.index('c1_19_4b')] = str(neonate_defaultFill.get('c1_19_4b'))
                 c1_19_5 = row[headers.index('c1_19_5')]
                 if not (c1_19_5 is None or c1_19_5 == '' or c1_19_5 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_19_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_5'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_19_5')] = ''
+                    row[headers.index('c1_19_5')] = str(neonate_defaultFill.get('c1_19_5'))
                 # not in electronic version
                 # c1_19_6 = row[headers.index('c1_19_6')]
                 #                 if not (c1_19_6 is None or c1_19_6 == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c1_19_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_19_6'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c1_19_6')] = ''
+                #                     c1_19_6')] = str(neonate_defaultFill.get(''))
             if c1_15 == '1':
                 c1_20a = row[headers.index('c1_20a')]
                 if not (c1_20a is None or c1_20a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_20a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_20a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_20a')] = ''
+                    row[headers.index('c1_20a')] = str(neonate_defaultFill.get('c1_20a'))
                 c1_20b = row[headers.index('c1_20b')]
                 if not (c1_20b is None or c1_20b == '' or c1_20b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_20b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_20b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_20b')] = ''
+                    row[headers.index('c1_20b')] = str(neonate_defaultFill.get('c1_20b'))
                 c1_21a = row[headers.index('c1_21a')]
                 if not (c1_21a is None or c1_21a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_21a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_21a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_21a')] = ''
+                    row[headers.index('c1_21a')] = str(neonate_defaultFill.get('c1_21a'))
                 c1_21b = row[headers.index('c1_21b')]
                 if not (c1_21b is None or c1_21b == '' or c1_21b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_21b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_21b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_21b')] = ''
+                    row[headers.index('c1_21b')] = str(neonate_defaultFill.get('c1_21b'))
                 c1_22a = row[headers.index('c1_22a')]
                 if not (c1_22a is None or c1_22a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_22a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_22a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_22a')] = ''
+                    row[headers.index('c1_22a')] = str(neonate_defaultFill.get('c1_22a'))
                 c1_22b = row[headers.index('c1_22b')]
                 if not (c1_22b is None or c1_22b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_22b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_22b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_22b')] = ''
+                    row[headers.index('c1_22b')] = str(neonate_defaultFill.get('c1_22b'))
                 c1_23 = row[headers.index('c1_23')]
                 if not (c1_23 is None or c1_23 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_23 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_23'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_23')] = ''
+                    row[headers.index('c1_23')] = str(neonate_defaultFill.get('c1_23'))
                 # not in electronic version
                 # c1_24 = row[headers.index('c1_24')]
                 #                 if not (c1_24 is None or c1_24 == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c1_24 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_24'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c1_24')] = ''
+                #                     c1_24')] = str(neonate_defaultFill.get(''))
                 #                 c1_24d = row[headers.index('c1_24d')]
                 #                 if not (c1_24d is None or c1_24d == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c1_24d should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_24d'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c1_24d')] = ''
+                #                     c1_24d')] = str(neonate_defaultFill.get(''))
                 #                 c1_24m = row[headers.index('c1_24m')]
                 #                 if not (c1_24m is None or c1_24m == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c1_24m should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_24m'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c1_24m')] = ''
+                #                     c1_24m')] = str(neonate_defaultFill.get(''))
                 #                 c1_24y = row[headers.index('c1_24y')]
                 #                 if not (c1_24y is None or c1_24y == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c1_24y should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_24y'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c1_24y')] = ''
+                #                     c1_24y')] = str(neonate_defaultFill.get(''))
                 c1_25a = row[headers.index('c1_25a')]
                 if not (c1_25a is None or c1_25a == '' or c1_25a == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_25a should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_25a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_25a')] = ''
+                    row[headers.index('c1_25a')] = str(neonate_defaultFill.get('c1_25a'))
                 c1_25b = row[headers.index('c1_25b')]
                 if not (c1_25b is None or c1_25b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c1_25b should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_25b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_25b')] = ''
+                    row[headers.index('c1_25b')] = str(neonate_defaultFill.get('c1_25b'))
                 c1_26 = row[headers.index('c1_26')]
                 if not (c1_26 is None or c1_26 == '' or c1_26 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c1_26 should be blank, setting to default and continuing\n" % (i+2, headers.index('c1_26'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c1_26')] = ''
+                    row[headers.index('c1_26')] = str(neonate_defaultFill.get('c1_26'))
             c1_26 = row[headers.index('c1_26')]
             if c1_15 == '1' or c1_26 == '1':
                 c4_01 = row[headers.index('c4_01')]
@@ -367,193 +367,193 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_01 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_01'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_01')] = ''
+                    row[headers.index('c4_01')] = str(neonate_defaultFill.get('c4_01'))
                 c4_06 = row[headers.index('c4_06')]
                 if not (c4_06 is None or c4_06 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_06'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_06')] = ''
+                    row[headers.index('c4_06')] = str(neonate_defaultFill.get('c4_06'))
                 c4_12 = row[headers.index('c4_12')]
                 if not (c4_12 is None or c4_12 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_12')] = ''
+                    row[headers.index('c4_12')] = str(neonate_defaultFill.get('c4_12'))
                 c4_16 = row[headers.index('c4_16')]
                 if not (c4_16 is None or c4_16 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_16 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_16'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_16')] = ''
+                    row[headers.index('c4_16')] = str(neonate_defaultFill.get('c4_16'))
                 c4_18 = row[headers.index('c4_18')]
                 if not (c4_18 is None or c4_18 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_18'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_18')] = ''
+                    row[headers.index('c4_18')] = str(neonate_defaultFill.get('c4_18'))
                 c4_25 = row[headers.index('c4_25')]
                 if not (c4_25 is None or c4_25 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_25 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_25'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_25')] = ''
+                    row[headers.index('c4_25')] = str(neonate_defaultFill.get('c4_25'))
                 c4_26 = row[headers.index('c4_26')]
                 if not (c4_26 is None or c4_26 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_26 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_26'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_26')] = ''
+                    row[headers.index('c4_26')] = str(neonate_defaultFill.get('c4_26'))
                 c4_28 = row[headers.index('c4_28')]
                 if not (c4_28 is None or c4_28 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_28 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_28'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_28')] = ''
+                    row[headers.index('c4_28')] = str(neonate_defaultFill.get('c4_28'))
                 c4_29 = row[headers.index('c4_29')]
                 if not (c4_29 is None or c4_29 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_29 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_29'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_29')] = ''
+                    row[headers.index('c4_29')] = str(neonate_defaultFill.get('c4_29'))
                 c4_30 = row[headers.index('c4_30')]
                 if not (c4_30 is None or c4_30 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_30 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_30'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_30')] = ''
+                    row[headers.index('c4_30')] = str(neonate_defaultFill.get('c4_30'))
                 c4_35 = row[headers.index('c4_35')]
                 if not (c4_35 is None or c4_35 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_35 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_35'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_35')] = ''
+                    row[headers.index('c4_35')] = str(neonate_defaultFill.get('c4_35'))
                 c4_36 = row[headers.index('c4_36')]
                 if not (c4_36 is None or c4_36 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_36 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_36'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_36')] = ''
+                    row[headers.index('c4_36')] = str(neonate_defaultFill.get('c4_36'))
                 c4_38 = row[headers.index('c4_38')]
                 if not (c4_38 is None or c4_38 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_38 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_38'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_38')] = ''
+                    row[headers.index('c4_38')] = str(neonate_defaultFill.get('c4_38'))
                 c4_39 = row[headers.index('c4_39')]
                 if not (c4_39 is None or c4_39 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_39 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_39'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_39')] = ''
+                    row[headers.index('c4_39')] = str(neonate_defaultFill.get('c4_39'))
                 c4_40 = row[headers.index('c4_40')]
                 if not (c4_40 is None or c4_40 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_40 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_40'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_40')] = ''
+                    row[headers.index('c4_40')] = str(neonate_defaultFill.get('c4_40'))
                 c4_41 = row[headers.index('c4_41')]
                 if not (c4_41 is None or c4_41 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_41 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_41'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_41')] = ''
+                    row[headers.index('c4_41')] = str(neonate_defaultFill.get('c4_41'))
                 c4_42 = row[headers.index('c4_42')]
                 if not (c4_42 is None or c4_42 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_42 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_42'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_42')] = ''
+                    row[headers.index('c4_42')] = str(neonate_defaultFill.get('c4_42'))
                 c4_43 = row[headers.index('c4_43')]
                 if not (c4_43 is None or c4_43 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_43 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_43'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_43')] = ''
+                    row[headers.index('c4_43')] = str(neonate_defaultFill.get('c4_43'))
                 c4_44 = row[headers.index('c4_44')]
                 if not (c4_44 is None or c4_44 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_44 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_44'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_44')] = ''
+                    row[headers.index('c4_44')] = str(neonate_defaultFill.get('c4_44'))
                 c4_46 = row[headers.index('c4_46')]
                 if not (c4_46 is None or c4_46 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_46 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_46'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_46')] = ''
+                    row[headers.index('c4_46')] = str(neonate_defaultFill.get('c4_46'))
                 c4_47_1 = row[headers.index('c4_47_1')]
                 if not (c4_47_1 is None or c4_47_1 == '' or c4_47_1 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_1')] = ''
+                    row[headers.index('c4_47_1')] = str(neonate_defaultFill.get('c4_47_1'))
                 c4_47_10 = row[headers.index('c4_47_10')]
                 if not (c4_47_10 is None or c4_47_10 == '' or c4_47_10 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_10'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_10')] = ''
+                    row[headers.index('c4_47_10')] = str(neonate_defaultFill.get('c4_47_10'))
                 c4_47_11 = row[headers.index('c4_47_11')]
                 if not (c4_47_11 is None or c4_47_11 == '' or c4_47_11 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_11')] = ''
+                    row[headers.index('c4_47_11')] = str(neonate_defaultFill.get('c4_47_11'))
                 c4_47_2 = row[headers.index('c4_47_2')]
                 if not (c4_47_2 is None or c4_47_2 == '' or c4_47_2 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_2'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_2')] = ''
+                    row[headers.index('c4_47_2')] = str(neonate_defaultFill.get('c4_47_2'))
                 c4_47_3 = row[headers.index('c4_47_3')]
                 if not (c4_47_3 is None or c4_47_3 == '' or c4_47_3 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_3'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_3')] = ''
+                    row[headers.index('c4_47_3')] = str(neonate_defaultFill.get('c4_47_3'))
                 c4_47_4 = row[headers.index('c4_47_4')]
                 if not (c4_47_4 is None or c4_47_4 == '' or c4_47_4 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_4'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_4')] = ''
+                    row[headers.index('c4_47_4')] = str(neonate_defaultFill.get('c4_47_4'))
                 c4_47_5 = row[headers.index('c4_47_5')]
                 if not (c4_47_5 is None or c4_47_5 == '' or c4_47_5 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_5'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_5')] = ''
+                    row[headers.index('c4_47_5')] = str(neonate_defaultFill.get('c4_47_5'))
                 c4_47_6 = row[headers.index('c4_47_6')]
                 if not (c4_47_6 is None or c4_47_6 == '' or c4_47_6 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_6'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_6')] = ''
+                    row[headers.index('c4_47_6')] = str(neonate_defaultFill.get('c4_47_6'))
                 c4_47_7 = row[headers.index('c4_47_7')]
                 if not (c4_47_7 is None or c4_47_7 == '' or c4_47_7 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_7'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_7')] = ''
+                    row[headers.index('c4_47_7')] = str(neonate_defaultFill.get('c4_47_7'))
                 c4_47_8a = row[headers.index('c4_47_8a')]
                 if not (c4_47_8a is None or c4_47_8a == '' or c4_47_8a == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_8a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_8a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_8a')] = ''
+                    row[headers.index('c4_47_8a')] = str(neonate_defaultFill.get('c4_47_8a'))
                 c4_47_8b = row[headers.index('c4_47_8b')]
                 if not (c4_47_8b is None or c4_47_8b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_8b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_8b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_8b')] = ''
+                    row[headers.index('c4_47_8b')] = str(neonate_defaultFill.get('c4_47_8b'))
                 c4_47_9 = row[headers.index('c4_47_9')]
                 if not (c4_47_9 is None or c4_47_9 == '' or c4_47_9 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_47_9 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_47_9'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_47_9')] = ''
+                    row[headers.index('c4_47_9')] = str(neonate_defaultFill.get('c4_47_9'))
             c4_16 = row[headers.index('c4_16')]
             c4_18 = row[headers.index('c4_18')]
             if c1_15 == '1' or c1_26 == '1' or (c4_16 == '0' and c4_18 == '0'):
@@ -562,25 +562,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_20 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_20'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_20')] = ''
+                    row[headers.index('c4_20')] = str(neonate_defaultFill.get('c4_20'))
                 c4_22 = row[headers.index('c4_22')]
                 if not (c4_22 is None or c4_22 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_22 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_22'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_22')] = ''
+                    row[headers.index('c4_22')] = str(neonate_defaultFill.get('c4_22'))
                 c4_23 = row[headers.index('c4_23')]
                 if not (c4_23 is None or c4_23 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_23 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_23'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_23')] = ''
+                    row[headers.index('c4_23')] = str(neonate_defaultFill.get('c4_23'))
                 c4_24 = row[headers.index('c4_24')]
                 if not (c4_24 is None or c4_24 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_24 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_24'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_24')] = ''
+                    row[headers.index('c4_24')] = str(neonate_defaultFill.get('c4_24'))
             c4_01 = row[headers.index('c4_01')]
             if c1_15 == '1' or c1_26 == '1' or c4_01 != '1':
                 c4_02a = row[headers.index('c4_02a')]
@@ -588,19 +588,19 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_02a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_02a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_02a')] = ''
+                    row[headers.index('c4_02a')] = str(neonate_defaultFill.get('c4_02a'))
                 c4_02b = row[headers.index('c4_02b')]
                 if not (c4_02b is None or c4_02b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_02b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_02b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_02b')] = ''
+                    row[headers.index('c4_02b')] = str(neonate_defaultFill.get('c4_02b'))
                 c4_03 = row[headers.index('c4_03')]
                 if not (c4_03 is None or c4_03 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_03'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_03')] = ''
+                    row[headers.index('c4_03')] = str(neonate_defaultFill.get('c4_03'))
             c4_03 = row[headers.index('c4_03')]
             if c1_15 == '1' or c1_26 == '1' or c4_01 != '1' or c4_03 != '1':
                 c4_04 = row[headers.index('c4_04')]
@@ -608,13 +608,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_04'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_04')] = ''
+                    row[headers.index('c4_04')] = str(neonate_defaultFill.get('c4_04'))
                 c4_05 = row[headers.index('c4_05')]
                 if not (c4_05 is None or c4_05 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_05'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_05')] = ''
+                    row[headers.index('c4_05')] = str(neonate_defaultFill.get('c4_05'))
             c4_06 = row[headers.index('c4_06')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1':
                 c4_07a = row[headers.index('c4_07a')]
@@ -622,25 +622,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_07a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_07a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_07a')] = ''
+                    row[headers.index('c4_07a')] = str(neonate_defaultFill.get('c4_07a'))
                 c4_07b = row[headers.index('c4_07b')]
                 if not (c4_07b is None or c4_07b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_07b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_07b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_07b')] = ''
+                    row[headers.index('c4_07b')] = str(neonate_defaultFill.get('c4_07b'))
                 c4_08a = row[headers.index('c4_08a')]
                 if not (c4_08a is None or c4_08a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_08a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_08a')] = ''
+                    row[headers.index('c4_08a')] = str(neonate_defaultFill.get('c4_08a'))
                 c4_08b = row[headers.index('c4_08b')]
                 if not (c4_08b is None or c4_08b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_08b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_08b')] = ''
+                    row[headers.index('c4_08b')] = str(neonate_defaultFill.get('c4_08b'))
             c4_08a = row[headers.index('c4_08a')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1' or c4_08a == '5' or c4_08a == '6':
                 c4_09 = row[headers.index('c4_09')]
@@ -648,13 +648,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_09'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_09')] = ''
+                    row[headers.index('c4_09')] = str(neonate_defaultFill.get('c4_09'))
                 c4_11 = row[headers.index('c4_11')]
                 if not (c4_11 is None or c4_11 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_11')] = ''
+                    row[headers.index('c4_11')] = str(neonate_defaultFill.get('c4_11'))
             c4_09 = row[headers.index('c4_09')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1' or c4_08a == '5' or c4_08a == '6' or c4_09 == '1':
                 c4_10a = row[headers.index('c4_10a')]
@@ -662,13 +662,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_10a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_10a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_10a')] = ''
+                    row[headers.index('c4_10a')] = str(neonate_defaultFill.get('c4_10a'))
                 c4_10b = row[headers.index('c4_10b')]
                 if not (c4_10b is None or c4_10b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_10b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_10b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_10b')] = ''
+                    row[headers.index('c4_10b')] = str(neonate_defaultFill.get('c4_10b'))
             c4_12 = row[headers.index('c4_12')]
             if c1_15 == '1' or c1_26 == '1' or c4_12 != '1':
                 c4_13a = row[headers.index('c4_13a')]
@@ -676,25 +676,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_13a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_13a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_13a')] = ''
+                    row[headers.index('c4_13a')] = str(neonate_defaultFill.get('c4_13a'))
                 c4_13b = row[headers.index('c4_13b')]
                 if not (c4_13b is None or c4_13b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_13b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_13b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_13b')] = ''
+                    row[headers.index('c4_13b')] = str(neonate_defaultFill.get('c4_13b'))
                 c4_14 = row[headers.index('c4_14')]
                 if not (c4_14 is None or c4_14 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_14'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_14')] = ''
+                    row[headers.index('c4_14')] = str(neonate_defaultFill.get('c4_14'))
                 c4_15 = row[headers.index('c4_15')]
                 if not (c4_15 is None or c4_15 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_15'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_15')] = ''
+                    row[headers.index('c4_15')] = str(neonate_defaultFill.get('c4_15'))
             c4_16 = row[headers.index('c4_16')]
             if c1_15 == '1' or c1_26 == '1' or c4_16 != '1':
                 c4_17a = row[headers.index('c4_17a')]
@@ -702,13 +702,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_17a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_17a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_17a')] = ''
+                    row[headers.index('c4_17a')] = str(neonate_defaultFill.get('c4_17a'))
                 c4_17b = row[headers.index('c4_17b')]
                 if not (c4_17b is None or c4_17b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_17b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_17b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_17b')] = ''
+                    row[headers.index('c4_17b')] = str(neonate_defaultFill.get('c4_17b'))
             c4_18 = row[headers.index('c4_18')]
             if c1_15 == '1' or c1_26 == '1' or c4_18 != '1':
                 c4_19a = row[headers.index('c4_19a')]
@@ -716,13 +716,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_19a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_19a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_19a')] = ''
+                    row[headers.index('c4_19a')] = str(neonate_defaultFill.get('c4_19a'))
                 c4_19b = row[headers.index('c4_19b')]
                 if not (c4_19b is None or c4_19b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_19b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_19b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_19b')] = ''
+                    row[headers.index('c4_19b')] = str(neonate_defaultFill.get('c4_19b'))
             c4_26 = row[headers.index('c4_26')]
             if c1_15 == '1' or c1_26 == '1' or c4_26 != '1':
                 c4_27 = row[headers.index('c4_27')]
@@ -730,7 +730,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_27 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_27'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_27')] = ''
+                    row[headers.index('c4_27')] = str(neonate_defaultFill.get('c4_27'))
             c4_30 = row[headers.index('c4_30')]
             if c1_15 == '1' or c1_26 == '1' or c4_30 != '1':
                 c4_31_1 = row[headers.index('c4_31_1')]
@@ -738,38 +738,38 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_30 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_31_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_31_1')] = ''
+                    row[headers.index('c4_31_1')] = str(neonate_defaultFill.get('c4_31_1'))
                 # not in electronic version
                 # c4_31_2 = row[headers.index('c4_31_2')]
                 #                 if not (c4_31_2 is None or c4_31_2 == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c4_31_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_31_2'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c4_31_2')] = ''
+                #                     c4_31_2')] = str(neonate_defaultFill.get(''))
                 c4_32 = row[headers.index('c4_32')]
                 if not (c4_32 is None or c4_32 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_32 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_32'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_32')] = ''
+                    row[headers.index('c4_32')] = str(neonate_defaultFill.get('c4_32'))
                 c4_33a = row[headers.index('c4_33a')]
                 if not (c4_33a is None or c4_33a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_33a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_33a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_33a')] = ''
+                    row[headers.index('c4_33a')] = str(neonate_defaultFill.get('c4_33a'))
                 c4_33b = row[headers.index('c4_33b')]
                 if not (c4_33b is None or c4_33b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_33b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_33b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_33b')] = ''
+                    row[headers.index('c4_33b')] = str(neonate_defaultFill.get('c4_33b'))
                 c4_34 = row[headers.index('c4_34')]
                 if not (c4_34 is None or c4_34 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_34 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_34'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_34')] = ''
+                    row[headers.index('c4_34')] = str(neonate_defaultFill.get('c4_34'))
             c4_36 = row[headers.index('c4_36')]
             if c1_15 == '1' or c1_26 == '1' or c4_36 != '1':
                 c4_37a = row[headers.index('c4_37a')]
@@ -777,13 +777,13 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_36 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_37a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_37a')] = ''
+                    row[headers.index('c4_37a')] = str(neonate_defaultFill.get('c4_37a'))
                 c4_37b = row[headers.index('c4_37b')]
                 if not (c4_37b is None or c4_37b == '' or c4_37b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_37b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_37b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_37b')] = ''
+                    row[headers.index('c4_37b')] = str(neonate_defaultFill.get('c4_37b'))
             c4_44 = row[headers.index('c4_44')]
             if c1_15 == '1' or c1_26 == '1' or c4_44 != '1':
                 c4_45 = row[headers.index('c4_45')]
@@ -791,7 +791,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_44 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_45'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_45')] = ''
+                    row[headers.index('c4_45')] = str(neonate_defaultFill.get('c4_45'))
             c4_47_11 = row[headers.index('c4_47_11')]
             if c1_15 == '1' or c1_26 == '1' or c4_47_11 == '1':
                 c4_48 = row[headers.index('c4_48')]
@@ -799,19 +799,19 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c4_48 should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_48'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_48')] = ''
+                    row[headers.index('c4_48')] = str(neonate_defaultFill.get('c4_48'))
                 c4_49a = row[headers.index('c4_49a')]
                 if not (c4_49a is None or c4_49a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c4_49a should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_49a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_49a')] = ''
+                    row[headers.index('c4_49a')] = str(neonate_defaultFill.get('c4_49a'))
                 c4_49b = row[headers.index('c4_49b')]
                 if not (c4_49b is None or c4_49b == '' or c4_49b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c4_49b should be blank, setting to default and continuing\n" % (i+2, headers.index('c4_49b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c4_49b')] = ''
+                    row[headers.index('c4_49b')] = str(neonate_defaultFill.get('c4_49b'))
 
             if c1_15 == '1' or c1_26 == '2':
                 c3_01 = row[headers.index('c3_01')]
@@ -819,169 +819,169 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_01 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_01'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_01')] = ''
+                    row[headers.index('c3_01')] = str(neonate_defaultFill.get('c3_01'))
                 c3_02 = row[headers.index('c3_02')]
                 if not (c3_02 is None or c3_02 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_02 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_02'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_02')] = ''
+                    row[headers.index('c3_02')] = str(neonate_defaultFill.get('c3_02'))
                 c3_04 = row[headers.index('c3_04')]
                 if not (c3_04 is None or c3_04 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_04'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_04')] = ''
+                    row[headers.index('c3_04')] = str(neonate_defaultFill.get('c3_04'))
                 c3_06 = row[headers.index('c3_06')]
                 if not (c3_06 is None or c3_06 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_06'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_06')] = ''
+                    row[headers.index('c3_06')] = str(neonate_defaultFill.get('c3_06'))
                 c3_07 = row[headers.index('c3_07')]
                 if not (c3_07 is None or c3_07 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_07 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_07'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_07')] = ''
+                    row[headers.index('c3_07')] = str(neonate_defaultFill.get('c3_07'))
                 c3_11 = row[headers.index('c3_11')]
                 if not (c3_11 is None or c3_11 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_11')] = ''
+                    row[headers.index('c3_11')] = str(neonate_defaultFill.get('c3_11'))
                 c3_17 = row[headers.index('c3_17')]
                 if not (c3_17 is None or c3_17 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_17'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_17')] = ''
+                    row[headers.index('c3_17')] = str(neonate_defaultFill.get('c3_17'))
                 c3_20 = row[headers.index('c3_20')]
                 if not (c3_20 is None or c3_20 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_20 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_20'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_20')] = ''
+                    row[headers.index('c3_20')] = str(neonate_defaultFill.get('c3_20'))
                 c3_23 = row[headers.index('c3_23')]
                 if not (c3_23 is None or c3_23 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_23 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_23'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_23')] = ''
+                    row[headers.index('c3_23')] = str(neonate_defaultFill.get('c3_23'))
                 c3_24 = row[headers.index('c3_24')]
                 if not (c3_24 is None or c3_24 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_24 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_24'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_24')] = ''
+                    row[headers.index('c3_24')] = str(neonate_defaultFill.get('c3_24'))
                 c3_25 = row[headers.index('c3_25')]
                 if not (c3_25 is None or c3_25 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_25 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_25'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_25')] = ''
+                    row[headers.index('c3_25')] = str(neonate_defaultFill.get('c3_25'))
                 c3_26 = row[headers.index('c3_26')]
                 if not (c3_26 is None or c3_26 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_26 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_26'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_26')] = ''
+                    row[headers.index('c3_26')] = str(neonate_defaultFill.get('c3_26'))
                 c3_29 = row[headers.index('c3_29')]
                 if not (c3_29 is None or c3_29 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_29 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_29'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_29')] = ''
+                    row[headers.index('c3_29')] = str(neonate_defaultFill.get('c3_29'))
                 c3_32 = row[headers.index('c3_32')]
                 if not (c3_32 is None or c3_32 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_32 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_32'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_32')] = ''
+                    row[headers.index('c3_32')] = str(neonate_defaultFill.get('c3_32'))
                 c3_33 = row[headers.index('c3_33')]
                 if not (c3_33 is None or c3_33 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_33 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_33'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_33')] = ''
+                    row[headers.index('c3_33')] = str(neonate_defaultFill.get('c3_33'))
                 c3_34 = row[headers.index('c3_34')]
                 if not (c3_34 is None or c3_34 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_34 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_34'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_34')] = ''
+                    row[headers.index('c3_34')] = str(neonate_defaultFill.get('c3_34'))
                 c3_35 = row[headers.index('c3_35')]
                 if not (c3_35 is None or c3_35 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_35 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_35'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_35')] = ''
+                    row[headers.index('c3_35')] = str(neonate_defaultFill.get('c3_35'))
                 c3_36 = row[headers.index('c3_36')]
                 if not (c3_36 is None or c3_36 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_36 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_36'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_36')] = ''
+                    row[headers.index('c3_36')] = str(neonate_defaultFill.get('c3_36'))
                 c3_38 = row[headers.index('c3_38')]
                 if not (c3_38 is None or c3_38 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_38 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_38'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_38')] = ''
+                    row[headers.index('c3_38')] = str(neonate_defaultFill.get('c3_38'))
                 c3_39 = row[headers.index('c3_39')]
                 if not (c3_39 is None or c3_39 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_39 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_39'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_39')] = ''
+                    row[headers.index('c3_39')] = str(neonate_defaultFill.get('c3_39'))
                 c3_40 = row[headers.index('c3_40')]
                 if not (c3_40 is None or c3_40 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_40 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_40'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_40')] = ''
+                    row[headers.index('c3_40')] = str(neonate_defaultFill.get('c3_40'))
                 c3_41 = row[headers.index('c3_41')]
                 if not (c3_41 is None or c3_41 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_41 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_41'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_41')] = ''
+                    row[headers.index('c3_41')] = str(neonate_defaultFill.get('c3_41'))
                 c3_42 = row[headers.index('c3_42')]
                 if not (c3_42 is None or c3_42 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_42 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_42'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_42')] = ''
+                    row[headers.index('c3_42')] = str(neonate_defaultFill.get('c3_42'))
                 c3_44 = row[headers.index('c3_44')]
                 if not (c3_44 is None or c3_44 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_44 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_44'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_44')] = ''
+                    row[headers.index('c3_44')] = str(neonate_defaultFill.get('c3_44'))
                 c3_46 = row[headers.index('c3_46')]
                 if not (c3_46 is None or c3_46 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_46 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_46'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_46')] = ''
+                    row[headers.index('c3_46')] = str(neonate_defaultFill.get('c3_46'))
                 c3_47 = row[headers.index('c3_47')]
                 if not (c3_47 is None or c3_47 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_47 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_47'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_47')] = ''
+                    row[headers.index('c3_47')] = str(neonate_defaultFill.get('c3_47'))
                 c3_48 = row[headers.index('c3_48')]
                 if not (c3_48 is None or c3_48 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_48 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_48'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_48')] = ''
+                    row[headers.index('c3_48')] = str(neonate_defaultFill.get('c3_48'))
                 c3_49 = row[headers.index('c3_49')]
                 if not (c3_49 is None or c3_49 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_49 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_49'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_49')] = ''
+                    row[headers.index('c3_49')] = str(neonate_defaultFill.get('c3_49'))
             c3_02 = row[headers.index('c3_02')]
             if c1_15 == '1' or c1_26 == '2' or c3_02 != '1':
                 c3_03_1 = row[headers.index('c3_03_1')]
@@ -989,44 +989,44 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_1')] = ''
+                    row[headers.index('c3_03_1')] = str(neonate_defaultFill.get('c3_03_1'))
                 c3_03_2 = row[headers.index('c3_03_2')]
                 if not (c3_03_2 is None or c3_03_2 == '' or c3_03_2 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_2'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_2')] = ''
+                    row[headers.index('c3_03_2')] = str(neonate_defaultFill.get('c3_03_2'))
                 c3_03_3 = row[headers.index('c3_03_3')]
                 if not (c3_03_3 is None or c3_03_3 == '' or c3_03_3 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_3'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_3')] = ''
+                    row[headers.index('c3_03_3')] = str(neonate_defaultFill.get('c3_03_3'))
                 c3_03_4a = row[headers.index('c3_03_4a')]
                 if not (c3_03_4a is None or c3_03_4a == '' or c3_03_4a == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_4a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_4a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_4a')] = ''
+                    row[headers.index('c3_03_4a')] = str(neonate_defaultFill.get('c3_03_4a'))
                 c3_03_4b = row[headers.index('c3_03_4b')]
                 if not (c3_03_4b is None or c3_03_4b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_4b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_4b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_4b')] = ''
+                    row[headers.index('c3_03_4b')] = str(neonate_defaultFill.get('c3_03_4b'))
                 c3_03_5 = row[headers.index('c3_03_5')]
                 if not (c3_03_5 is None or c3_03_5 == '' or c3_03_5 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c3_03_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_5'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_03_5')] = ''
+                    row[headers.index('c3_03_5')] = str(neonate_defaultFill.get('c3_03_5'))
                 # not in electronic version
                 # c3_03_6 = row[headers.index('c3_03_6')]
                 #                 if not (c3_03_6 is None or c3_03_6 == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c3_03_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_03_6'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c3_03_6')] = ''
+                #                     c3_03_6')] = str(neonate_defaultFill.get(''))
             c3_04 = row[headers.index('c3_04')]
             if c1_15 == '1' or c1_26 == '2' or c3_04 == '0':
                 c3_05 = row[headers.index('c3_05')]
@@ -1034,7 +1034,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_05'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_05')] = ''
+                    row[headers.index('c3_05')] = str(neonate_defaultFill.get('c3_05'))
             c3_07 = row[headers.index('c3_07')]
             if c1_15 == '1' or c1_26 == '2' or c3_07 == '1':
                 c3_08 = row[headers.index('c3_08')]
@@ -1042,7 +1042,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_08'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_08')] = ''
+                    row[headers.index('c3_08')] = str(neonate_defaultFill.get('c3_08'))
             c3_08 = row[headers.index('c3_08')]
             if c1_15 == '1' or c1_26 == '2' or c3_08 == '4':
                 c3_09 = row[headers.index('c3_09')]
@@ -1050,7 +1050,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_09'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_09')] = ''
+                    row[headers.index('c3_09')] = str(neonate_defaultFill.get('c3_09'))
             c3_09 = row[headers.index('c3_09')]
             if c1_15 == '1' or c1_26 == '2' or c3_08 == '4' or c3_09 != '1':
                 c3_10 = row[headers.index('c3_10')]
@@ -1058,15 +1058,23 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_10'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_10')] = ''
+                    row[headers.index('c3_10')] = str(neonate_defaultFill.get('c3_10'))
             c3_11 = row[headers.index('c3_11')]
-            if c1_15 == '1' or c1_26 == '2' or c3_11 == '1':
+            # This is a unique case because c3_12 can have different 'default' values depending on other variables
+            if c1_15 == '1':
                 c3_12 = row[headers.index('c3_12')]
-                if not (c3_12 is None or c3_12 == ''):
-                    updatestr = "WARNING: value at row %s col %s for variable c3_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_12'))
+                if (c3_12 != '0'):
+                    updatestr = "WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing\n" % (i+2, headers.index('c3_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_12')] = ''
+                    row[headers.index('c3_12')] = '0'
+            elif c1_26 == '2' or c3_11 == '1':
+                c3_12 = row[headers.index('c3_12')]
+                if (c3_12 != '1'):
+                    updatestr = "WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing\n" % (i+2, headers.index('c3_12'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('c3_12')] = '1'
             c3_12 = row[headers.index('c3_12')]
             if c1_15 == '1' or c1_26 == '2' or c3_12 != '1':
                 c3_13 = row[headers.index('c3_13')]
@@ -1074,7 +1082,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_13'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_13')] = ''
+                    row[headers.index('c3_13')] = str(neonate_defaultFill.get('c3_13'))
             c3_13 = row[headers.index('c3_13')]
             if c1_15 == '1' or c1_26 == '2' or c3_12 != '1' or c3_13 != '1':
                 c3_14a = row[headers.index('c3_14a')]
@@ -1082,25 +1090,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_14a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_14a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_14a')] = ''
+                    row[headers.index('c3_14a')] = str(neonate_defaultFill.get('c3_14a'))
                 c3_14b = row[headers.index('c3_14b')]
                 if not (c3_14b is None or c3_14b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_14b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_14b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_14b')] = ''
+                    row[headers.index('c3_14b')] = str(neonate_defaultFill.get('c3_14b'))
                 c3_15 = row[headers.index('c3_15')]
                 if not (c3_15 is None or c3_15 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_15'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_15')] = ''
+                    row[headers.index('c3_15')] = str(neonate_defaultFill.get('c3_15'))
                 c3_16 = row[headers.index('c3_16')]
                 if not (c3_16 is None or c3_16 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_16 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_16'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_16')] = ''
+                    row[headers.index('c3_16')] = str(neonate_defaultFill.get('c3_16'))
             c3_17 = row[headers.index('c3_17')]
             if c1_15 == '1' or c1_26 == '2' or c3_17 != '1':
                 c3_18a = row[headers.index('c3_18a')]
@@ -1108,25 +1116,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_18a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_18a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_18a')] = ''
+                    row[headers.index('c3_18a')] = str(neonate_defaultFill.get('c3_18a'))
                 c3_18b = row[headers.index('c3_18b')]
                 if not (c3_18b is None or c3_18b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_18b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_18b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_18b')] = ''
+                    row[headers.index('c3_18b')] = str(neonate_defaultFill.get('c3_18b'))
                 c3_19a = row[headers.index('c3_19a')]
                 if not (c3_19a is None or c3_19a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_19a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_19a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_19a')] = ''
+                    row[headers.index('c3_19a')] = str(neonate_defaultFill.get('c3_19a'))
                 c3_19b = row[headers.index('c3_19b')]
                 if not (c3_19b is None or c3_19b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_19b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_19b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_19b')] = ''
+                    row[headers.index('c3_19b')] = str(neonate_defaultFill.get('c3_19b'))
             c3_20 = row[headers.index('c3_20')]
             if c1_15 == '1' or c1_26 == '2' or c3_20 != '1':
                 c3_21a = row[headers.index('c3_21a')]
@@ -1134,25 +1142,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_21a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_21a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_21a')] = ''
+                    row[headers.index('c3_21a')] = str(neonate_defaultFill.get('c3_21a'))
                 c3_21b = row[headers.index('c3_21b')]
                 if not (c3_21b is None or c3_21b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_21b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_21b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_21b')] = ''
+                    row[headers.index('c3_21b')] = str(neonate_defaultFill.get('c3_21b'))
                 c3_22a = row[headers.index('c3_22a')]
                 if not (c3_22a is None or c3_22a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_22a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_22a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_22a')] = ''
+                    row[headers.index('c3_22a')] = str(neonate_defaultFill.get('c3_22a'))
                 c3_22b = row[headers.index('c3_22b')]
                 if not (c3_22b is None or c3_22b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_22b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_22b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_22b')] = ''
+                    row[headers.index('c3_22b')] = str(neonate_defaultFill.get('c3_22b'))
             c3_26 = row[headers.index('c3_26')]
             if c1_15 == '1' or c1_26 == '2' or c3_26 != '1':
                 c3_27a = row[headers.index('c3_27a')]
@@ -1160,25 +1168,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_27a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_27a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_27a')] = ''
+                    row[headers.index('c3_27a')] = str(neonate_defaultFill.get('c3_27a'))
                 c3_27b = row[headers.index('c3_27b')]
                 if not (c3_27b is None or c3_27b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_27b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_27b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_27b')] = ''
+                    row[headers.index('c3_27b')] = str(neonate_defaultFill.get('c3_27b'))
                 c3_28a = row[headers.index('c3_28a')]
                 if not (c3_28a is None or c3_28a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_28a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_28a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_28a')] = ''
+                    row[headers.index('c3_28a')] = str(neonate_defaultFill.get('c3_28a'))
                 c3_28b = row[headers.index('c3_28b')]
                 if not (c3_28b is None or c3_28b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_28b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_28b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_28b')] = ''
+                    row[headers.index('c3_28b')] = str(neonate_defaultFill.get('c3_28b'))
             c3_29 = row[headers.index('c3_29')]
             if c1_15 == '1' or c1_26 == '2' or c3_29 != '1':
                 c3_30a = row[headers.index('c3_30a')]
@@ -1186,25 +1194,25 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_30a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_30a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_30a')] = ''
+                    row[headers.index('c3_30a')] = str(neonate_defaultFill.get('c3_30a'))
                 c3_30b = row[headers.index('c3_30b')]
                 if not (c3_30b is None or c3_30b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_30b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_30b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_30b')] = ''
+                    row[headers.index('c3_30b')] = str(neonate_defaultFill.get('c3_30b'))
                 c3_31a = row[headers.index('c3_31a')]
                 if not (c3_31a is None or c3_31a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_31a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_31a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_31a')] = ''
+                    row[headers.index('c3_31a')] = str(neonate_defaultFill.get('c3_31a'))
                 c3_31b = row[headers.index('c3_31b')]
                 if not (c3_31b is None or c3_31b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_31b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_31b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_31b')] = ''
+                    row[headers.index('c3_31b')] = str(neonate_defaultFill.get('c3_31b'))
             c3_36 = row[headers.index('c3_36')]
             if c1_15 == '1' or c1_26 == '2' or c3_36 != '1':
                 c3_37 = row[headers.index('c3_37')]
@@ -1212,7 +1220,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_37 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_37'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_37')] = ''
+                    row[headers.index('c3_37')] = str(neonate_defaultFill.get('c3_37'))
             c3_42 = row[headers.index('c3_42')]
             if c1_15 == '1' or c1_26 == '2' or c3_42 != '1':
                 c3_43 = row[headers.index('c3_43')]
@@ -1220,7 +1228,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_43 should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_43'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_43')] = ''
+                    row[headers.index('c3_43')] = str(neonate_defaultFill.get('c3_43'))
             c3_44 = row[headers.index('c3_44')]
             if c1_15 == '1' or c1_26 == '2' or c3_44 != '1':
                 c3_45a = row[headers.index('c3_45a')]
@@ -1228,226 +1236,226 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c3_45a should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_45a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_45a')] = ''
+                    row[headers.index('c3_45a')] = str(neonate_defaultFill.get('c3_45a'))
                 c3_45b = row[headers.index('c3_45b')]
                 if not (c3_45b is None or c3_45b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c3_45b should be blank, setting to default and continuing\n" % (i+2, headers.index('c3_45b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c3_45b')] = ''
+                    row[headers.index('c3_45b')] = str(neonate_defaultFill.get('c3_45b'))
             if c1_26 == '2':
                 c2_01_1 = row[headers.index('c2_01_1')]
                 if not (c2_01_1 is None or c2_01_1 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_1')] = ''
+                    row[headers.index('c2_01_1')] = str(neonate_defaultFill.get('c2_01_1'))
                 c2_01_10 = row[headers.index('c2_01_10')]
                 if not (c2_01_10 is None or c2_01_10 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_10'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_10')] = ''
+                    row[headers.index('c2_01_10')] = str(neonate_defaultFill.get('c2_01_10'))
                 c2_01_11 = row[headers.index('c2_01_11')]
                 if not (c2_01_11 is None or c2_01_11 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_11')] = ''
+                    row[headers.index('c2_01_11')] = str(neonate_defaultFill.get('c2_01_11'))
                 c2_01_12 = row[headers.index('c2_01_12')]
                 if not (c2_01_12 is None or c2_01_12 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_12')] = ''
+                    row[headers.index('c2_01_12')] = str(neonate_defaultFill.get('c2_01_12'))
                 c2_01_13 = row[headers.index('c2_01_13')]
                 if not (c2_01_13 is None or c2_01_13 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_13'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_13')] = ''
+                    row[headers.index('c2_01_13')] = str(neonate_defaultFill.get('c2_01_13'))
                 c2_01_14 = row[headers.index('c2_01_14')]
                 if not (c2_01_14 is None or c2_01_14 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_14'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_14')] = ''
+                    row[headers.index('c2_01_14')] = str(neonate_defaultFill.get('c2_01_14'))
                 c2_01_2 = row[headers.index('c2_01_2')]
                 if not (c2_01_2 is None or c2_01_2 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_2'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_2')] = ''
+                    row[headers.index('c2_01_2')] = str(neonate_defaultFill.get('c2_01_2'))
                 c2_01_3 = row[headers.index('c2_01_3')]
                 if not (c2_01_3 is None or c2_01_3 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_3'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_3')] = ''
+                    row[headers.index('c2_01_3')] = str(neonate_defaultFill.get('c2_01_3'))
                 c2_01_4 = row[headers.index('c2_01_4')]
                 if not (c2_01_4 is None or c2_01_4 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_4'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_4')] = ''
+                    row[headers.index('c2_01_4')] = str(neonate_defaultFill.get('c2_01_4'))
                 c2_01_5 = row[headers.index('c2_01_5')]
                 if not (c2_01_5 is None or c2_01_5 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_5'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_5')] = ''
+                    row[headers.index('c2_01_5')] = str(neonate_defaultFill.get('c2_01_5'))
                 c2_01_6 = row[headers.index('c2_01_6')]
                 if not (c2_01_6 is None or c2_01_6 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_6'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_6')] = ''
+                    row[headers.index('c2_01_6')] = str(neonate_defaultFill.get('c2_01_6'))
                 c2_01_7 = row[headers.index('c2_01_7')]
                 if not (c2_01_7 is None or c2_01_7 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_7'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_7')] = ''
+                    row[headers.index('c2_01_7')] = str(neonate_defaultFill.get('c2_01_7'))
                 c2_01_8 = row[headers.index('c2_01_8')]
                 if not (c2_01_8 is None or c2_01_8 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_8'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_8')] = ''
+                    row[headers.index('c2_01_8')] = str(neonate_defaultFill.get('c2_01_8'))
                 c2_01_9 = row[headers.index('c2_01_9')]
                 if not (c2_01_9 is None or c2_01_9 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_01_9 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_01_9'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_01_9')] = ''
+                    row[headers.index('c2_01_9')] = str(neonate_defaultFill.get('c2_01_9'))
                 c2_02a = row[headers.index('c2_02a')]
                 if not (c2_02a is None or c2_02a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_02a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_02a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_02a')] = ''
+                    row[headers.index('c2_02a')] = str(neonate_defaultFill.get('c2_02a'))
                 c2_02b = row[headers.index('c2_02b')]
                 if not (c2_02b is None or c2_02b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_02b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_02b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_02b')] = ''
+                    row[headers.index('c2_02b')] = str(neonate_defaultFill.get('c2_02b'))
                 c2_03 = row[headers.index('c2_03')]
                 if not (c2_03 is None or c2_03 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_03'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_03')] = ''
+                    row[headers.index('c2_03')] = str(neonate_defaultFill.get('c2_03'))
                 c2_04 = row[headers.index('c2_04')]
                 if not (c2_04 is None or c2_04 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_04'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_04')] = ''
+                    row[headers.index('c2_04')] = str(neonate_defaultFill.get('c2_04'))
                 c2_05a = row[headers.index('c2_05a')]
                 if not (c2_05a is None or c2_05a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_05a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_05a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_05a')] = ''
+                    row[headers.index('c2_05a')] = str(neonate_defaultFill.get('c2_05a'))
                 c2_05b = row[headers.index('c2_05b')]
                 if not (c2_05b is None or c2_05b == '' or c2_05b == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c2_05b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_05b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_05b')] = ''
+                    row[headers.index('c2_05b')] = str(neonate_defaultFill.get('c2_05b'))
                 c2_06 = row[headers.index('c2_06')]
                 if not (c2_06 is None or c2_06 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_06 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_06'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_06')] = ''
+                    row[headers.index('c2_06')] = str(neonate_defaultFill.get('c2_06'))
                 c2_08a = row[headers.index('c2_08a')]
                 if not (c2_08a is None or c2_08a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_08a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_08a')] = ''
+                    row[headers.index('c2_08a')] = str(neonate_defaultFill.get('c2_08a'))
                 c2_08b = row[headers.index('c2_08b')]
                 if not (c2_08b is None or c2_08b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_08b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_08b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_08b')] = ''
+                    row[headers.index('c2_08b')] = str(neonate_defaultFill.get('c2_08b'))
                 c2_09 = row[headers.index('c2_09')]
                 if not (c2_09 is None or c2_09 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_09'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_09')] = ''
+                    row[headers.index('c2_09')] = str(neonate_defaultFill.get('c2_09'))
                 c2_10a = row[headers.index('c2_10a')]
                 if not (c2_10a is None or c2_10a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_10a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_10a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_10a')] = ''
+                    row[headers.index('c2_10a')] = str(neonate_defaultFill.get('c2_10a'))
                 c2_10b = row[headers.index('c2_10b')]
                 if not (c2_10b is None or c2_10b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_10b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_10b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_10b')] = ''
+                    row[headers.index('c2_10b')] = str(neonate_defaultFill.get('c2_10b'))
                 c2_11 = row[headers.index('c2_11')]
                 if not (c2_11 is None or c2_11 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_11')] = ''
+                    row[headers.index('c2_11')] = str(neonate_defaultFill.get('c2_11'))
                 c2_13a = row[headers.index('c2_13a')]
                 if not (c2_13a is None or c2_13a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_13a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_13a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_13a')] = ''
+                    row[headers.index('c2_13a')] = str(neonate_defaultFill.get('c2_13a'))
                 c2_13b = row[headers.index('c2_13b')]
                 if not (c2_13b is None or c2_13b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_13b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_13b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_13b')] = ''
+                    row[headers.index('c2_13b')] = str(neonate_defaultFill.get('c2_13b'))
                 c2_14 = row[headers.index('c2_14')]
                 if not (c2_14 is None or c2_14 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_14'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_14')] = ''
+                    row[headers.index('c2_14')] = str(neonate_defaultFill.get('c2_14'))
                 c2_15a = row[headers.index('c2_15a')]
                 if not (c2_15a is None or c2_15a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_15a should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_15a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_15a')] = ''
+                    row[headers.index('c2_15a')] = str(neonate_defaultFill.get('c2_15a'))
                 c2_15b = row[headers.index('c2_15b')]
                 if not (c2_15b is None or c2_15b == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_15b should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_15b'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_15b')] = ''
+                    row[headers.index('c2_15b')] = str(neonate_defaultFill.get('c2_15b'))
                 c2_17 = row[headers.index('c2_17')]
                 if not (c2_17 is None or c2_17 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_17'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_17')] = ''
+                    row[headers.index('c2_17')] = str(neonate_defaultFill.get('c2_17'))
                 c2_18 = row[headers.index('c2_18')]
                 if not (c2_18 is None or c2_18 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_18'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_18')] = ''
+                    row[headers.index('c2_18')] = str(neonate_defaultFill.get('c2_18'))
             c2_06 = row[headers.index('c2_06')]
-            if c1_26 == '2' or c2_06 != '2':
+            if c1_26 == '2' or c2_06 == '2':
                 c2_07 = row[headers.index('c2_07')]
                 if not (c2_07 is None or c2_07 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c2_07 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_07'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_07')] = ''
+                    row[headers.index('c2_07')] = str(neonate_defaultFill.get('c2_07'))
             c2_11 = row[headers.index('c2_11')]
             if c1_26 == '2' or c2_11 != '1':
                 c2_12 = row[headers.index('c2_12')]
@@ -1455,7 +1463,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c2_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c2_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c2_12')] = ''
+                    row[headers.index('c2_12')] = str(neonate_defaultFill.get('c2_12'))
             c5_01 = row[headers.index('c5_01')]
             if c5_01 != '1':
                 c5_02_1 = row[headers.index('c5_02_1')]
@@ -1463,98 +1471,98 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_1 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_1'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_1')] = ''
+                    row[headers.index('c5_02_1')] = str(neonate_defaultFill.get('c5_02_1'))
                 c5_02_10 = row[headers.index('c5_02_10')]
                 if not (c5_02_10 is None or c5_02_10 == '' or c5_02_10 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_10 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_10'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_10')] = ''
+                    row[headers.index('c5_02_10')] = str(neonate_defaultFill.get('c5_02_10'))
                 c5_02_11a = row[headers.index('c5_02_11a')]
                 if not (c5_02_11a is None or c5_02_11a == '' or c5_02_11a == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_11a should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_11a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_11a')] = ''
+                    row[headers.index('c5_02_11a')] = str(neonate_defaultFill.get('c5_02_11a'))
                 # not in electronic version
                 # c5_02_11b = row[headers.index('c5_02_11b')]
                 #                 if not (c5_02_11b is None or c5_02_11b == ''):
                 #                     updatestr = "WARNING: value at row %s col %s for variable c5_02_11b should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_11b'))
                 #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 #    self.warningfile.write(updatestr)
-                #                     c5_02_11b')] = ''
+                #                     c5_02_11b')] = str(neonate_defaultFill.get(''))
                 c5_02_12 = row[headers.index('c5_02_12')]
                 if not (c5_02_12 is None or c5_02_12 == '' or c5_02_12 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_12')] = ''
+                    row[headers.index('c5_02_12')] = str(neonate_defaultFill.get('c5_02_12'))
                 c5_02_13 = row[headers.index('c5_02_13')]
                 if not (c5_02_13 is None or c5_02_13 == '' or c5_02_13 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_13'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_13')] = ''
+                    row[headers.index('c5_02_13')] = str(neonate_defaultFill.get('c5_02_13'))
                 c5_02_14 = row[headers.index('c5_02_14')]
                 if not (c5_02_14 is None or c5_02_14 == '' or c5_02_14 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_14'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_14')] = ''
+                    row[headers.index('c5_02_14')] = str(neonate_defaultFill.get('c5_02_14'))
                 c5_02_2 = row[headers.index('c5_02_2')]
                 if not (c5_02_2 is None or c5_02_2 == '' or c5_02_2 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_2 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_2'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_2')] = ''
+                    row[headers.index('c5_02_2')] = str(neonate_defaultFill.get('c5_02_2'))
                 c5_02_3 = row[headers.index('c5_02_3')]
                 if not (c5_02_3 is None or c5_02_3 == '' or c5_02_3 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_3 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_3'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_3')] = ''
+                    row[headers.index('c5_02_3')] = str(neonate_defaultFill.get('c5_02_3'))
                 c5_02_4 = row[headers.index('c5_02_4')]
                 if not (c5_02_4 is None or c5_02_4 == '' or c5_02_4 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_4 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_4'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_4')] = ''
+                    row[headers.index('c5_02_4')] = str(neonate_defaultFill.get('c5_02_4'))
                 c5_02_5 = row[headers.index('c5_02_5')]
                 if not (c5_02_5 is None or c5_02_5 == '' or c5_02_5 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_5 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_5'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_5')] = ''
+                    row[headers.index('c5_02_5')] = str(neonate_defaultFill.get('c5_02_5'))
                 c5_02_6 = row[headers.index('c5_02_6')]
                 if not (c5_02_6 is None or c5_02_6 == '' or c5_02_6 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_6 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_6'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_6')] = ''
+                    row[headers.index('c5_02_6')] = str(neonate_defaultFill.get('c5_02_6'))
                 c5_02_7 = row[headers.index('c5_02_7')]
                 if not (c5_02_7 is None or c5_02_7 == '' or c5_02_7 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_7 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_7'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_7')] = ''
+                    row[headers.index('c5_02_7')] = str(neonate_defaultFill.get('c5_02_7'))
                 c5_02_8 = row[headers.index('c5_02_8')]
                 if not (c5_02_8 is None or c5_02_8 == '' or c5_02_8 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_8 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_8'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_8')] = ''
+                    row[headers.index('c5_02_8')] = str(neonate_defaultFill.get('c5_02_8'))
                 c5_02_9 = row[headers.index('c5_02_9')]
                 if not (c5_02_9 is None or c5_02_9 == '' or c5_02_9 == '0'):
                     updatestr = "WARNING: value at row %s col %s for variable c5_02_9 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_02_9'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_02_9')] = ''
+                    row[headers.index('c5_02_9')] = str(neonate_defaultFill.get('c5_02_9'))
                 c5_03 = row[headers.index('c5_03')]
                 if not (c5_03 is None or c5_03 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_03'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_03')] = ''
+                    row[headers.index('c5_03')] = str(neonate_defaultFill.get('c5_03'))
             c5_04 = row[headers.index('c5_04')]
             if c5_04 != '1':
                 c5_05 = row[headers.index('c5_05')]
@@ -1562,7 +1570,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_05'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_05')] = ''
+                    row[headers.index('c5_05')] = str(neonate_defaultFill.get('c5_05'))
             c5_05 = row[headers.index('c5_05')]
             if c5_05 != '1':
                 c5_06_1d = row[headers.index('c5_06_1d')]
@@ -1570,73 +1578,73 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_1d should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_1d'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_1d')] = ''
+                    row[headers.index('c5_06_1d')] = str(neonate_defaultFill.get('c5_06_1d'))
                 c5_06_1m = row[headers.index('c5_06_1m')]
                 if not (c5_06_1m is None or c5_06_1m == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_1m should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_1m'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_1m')] = ''
+                    row[headers.index('c5_06_1m')] = str(neonate_defaultFill.get('c5_06_1m'))
                 c5_06_1y = row[headers.index('c5_06_1y')]
                 if not (c5_06_1y is None or c5_06_1y == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_1y should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_1y'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_1y')] = ''
+                    row[headers.index('c5_06_1y')] = str(neonate_defaultFill.get('c5_06_1y'))
                 c5_06_2d = row[headers.index('c5_06_2d')]
                 if not (c5_06_2d is None or c5_06_2d == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_2d should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_2d'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_2d')] = ''
+                    row[headers.index('c5_06_2d')] = str(neonate_defaultFill.get('c5_06_2d'))
                 c5_06_2m = row[headers.index('c5_06_2m')]
                 if not (c5_06_2m is None or c5_06_2m == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_2m should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_2m'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_2m')] = ''
+                    row[headers.index('c5_06_2m')] = str(neonate_defaultFill.get('c5_06_2m'))
                 c5_06_2y = row[headers.index('c5_06_2y')]
                 if not (c5_06_2y is None or c5_06_2y == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_06_2y should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_06_2y'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_06_2y')] = ''
+                    row[headers.index('c5_06_2y')] = str(neonate_defaultFill.get('c5_06_2y'))
                 c5_07_1a = row[headers.index('c5_07_1a')]
                 if not (c5_07_1a is None or c5_07_1a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_07_1a should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_07_1a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_07_1a')] = ''
+                    row[headers.index('c5_07_1a')] = str(neonate_defaultFill.get('c5_07_1a'))
                 c5_07_2a = row[headers.index('c5_07_2a')]
                 if not (c5_07_2a is None or c5_07_2a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_07_2a should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_07_2a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_07_2a')] = ''
+                    row[headers.index('c5_07_2a')] = str(neonate_defaultFill.get('c5_07_2a'))
                 c5_08d = row[headers.index('c5_08d')]
                 if not (c5_08d is None or c5_08d == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_08d should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_08d'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_08d')] = ''
+                    row[headers.index('c5_08d')] = str(neonate_defaultFill.get('c5_08d'))
                 c5_08m = row[headers.index('c5_08m')]
                 if not (c5_08m is None or c5_08m == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_08m should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_08m'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_08m')] = ''
+                    row[headers.index('c5_08m')] = str(neonate_defaultFill.get('c5_08m'))
                 c5_08y = row[headers.index('c5_08y')]
                 if not (c5_08y is None or c5_08y == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_08y should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_08y'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_08y')] = ''
+                    row[headers.index('c5_08y')] = str(neonate_defaultFill.get('c5_08y'))
                 c5_09 = row[headers.index('c5_09')]
                 if not (c5_09 is None or c5_09 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_09'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_09')] = ''
+                    row[headers.index('c5_09')] = str(neonate_defaultFill.get('c5_09'))
             c5_10 = row[headers.index('c5_10')]
             if c5_10 != '1':
                 c5_11 = row[headers.index('c5_11')]
@@ -1644,7 +1652,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_11 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_11'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_11')] = ''
+                    row[headers.index('c5_11')] = str(neonate_defaultFill.get('c5_11'))
             c5_11 = row[headers.index('c5_11')]
             if c5_10 != '1' or c5_11 != '1':
                 c5_12 = row[headers.index('c5_12')]
@@ -1652,31 +1660,31 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_12 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_12')] = ''
+                    row[headers.index('c5_12')] = str(neonate_defaultFill.get('c5_12'))
                 c5_13 = row[headers.index('c5_13')]
                 if not (c5_13 is None or c5_13 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_13'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_13')] = ''
+                    row[headers.index('c5_13')] = str(neonate_defaultFill.get('c5_13'))
                 c5_14 = row[headers.index('c5_14')]
                 if not (c5_14 is None or c5_14 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_14 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_14'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_14')] = ''
+                    row[headers.index('c5_14')] = str(neonate_defaultFill.get('c5_14'))
                 c5_15 = row[headers.index('c5_15')]
                 if not (c5_15 is None or c5_15 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_15 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_15'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_15')] = ''
+                    row[headers.index('c5_15')] = str(neonate_defaultFill.get('c5_15'))
                 c5_16 = row[headers.index('c5_16')]
                 if not (c5_16 is None or c5_16 == ''):
                     updatestr = "WARNING: value at row %s col %s for variable c5_16 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_16'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_16')] = ''
+                    row[headers.index('c5_16')] = str(neonate_defaultFill.get('c5_16'))
             c5_17 = row[headers.index('c5_17')]
             if c5_17 != '1':
                 c5_18 = row[headers.index('c5_18')]
@@ -1684,8 +1692,7 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable c5_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_18'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('c5_18')] = ''
-            
+                    row[headers.index('c5_18')] = str(neonate_defaultFill.get('c5_18'))
             #general vars
             # not in electronic version
             # g1_07a = row[headers.index('g1_07a')]
@@ -1695,7 +1702,7 @@ class PreSymptomPrep():
             #                     updatestr = "WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('g1_08'))
             #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
             #        self.warningfile.write(updatestr)
-            #                     g1_08')] = ''
+            #                     g1_08')] = str(neonate_defaultFill.get(''))
             g5_04a = row[headers.index('g5_04a')]
             if g5_04a is not None and g5_04a != '':
                 g5_04a = int(g5_04a)
@@ -1707,21 +1714,21 @@ class PreSymptomPrep():
                     updatestr = "WARNING: value at row %s col %s for variable g5_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_05'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('g5_05')] = ''
+                    row[headers.index('g5_05')] = str(neonate_defaultFill.get('g5_05'))
             if g5_04a < 5 or g5_04a == 999:
                 g5_06a = row[headers.index('g5_06a')]
                 if not (g5_06a is None or g5_06a == ''):
                     updatestr = "WARNING: value at row %s col %s for variable g5_06a should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06a'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
-                    row[headers.index('g5_06a')] = ''
+                    row[headers.index('g5_06a')] = str(neonate_defaultFill.get('g5_06a'))
                 # not in electronic version
                 # g5_06b = row[headers.index('g5_06b')]
                 #                if not (g5_06b is None or g5_06b == ''):
                 #                    updatestr = "WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06b'))
                 #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    self.warningfile.write(updatestr)
-                #                    g5_06b')] = ''
+                #    self.warningfile.write(updatestr)
+                #                    g5_06b = str(neonate_defaultFill.get(''))
         
         
         # fill in missing values:
@@ -1739,7 +1746,6 @@ class PreSymptomPrep():
         updatestr = "Analyzing free text\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
-        
         
         
         keyWords = neonate_wordsToVars.keys()
@@ -1764,7 +1770,6 @@ class PreSymptomPrep():
         #fix duration variables    
         updatestr = "Processing duration variables\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        #removed because they don't exist?  c1_25, 
         durationVars = ['c1_05', 'c1_20', 'c1_21', 'c1_25', 'c2_02', 'c2_05', 'c2_10', 'c3_14', 'c3_18', 'c3_19', 'c3_21', 'c3_22', 'c3_27', 'c3_28', 'c3_30', 'c3_31', 'c4_02', 'c4_08', 'c4_10', 'c4_13', 'c4_17', 'c4_19', 'c4_33', 'c4_37', 'c4_49']
             
         # add duration variables
@@ -1901,7 +1906,7 @@ class PreSymptomPrep():
                     
                     maxweight = float(max(row[c5_07_1b], row[c5_07_2b]))
                     weight_kg = maxweight/1000
-
+                    
                     # input months, output 3rd standard deviation below
                     male_sd3 = {0 : 2.1, 1 : 2.9, 2 : 3.8, 3 : 4.4, 4 : 4.9, 5 : 5.3, 6 : 5.7, 7 : 5.9, 8 : 6.2, 9 : 6.4, 10 : 6.6, 11 : 6.8, 12 : 6.9, 13 : 7.1, 14 : 7.2, 15 : 7.4, 16 : 7.5, 17 : 7.7, 18 : 7.8, 19 : 8, 20 : 8.1, 21 : 8.2, 22 : 8.4, 23 : 8.5, 24 : 8.6, 25 : 8.8, 26 : 8.9, 27 : 9, 28 : 9.1, 29 : 9.2, 30 : 9.4, 31 : 9.5, 32 : 9.6, 33 : 9.7, 34 : 9.8, 35 : 9.9, 36 : 10, 37 : 10.1, 38 : 10.2, 39 : 10.3, 40 : 10.4, 41 : 10.5, 42 : 10.6, 43 : 10.7, 44 : 10.8, 45 : 10.9, 46 : 11, 47 : 11.1, 48 : 11.2, 49 : 11.3, 50 : 11.4, 51 : 11.5, 52 : 11.6, 53 : 11.7, 54 : 11.8, 55 : 11.9, 56 : 12, 57 : 12.1, 58 : 12.2, 59 : 12.3, 60 : 12.4}
       
@@ -1923,29 +1928,9 @@ class PreSymptomPrep():
                         if weight_kg < female_sd2[month]:
                             row[headers.index('s180')] = 1
                         
-                        
-                        
-        #     local Adult_durs "a2_01 a2_03 a2_08 a2_15 a2_22 a2_24 a2_26 a2_28 a2_33 a2_37 a2_41 a2_48 a2_54 a2_58 a2_62 a2_65 a2_68 a2_70 a2_73 a2_76 a2_79 a2_83 a2_86 a3_08 a3_11 a3_16 a5_04"
-        # local Child_durs "c1_05 c1_20 c1_21 c1_25 c2_02 c2_05 c2_10 c3_14 c3_18 c3_19 c3_21 c3_22 c3_27 c3_28 c3_30 c3_31 c4_02 c4_08 c4_10 c4_13 c4_17 c4_19 c4_33 c4_37 c4_49"
-        # foreach var of local `module'_durs {
-        #     gen `var' = `var'b
-        #     replace `var' = `var' * 365 if `var'a == 1
-        #     replace `var' = `var' * 30 if `var'a == 2
-        #     replace `var' = `var' * 7 if `var'a == 3
-        #     replace `var' = `var' / 24 if `var'a == 5
-        #     replace `var' = `var' / 1440 if `var'a == 6
-        #     order `var', before(`var'a)
-        #     local name : variable label `var'b
-        #     local name = "`name' [days]"
-        #     label variable `var' "`name'"
-        #     drop `var'a `var'b
-        # }
-		    
-		# end loop
- 
+                         
                         
         childwriter.writerow(headers)
-        
         for row in matrix:
             childwriter.writerow(row)
                     

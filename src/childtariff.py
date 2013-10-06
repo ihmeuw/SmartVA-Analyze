@@ -15,7 +15,6 @@ import childuniformtrain
 from hce_variables import child_hce
 from freetext_vars import child_freetext
 from vacauses import childcauses
-#excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
@@ -26,22 +25,10 @@ class ScoredVA:
         self.sid = sid
         self.age = age
         self.gender = gender
-        
-        
-         # local whonc = "child"
-         #                 local cause_count = 21
-         #                 local cause_var = "va34"
-         #                 local text = "gs_text34"
-         #                 local aggregate_cause_count = 21
-         #                 local aggr_cl = "va34"
-         #                 local aggr_cl_text "gs_text34"
-         
-         # local cutoff = 95
-         #              local abs_cutoff = .17
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria):
+    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria, country):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -49,6 +36,7 @@ class Tariff():
         self.freetext = freetext
         self.want_abort = 0
         self.malaria = malaria
+        self.iso3 = country
         
 
     def run(self):
@@ -61,14 +49,19 @@ class Tariff():
         
         tarifffile = 'tariffs-child.csv'
         validatedfile = 'validated-child.csv'
+        undeterminedfile = 'child_undetermined_weights'
+        if self.hce is None:
+            undeterminedfile = undeterminedfile + "-hce0.csv"
+        else:
+            undeterminedfile = undeterminedfile + "-hce1.csv"
         if platform.system() == "Windows":
             tarifffile = os.path.join(os.path.dirname(sys.executable), 'tariffs-child.csv')
             validatedfile = os.path.join(os.path.dirname(sys.executable), 'validated-child.csv')
+            undeterminedfile = os.path.join(os.path.dirname(sys.executable), undeterminedfile)
         
         tariffreader = csv.reader(open(tarifffile, 'rU'))
         validatedreader = csv.reader(open(validatedfile, 'rU'))
-        
-        
+        undeterminedreader = csv.reader(open(undeterminedfile, 'rU'))
         
         matrix = list()
         headers = list()
@@ -78,6 +71,9 @@ class Tariff():
         
         validatedheaders = list()
         validatedmatrix = list()
+        
+        undeterminedheaders = list()
+        undeterminedmatrix = list()
     
         first = 1
         # read in new .csv for processing
@@ -102,10 +98,7 @@ class Tariff():
                     
             else:
                 tariffmatrix.append(row)
-                
-        #print tariffmatrix
-                
-                
+                                
         first = 1
         # read in new validated .csv for processing
         # we add the generated headers later this time
@@ -121,6 +114,17 @@ class Tariff():
         if len(matrix) == 0:
             #no entries, just return
             return
+            
+        first = 1
+        # read in new undetermined .csv for processing
+        for row in undeterminedreader:
+            if first == 1:
+                for col in row:    
+                    undeterminedheaders.append(col)
+                first = 0
+                    
+            else:
+                undeterminedmatrix.append(row)
             
         if self.hce is None:
             # remove all hce variables
@@ -188,7 +192,6 @@ class Tariff():
                 sdict[tariffheaders[j]] = math.fabs(float(row[j]))
             # sort the list based on the values of the svars                
             sorteddict = sorted(sdict.items(), key=lambda t: t[1], reverse=True)
-            #print "sorted dict %s" % sorteddict
 
             slist = []
             for val in sorteddict[:40]:
@@ -226,8 +229,6 @@ class Tariff():
         # va1 :: cause1/score, cause2/score...casue46/score
         # ... 
         
-        #print tariffmatrix[0]
-
         vavalidatedcauselist = []
         total = len(validatedmatrix) * 21
         cnt = 0
@@ -256,9 +257,6 @@ class Tariff():
             vavalidatedcauselist.append(va)
         progress = "Processing %s of %s\n" % (total, total)
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
-        #print "len causelist %s" % (len(vavalidatedcauselist))
-        #print "validated va1 = %s" % vavalidatedcauselist[1]
-            
 
         updatestr = "Creating uniform training set\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
@@ -289,8 +287,6 @@ class Tariff():
         # sample size is the first (0th) element of the list, and the second (1th) item of that element
         samplesize = sortedcausecount[0][1]
         
-                                
-        #print "sample %s" % samplesize        
         #create new uniform training set using the frequencies file
         uniformtrain = {}
         for cause in range(1, 22):
@@ -303,34 +299,6 @@ class Tariff():
                 for i in range(0, count):
                     uniformtrain[str(cause)].append(vavalidatedcauselist[causeindex])
         
-        # uniform train
-        # key == 1, 2, 3 (causes)
-        # uniformtrain["1"] == [ScoredVA1, ScoredVA2]
-        # where uniformtrain["1"] has 630 VAs, each with 46 causes/scores.
-               
-        # print "WTF: %s" % uniformtrain["1"][1]        
-        #         
-        #         print "keys %s" % uniformtrain.keys()
-        #         #print "uni1 %s" % uniformtrain["1"]
-        #         print "len of cause1 %s" % len(uniformtrain["1"])  
-        #         print "woot"
-        #         print "asdf %s" % uniformtrain["1"]
-        #for a in uniformtrain["1"]:
-        #    print a      
-        
-        
-        
-        #TODO HERE.  Bet I have to compare all the causes, not just the ones in mylist
-        
-#         Then I generate rankings for my external data set:
-#         for each external VA:
-#         for each cause:
-#           get the external calculated tariff for this cause (death score)
-
-#           for all the VAs in the uniform training set with this cause (630), get the all the tariffs (630*46 = around ~28k), and sort them from greatest to least
-
-# Here is the difference- We should be using all of the VAs in the uniform training set, not just the tariff scores for the 630 VAs from this cause. And we should be looking at the tariff scores for this cause for all 28k VAs. i.e. we should be ranking the external VAs against the 28k scores for cause n regardless of gold standard cause of death.
-
         # create a list of ALL the VAs in our uniform set
         uniformlist = []
         for key in uniformtrain.keys():
@@ -410,41 +378,10 @@ class Tariff():
             for va in uniformlist:
                 causelist.append([va.sid, va.causescores[cause], va])
             sortedcauselist = sorted(causelist, key=lambda t:t[1], reverse=True)
-#                OrderedDict(sorted(d.items(), key=lambda t: t[1]))
-#OrderedDict([('pear', 1), ('orange', 2), ('banana', 3), ('apple', 4)])
-            #sortedcauselist = sorted(causelist, key=lambda t:(t[1]), reverse=True)
-            #sortedcaustlist = sorted(causelist.items(), key=lambda t: t[1], reverse=True)
-            #sorted(sdict.items(), key=lambda t: t[1], reverse=True)
-            
-            # now have a sorted list of sid, causescore for a specific cause
-            
             for j, item in enumerate(sortedcauselist):
-                #item[2] == va
                 item[2].ranklist[cause] = j
                 
-        
-                        
-        # va = uniformlist[0]
-        # print va.sid
-        # print va.ranklist
-        # 
-        # 
-        # va = uniformlist[1]
-        # print va.sid
-        # print va.ranklist
-        # 
-        # va = uniformlist[2]
-        # print va.sid
-        # print va.ranklist
-                
-        
-        #Lines 403-409 in the Stata code generate the ranks for the validation data. It takes in the 27,000x46 tariff scores for the validation data and then goes cause by cause and sorts the tariff scores for one cause from highest to lowest and then generates a new variable called "rank" that holds the position of the VA on the list after being sorted:
-
-        
-                
-        #print "uniformlistlen %s" % len(uniformlist)
-        
-        #print "uniformlist[] %s" % uniformlist[0]
+       
         
         updatestr = "Generating cutoffs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -454,31 +391,19 @@ class Tariff():
             causelist = []
             for va in uniformlist:
                 causelist.append([va.cause, va.causescores["cause" + str(i)], va.sid, va])
-            #print "causelistlen = %s" % (len(causelist))
-            #print "causelist = %s" % causelist
             causelist.sort(key=lambda t: t[2])
             causelist.sort(key=lambda t: t[1], reverse=True)
             sortedlist = causelist
-            #print "sortedlistlen %s" % len(sortedlist)
-            #print "ALSDKFJSLKDFJSLDKJF %s" % sortedlist
-            
-            #print "SORTEDLIST %s" % sortedlist
 
             locallist = []
             for j, va in enumerate(sortedlist):
-                #0 == actualcause
-                #print "va[0] == %s" % va[0]
                 if va[0] == str(i):
-                    #print "adding index %s" % j
                     # j is the "rank"
                     # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same numbers
                     # as the original stata tool
                     locallist.append(j+1)
             #make it an int, don't round
             index = int(len(locallist) * .95)
-            #print "trying index %s" % index
-            #print "locallistlen %s" % len(locallist)
-            #print locallist
             cutoffs.append(locallist[index])
         
                         
@@ -518,7 +443,7 @@ class Tariff():
                     va.ranklist["cause"+str(i)] = lowest
                     
         
-        #TODO, what here?
+        causecounts = {}
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-causes.csv', 'wb', buffering=0))
         rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
@@ -540,25 +465,38 @@ class Tariff():
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
             if cause34 == '':
                 cause34 = 'undetermined'
+                # for undetermined, look up the values for each cause using keys (age, sex, country) and add them to the 'count' for that cause
+                for uRow in undeterminedmatrix:
+                    ageValidated = False
+                    if int(uRow[undeterminedheaders.index('age')]) == 0 and float(va.age) < 1:
+                        ageValidated = True
+                    elif int(uRow[undeterminedheaders.index('age')]) == 1 and float(va.age) >=1 and float(va.age) < 5:
+                        ageValidated = True
+                    elif int(uRow[undeterminedheaders.index('age')]) == 2 and float(va.age) >= 5 and float(va.age) < 9:
+                        ageValidated = True
+                    elif int(uRow[undeterminedheaders.index('age')]) == 3 and float(va.age) >= 10 and float(va.age) < 15:
+                        ageValidated = True
+                    if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
+                        #get the value and add it
+                        if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('GBD_weight')])
+                        else:
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('GBD_weight')])
             else:
                 cause34 = childcauses[cause34]
+                if cause34 in causecounts.keys():
+                    causecounts[cause34] = causecounts[cause34] + 1.0
+                else:
+                    causecounts[cause34] = 1.0
             rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
-                    
         
-        
-        
-                    
-        
-        # rankings is a list of VAs, and for each va you have {cause, rank}
-
-        
-        # ff = uniformtrain["1"].values()
-        #        sortedff = sorted(ff, reverse=True)
-        #        subt = []
-        #        for val in sortedff:
-        #            subt.append(math.fabs(val - deathscore))
-        
-        
+        csmfwriter = csv.writer(open(self.output_dir + os.sep + 'child-csmf.csv', 'wb', buffering=0))
+        csmfheaders = ["cause", "percentage"]
+        csmfwriter.writerow(csmfheaders)
+        for causekey in causecounts.keys():
+            percent = float(causecounts[causekey])/float(len(matrix))
+            csmfwriter.writerow([causekey, percent])            
+            
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
@@ -585,37 +523,7 @@ class Tariff():
                 newrow.append(va.causescores[cause])
             tariffwriter.writerow(newrow)
         
-        
-        
-        
-        
-        
-                            
-            #     for cause in cause40s:
-            #         print cause
-                    # for svar in cause:
-                    #                        index = headers.index(svar)
-                    #                        if row[index] == 1:
-                    #                            tariff
-            # make list of causes per va?
-            # for each va
-            # for each cause40
-            # if s in cause40 is '1' in va, then get score from tariff and add it to the cause
-            
-            # when done, have causelist of 46 with scores for each cause for each VA
-        
-        
-        
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        #end
+
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)
