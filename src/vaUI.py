@@ -1,4 +1,4 @@
-#!/opt/local/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -8,6 +8,7 @@ import workerthread
 import config
 import re
 import threading
+
 
 # TODO: pull out all strings
 # TODO: why is the first button selected

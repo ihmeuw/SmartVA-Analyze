@@ -1,4 +1,5 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
 import wx
@@ -14,8 +15,8 @@ import childtariff
 import neonatepresymptom
 import neonatesymptom
 import neonatetariff
-import causegraphs
-import csmfgraphs
+import causegrapher
+import csmfgrapher
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -78,8 +79,8 @@ class WorkerThread(Thread):
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-prepped.csv", self.output_dir, self.warningfile)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(self._notify_window, self.output_dir + os.sep + "neonate-presymptom.csv", self.output_dir)
         self.neonateresults = neonatetariff.Tariff(self._notify_window, self.output_dir + os.sep + "neonate-symptom.csv", self.output_dir, self.hce, self.freetext, self.country)
-        self.causegraph = causegraphs.CauseGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
-        #self.csmfgraph = csmfgraphs.CSMFGraphs(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        self.causegrapher = causegrapher.CauseGrapher(self._notify_window, self.output_dir + os.sep + '$module-tariff-causes.csv', self.output_dir)
+        self.csmfgrapher = csmfgrapher.CSMFGrapher(self._notify_window, self.output_dir + os.sep + '$module-csmf.csv', self.output_dir)
         self.start()
 
     def run(self):
@@ -150,7 +151,13 @@ class WorkerThread(Thread):
             return
 
         #generate all cause graphs
-        self.causegraph.run()
+        self.causegrapher.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
+
+        #generate all csmf graphs
+        self.csmfgrapher.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
@@ -174,7 +181,8 @@ class WorkerThread(Thread):
         self.neonatepresym.abort()
         self.neonatesym.abort()
         self.neonateresults.abort()
-        self.causegraph.abort()
+        self.causegrapher.abort()
+        self.csmfgrapher.abort()
         if self.data:
             #print "trying to cancel"
             self.data.setCancelled();
