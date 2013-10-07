@@ -35,7 +35,7 @@
       <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/vaUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="383" column="46" selection-start="19516" selection-end="19516" vertical-scroll-proportion="0.56889766" vertical-offset="5366" max-vertical-offset="6195">
+            <state line="328" column="23" selection-start="17310" selection-end="17310" vertical-scroll-proportion="0.62795275" vertical-offset="4511" max-vertical-offset="6195">
               <folding />
             </state>
           </provider>
@@ -80,7 +80,7 @@
       <file leaf-file-name="causegrapher.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="157" column="43" selection-start="5236" selection-end="5236" vertical-scroll-proportion="0.0" vertical-offset="1838" max-vertical-offset="2385">
+            <state line="65" column="4" selection-start="2007" selection-end="2070" vertical-scroll-proportion="0.0" vertical-offset="713" max-vertical-offset="2385">
               <folding />
             </state>
           </provider>
@@ -89,7 +89,7 @@
       <file leaf-file-name="csmfgrapher.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="0" selection-start="695" selection-end="695" vertical-scroll-proportion="-11.269231" vertical-offset="217" max-vertical-offset="2385">
+            <state line="101" column="17" selection-start="2837" selection-end="2837" vertical-scroll-proportion="-58.26923" vertical-offset="0" max-vertical-offset="2385">
               <folding>
                 <element signature="e#47#57#0" expanded="true" />
               </folding>
@@ -119,12 +119,12 @@
         <option value="$PROJECT_DIR$/src/outputgraphs.py" />
         <option value="$PROJECT_DIR$/src/grapher.py" />
         <option value="$PROJECT_DIR$/src/test.py" />
-        <option value="$PROJECT_DIR$/src/csmfgrapher.py" />
         <option value="$PROJECT_DIR$/src/workerthread.py" />
         <option value="$PROJECT_DIR$/pkg/smartva-win.spec" />
         <option value="$PROJECT_DIR$/src/readme.txt" />
-        <option value="$PROJECT_DIR$/src/causegrapher.py" />
         <option value="$PROJECT_DIR$/src/vaUI.py" />
+        <option value="$PROJECT_DIR$/src/causegrapher.py" />
+        <option value="$PROJECT_DIR$/src/csmfgrapher.py" />
       </list>
     </option>
   </component>
@@ -529,15 +529,6 @@
         <state line="793" column="36" selection-start="28433" selection-end="28433" vertical-scroll-proportion="0.20194986" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="0" selection-start="695" selection-end="695" vertical-scroll-proportion="-11.269231" vertical-offset="217" max-vertical-offset="2385">
-          <folding>
-            <element signature="e#47#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/word_conversions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="534">
@@ -587,14 +578,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="43" selection-start="5236" selection-end="5236" vertical-scroll-proportion="0.0" vertical-offset="1838" max-vertical-offset="2385">
+        <state line="65" column="4" selection-start="2007" selection-end="2070" vertical-scroll-proportion="0.0" vertical-offset="713" max-vertical-offset="2385">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="101" column="17" selection-start="2837" selection-end="2837" vertical-scroll-proportion="-58.26923" vertical-offset="0" max-vertical-offset="2385">
+          <folding>
+            <element signature="e#47#57#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vaUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="383" column="46" selection-start="19516" selection-end="19516" vertical-scroll-proportion="0.56889766" vertical-offset="5366" max-vertical-offset="6195">
+        <state line="328" column="23" selection-start="17310" selection-end="17310" vertical-scroll-proportion="0.62795275" vertical-offset="4511" max-vertical-offset="6195">
           <folding />
         </state>
       </provider>
