@@ -386,6 +386,8 @@ class vaUI(wx.Frame):
         self.countryComboBox.Enable(enable)
         self.hceCheckBox.Enable(enable)
         self.freetextCheckBox.Enable(enable)
+        self.malariaCheckBox.Enable(enable)
+        
     
     def incrementProgressBar(self):
         if self.worker is not None and self.worker.isAlive():
