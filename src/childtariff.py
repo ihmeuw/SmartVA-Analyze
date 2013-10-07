@@ -450,12 +450,14 @@ class Tariff():
             causescore = lowest
             realcause = 'undetermined'
             cause34 = ''
+            causenum = ''
             multiple = {}
             for cause in va.ranklist:
                 if float(va.ranklist[cause]) < causescore:
                     causescore = float(va.ranklist[cause])
                     realcause = cause
                     cause34 = string.strip(cause, 'cause')
+                    causenum = cause34
                     multiple[va.sid] = [cause]
                 elif causescore == float(va.ranklist[cause]) and causescore != lowest:
                     multiple[va.sid].append(cause)
@@ -479,16 +481,16 @@ class Tariff():
                     if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
                         #get the value and add it
                         if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
                         else:
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
             else:
                 cause34 = childcauses[cause34]
                 if cause34 in causecounts.keys():
                     causecounts[cause34] = causecounts[cause34] + 1.0
                 else:
                     causecounts[cause34] = 1.0
-            rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
+            rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
         
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'child-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "percentage"]

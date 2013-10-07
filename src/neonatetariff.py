@@ -446,12 +446,14 @@ class Tariff():
             causescore = lowest
             realcause = 'undetermined'
             cause34 = ''
+            causenum = ''
             multiple = {}
             for cause in va.ranklist:
                 if float(va.ranklist[cause]) < causescore:
                     causescore = float(va.ranklist[cause])
                     realcause = cause
                     cause34 = string.strip(cause, 'cause')
+                    causenum = cause34
                     multiple[va.sid] = [cause]
                 elif causescore == float(va.ranklist[cause]) and causescore != lowest:
                     multiple[va.sid].append(cause)
@@ -474,10 +476,10 @@ class Tariff():
                         #get the value and add it
                         if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
                             #print " adding %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
                         else:
                             #print " started at %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
             else:
                 cause34 = neonatecauses[cause34]
                 #print "found cause: %s" % cause34
@@ -488,7 +490,7 @@ class Tariff():
                     causecounts[cause34] = 1.0
                     #print "starting at 1"
             #print "neonate va was %s" % cause34
-            rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
+            rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
                             
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "percentage"]
