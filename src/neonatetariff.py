@@ -463,23 +463,29 @@ class Tariff():
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
             #replace number with word for cause:
             if cause34 == '':
-                cause34 = 'undetermined'
-                # for undetermined, look up the values for each cause using keys (age, sex, country) and add them to the 'count' for that cause
-                for uRow in undeterminedmatrix:
-                    ageValidated = False
-                    if int(uRow[undeterminedheaders.index('age')]) == 0 and float(va.age) >= 0 and float(va.age) < 7:
-                        ageValidated = True
-                    elif int(uRow[undeterminedheaders.index('age')]) == 7 and float(va.age) >= 7 and float(va.age) < 28:
-                        ageValidated = True
-                    if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
-                        #print "gender = %s and age = %s and country = %s" % (va.gender, va.age, self.iso3)
-                        #get the value and add it
-                        if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
-                            #print " adding %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
-                        else:
-                            #print " started at %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
+                cause34 = 'Undetermined'
+                if self.iso3 is None:
+                    if cause34 in causecounts.keys():
+                        causecounts[cause34] = causecounts[cause34] + 1.0
+                    else:
+                        causecounts[cause34] = 1.0
+                else:
+                    # for undetermined, look up the values for each cause using keys (age, sex, country) and add them to the 'count' for that cause
+                    for uRow in undeterminedmatrix:
+                        ageValidated = False
+                        if int(uRow[undeterminedheaders.index('age')]) == 0 and float(va.age) >= 0 and float(va.age) < 7:
+                            ageValidated = True
+                        elif int(uRow[undeterminedheaders.index('age')]) == 7 and float(va.age) >= 7 and float(va.age) < 28:
+                            ageValidated = True
+                        if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
+                            #print "gender = %s and age = %s and country = %s" % (va.gender, va.age, self.iso3)
+                            #get the value and add it
+                            if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
+                                #print " adding %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
+                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
+                            else:
+                                #print " started at %s" % float(uRow[undeterminedheaders.index('GBD_weight')])
+                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
             else:
                 cause34 = neonatecauses[cause34]
                 #print "found cause: %s" % cause34
