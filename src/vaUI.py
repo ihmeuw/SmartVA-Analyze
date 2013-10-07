@@ -40,7 +40,7 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(550, 730),style=wx.CAPTION|wx.MINIMIZE_BOX|wx.CLOSE_BOX)
+            size=(530, 675))
             
         self.InitUI()
         self.Centre()
@@ -78,6 +78,7 @@ class vaUI(wx.Frame):
         menubar.Append(helpMenu, '&Help')
         
         self.Bind(wx.EVT_MENU, self.onQuit, id=APP_EXIT)
+        self.Bind(wx.EVT_CLOSE, self.onQuit)
         self.SetMenuBar(menubar)
         self.parentPanel = wx.Panel(self)
         
@@ -98,14 +99,10 @@ class vaUI(wx.Frame):
         r1 = wx.BoxSizer(wx.HORIZONTAL)
 
         helpButton = wx.Button(self.parentPanel, label='Help')
-        quitButton = wx.Button(self.parentPanel, label='Quit')
-
         helpButton.Bind(wx.EVT_BUTTON, self.onHelp)
-        quitButton.Bind(wx.EVT_BUTTON, self.onQuit)
 
         r1.AddStretchSpacer()
         r1.Add(helpButton, flag=wx.RIGHT, border=12)
-        r1.Add(quitButton, flag=wx.RIGHT, border=12)
 
         r2 = wx.BoxSizer(wx.HORIZONTAL)
         r2sb1 = wx.StaticBox(self.parentPanel, label='1. Choose input file')
@@ -135,7 +132,7 @@ class vaUI(wx.Frame):
         r4sb1 = wx.StaticBox(self.parentPanel, label='3. Set processing options')
         r4sbs1 = wx.StaticBoxSizer(r4sb1, wx.VERTICAL)
 
-        self.countryLabel = wx.StaticText(self.parentPanel, label='Country where data collected')
+        self.countryLabel = wx.StaticText(self.parentPanel, label='Data origin (country)')
         self.countryComboBox = wx.ComboBox(self.parentPanel, choices=COUNTRIES, style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.changeCountry)
 
@@ -143,15 +140,15 @@ class vaUI(wx.Frame):
         r4bs2.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
         r4bs2.Add(self.countryComboBox)
 
-        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Include Health Care Experience (HCE) variables')
+        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Health Care Experience (HCE) variables')
         self.hceCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleHCE, id=self.hceCheckBox.GetId())
 
-        self.freetextCheckBox = wx.CheckBox(self.parentPanel, label='Include free text variables')
+        self.freetextCheckBox = wx.CheckBox(self.parentPanel, label='Free text variables')
         self.freetextCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleFreetext, id=self.freetextCheckBox.GetId())
 
-        self.malariaCheckBox = wx.CheckBox(self.parentPanel, label='Data collected in area with endemic malaria')
+        self.malariaCheckBox = wx.CheckBox(self.parentPanel, label='Malaria region')
         self.malariaCheckBox.SetValue(False)
         self.Bind(wx.EVT_CHECKBOX, self.toggleMalaria, id=self.malariaCheckBox.GetId())
 
@@ -319,14 +316,14 @@ class vaUI(wx.Frame):
         dialog.ShowModal()
 
     def onQuit(self, e):
-        quitDialog = wx.MessageDialog(self, 'Are you sure you want to Quit?', 'Exit Application?', wx.YES_NO | wx.NO_DEFAULT)
+        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit application?', wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
         
         if pressed == wx.ID_YES:
             self.OnAbort()
-            self.Close()
             if self.helpWindow:
                 self.helpWindow.Close()
+            self.Destroy()
         # do nothing
         #elif pressed == wx.ID_NO:
         #    print 'NO'
@@ -397,8 +394,6 @@ class vaUI(wx.Frame):
         else:
             self.statusGauge.SetValue(1)
             self.statusGauge.SetValue(0)
-
-
   
 
 if __name__ == '__main__':
