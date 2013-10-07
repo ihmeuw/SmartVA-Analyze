@@ -40,7 +40,8 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(530, 675))
+            size=(530, 675),style=wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.SYSTEM_MENU|
+                  wx.CAPTION|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
             
         self.InitUI()
         self.Centre()
@@ -316,7 +317,7 @@ class vaUI(wx.Frame):
         dialog.ShowModal()
 
     def onQuit(self, e):
-        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit application?', wx.YES_NO | wx.NO_DEFAULT)
+        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit', wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
         
         if pressed == wx.ID_YES:

@@ -66,7 +66,8 @@ class WorkerThread(Thread):
         self.country = country
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
-        
+
+        # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
         #set up the function calls
         self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, self.output_dir)
         self.prep = vaprep.VaPrep(self._notify_window, self.output_dir + os.sep + "cleanheaders.csv", self.output_dir, self.warningfile)
