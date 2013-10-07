@@ -1,6 +1,6 @@
 <project>
     <shortName>SmartVA</shortName>
-    <fullName>SmartVA</fullName>
+    <fullName>Smart VA</fullName>
     <version>1.0</version>
     <componentList>
         <component>
@@ -9,6 +9,22 @@
             <canBeEdited>1</canBeEdited>
             <selected>1</selected>
             <show>1</show>
+            <desktopShortcutList>
+                <shortcut>
+                    <comment>Run ${product_fullname}</comment>
+                    <exec></exec>
+                    <icon></icon>
+                    <name>Run ${product_fullname}</name>
+                    <path></path>
+                    <platforms>windows</platforms>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/Smart VA.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/pkg/icon.ico</windowsIcon>
+                    <windowsPath></windowsPath>
+                </shortcut>
+            </desktopShortcutList>
             <folderList>
                 <folder>
                     <description>Program Files</description>
@@ -35,14 +51,13 @@
                 <folder>
                     <description>Program Files</description>
                     <destination>${installdir}</destination>
-                    <name>programfileslinux</name>
-                    <platforms>linux</platforms>
-                </folder>
-                <folder>
-                    <description>Program Files</description>
-                    <destination>${installdir}</destination>
                     <name>programfileswindows</name>
                     <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/Smart VA.exe</origin>
+                        </distributionFile>
+                    </distributionFileList>
                 </folder>
                 <folder>
                     <description>Program Files</description>
@@ -51,7 +66,7 @@
                     <platforms>osx</platforms>
                     <distributionFileList>
                         <distributionFile>
-                            <origin>../dist/Smart VA.app</origin>
+                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/Smart VA.app</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
@@ -67,13 +82,22 @@
                     <windowsIcon></windowsIcon>
                     <windowsPath>${installdir}/</windowsPath>
                 </startMenuShortcut>
+                <startMenuShortcut>
+                    <comment>Run ${product_fullname}</comment>
+                    <name>Run ${product_fullname}</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/Smart VA.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/pkg/icon.ico</windowsIcon>
+                    <windowsPath></windowsPath>
+                </startMenuShortcut>
             </startMenuShortcutList>
         </component>
     </componentList>
     <disableSplashScreen>1</disableSplashScreen>
     <enableRollback>1</enableRollback>
     <enableTimestamp>1</enableTimestamp>
-    <saveRelativePaths>1</saveRelativePaths>
     <uninstallerName>Uninstall ${product_fullname}</uninstallerName>
     <vendor>IHME</vendor>
     <parameterList>

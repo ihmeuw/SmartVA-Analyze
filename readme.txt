@@ -4,7 +4,7 @@ To bundle the source as a single binary, run the following commands with PyInsta
 pyinstaller pkg/smartva-mac.spec --onefile --windowed
 
 # On Windows
-pyinstaller pkg/smartva-win.spec --onefile --windowed
+pyinstaller pkg\smartva-win.spec --onefile --windowed
 
 # Notes
 The spec files disable UPX because it doesn't work with 64-bit Python on OS X (10.6+).
