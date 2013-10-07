@@ -317,7 +317,7 @@ class vaUI(wx.Frame):
         dialog.ShowModal()
 
     def onQuit(self, e):
-        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit', wx.YES_NO | wx.NO_DEFAULT)
+        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit SmartVA', wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
         
         if pressed == wx.ID_YES:

@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/causegrapher.py" afterPath="$PROJECT_DIR$/src/causegrapher.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/adulttariff.py" afterPath="$PROJECT_DIR$/src/adulttariff.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/childtariff.py" afterPath="$PROJECT_DIR$/src/childtariff.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/neonatetariff.py" afterPath="$PROJECT_DIR$/src/neonatetariff.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/vaUI.py" afterPath="$PROJECT_DIR$/src/vaUI.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/workerthread.py" afterPath="$PROJECT_DIR$/src/workerthread.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ihme-va.iws" />
@@ -32,60 +33,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="vaUI.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/vaUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="38" selection-start="6159" selection-end="6159" vertical-scroll-proportion="-12.615385" vertical-offset="182" max-vertical-offset="6210">
+            <state line="231" column="14" selection-start="13914" selection-end="13918" vertical-scroll-proportion="6.6437006" vertical-offset="0" max-vertical-offset="6210">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="word_conversions.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/word_conversions.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="150">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vaprep.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/vaprep.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="workerthread.py" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/workerthread.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="107" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.505618" vertical-offset="765" max-vertical-offset="2970">
-              <folding>
-                <element signature="e#47#56#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="causegrapher.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="148" column="46" selection-start="4925" selection-end="4925" vertical-scroll-proportion="0.0" vertical-offset="1163" max-vertical-offset="2385">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="csmfgrapher.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="17" selection-start="2837" selection-end="2837" vertical-scroll-proportion="-58.26923" vertical-offset="0" max-vertical-offset="2385">
-              <folding>
-                <element signature="e#47#57#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -118,6 +70,9 @@
         <option value="$PROJECT_DIR$/src/test.py" />
         <option value="$PROJECT_DIR$/src/causegrapher.py" />
         <option value="$PROJECT_DIR$/src/vaUI.py" />
+        <option value="$PROJECT_DIR$/src/adulttariff.py" />
+        <option value="$PROJECT_DIR$/src/childtariff.py" />
+        <option value="$PROJECT_DIR$/src/neonatetariff.py" />
       </list>
     </option>
   </component>
@@ -425,7 +380,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1436" height="878" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -436,7 +391,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29455218" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26564497" sideWeight="0.19637883" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26564497" sideWeight="0.8036212" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26564497" sideWeight="0.8036212" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -465,20 +420,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/workerthread.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="84" selection-end="84" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding>
-            <element signature="e#47#56#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/vaUI.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
@@ -538,9 +479,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaprep.py">
+    <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
+        <state line="148" column="46" selection-start="4925" selection-end="4925" vertical-scroll-proportion="0.0" vertical-offset="1163" max-vertical-offset="2385">
           <folding />
         </state>
       </provider>
@@ -552,26 +493,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
+    <entry file="file://$PROJECT_DIR$/src/vaprep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="46" selection-start="4925" selection-end="4925" vertical-scroll-proportion="0.0" vertical-offset="1163" max-vertical-offset="2385">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="38" selection-start="6159" selection-end="6159" vertical-scroll-proportion="-12.615385" vertical-offset="182" max-vertical-offset="6210">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="107" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.505618" vertical-offset="765" max-vertical-offset="2970">
+        <state line="84" column="2" selection-start="4136" selection-end="4136" vertical-scroll-proportion="0.0" vertical-offset="765" max-vertical-offset="2970">
           <folding>
             <element signature="e#47#56#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/adulttariff.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8670">
+          <folding>
+            <element signature="e#40#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/childtariff.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8130">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/neonatetariff.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8175">
+          <folding>
+            <element signature="e#40#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="231" column="14" selection-start="13914" selection-end="13918" vertical-scroll-proportion="6.6437006" vertical-offset="0" max-vertical-offset="6210">
+          <folding />
         </state>
       </provider>
     </entry>

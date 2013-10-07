@@ -2,19 +2,21 @@
 
 import csv
 import string
-import wx
 import copy
 import math
-import random
 from decimal import Decimal
-import workerthread
 import os
-import sys
 import platform
+
+import wx
+
+import workerthread
 import childuniformtrain
 from hce_variables import child_hce
 from freetext_vars import child_freetext
 from vacauses import childcauses
+import config
+
 
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
@@ -55,9 +57,9 @@ class Tariff():
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
         if platform.system() == "Windows":
-            tarifffile = os.path.join(os.path.dirname(sys.executable), 'tariffs-child.csv')
-            validatedfile = os.path.join(os.path.dirname(sys.executable), 'validated-child.csv')
-            undeterminedfile = os.path.join(os.path.dirname(sys.executable), undeterminedfile)
+            tarifffile = os.path.join(config.basedir, 'tariffs-child.csv')
+            validatedfile =  os.path.join(config.basedir, 'validated-child.csv')
+            undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
         
         tariffreader = csv.reader(open(tarifffile, 'rU'))
         validatedreader = csv.reader(open(validatedfile, 'rU'))

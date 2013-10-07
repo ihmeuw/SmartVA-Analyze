@@ -2,19 +2,21 @@
 
 import csv
 import string
-import wx
 import copy
 import math
-import random
 from decimal import Decimal
-import workerthread
 import os
-import sys
 import platform
+
+import wx
+
+import workerthread
 import neonateuniformtrain
 from hce_variables import neonate_hce
 from freetext_vars import neonate_freetext
 from vacauses import neonatecauses
+import config
+
 
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
@@ -55,10 +57,10 @@ class Tariff():
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
         if platform.system() == "Windows":
-            tarifffile = os.path.join(os.path.dirname(sys.executable), 'tariffs-neonate.csv')
-            validatedfile = os.path.join(os.path.dirname(sys.executable), 'validated-neonate.csv')
-            undeterminedfile = os.path.join(os.path.dirname(sys.executable), undeterminedfile)
-        
+            tarifffile = os.path.join(config.basedir, 'tariffs-neonate.csv')
+            validatedfile =  os.path.join(config.basedir, 'validated-neonate.csv')
+            undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
+
         tariffreader = csv.reader(open(tarifffile, 'rU'))
         validatedreader = csv.reader(open(validatedfile, 'rU'))
         undeterminedreader = csv.reader(open(undeterminedfile, 'rU'))

@@ -1,21 +1,22 @@
 #!/opt/virtualenvs/ihme-va/bin/pythonw
 
 import csv
-import string
-import wx
 import copy
 import math
-import random
 from decimal import Decimal
-import workerthread
 import os
-import sys
 import platform
-from operator import itemgetter
+
+import wx
+
+import workerthread
 from freetext_vars import adult_freetext
 from hce_variables import adult_hce
 from vacauses import adultcauses
 import adultuniformtrain
+import config
+
+
 
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
@@ -56,9 +57,9 @@ class Tariff():
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
         if platform.system() == "Windows":
-            tarifffile = os.path.join(os.path.dirname(sys.executable), 'tariffs-adult.csv')
-            validatedfile = os.path.join(os.path.dirname(sys.executable), 'validated-adult.csv')
-            undeterminedfile = os.path.join(os.path.dirname(sys.executable), undeterminedfile)
+            tarifffile = os.path.join(config.basedir, 'tariffs-adult.csv')
+            validatedfile =  os.path.join(config.basedir, 'validated-adult.csv')
+            undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
         
         tariffreader = csv.reader(open(tarifffile, 'rU'))
         validatedreader = csv.reader(open(validatedfile, 'rU'))
