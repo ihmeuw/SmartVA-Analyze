@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/causegrapher.py" afterPath="$PROJECT_DIR$/src/causegrapher.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pkg/smartva-win.spec" afterPath="$PROJECT_DIR$/pkg/smartva-win.spec" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/vaUI.py" afterPath="$PROJECT_DIR$/src/vaUI.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/workerthread.py" afterPath="$PROJECT_DIR$/src/workerthread.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ihme-va.iws" />
@@ -17,8 +17,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ihme-va$test.coverage" NAME="test Coverage Results" MODIFIED="1381092573214" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381112282127" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$test.coverage" NAME="test Coverage Results" MODIFIED="1381116956849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381116412661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -32,10 +32,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="vaUI.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/vaUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="328" column="23" selection-start="17310" selection-end="17310" vertical-scroll-proportion="0.62795275" vertical-offset="4511" max-vertical-offset="6195">
+            <state line="40" column="38" selection-start="6159" selection-end="6159" vertical-scroll-proportion="-12.615385" vertical-offset="182" max-vertical-offset="6210">
               <folding />
             </state>
           </provider>
@@ -53,26 +53,19 @@
       <file leaf-file-name="vaprep.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/vaprep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7785">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workerthread.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="workerthread.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/workerthread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="21" selection-start="290" selection-end="290" vertical-scroll-proportion="0.0" vertical-offset="225" max-vertical-offset="2955">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="readme.txt" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/readme.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="88" selection-start="494" selection-end="494" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="285">
-              <folding />
+            <state line="69" column="107" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.505618" vertical-offset="765" max-vertical-offset="2970">
+              <folding>
+                <element signature="e#47#56#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,7 +73,7 @@
       <file leaf-file-name="causegrapher.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="4" selection-start="2007" selection-end="2070" vertical-scroll-proportion="0.0" vertical-offset="713" max-vertical-offset="2385">
+            <state line="148" column="46" selection-start="4925" selection-end="4925" vertical-scroll-proportion="0.0" vertical-offset="1163" max-vertical-offset="2385">
               <folding />
             </state>
           </provider>
@@ -118,13 +111,13 @@
         <option value="$PROJECT_DIR$/src/causegraphs.py" />
         <option value="$PROJECT_DIR$/src/outputgraphs.py" />
         <option value="$PROJECT_DIR$/src/grapher.py" />
-        <option value="$PROJECT_DIR$/src/test.py" />
-        <option value="$PROJECT_DIR$/src/workerthread.py" />
         <option value="$PROJECT_DIR$/pkg/smartva-win.spec" />
         <option value="$PROJECT_DIR$/src/readme.txt" />
-        <option value="$PROJECT_DIR$/src/vaUI.py" />
-        <option value="$PROJECT_DIR$/src/causegrapher.py" />
         <option value="$PROJECT_DIR$/src/csmfgrapher.py" />
+        <option value="$PROJECT_DIR$/src/workerthread.py" />
+        <option value="$PROJECT_DIR$/src/test.py" />
+        <option value="$PROJECT_DIR$/src/causegrapher.py" />
+        <option value="$PROJECT_DIR$/src/vaUI.py" />
       </list>
     </option>
   </component>
@@ -189,20 +182,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pkg" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -486,19 +465,12 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="46" selection-end="46" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="2385">
-          <folding>
-            <element signature="e#47#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="0" selection-start="84" selection-end="84" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -515,7 +487,9 @@
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="124" column="0" selection-start="4988" selection-end="4988" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -529,43 +503,12 @@
         <state line="793" column="36" selection-start="28433" selection-end="28433" vertical-scroll-proportion="0.20194986" vertical-offset="0" max-vertical-offset="0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/word_conversions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="534">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaprep.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/workerthread.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="21" selection-start="290" selection-end="290" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2955">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pkg/smartva-mac.spec">
       <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state line="27" column="87" selection-start="1862" selection-end="1862" vertical-scroll-proportion="0.46745563" vertical-offset="168" max-vertical-offset="675" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/readme.txt">
-      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="88" selection-start="494" selection-end="494" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="285">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pkg/smartva-win.spec">
@@ -576,9 +519,12 @@
         <state line="29" column="88" selection-start="1695" selection-end="1695" vertical-scroll-proportion="0.6076923" vertical-offset="177" max-vertical-offset="697" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
+    <entry file="file://$PROJECT_DIR$/src/readme.txt">
+      <provider editor-type-id="com.intellij.persistence.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="4" selection-start="2007" selection-end="2070" vertical-scroll-proportion="0.0" vertical-offset="713" max-vertical-offset="2385">
+        <state line="11" column="88" selection-start="494" selection-end="494" vertical-scroll-proportion="0.0" vertical-offset="165" max-vertical-offset="285">
           <folding />
         </state>
       </provider>
@@ -592,10 +538,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/vaprep.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7725">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/word_conversions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="534">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="148" column="46" selection-start="4925" selection-end="4925" vertical-scroll-proportion="0.0" vertical-offset="1163" max-vertical-offset="2385">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/vaUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="328" column="23" selection-start="17310" selection-end="17310" vertical-scroll-proportion="0.62795275" vertical-offset="4511" max-vertical-offset="6195">
+        <state line="40" column="38" selection-start="6159" selection-end="6159" vertical-scroll-proportion="-12.615385" vertical-offset="182" max-vertical-offset="6210">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/workerthread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="69" column="107" selection-start="2096" selection-end="2096" vertical-scroll-proportion="0.505618" vertical-offset="765" max-vertical-offset="2970">
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

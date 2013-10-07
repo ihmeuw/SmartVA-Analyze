@@ -62,7 +62,7 @@ def make_graph(cause_key, output_dir):
     female_data = graph_data[cause_key]['female'].values()
     unknown_data = graph_data[cause_key]['unknown'].values()
     
-    graph_title = cause_key +' deaths by age and sex'
+    graph_title = cause_key +' by age and sex'
     graph_filename = re.sub('[^\w\-_\. ]', ' ', cause_key).rstrip()
 
     max_value = max(max(male_data),max(female_data),max(unknown_data))
@@ -149,7 +149,7 @@ class CauseGrapher():
                     cause_key = row['cause34']
 
                     graph_data[cause_key][gender_key][age_key] += 1
-                    graph_data['all'][gender_key][age_key] += 1
+                    graph_data['All'][gender_key][age_key] += 1
 
             except IOError:
                 print module_key+'-tariff-causes.csv not found'

@@ -40,7 +40,8 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(530, 675))
+            size=(530, 675),style=wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.SYSTEM_MENU|
+                  wx.CAPTION|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
             
         self.InitUI()
         self.Centre()
