@@ -516,16 +516,16 @@ class Tariff():
                     if uRow[undeterminedheaders.index('sex')] == va.gender and int(uRow[undeterminedheaders.index('age')]) >= int(va.age) and (int(uRow[undeterminedheaders.index('age')]) < (int(va.age)+5) or int(va.age) > 80) and uRow[undeterminedheaders.index('iso3')] == self.iso3:
                         #get the value and add it
                         if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
                         else:
-                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('GBD_weight')])
+                            causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
             else:
                 cause34 = adultcauses[cause34]  
                 if cause34 in causecounts.keys():
                     causecounts[cause34] = causecounts[cause34] + 1.0
                 else:
                     causecounts[cause34] = 1.0
-            rankwriter.writerow([va.sid, realcause, cause34, va.age, va.gender])
+            rankwriter.writerow([va.sid, causereduction[cause], cause34, va.age, va.gender])
         
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "percentage"]
