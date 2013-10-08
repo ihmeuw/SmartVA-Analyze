@@ -63,11 +63,11 @@ def make_graph(cause_key, output_dir):
     unknown_data = graph_data[cause_key]['unknown'].values()
     
     graph_title = cause_key +' by age and sex'
-    graph_filename = re.sub('[^\w\-_\. ]', '-', cause_key).rstrip().lower()
+    graph_filename = re.sub('[^\w_\. ]', '-', cause_key.replace('(','').replace(')','')).replace(' ','-').lower()
 
     max_value = max(max(male_data),max(female_data),max(unknown_data))
     xlocations = np.arange(len(age_labels))    # the x locations for the groups
-    
+
     bar_width = 0.25 # the width of the bars
 
     # interactive mode off
@@ -80,16 +80,16 @@ def make_graph(cause_key, output_dir):
     ax.set_title(graph_title)
     ax.set_ylabel('number of VAs')
     ax.yaxis.grid()
-    
+
     ax.set_xticklabels(age_labels,rotation=90)
     ax.set_xticks(xlocations+bar_width/2)
 
     #push legend outside of the plot
     ax.legend((rects1[0],rects2[0]), gender_labels,loc='upper center', bbox_to_anchor=(0.5, -0.375),ncol=2)
-    
+
     #add whitespace at top of bar
     ax.set_ylim(top=max_value + .5)
-    
+
     #add whitespace before first bar and after last
     plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
 
@@ -97,7 +97,7 @@ def make_graph(cause_key, output_dir):
     plt.subplots_adjust(bottom=0.35)
 
     # clean up filenames
-    plt.savefig(output_dir + os.sep + graph_filename + ' graph.png',dpi=150)
+    plt.savefig(output_dir + os.sep + graph_filename + '-graph.png',dpi=150)
 
     # clear the current figure
     plt.clf()
@@ -135,7 +135,7 @@ class CauseGrapher():
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
             try:
-                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-tariff-causes.csv',module_key+'-tariff-causes.csv'),'rU'))
+                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-tariff-causes.csv', module_key + os.sep + module_key +'-tariff-causes.csv'),'rU'))
 
                 updatestr = 'Making cause graphs for ' + module_key + '\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))

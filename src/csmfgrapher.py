@@ -60,7 +60,7 @@ def make_graph(module_key, output_dir):
     cause_fractions = graph_data[module_key].values()
 
     graph_title = module_key + ' CSMF'
-    graph_filename = graph_title.lower()
+    graph_filename = graph_title.replace(' ','-').lower()
 
     max_value = 1
     xlocations = np.arange(len(cause_keys))    # the x locations for the groups
@@ -89,7 +89,7 @@ def make_graph(module_key, output_dir):
     #add some spacing for rotated xlabels
     plt.subplots_adjust(bottom=0.60)
 
-    plt.savefig(output_dir + os.sep + module_key + os.sep + graph_filename +' graph.png',dpi=150)
+    plt.savefig(output_dir + os.sep + module_key + os.sep + graph_filename +'-graph.png',dpi=150)
 
     # clear the current figure
     plt.clf()
@@ -115,6 +115,7 @@ class CSMFGrapher():
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
+        print self.output_dir
 
     def run(self):
 
@@ -125,7 +126,7 @@ class CSMFGrapher():
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
             try:
-                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-csmf.csv',module_key+'-csmf.csv'),'rU'))
+                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-csmf.csv', module_key + os.sep + module_key +'-csmf.csv'),'rU'))
 
                 updatestr = 'Making CSMF graphs for ' + module_key + '\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
