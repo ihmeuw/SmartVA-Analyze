@@ -115,7 +115,6 @@ class CSMFGrapher():
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
-        print self.output_dir
 
     def run(self):
 
