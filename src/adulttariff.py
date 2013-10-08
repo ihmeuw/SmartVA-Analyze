@@ -532,7 +532,7 @@ class Tariff():
                     causecounts[cause34] = causecounts[cause34] + 1.0
                 else:
                     causecounts[cause34] = 1.0
-            rankwriter.writerow([va.sid, causereduction[cause], cause34, va.age, va.gender])
+            rankwriter.writerow([va.sid, causereduction[realcause], cause34, va.age, va.gender])
         
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "percentage"]
