@@ -495,7 +495,7 @@ class Tariff():
         rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
-            realcause = 'undetermined'
+            realcause = 'Undetermined'
             cause34 = ''
             multiple = {}
             for cause in va.ranklist:

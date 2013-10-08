@@ -63,7 +63,7 @@ def make_graph(cause_key, output_dir):
     unknown_data = graph_data[cause_key]['unknown'].values()
     
     graph_title = cause_key +' by age and sex'
-    graph_filename = re.sub('[^\w\-_\. ]', ' ', cause_key).rstrip()
+    graph_filename = re.sub('[^\w\-_\. ]', '-', cause_key).rstrip().lower()
 
     max_value = max(max(male_data),max(female_data),max(unknown_data))
     xlocations = np.arange(len(age_labels))    # the x locations for the groups

@@ -60,6 +60,7 @@ def make_graph(module_key, output_dir):
     cause_fractions = graph_data[module_key].values()
 
     graph_title = module_key + ' CSMF'
+    graph_filename = graph_title.lower()
 
     max_value = 1
     xlocations = np.arange(len(cause_keys))    # the x locations for the groups
@@ -88,7 +89,7 @@ def make_graph(module_key, output_dir):
     #add some spacing for rotated xlabels
     plt.subplots_adjust(bottom=0.60)
 
-    plt.savefig(output_dir + os.sep + graph_title +' graph.png',dpi=150)
+    plt.savefig(output_dir + os.sep + module_key + os.sep + graph_filename +' graph.png',dpi=150)
 
     # clear the current figure
     plt.clf()

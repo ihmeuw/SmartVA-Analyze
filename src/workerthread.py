@@ -70,16 +70,13 @@ class WorkerThread(Thread):
         adult_output_dir = self.output_dir + os.sep + "adult"
         child_output_dir = self.output_dir + os.sep + "child" 
         neonate_output_dir = self.output_dir + os.sep + "neonate"
-        
+
         if not os.path.exists(adult_output_dir):
             os.mkdir(adult_output_dir)
         if not os.path.exists(child_output_dir):
             os.mkdir(child_output_dir)
         if not os.path.exists(neonate_output_dir):
             os.mkdir(neonate_output_dir)
-        
-        
-        
 
         # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
         #set up the function calls
