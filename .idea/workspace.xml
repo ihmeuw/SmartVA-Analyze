@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="" />
+    <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.hgignore" afterPath="$PROJECT_DIR$/.hgignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/causegrapher.py" afterPath="$PROJECT_DIR$/src/causegrapher.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/csmfgrapher.py" afterPath="$PROJECT_DIR$/src/csmfgrapher.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="ihme-va.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -50,7 +55,7 @@
       <file leaf-file-name="causegrapher.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="135" column="58" selection-start="4334" selection-end="4334" vertical-scroll-proportion="0.6901042" vertical-offset="1330" max-vertical-offset="2385">
+            <state line="105" column="3" selection-start="3346" selection-end="3346" vertical-scroll-proportion="0.07582939" vertical-offset="1330" max-vertical-offset="2385">
               <folding />
             </state>
           </provider>
@@ -561,7 +566,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="135" column="58" selection-start="4334" selection-end="4334" vertical-scroll-proportion="0.6901042" vertical-offset="1330" max-vertical-offset="2385">
+        <state line="105" column="3" selection-start="3346" selection-end="3346" vertical-scroll-proportion="0.07582939" vertical-offset="1330" max-vertical-offset="2385">
           <folding />
         </state>
       </provider>
