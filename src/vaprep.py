@@ -22,9 +22,9 @@ class VaPrep():
         # read stocks data, print status messages
         reader = csv.reader(open( self.inputFilePath, 'rU'))
         
-        adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult' + os.sep + 'adult-prepped.csv', 'wb', buffering=0))
-        childwriter = csv.writer(open(self.output_dir + os.sep + 'child' + os.sep + 'child-prepped.csv', 'wb', buffering=0))
-        neonatewriter = csv.writer(open(self.output_dir + os.sep + 'neonate' + os.sep + 'neonate-prepped.csv', 'wb', buffering=0))
+        adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-prepped.csv', 'wb', buffering=0))
+        childwriter = csv.writer(open(self.output_dir + os.sep + 'child-prepped.csv', 'wb', buffering=0))
+        neonatewriter = csv.writer(open(self.output_dir + os.sep + 'neonate-prepped.csv', 'wb', buffering=0))
           
         # these are new column headers that we generate since they are not already in the ODK data.
         # any newly created variables at this step should be added here      

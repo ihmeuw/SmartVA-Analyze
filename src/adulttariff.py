@@ -30,7 +30,7 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria, country):
+    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -39,11 +39,12 @@ class Tariff():
         self.want_abort = 0
         self.malaria = malaria
         self.iso3 = country
+        self.intermediate_dir = intermediate_dir
         
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
-        writer = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
+        writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
         
         updatestr = "Processing tariffs on adults\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -371,7 +372,7 @@ class Tariff():
         progress = "Processing %s of %s\n" % (total, total)
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
             
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].ranklist.keys():
@@ -422,7 +423,7 @@ class Tariff():
             cutoffs.append(locallist[index])
         
                         
-        f = open(self.output_dir + os.sep + 'adult-cutoffs.txt','w')
+        f = open(self.intermediate_dir + os.sep + 'adult-cutoffs.txt','w')
         for i, cutoff in enumerate(cutoffs):
             f.write(str(i+1) + " : " + str(cutoff) + "\n")
         f.close()
@@ -491,7 +492,7 @@ class Tariff():
         causereduction = {'cause1' : '1', 'cause2' : '1', 'cause3' : '21', 'cause4' : '2', 'cause5' : '3', 'cause6' : '4', 'cause7' : '5', 'cause8' : '6', 'cause9' : '7', 'cause10' : '8', 'cause11' : '9', 'cause12' : '9', 'cause13' : '9', 'cause14' : '10', 'cause15' : '11', 'cause16' : '12', 'cause17' : '13', 'cause18' : '14', 'cause19' : '15', 'cause20' : '21', 'cause21' : '16', 'cause22' : '21', 'cause23' : '17', 'cause24' : '22', 'cause25' : '22', 'cause26' : '18', 'cause27' : '19', 'cause28' : '18', 'cause29' : '20', 'cause30' : '25', 'cause31' : '22', 'cause32' : '25', 'cause33' : '23', 'cause34' : '24', 'cause35' : '25', 'cause36' : '21', 'cause37' : '26', 'cause38' : '27', 'cause39' : '28', 'cause40' : '29', 'cause41' : '30', 'cause42' : '21', 'cause43' : '31', 'cause44' : '32', 'cause45' : '33', 'cause46' : '34', 'Undetermined' : ''}
         
         causecounts = {}
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-causes.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
         rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
@@ -542,7 +543,7 @@ class Tariff():
             csmfwriter.writerow([causekey, percent])
                     
              
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].ranklist.keys():
@@ -555,7 +556,7 @@ class Tariff():
                 newrow.append(va.ranklist[cause])
             rankwriter.writerow(newrow)
             
-        tariffwriter = csv.writer(open(self.output_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
+        tariffwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].causescores.keys():

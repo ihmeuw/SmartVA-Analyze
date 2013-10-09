@@ -30,7 +30,7 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, hce, freetext, malaria, country):
+    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -39,11 +39,12 @@ class Tariff():
         self.want_abort = 0
         self.malaria = malaria
         self.iso3 = country
+        self.intermediate_dir = intermediate_dir
         
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
-        writer = csv.writer(open(self.output_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
+        writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
         
         updatestr = "Processing tariffs on childs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -359,7 +360,7 @@ class Tariff():
         progress = "Processing %s of %s\n" % (total, total)
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
             
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].ranklist.keys():
@@ -409,7 +410,7 @@ class Tariff():
             cutoffs.append(locallist[index])
         
                         
-        f = open(self.output_dir + os.sep + 'child-cutoffs.txt','w')
+        f = open(self.intermediate_dir + os.sep + 'child-cutoffs.txt','w')
         for i, cutoff in enumerate(cutoffs):
             f.write(str(i+1) + " : " + str(cutoff) + "\n")
         f.close()
@@ -446,7 +447,7 @@ class Tariff():
                     
         
         causecounts = {}
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-causes.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-predictions.csv', 'wb', buffering=0))
         rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
         for va in vacauselist:
             causescore = lowest
@@ -507,7 +508,7 @@ class Tariff():
             percent = float(causecounts[causekey])/float(len(matrix))
             csmfwriter.writerow([causekey, percent])            
             
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-ranks.csv', 'wb', buffering=0))
+        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].ranklist.keys():
@@ -520,7 +521,7 @@ class Tariff():
                 newrow.append(va.ranklist[cause])
             rankwriter.writerow(newrow)
             
-        tariffwriter = csv.writer(open(self.output_dir + os.sep + 'child-tariff-scores.csv', 'wb', buffering=0))
+        tariffwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-scores.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
         for cause in vacauselist[0].causescores.keys():

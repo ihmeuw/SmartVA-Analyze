@@ -135,7 +135,7 @@ class CauseGrapher():
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
             try:
-                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-tariff-causes.csv', module_key + os.sep + module_key +'-tariff-causes.csv'),'rU'))
+                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-predictions.csv', module_key +'-predictions.csv'),'rU'))
 
                 updatestr = 'Making cause graphs for ' + module_key + '\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -152,7 +152,7 @@ class CauseGrapher():
                     graph_data['All'][gender_key][age_key] += 1
 
             except IOError:
-                print module_key+'-tariff-causes.csv not found'
+                print module_key+'-predictions.csv not found'
 
         # make cause of death graphs
         for cause_key in graph_data.keys():
