@@ -25,9 +25,9 @@ def get_gender_key(gender_value):
 
     gender_key = 'unknown'
     if gender_value == 1:
-        gender_key = 'male'
-    elif gender_value == 0:
         gender_key = 'female'
+    elif gender_value == 0:
+        gender_key = 'male'
     return gender_key
 
 # convert value from csv to key for dict
