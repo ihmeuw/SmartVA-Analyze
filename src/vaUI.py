@@ -14,28 +14,42 @@ import threading
 # TODO: why is the first button selected
 # TODO: disable buttons when app is running
 
-APP_EXIT = 1
-APP_HELP = 2
+APP_QUIT = 1
+APP_ABOUT = 2
+APP_DOCS = 3
 
 APP_TITLE = 'Smart VA'
 
 COUNTRY_DEFAULT = u'Unknown'
 COUNTRIES = [COUNTRY_DEFAULT,u'Afghanistan (AFG)',u'Åland Islands (ALA)',u'Albania (ALB)',u'Algeria (DZA)',u'American Samoa (ASM)',u'Andorra (AND)',u'Angola (AGO)',u'Anguilla (AIA)',u'Antarctica (ATA)',u'Antigua and Barbuda (ATG)',u'Argentina (ARG)',u'Armenia (ARM)',u'Aruba (ABW)',u'Australia (AUS)',u'Austria (AUT)',u'Azerbaijan (AZE)',u'Bahamas (BHS)',u'Bahrain (BHR)',u'Bangladesh (BGD)',u'Barbados (BRB)',u'Belarus (BLR)',u'Belgium (BEL)',u'Belize (BLZ)',u'Benin (BEN)',u'Bermuda (BMU)',u'Bhutan (BTN)',u'Bolivia, Plurinational State of (BOL)',u'Bosnia and Herzegovina (BIH)',u'Botswana (BWA)',u'Bouvet Island (BVT)',u'Brazil (BRA)',u'British Indian Ocean Territory (IOT)',u'Brunei Darussalam (BRN)',u'Bulgaria (BGR)',u'Burkina Faso (BFA)',u'Burundi (BDI)',u'Cambodia (KHM)',u'Cameroon (CMR)',u'Canada (CAN)',u'Cape Verde (CPV)',u'Cayman Islands (CYM)',u'Central African Republic (CAF)',u'Chad (TCD)',u'Chile (CHL)',u'China (CHN)',u'Christmas Island (CXR)',u'Cocos (Keeling) Islands (CCK)',u'Colombia (COL)',u'Comoros (COM)',u'Congo (COG)',u'Congo, the Democratic Republic of the (COD)',u'Cook Islands (COK)',u'Costa Rica (CRI)',u'Côte d\'Ivoire (CIV)',u'Croatia (HRV)',u'Cuba (CUB)',u'Cyprus (CYP)',u'Czech Republic (CZE)',u'Denmark (DNK)',u'Djibouti (DJI)',u'Dominica (DMA)',u'Dominican Republic (DOM)',u'Ecuador (ECU)',u'Egypt (EGY)',u'El Salvador (SLV)',u'Equatorial Guinea (GNQ)',u'Eritrea (ERI)',u'Estonia (EST)',u'Ethiopia (ETH)',u'Falkland Islands (Malvinas) (FLK)',u'Faroe Islands (FRO)',u'Fiji (FJI)',u'Finland (FIN)',u'France (FRA)',u'French Guiana (GUF)',u'French Polynesia (PYF)',u'French Southern Territories (ATF)',u'Gabon (GAB)',u'Gambia (GMB)',u'Georgia (GEO)',u'Germany (DEU)',u'Ghana (GHA)',u'Gibraltar (GIB)',u'Greece (GRC)',u'Greenland (GRL)',u'Grenada (GRD)',u'Guadeloupe (GLP)',u'Guam (GUM)',u'Guatemala (GTM)',u'Guernsey (GGY)',u'Guinea (GIN)',u'Guinea-Bissau (GNB)',u'Guyana (GUY)',u'Haiti (HTI)',u'Heard Island and McDonald Islands (HMD)',u'Holy See (Vatican City State) (VAT)',u'Honduras (HND)',u'Hong Kong (HKG)',u'Hungary (HUN)',u'Iceland (ISL)',u'India (IND)',u'Indonesia (IDN)',u'Iran, Islamic Republic of (IRN)',u'Iraq (IRQ)',u'Ireland (IRL)',u'Isle of Man (IMN)',u'Israel (ISR)',u'Italy (ITA)',u'Jamaica (JAM)',u'Japan (JPN)',u'Jersey (JEY)',u'Jordan (JOR)',u'Kazakhstan (KAZ)',u'Kenya (KEN)',u'Kiribati (KIR)',u'Korea, Democratic People\'s Republic of (PRK)',u'Korea, Republic of (KOR)',u'Kuwait (KWT)',u'Kyrgyzstan (KGZ)',u'Lao People\'s Democratic Republic (LAO)',u'Latvia (LVA)',u'Lebanon (LBN)',u'Lesotho (LSO)',u'Liberia (LBR)',u'Libyan Arab Jamahiriya (LBY)',u'Liechtenstein (LIE)',u'Lithuania (LTU)',u'Luxembourg (LUX)',u'Macao (MAC)',u'Macedonia, the former Yugoslav Republic of (MKD)',u'Madagascar (MDG)',u'Malawi (MWI)',u'Malaysia (MYS)',u'Maldives (MDV)',u'Mali (MLI)',u'Malta (MLT)',u'Marshall Islands (MHL)',u'Martinique (MTQ)',u'Mauritania (MRT)',u'Mauritius (MUS)',u'Mayotte (MYT)',u'Mexico (MEX)',u'Micronesia, Federated States of (FSM)',u'Moldova, Republic of (MDA)',u'Monaco (MCO)',u'Mongolia (MNG)',u'Montenegro (MNE)',u'Montserrat (MSR)',u'Morocco (MAR)',u'Mozambique (MOZ)',u'Myanmar (MMR)',u'Namibia (NAM)',u'Nauru (NRU)',u'Nepal (NPL)',u'Netherlands (NLD)',u'Netherlands Antilles (ANT)',u'New Caledonia (NCL)',u'New Zealand (NZL)',u'Nicaragua (NIC)',u'Niger (NER)',u'Nigeria (NGA)',u'Niue (NIU)',u'Norfolk Island (NFK)',u'Northern Mariana Islands (MNP)',u'Norway (NOR)',u'Oman (OMN)',u'Pakistan (PAK)',u'Palau (PLW)',u'Palestinian Territory, Occupied (PSE)',u'Panama (PAN)',u'Papua New Guinea (PNG)',u'Paraguay (PRY)',u'Peru (PER)',u'Philippines (PHL)',u'Pitcairn (PCN)',u'Poland (POL)',u'Portugal (PRT)',u'Puerto Rico (PRI)',u'Qatar (QAT)',u'Réunion (REU)',u'Romania (ROU)',u'Russian Federation (RUS)',u'Rwanda (RWA)',u'Saint Barthélemy (BLM)',u'Saint Helena, Ascension and Tristan da Cunha (SHN)',u'Saint Kitts and Nevis (KNA)',u'Saint Lucia (LCA)',u'Saint Martin (French part) (MAF)',u'Saint Pierre and Miquelon (SPM)',u'Saint Vincent and the Grenadines (VCT)',u'Samoa (WSM)',u'San Marino (SMR)',u'Sao Tome and Principe (STP)',u'Saudi Arabia (SAU)',u'Senegal (SEN)',u'Serbia (SRB)',u'Seychelles (SYC)',u'Sierra Leone (SLE)',u'Singapore (SGP)',u'Slovakia (SVK)',u'Slovenia (SVN)',u'Solomon Islands (SLB)',u'Somalia (SOM)',u'South Africa (ZAF)',u'South Georgia and the South Sandwich Islands (SGS)',u'Spain (ESP)',u'Sri Lanka (LKA)',u'Sudan (SDN)',u'Suriname (SUR)',u'Svalbard and Jan Mayen (SJM)',u'Swaziland (SWZ)',u'Sweden (SWE)',u'Switzerland (CHE)',u'Syrian Arab Republic (SYR)',u'Taiwan, Province of China (TWN)',u'Tajikistan (TJK)',u'Tanzania, United Republic of (TZA)',u'Thailand (THA)',u'Timor-Leste (TLS)',u'Togo (TGO)',u'Tokelau (TKL)',u'Tonga (TON)',u'Trinidad and Tobago (TTO)',u'Tunisia (TUN)',u'Turkey (TUR)',u'Turkmenistan (TKM)',u'Turks and Caicos Islands (TCA)',u'Tuvalu (TUV)',u'Uganda (UGA)',u'Ukraine (UKR)',u'United Arab Emirates (ARE)',u'United Kingdom (GBR)',u'United States (USA)',u'United States Minor Outlying Islands (UMI)',u'Uruguay (URY)',u'Uzbekistan (UZB)',u'Vanuatu (VUT)',u'Venezuela, Bolivarian Republic of (VEN)',u'Viet Nam (VNM)',u'Virgin Islands, British (VGB)',u'Virgin Islands, U.S. (VIR)',u'Wallis and Futuna (WLF)',u'Western Sahara (ESH)',u'Yemen (YEM)',u'Zambia (ZMB)',u'Zimbabwe (ZWE)']
 
-class vaHelp(wx.Frame):
-    
+
+class vaAbout(wx.Frame):
+
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Help', size=(600,600))
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title='About ' + APP_TITLE, size=(400,500))
         html = wxHTML(self)
         html.SetStandardFonts()
-        helpfile = 'res' +  str(os.path.sep) + 'help.html'
-        html.LoadPage(os.path.join(config.basedir, helpfile))
+        about = 'res' +  str(os.path.sep) + 'about.html'
+        html.LoadPage(os.path.join(config.basedir, about))
+
+class vaDocs(wx.Frame):
+    
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(600,600))
+        html = wxHTML(self)
+        html.SetStandardFonts()
+        docs = 'res' +  str(os.path.sep) + 'docs.html'
+        html.LoadPage(os.path.join(config.basedir, docs))
+
+
+
  
 class wxHTML(wx.html.HtmlWindow):
      
      def OnLinkClicked(self, link):
         LaunchDefaultBrowser(link.GetHref())
-    
+
 class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
@@ -57,11 +71,11 @@ class vaUI(wx.Frame):
         self.statusLog = ''
         self.hce = 'hce'
         self.freetext = 'freetext'
-        self.malaria = None
+        self.malaria = 'malaria'
         self.country = None
         self.running = False
         self.worker = None
-        self.helpWindow = None
+        self.docsWindow = None
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
@@ -69,16 +83,21 @@ class vaUI(wx.Frame):
         fileMenu = wx.Menu()
         helpMenu = wx.Menu()
 
-        qmi = wx.MenuItem(fileMenu, APP_EXIT, '&Quit\tCtrl+Q')
-        hmi = wx.MenuItem(helpMenu, APP_HELP, '&Help')
+        qmi = wx.MenuItem(fileMenu, APP_QUIT, '&Quit\tCtrl+Q')
+        ami = wx.MenuItem(helpMenu, APP_ABOUT, '&About '+APP_TITLE)
+        dmi = wx.MenuItem(helpMenu, APP_DOCS, '&Documentation')
 
         fileMenu.AppendItem(qmi)
-        helpMenu.AppendItem(hmi)
-        
+        helpMenu.AppendItem(ami)
+        helpMenu.AppendItem(dmi)
+
         menubar.Append(fileMenu, '&File')
-        menubar.Append(helpMenu, '&Help')
-        
-        self.Bind(wx.EVT_MENU, self.onQuit, id=APP_EXIT)
+        menubar.Append(helpMenu, '&About')
+
+        self.Bind(wx.EVT_MENU, self.onQuit, id=APP_QUIT)
+        self.Bind(wx.EVT_MENU, self.onAbout, id=APP_ABOUT)
+        self.Bind(wx.EVT_MENU, self.onDocs, id=APP_DOCS)
+
         self.Bind(wx.EVT_CLOSE, self.onQuit)
         self.SetMenuBar(menubar)
         self.parentPanel = wx.Panel(self)
@@ -96,14 +115,6 @@ class vaUI(wx.Frame):
         r0.AddStretchSpacer()
         r0.Add(wx.StaticBitmap(self.parentPanel,-1,scaled_image),flag=wx.RIGHT, border=12)
         r0.AddStretchSpacer()
-
-        r1 = wx.BoxSizer(wx.HORIZONTAL)
-
-        helpButton = wx.Button(self.parentPanel, label='Help')
-        helpButton.Bind(wx.EVT_BUTTON, self.onHelp)
-
-        r1.AddStretchSpacer()
-        r1.Add(helpButton, flag=wx.RIGHT, border=12)
 
         r2 = wx.BoxSizer(wx.HORIZONTAL)
         r2sb1 = wx.StaticBox(self.parentPanel, label='1. Choose input file')
@@ -150,7 +161,7 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_CHECKBOX, self.toggleFreetext, id=self.freetextCheckBox.GetId())
 
         self.malariaCheckBox = wx.CheckBox(self.parentPanel, label='Malaria region')
-        self.malariaCheckBox.SetValue(False)
+        self.malariaCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleMalaria, id=self.malariaCheckBox.GetId())
 
 
@@ -189,7 +200,6 @@ class vaUI(wx.Frame):
         r5.Add(r5sbs1)
 
         vbox.Add(r0,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.Add(r1,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.Add(r2, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.AddSpacer(3)
         vbox.Add(r3, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
@@ -322,17 +332,22 @@ class vaUI(wx.Frame):
         
         if pressed == wx.ID_YES:
             self.OnAbort()
-            if self.helpWindow:
-                self.helpWindow.Close()
+            if self.docsWindow:
+                self.docsWindow.Close()
             self.Destroy()
         # do nothing
         #elif pressed == wx.ID_NO:
         #    print 'NO'
 
-    def onHelp(self, e):
-        self.helpWindow = vaHelp(None)
-        self.helpWindow.Centre()
-        self.helpWindow.Show()
+    def onDocs(self, e):
+        self.docsWindow = vaDocs(None)
+        self.docsWindow.Centre()
+        self.docsWindow.Show()
+
+    def onAbout(self, e):
+        self.aboutWindow = vaAbout(None)
+        self.aboutWindow.Centre()
+        self.aboutWindow.Show()
 
     def OnResult(self, event):
         if event.data is None:
@@ -397,7 +412,6 @@ class vaUI(wx.Frame):
         else:
             self.statusGauge.SetValue(1)
             self.statusGauge.SetValue(0)
-  
 
 if __name__ == '__main__':
     

@@ -89,7 +89,7 @@ def make_graph(module_key, output_dir):
     #add some spacing for rotated xlabels
     plt.subplots_adjust(bottom=0.60)
 
-    plt.savefig(output_dir + os.sep + graph_filename +'-graph.png',dpi=150)
+    plt.savefig(output_dir + os.sep + graph_filename +'-figure.png',dpi=150)
 
     # clear the current figure
     plt.clf()

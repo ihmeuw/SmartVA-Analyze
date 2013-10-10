@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fd39ff84-03f3-4b76-9efe-36fb52d284bd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.hgignore" afterPath="$PROJECT_DIR$/.hgignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/causegrapher.py" afterPath="$PROJECT_DIR$/src/causegrapher.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/csmfgrapher.py" afterPath="$PROJECT_DIR$/src/csmfgrapher.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/vaUI.py" afterPath="$PROJECT_DIR$/src/vaUI.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/res/help.html" afterPath="$PROJECT_DIR$/src/res/docs.html" />
     </list>
     <ignored path="ihme-va.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -18,7 +19,7 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/ihme-va$test.coverage" NAME="test Coverage Results" MODIFIED="1381116956849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381289645059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381425608913" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -32,10 +33,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="vaUI.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/vaUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="379" column="39" selection-start="19445" selection-end="19445" vertical-scroll-proportion="0.0" vertical-offset="2580" max-vertical-offset="6330">
+            <state line="158" column="69" selection-start="10863" selection-end="10863" vertical-scroll-proportion="0.33333334" vertical-offset="2193" max-vertical-offset="6540">
               <folding>
                 <element signature="e#47#56#0" expanded="true" />
               </folding>
@@ -46,16 +47,16 @@
       <file leaf-file-name="adulttariff.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/adulttariff.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="42" selection-start="1766" selection-end="1766" vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="8685">
+            <state line="59" column="42" selection-start="1839" selection-end="1839" vertical-scroll-proportion="0.0" vertical-offset="885" max-vertical-offset="8910">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="causegrapher.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="causegrapher.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="105" column="3" selection-start="3346" selection-end="3346" vertical-scroll-proportion="0.07582939" vertical-offset="1330" max-vertical-offset="2385">
+            <state line="99" column="63" selection-start="3240" selection-end="3240" vertical-scroll-proportion="-5.8076925" vertical-offset="1169" max-vertical-offset="2385">
               <folding />
             </state>
           </provider>
@@ -64,7 +65,7 @@
       <file leaf-file-name="csmfgrapher.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="22" selection-start="585" selection-end="585" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2265">
+            <state line="90" column="0" selection-start="2612" selection-end="2612" vertical-scroll-proportion="0.0" vertical-offset="1023" max-vertical-offset="2265">
               <folding />
             </state>
           </provider>
@@ -73,7 +74,7 @@
       <file leaf-file-name="workerthread.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/workerthread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="0" selection-start="2188" selection-end="2188" vertical-scroll-proportion="0.0" vertical-offset="495" max-vertical-offset="2940">
+            <state line="95" column="18" selection-start="4554" selection-end="4554" vertical-scroll-proportion="-4.769231" vertical-offset="1076" max-vertical-offset="2910">
               <folding />
             </state>
           </provider>
@@ -104,19 +105,20 @@
         <option value="$PROJECT_DIR$/src/readme.txt" />
         <option value="$PROJECT_DIR$/src/childtariff.py" />
         <option value="$PROJECT_DIR$/src/neonatetariff.py" />
-        <option value="$PROJECT_DIR$/src/vaUI.py" />
         <option value="$PROJECT_DIR$/src/workerthread.py" />
         <option value="$PROJECT_DIR$/src/adulttariff.py" />
         <option value="$PROJECT_DIR$/src/test.py" />
         <option value="$PROJECT_DIR$/src/causegrapher.py" />
         <option value="$PROJECT_DIR$/src/csmfgrapher.py" />
+        <option value="$PROJECT_DIR$/src/vaUI.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
-    <option name="width" value="1916" />
-    <option name="height" value="1178" />
+    <option name="x" value="237" />
+    <option name="y" value="1200" />
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -132,7 +134,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -143,54 +145,18 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ihme-va" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
     <property name="recentsLimit" value="5" />
-    <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/test.py" />
+    <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PublishConfig" persistUploadOnCheckin="false" />
   <component name="PyConsoleOptionsProvider">
@@ -309,9 +275,6 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
-      <method />
-    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -333,6 +296,9 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -416,7 +382,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1916" height="1178" extended-state="6" />
+    <frame x="237" y="1200" width="1440" height="900" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -428,7 +394,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29455218" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2650046" sideWeight="0.19624217" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2650046" sideWeight="0.8032359" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25714287" sideWeight="0.8032359" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -456,9 +422,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23903966" sideWeight="0.73499537" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2650046" sideWeight="0.8032359" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -536,38 +502,38 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/adulttariff.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="42" selection-start="1766" selection-end="1766" vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="8685">
+        <state line="59" column="42" selection-start="1839" selection-end="1839" vertical-scroll-proportion="0.0" vertical-offset="885" max-vertical-offset="8910">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="379" column="39" selection-start="19445" selection-end="19445" vertical-scroll-proportion="0.0" vertical-offset="5246" max-vertical-offset="6330">
-          <folding>
-            <element signature="e#47#56#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/workerthread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="0" selection-start="2188" selection-end="2188" vertical-scroll-proportion="0.0" vertical-offset="405" max-vertical-offset="2940">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="22" selection-start="585" selection-end="585" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2265">
+        <state line="95" column="18" selection-start="4554" selection-end="4554" vertical-scroll-proportion="-4.769231" vertical-offset="1076" max-vertical-offset="2910">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/causegrapher.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="3" selection-start="3346" selection-end="3346" vertical-scroll-proportion="0.07582939" vertical-offset="1330" max-vertical-offset="2385">
+        <state line="99" column="63" selection-start="3240" selection-end="3240" vertical-scroll-proportion="-5.8076925" vertical-offset="1169" max-vertical-offset="2385">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/csmfgrapher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="0" selection-start="2612" selection-end="2612" vertical-scroll-proportion="0.0" vertical-offset="1023" max-vertical-offset="2265">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/vaUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="158" column="69" selection-start="10863" selection-end="10863" vertical-scroll-proportion="0.33333334" vertical-offset="2193" max-vertical-offset="6540">
+          <folding>
+            <element signature="e#47#56#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

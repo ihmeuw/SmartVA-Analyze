@@ -97,7 +97,7 @@ def make_graph(cause_key, output_dir):
     plt.subplots_adjust(bottom=0.35)
 
     # clean up filenames
-    plt.savefig(output_dir + os.sep + graph_filename + '-graph.png',dpi=150)
+    plt.savefig(output_dir + os.sep + graph_filename + '-figure.png',dpi=150)
 
     # clear the current figure
     plt.clf()
