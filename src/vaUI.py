@@ -41,9 +41,6 @@ class vaDocs(wx.Frame):
         html.SetStandardFonts()
         docs = 'res' +  str(os.path.sep) + 'docs.html'
         html.LoadPage(os.path.join(config.basedir, docs))
-
-
-
  
 class wxHTML(wx.html.HtmlWindow):
      
@@ -54,8 +51,8 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(530, 675),style=wx.MINIMIZE_BOX|wx.RESIZE_BORDER|wx.SYSTEM_MENU|
-                  wx.CAPTION|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
+            size=(530, 675),style=wx.MINIMIZE_BOX|wx.SYSTEM_MENU|
+                  wx.CAPTION|wx.RESIZE_BORDER|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
             
         self.InitUI()
         self.Centre()
@@ -105,52 +102,50 @@ class vaUI(wx.Frame):
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         scaleSize = .35
-        imageFilename = 'res' + str(os.path.sep) + 'logo.png'
-        imageFile = os.path.join(config.basedir, imageFilename)
-        image = wx.Image(imageFile, wx.BITMAP_TYPE_ANY)
-        scaled_image = image.Scale(image.GetWidth()*scaleSize, image.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        logoFilepath = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
+        logo = wx.Image(logoFilepath, wx.BITMAP_TYPE_ANY)
+        scaled_image = logo.Scale(logo.GetWidth()*scaleSize, logo.GetHeight()*scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
 
-        r0 = wx.BoxSizer(wx.HORIZONTAL)
+        logoBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        logoBoxSizer.AddStretchSpacer()
+        logoBoxSizer.Add(wx.StaticBitmap(self.parentPanel,-1,scaled_image),flag=wx.RIGHT, border=12)
+        logoBoxSizer.AddStretchSpacer()
 
-        r0.AddStretchSpacer()
-        r0.Add(wx.StaticBitmap(self.parentPanel,-1,scaled_image),flag=wx.RIGHT, border=12)
-        r0.AddStretchSpacer()
-
-        r2 = wx.BoxSizer(wx.HORIZONTAL)
-        r2sb1 = wx.StaticBox(self.parentPanel, label='1. Choose input file')
-        r2sbs1 = wx.StaticBoxSizer(r2sb1, wx.HORIZONTAL)
+        chooseFileBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chooseFileStaticBox = wx.StaticBox(self.parentPanel, label='1. Choose input file')
+        chooseFileStaticBoxSizer = wx.StaticBoxSizer(chooseFileStaticBox, wx.HORIZONTAL)
 
         self.chooseFileButton = wx.Button(self.parentPanel, label='Choose file...')
         self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(367, -1))
+        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(-1, -1))
 
-        r2sbs1.Add(self.chooseFileButton, flag=wx.ALL, border=5)
-        r2sbs1.Add(self.choosenFileText, proportion=1, flag=wx.ALL, border=5)
-        r2.Add(r2sbs1)
+        chooseFileStaticBoxSizer.Add(self.chooseFileButton, flag=wx.EXPAND|wx.ALL, border=5)
+        chooseFileStaticBoxSizer.Add(self.choosenFileText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
+        chooseFileBoxSizer.Add(chooseFileStaticBoxSizer)
 
-        r3 = wx.BoxSizer(wx.HORIZONTAL)
-        r3sb1 = wx.StaticBox(self.parentPanel, label='2. Choose output folder')
-        r3sbs1 = wx.StaticBoxSizer(r3sb1, wx.HORIZONTAL)
+        chooseFolderBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chooseFolderStaticBox = wx.StaticBox(self.parentPanel, label='2. Choose output folder')
+        chooseFolderStaticBoxSizer = wx.StaticBoxSizer(chooseFolderStaticBox, wx.HORIZONTAL)
 
         self.chooseFolderButton = wx.Button(self.parentPanel, label='Choose folder...')
         self.chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
-        self.choosenFolderText = wx.StaticText(self.parentPanel, label='',size=(349, -1))
+        self.choosenFolderText = wx.StaticText(self.parentPanel, label='',size=(356, -1))
 
-        r3sbs1.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
-        r3sbs1.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
-        r3.Add(r3sbs1)
+        chooseFolderStaticBoxSizer.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
+        chooseFolderStaticBoxSizer.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
+        chooseFolderBoxSizer.Add(chooseFolderStaticBoxSizer)
 
-        r4 = wx.BoxSizer(wx.HORIZONTAL)        
-        r4sb1 = wx.StaticBox(self.parentPanel, label='3. Set processing options')
-        r4sbs1 = wx.StaticBoxSizer(r4sb1, wx.VERTICAL)
+        setOptionsBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        setOptionsStaticBox = wx.StaticBox(self.parentPanel, label='3. Set processing options')
+        setOptionsStaticBoxSizer = wx.StaticBoxSizer(setOptionsStaticBox, wx.VERTICAL)
 
         self.countryLabel = wx.StaticText(self.parentPanel, label='Data origin (country)')
         self.countryComboBox = wx.ComboBox(self.parentPanel, choices=COUNTRIES, style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.changeCountry)
 
-        r4bs2 = wx.BoxSizer(wx.HORIZONTAL)
-        r4bs2.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
-        r4bs2.Add(self.countryComboBox)
+        countryBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        countryBoxSizer.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
+        countryBoxSizer.Add(self.countryComboBox)
 
         self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Health Care Experience (HCE) variables')
         self.hceCheckBox.SetValue(True)
@@ -164,49 +159,48 @@ class vaUI(wx.Frame):
         self.malariaCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleMalaria, id=self.malariaCheckBox.GetId())
 
+        setOptionsStaticBoxSizer.Add(countryBoxSizer)
+        setOptionsStaticBoxSizer.AddSpacer(5)
+        setOptionsStaticBoxSizer.Add(self.malariaCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.AddSpacer(3)
+        setOptionsStaticBoxSizer.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.AddSpacer(3)
+        setOptionsStaticBoxSizer.Add(self.freetextCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.AddSpacer(3)
 
-        r4sbs1.Add(r4bs2)
-        r4sbs1.AddSpacer(5)
-        r4sbs1.Add(self.malariaCheckBox, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.AddSpacer(3)
-        r4sbs1.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.AddSpacer(3)
-        r4sbs1.Add(self.freetextCheckBox, flag=wx.LEFT|wx.TOP, border=5)
-        r4sbs1.AddSpacer(3)
+        setOptionsBoxSizer.Add(setOptionsStaticBoxSizer,proportion=1,flag=wx.RIGHT, border=10)
 
-        r4.Add(r4sbs1,proportion=1,flag=wx.RIGHT, border=10)
-
-        r5 = wx.BoxSizer(wx.HORIZONTAL)
-        r5sb1 = wx.StaticBox(self.parentPanel, label='4. Start analysis')
-        r5sbs1 = wx.StaticBoxSizer(r5sb1, wx.VERTICAL)
+        startAnalysisBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        startAnaysisStaticBox = wx.StaticBox(self.parentPanel, label='4. Start analysis')
+        startAnalysisStaticBoxSizer = wx.StaticBoxSizer(startAnaysisStaticBox, wx.VERTICAL)
         
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(475, 150),style=wx.TE_MULTILINE|wx.TE_LEFT)
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(377, 150),style=wx.TE_MULTILINE|wx.TE_LEFT)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
-        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(375, -1))
+        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(-1, -1))
         self.actionButton = wx.Button(self.parentPanel, label='Start')
         self.actionButton.Bind(wx.EVT_BUTTON, self.onAction)
 
-        r6c1 = wx.BoxSizer(wx.HORIZONTAL);
-        r6c1.Add(self.statusGauge,flag=wx.LEFT, border=7)
-        r6c1.AddSpacer(10)
-        r6c1.Add(self.actionButton,flag=wx.LEFT, border=5)
+        statusGaugeBoxSizer = wx.BoxSizer(wx.HORIZONTAL);
+        statusGaugeBoxSizer.Add(self.statusGauge,flag=wx.LEFT, border=7)
+        statusGaugeBoxSizer.AddSpacer(10)
+        statusGaugeBoxSizer.Add(self.actionButton,flag=wx.LEFT, border=5)
 
-        r5sbs1.AddSpacer(5)
-        r5sbs1.Add(r6c1)
-        r5sbs1.AddSpacer(5)
-        r5sbs1.Add(self.statusTextCtrl,flag=wx.ALL,border=5)
-        r5sbs1.AddSpacer(5)
-        r5.Add(r5sbs1)
+        startAnalysisStaticBoxSizer.AddSpacer(5)
+        startAnalysisStaticBoxSizer.Add(statusGaugeBoxSizer)
+        startAnalysisStaticBoxSizer.AddSpacer(5)
+        startAnalysisStaticBoxSizer.Add(self.statusTextCtrl,flag=wx.EXPAND|wx.ALL,border=5)
+        startAnalysisStaticBoxSizer.AddSpacer(5)
+        startAnalysisBoxSizer.Add(startAnalysisStaticBoxSizer,proportion=1, flag=wx.EXPAND|wx.ALL)
 
-        vbox.Add(r0,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.Add(r2, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.Add(logoBoxSizer,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.Add(chooseFileBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.AddSpacer(3)
-        vbox.Add(r3, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.Add(chooseFolderBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.AddSpacer(3)
-        vbox.Add(r4, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.Add(setOptionsBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
         vbox.AddSpacer(3)
-        vbox.Add(r5, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+        vbox.Add(startAnalysisBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
 
         self.parentPanel.SetSizer(vbox)
 
