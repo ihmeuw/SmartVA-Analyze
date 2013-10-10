@@ -54,6 +54,9 @@
                     <name>programfileswindows</name>
                     <platforms>windows</platforms>
                     <distributionFileList>
+                        <distributionDirectory>
+                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/pkg/Manual Data Entry Forms</origin>
+                        </distributionDirectory>
                         <distributionFile>
                             <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/Smart VA.exe</origin>
                         </distributionFile>
@@ -64,11 +67,6 @@
                     <destination>${installdir}</destination>
                     <name>programfilesosx</name>
                     <platforms>osx</platforms>
-                    <distributionFileList>
-                        <distributionFile>
-                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/Smart VA.app</origin>
-                        </distributionFile>
-                    </distributionFileList>
                 </folder>
             </folderList>
             <startMenuShortcutList>
@@ -92,9 +90,23 @@
                     <windowsIcon>${installdir}/Smart VA.exe</windowsIcon>
                     <windowsPath></windowsPath>
                 </startMenuShortcut>
+                <startMenuFileShortcut>
+                    <comment>Show Manual Data Entry Forms</comment>
+                    <filePath>${installdir}/Manual Data Entry Forms</filePath>
+                    <name>Show Manual Data Entry Forms</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsIcon></windowsIcon>
+                </startMenuFileShortcut>
             </startMenuShortcutList>
         </component>
     </componentList>
+    <postInstallationActionList>
+        <changeWindowsAttributes>
+            <files>${installdir}/Manual Data Entry Forms/DataEntryForm.xlsx</files>
+            <readOnly>1</readOnly>
+        </changeWindowsAttributes>
+    </postInstallationActionList>
     <disableSplashScreen>1</disableSplashScreen>
     <enableRollback>1</enableRollback>
     <enableTimestamp>1</enableTimestamp>
