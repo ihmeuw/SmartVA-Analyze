@@ -1916,14 +1916,14 @@ class PreSymptomPrep():
                     sex = row[headers.index('g5_02')]
                     if sex == '1':
                         if weight_kg < male_sd3[month]:
-                            row[headers.index('s181')] = 1
-                        if weight_kg < male_sd2[month]:
                             row[headers.index('s180')] = 1
+                        if weight_kg < male_sd2[month]:
+                            row[headers.index('s181')] = 1
                     elif sex == '2':
                         if weight_kg < female_sd3[month]:
-                            row[headers.index('s181')] = 1
-                        if weight_kg < female_sd2[month]:
                             row[headers.index('s180')] = 1
+                        if weight_kg < female_sd2[month]:
+                            row[headers.index('s181')] = 1
 
  
                         
