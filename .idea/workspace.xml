@@ -16,7 +16,7 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/ihme-va$test.coverage" NAME="test Coverage Results" MODIFIED="1381116956849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381436582666" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/ihme-va$vaUI.coverage" NAME="vaUI Coverage Results" MODIFIED="1381437318277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -33,7 +33,7 @@
       <file leaf-file-name="vaUI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/vaUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="179" column="71" selection-start="12754" selection-end="12754" vertical-scroll-proportion="0.35928145" vertical-offset="2385" max-vertical-offset="6450">
+            <state line="78" column="30" selection-start="7485" selection-end="7485" vertical-scroll-proportion="0.8982036" vertical-offset="420" max-vertical-offset="6450">
               <folding>
                 <element signature="e#47#56#0" expanded="true" />
               </folding>
@@ -526,7 +526,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vaUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="71" selection-start="12754" selection-end="12754" vertical-scroll-proportion="0.35928145" vertical-offset="2385" max-vertical-offset="6450">
+        <state line="78" column="30" selection-start="7485" selection-end="7485" vertical-scroll-proportion="0.8982036" vertical-offset="420" max-vertical-offset="6450">
           <folding>
             <element signature="e#47#56#0" expanded="true" />
           </folding>

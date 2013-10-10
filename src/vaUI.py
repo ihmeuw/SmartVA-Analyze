@@ -51,7 +51,7 @@ class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
         super(vaUI, self).__init__(parent, title=title, 
-            size=(530, 675),style=wx.MINIMIZE_BOX|wx.SYSTEM_MENU|
+            size=(530, 675),style=wx.MINIMIZE_BOX|wx.MAXIMIZE_BOX|wx.SYSTEM_MENU|
                   wx.CAPTION|wx.RESIZE_BORDER|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
             
         self.InitUI()
@@ -117,7 +117,7 @@ class vaUI(wx.Frame):
 
         self.chooseFileButton = wx.Button(self.parentPanel, label='Choose file...')
         self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(-1, -1))
+        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(367, -1))
 
         chooseFileStaticBoxSizer.Add(self.chooseFileButton, flag=wx.EXPAND|wx.ALL, border=5)
         chooseFileStaticBoxSizer.Add(self.choosenFileText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
@@ -177,7 +177,7 @@ class vaUI(wx.Frame):
         self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(377, 150),style=wx.TE_MULTILINE|wx.TE_LEFT)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
-        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(-1, -1))
+        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(375, -1))
         self.actionButton = wx.Button(self.parentPanel, label='Start')
         self.actionButton.Bind(wx.EVT_BUTTON, self.onAction)
 
