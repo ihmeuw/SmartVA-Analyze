@@ -9,7 +9,6 @@ import config
 import re
 import threading
 
-
 # TODO: pull out all strings
 # TODO: why is the first button selected
 # TODO: disable buttons when app is running
@@ -22,7 +21,6 @@ APP_TITLE = 'Smart VA'
 
 COUNTRY_DEFAULT = u'Unknown'
 COUNTRIES = [COUNTRY_DEFAULT,u'Afghanistan (AFG)',u'Åland Islands (ALA)',u'Albania (ALB)',u'Algeria (DZA)',u'American Samoa (ASM)',u'Andorra (AND)',u'Angola (AGO)',u'Anguilla (AIA)',u'Antarctica (ATA)',u'Antigua and Barbuda (ATG)',u'Argentina (ARG)',u'Armenia (ARM)',u'Aruba (ABW)',u'Australia (AUS)',u'Austria (AUT)',u'Azerbaijan (AZE)',u'Bahamas (BHS)',u'Bahrain (BHR)',u'Bangladesh (BGD)',u'Barbados (BRB)',u'Belarus (BLR)',u'Belgium (BEL)',u'Belize (BLZ)',u'Benin (BEN)',u'Bermuda (BMU)',u'Bhutan (BTN)',u'Bolivia, Plurinational State of (BOL)',u'Bosnia and Herzegovina (BIH)',u'Botswana (BWA)',u'Bouvet Island (BVT)',u'Brazil (BRA)',u'British Indian Ocean Territory (IOT)',u'Brunei Darussalam (BRN)',u'Bulgaria (BGR)',u'Burkina Faso (BFA)',u'Burundi (BDI)',u'Cambodia (KHM)',u'Cameroon (CMR)',u'Canada (CAN)',u'Cape Verde (CPV)',u'Cayman Islands (CYM)',u'Central African Republic (CAF)',u'Chad (TCD)',u'Chile (CHL)',u'China (CHN)',u'Christmas Island (CXR)',u'Cocos (Keeling) Islands (CCK)',u'Colombia (COL)',u'Comoros (COM)',u'Congo (COG)',u'Congo, the Democratic Republic of the (COD)',u'Cook Islands (COK)',u'Costa Rica (CRI)',u'Côte d\'Ivoire (CIV)',u'Croatia (HRV)',u'Cuba (CUB)',u'Cyprus (CYP)',u'Czech Republic (CZE)',u'Denmark (DNK)',u'Djibouti (DJI)',u'Dominica (DMA)',u'Dominican Republic (DOM)',u'Ecuador (ECU)',u'Egypt (EGY)',u'El Salvador (SLV)',u'Equatorial Guinea (GNQ)',u'Eritrea (ERI)',u'Estonia (EST)',u'Ethiopia (ETH)',u'Falkland Islands (Malvinas) (FLK)',u'Faroe Islands (FRO)',u'Fiji (FJI)',u'Finland (FIN)',u'France (FRA)',u'French Guiana (GUF)',u'French Polynesia (PYF)',u'French Southern Territories (ATF)',u'Gabon (GAB)',u'Gambia (GMB)',u'Georgia (GEO)',u'Germany (DEU)',u'Ghana (GHA)',u'Gibraltar (GIB)',u'Greece (GRC)',u'Greenland (GRL)',u'Grenada (GRD)',u'Guadeloupe (GLP)',u'Guam (GUM)',u'Guatemala (GTM)',u'Guernsey (GGY)',u'Guinea (GIN)',u'Guinea-Bissau (GNB)',u'Guyana (GUY)',u'Haiti (HTI)',u'Heard Island and McDonald Islands (HMD)',u'Holy See (Vatican City State) (VAT)',u'Honduras (HND)',u'Hong Kong (HKG)',u'Hungary (HUN)',u'Iceland (ISL)',u'India (IND)',u'Indonesia (IDN)',u'Iran, Islamic Republic of (IRN)',u'Iraq (IRQ)',u'Ireland (IRL)',u'Isle of Man (IMN)',u'Israel (ISR)',u'Italy (ITA)',u'Jamaica (JAM)',u'Japan (JPN)',u'Jersey (JEY)',u'Jordan (JOR)',u'Kazakhstan (KAZ)',u'Kenya (KEN)',u'Kiribati (KIR)',u'Korea, Democratic People\'s Republic of (PRK)',u'Korea, Republic of (KOR)',u'Kuwait (KWT)',u'Kyrgyzstan (KGZ)',u'Lao People\'s Democratic Republic (LAO)',u'Latvia (LVA)',u'Lebanon (LBN)',u'Lesotho (LSO)',u'Liberia (LBR)',u'Libyan Arab Jamahiriya (LBY)',u'Liechtenstein (LIE)',u'Lithuania (LTU)',u'Luxembourg (LUX)',u'Macao (MAC)',u'Macedonia, the former Yugoslav Republic of (MKD)',u'Madagascar (MDG)',u'Malawi (MWI)',u'Malaysia (MYS)',u'Maldives (MDV)',u'Mali (MLI)',u'Malta (MLT)',u'Marshall Islands (MHL)',u'Martinique (MTQ)',u'Mauritania (MRT)',u'Mauritius (MUS)',u'Mayotte (MYT)',u'Mexico (MEX)',u'Micronesia, Federated States of (FSM)',u'Moldova, Republic of (MDA)',u'Monaco (MCO)',u'Mongolia (MNG)',u'Montenegro (MNE)',u'Montserrat (MSR)',u'Morocco (MAR)',u'Mozambique (MOZ)',u'Myanmar (MMR)',u'Namibia (NAM)',u'Nauru (NRU)',u'Nepal (NPL)',u'Netherlands (NLD)',u'Netherlands Antilles (ANT)',u'New Caledonia (NCL)',u'New Zealand (NZL)',u'Nicaragua (NIC)',u'Niger (NER)',u'Nigeria (NGA)',u'Niue (NIU)',u'Norfolk Island (NFK)',u'Northern Mariana Islands (MNP)',u'Norway (NOR)',u'Oman (OMN)',u'Pakistan (PAK)',u'Palau (PLW)',u'Palestinian Territory, Occupied (PSE)',u'Panama (PAN)',u'Papua New Guinea (PNG)',u'Paraguay (PRY)',u'Peru (PER)',u'Philippines (PHL)',u'Pitcairn (PCN)',u'Poland (POL)',u'Portugal (PRT)',u'Puerto Rico (PRI)',u'Qatar (QAT)',u'Réunion (REU)',u'Romania (ROU)',u'Russian Federation (RUS)',u'Rwanda (RWA)',u'Saint Barthélemy (BLM)',u'Saint Helena, Ascension and Tristan da Cunha (SHN)',u'Saint Kitts and Nevis (KNA)',u'Saint Lucia (LCA)',u'Saint Martin (French part) (MAF)',u'Saint Pierre and Miquelon (SPM)',u'Saint Vincent and the Grenadines (VCT)',u'Samoa (WSM)',u'San Marino (SMR)',u'Sao Tome and Principe (STP)',u'Saudi Arabia (SAU)',u'Senegal (SEN)',u'Serbia (SRB)',u'Seychelles (SYC)',u'Sierra Leone (SLE)',u'Singapore (SGP)',u'Slovakia (SVK)',u'Slovenia (SVN)',u'Solomon Islands (SLB)',u'Somalia (SOM)',u'South Africa (ZAF)',u'South Georgia and the South Sandwich Islands (SGS)',u'Spain (ESP)',u'Sri Lanka (LKA)',u'Sudan (SDN)',u'Suriname (SUR)',u'Svalbard and Jan Mayen (SJM)',u'Swaziland (SWZ)',u'Sweden (SWE)',u'Switzerland (CHE)',u'Syrian Arab Republic (SYR)',u'Taiwan, Province of China (TWN)',u'Tajikistan (TJK)',u'Tanzania, United Republic of (TZA)',u'Thailand (THA)',u'Timor-Leste (TLS)',u'Togo (TGO)',u'Tokelau (TKL)',u'Tonga (TON)',u'Trinidad and Tobago (TTO)',u'Tunisia (TUN)',u'Turkey (TUR)',u'Turkmenistan (TKM)',u'Turks and Caicos Islands (TCA)',u'Tuvalu (TUV)',u'Uganda (UGA)',u'Ukraine (UKR)',u'United Arab Emirates (ARE)',u'United Kingdom (GBR)',u'United States (USA)',u'United States Minor Outlying Islands (UMI)',u'Uruguay (URY)',u'Uzbekistan (UZB)',u'Vanuatu (VUT)',u'Venezuela, Bolivarian Republic of (VEN)',u'Viet Nam (VNM)',u'Virgin Islands, British (VGB)',u'Virgin Islands, U.S. (VIR)',u'Wallis and Futuna (WLF)',u'Western Sahara (ESH)',u'Yemen (YEM)',u'Zambia (ZMB)',u'Zimbabwe (ZWE)']
-
 
 class vaAbout(wx.Frame):
 
@@ -50,16 +48,15 @@ class wxHTML(wx.html.HtmlWindow):
 class vaUI(wx.Frame):
 
     def __init__(self, parent, title):
-        super(vaUI, self).__init__(parent, title=title, 
+        super(vaUI, self).__init__(parent, title=title,
             size=(530, 675),style=wx.MINIMIZE_BOX|wx.MAXIMIZE_BOX|wx.SYSTEM_MENU|
                   wx.CAPTION|wx.RESIZE_BORDER|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
-            
         self.InitUI()
         self.Centre()
         self.Show()     
         
     def InitUI(self):
-        
+
         #TODO: make both of these empty when done
         self.inputFilePath = '/Users/carlhartung/Desktop/runva/Test_09132013.csv'
         self.outputFolderPath = '/Users/carlhartung/Desktop/runva'
@@ -97,10 +94,11 @@ class vaUI(wx.Frame):
 
         self.Bind(wx.EVT_CLOSE, self.onQuit)
         self.SetMenuBar(menubar)
+
         self.parentPanel = wx.Panel(self)
-        
         vbox = wx.BoxSizer(wx.VERTICAL)
 
+        # logo
         scaleSize = .35
         logoFilepath = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
         logo = wx.Image(logoFilepath, wx.BITMAP_TYPE_ANY)
@@ -111,31 +109,38 @@ class vaUI(wx.Frame):
         logoBoxSizer.Add(wx.StaticBitmap(self.parentPanel,-1,scaled_image),flag=wx.RIGHT, border=12)
         logoBoxSizer.AddStretchSpacer()
 
-        chooseFileBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        chooseFileStaticBox = wx.StaticBox(self.parentPanel, label='1. Choose input file')
-        chooseFileStaticBoxSizer = wx.StaticBoxSizer(chooseFileStaticBox, wx.HORIZONTAL)
+
+        # choose input file
+        chooseInputStaticBox = wx.StaticBox(self.parentPanel, label='1. Choose input file')
+        chooseInputStaticBoxSizer = wx.StaticBoxSizer(chooseInputStaticBox, wx.HORIZONTAL)
 
         self.chooseFileButton = wx.Button(self.parentPanel, label='Choose file...')
         self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(367, -1))
+        self.choosenFileText = wx.StaticText(self.parentPanel, label='',size=(-1, -1))
 
-        chooseFileStaticBoxSizer.Add(self.chooseFileButton, flag=wx.EXPAND|wx.ALL, border=5)
-        chooseFileStaticBoxSizer.Add(self.choosenFileText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
-        chooseFileBoxSizer.Add(chooseFileStaticBoxSizer)
+        chooseFileBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chooseFileBoxSizer.Add(self.chooseFileButton, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
+        chooseFileBoxSizer.Add(self.choosenFileText, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        chooseFolderBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        chooseFolderStaticBox = wx.StaticBox(self.parentPanel, label='2. Choose output folder')
-        chooseFolderStaticBoxSizer = wx.StaticBoxSizer(chooseFolderStaticBox, wx.HORIZONTAL)
+        chooseInputStaticBoxSizer.Add(chooseFileBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+
+
+        # choose output folder
+        chooseOutputStaticBox = wx.StaticBox(self.parentPanel, label='2. Choose output folder')
+        chooseOutputStaticBoxSizer = wx.StaticBoxSizer(chooseOutputStaticBox, wx.HORIZONTAL)
 
         self.chooseFolderButton = wx.Button(self.parentPanel, label='Choose folder...')
         self.chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
-        self.choosenFolderText = wx.StaticText(self.parentPanel, label='',size=(356, -1))
+        self.choosenFolderText = wx.StaticText(self.parentPanel, label='',size=(-1, -1))
 
-        chooseFolderStaticBoxSizer.Add(self.chooseFolderButton, flag=wx.ALL, border=5)
-        chooseFolderStaticBoxSizer.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND|wx.ALL, border=5)
-        chooseFolderBoxSizer.Add(chooseFolderStaticBoxSizer)
+        chooseFolderBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chooseFolderBoxSizer.Add(self.chooseFolderButton, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
+        chooseFolderBoxSizer.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        setOptionsBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        chooseOutputStaticBoxSizer.Add(chooseFolderBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+
+
+        # set processing options
         setOptionsStaticBox = wx.StaticBox(self.parentPanel, label='3. Set processing options')
         setOptionsStaticBoxSizer = wx.StaticBoxSizer(setOptionsStaticBox, wx.VERTICAL)
 
@@ -144,9 +149,9 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_COMBOBOX, self.changeCountry)
 
         countryBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        countryBoxSizer.Add(self.countryLabel,flag=wx.TOP|wx.RIGHT,border=5)
+        countryBoxSizer.Add(self.countryLabel,flag=wx.TOP | wx.RIGHT, border=5)
         countryBoxSizer.Add(self.countryComboBox)
-
+        
         self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Health Care Experience (HCE) variables')
         self.hceCheckBox.SetValue(True)
         self.Bind(wx.EVT_CHECKBOX, self.toggleHCE, id=self.hceCheckBox.GetId())
@@ -161,48 +166,42 @@ class vaUI(wx.Frame):
 
         setOptionsStaticBoxSizer.Add(countryBoxSizer)
         setOptionsStaticBoxSizer.AddSpacer(5)
-        setOptionsStaticBoxSizer.Add(self.malariaCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.Add(self.malariaCheckBox, flag=wx.LEFT | wx.TOP, border=5)
         setOptionsStaticBoxSizer.AddSpacer(3)
-        setOptionsStaticBoxSizer.Add(self.hceCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.Add(self.hceCheckBox, flag=wx.LEFT | wx.TOP, border=5)
         setOptionsStaticBoxSizer.AddSpacer(3)
-        setOptionsStaticBoxSizer.Add(self.freetextCheckBox, flag=wx.LEFT|wx.TOP, border=5)
+        setOptionsStaticBoxSizer.Add(self.freetextCheckBox, flag=wx.LEFT | wx.TOP, border=5)
         setOptionsStaticBoxSizer.AddSpacer(3)
 
-        setOptionsBoxSizer.Add(setOptionsStaticBoxSizer,proportion=1,flag=wx.RIGHT, border=10)
 
-        startAnalysisBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        startAnaysisStaticBox = wx.StaticBox(self.parentPanel, label='4. Start analysis')
-        startAnalysisStaticBoxSizer = wx.StaticBoxSizer(startAnaysisStaticBox, wx.VERTICAL)
-        
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(377, 150),style=wx.TE_MULTILINE|wx.TE_LEFT)
+        # start analysis
+        startAnalysisStaticBox = wx.StaticBox(self.parentPanel, label='4. Start analysis')
+        startAnalysisBoxSizer = wx.StaticBoxSizer(startAnalysisStaticBox, wx.VERTICAL)
+
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(-1, -1),style=wx.TE_MULTILINE | wx.TE_LEFT)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
-        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(375, -1))
+        self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(-1, -1))
         self.actionButton = wx.Button(self.parentPanel, label='Start')
         self.actionButton.Bind(wx.EVT_BUTTON, self.onAction)
 
-        statusGaugeBoxSizer = wx.BoxSizer(wx.HORIZONTAL);
-        statusGaugeBoxSizer.Add(self.statusGauge,flag=wx.LEFT, border=7)
-        statusGaugeBoxSizer.AddSpacer(10)
-        statusGaugeBoxSizer.Add(self.actionButton,flag=wx.LEFT, border=5)
+        statusGaugeBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
+        statusGaugeBoxSizer.Add(self.statusGauge, proportion=1, flag=wx.EXPAND |wx.LEFT | wx.RIGHT, border=5)
+        statusGaugeBoxSizer.Add(self.actionButton, proportion=0, flag=wx.EXPAND| wx.LEFT | wx.RIGHT, border=5)
 
-        startAnalysisStaticBoxSizer.AddSpacer(5)
-        startAnalysisStaticBoxSizer.Add(statusGaugeBoxSizer)
-        startAnalysisStaticBoxSizer.AddSpacer(5)
-        startAnalysisStaticBoxSizer.Add(self.statusTextCtrl,flag=wx.EXPAND|wx.ALL,border=5)
-        startAnalysisStaticBoxSizer.AddSpacer(5)
-        startAnalysisBoxSizer.Add(startAnalysisStaticBoxSizer,proportion=1, flag=wx.EXPAND|wx.ALL)
+        startAnalysisBoxSizer.Add(statusGaugeBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        startAnalysisBoxSizer.Add(self.statusTextCtrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
-        vbox.Add(logoBoxSizer,flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.Add(chooseFileBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(3)
-        vbox.Add(chooseFolderBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(3)
-        vbox.Add(setOptionsBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
-        vbox.AddSpacer(3)
-        vbox.Add(startAnalysisBoxSizer, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+
+        # build ui
+        vbox.Add(logoBoxSizer,flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        vbox.Add(chooseInputStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        vbox.Add(chooseOutputStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        vbox.Add(setOptionsStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        vbox.Add(startAnalysisBoxSizer, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
         self.parentPanel.SetSizer(vbox)
+
 
     def shortenPath(self,path, maxLength):
         pathLength = 0
