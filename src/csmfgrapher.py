@@ -120,6 +120,7 @@ class CSMFGrapher():
 
         graph_data_unsorted = get_default_dict()
 
+        module_errors = {}
         for module_key in module_labels:
 
             # read and process data from csv. rU gives universal newline support
@@ -129,6 +130,7 @@ class CSMFGrapher():
 
                 updatestr = 'Making CSMF graphs for ' + module_key + '\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                module_errors[module_key] = 0
 
                 for row in csv_file:
                     if self.want_abort == 1:
@@ -140,13 +142,16 @@ class CSMFGrapher():
                     graph_data_unsorted[module_key][cause_key] = float(cause_fraction)
 
             except IOError:
-                print module_key+'-csmf.csv not found'
+                # if the file isn't there, there was no data or an error, so just skip it
+                # print module_key+'-csmf.csv not found'
+                module_errors[module_key] = 1
 
         # make csmf graphs
         for module_key in module_labels:
-            # sort data in decreasing order
-            graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1],reverse=True))
-            make_graph(module_key,self.output_dir)
+            if module_errors[module_key] != 1:
+                # sort data in decreasing order
+                graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1],reverse=True))
+                make_graph(module_key,self.output_dir)
 
         updatestr = 'Finished making CSMF graphs\n'
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))

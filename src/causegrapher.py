@@ -130,6 +130,7 @@ class CauseGrapher():
 
     def run(self):
 
+        module_errors = {}
         for module_key in module_labels:
 
             # read and process data from csv. rU gives universal newline support
@@ -139,7 +140,8 @@ class CauseGrapher():
 
                 updatestr = 'Making cause graphs for ' + module_key + '\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-
+                module_errors[module_key] = 0
+                
                 for row in csv_file:
                     if self.want_abort == 1:
                         return
@@ -152,11 +154,14 @@ class CauseGrapher():
                     graph_data['All'][gender_key][age_key] += 1
 
             except IOError:
-                print module_key+'-predictions.csv not found'
+                # if the file isn't there, there was no data or an error, so just skip it
+                # print module_key+'-predictions.csv not found'
+                module_errors[module_key] = 1
 
         # make cause of death graphs
         for cause_key in graph_data.keys():
-            make_graph(cause_key,self.output_dir)
+            if module_errors[module_key] != 1:
+                make_graph(cause_key,self.output_dir)
 
         updatestr = 'Finished making cause graphs\n'
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
