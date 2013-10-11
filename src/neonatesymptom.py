@@ -37,7 +37,7 @@ class NeonateSymptomPrep():
         matrix = list()
         headers = list()
         
-        updatestr = "Processing neonate symptom data\n"
+        updatestr = "Neonate :: Processing symptom data\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
     
         first = 1

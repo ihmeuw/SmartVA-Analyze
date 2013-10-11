@@ -367,9 +367,9 @@ class vaUI(wx.Frame):
             
         else:
             # everything else is update status text
-            if event.data.startswith('Processing'):
+            if event.data.startswith('Adult :: Processing') or event.data.startswith('Child :: Processing') or event.data.startswith('Neonate :: Processing'):
                 lastline = self.statusTextCtrl.GetLineText(long(self.statusTextCtrl.GetNumberOfLines()-1))
-                if lastline.startswith('Processing'):
+                if lastline.startswith('Adult :: Processing') or lastline.startswith('Child :: Processing') or lastline.startswith('Neonate :: Processing'):
                     # replace
                     position = self.statusTextCtrl.GetLastPosition()
                     self.statusTextCtrl.Remove(position - len(lastline), position)

@@ -31,7 +31,7 @@ class ChildSymptomPrep():
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'child-symptom.csv', 'wb', buffering=0))
         
-        updatestr = "Processing child symptom data\n"
+        updatestr = "Child :: Processing symptom data\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         
         matrix = list()

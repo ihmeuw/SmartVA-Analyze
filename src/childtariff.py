@@ -46,7 +46,7 @@ class Tariff():
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
         
-        updatestr = "Processing tariffs on childs\n"
+        updatestr = "Child :: Processing tariffs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         
         
@@ -226,7 +226,7 @@ class Tariff():
             vacauselist.append(va)
             
        
-        updatestr = "Creating validated causelist.  (This takes a few minutes)\n"
+        updatestr = "Child :: Calculating scores for validated dataset. (This takes a few minutes)\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))    
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
@@ -241,7 +241,7 @@ class Tariff():
                 if (self.want_abort == 1):
                     return
                 cnt = cnt + 1
-                progress = "Processing %s of %s" % (cnt, total)
+                progress = "Child :: Processing %s of %s" % (cnt, total)
                 if (cnt % 1000 == 0):
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
                 cause = "cause" + str(causenum)
@@ -258,10 +258,10 @@ class Tariff():
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
-        progress = "Processing %s of %s\n" % (total, total)
+        progress = "Child :: Processing %s of %s\n" % (total, total)
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
 
-        updatestr = "Creating uniform training set\n"
+        updatestr = "Child :: Creating uniform training set\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
@@ -311,7 +311,7 @@ class Tariff():
                 uniformlist.append(va)
         
         
-        updatestr = "Generating cause rankings. (This takes a few minutes)\n"
+        updatestr = "Child :: Generating cause rankings. (This takes a few minutes)\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
         total = len(vacauselist) * 21
@@ -323,7 +323,7 @@ class Tariff():
                 if (self.want_abort == 1):
                     return
                 cnt = cnt + 1
-                progress = "Processing %s of %s" % (cnt, total)
+                progress = "Child :: Processing %s of %s" % (cnt, total)
                 if (cnt % 10 == 0):
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
                 cause = "cause" + str(i)
@@ -357,7 +357,7 @@ class Tariff():
                 # answer as the original stata tool
                 ranklist[cause] = index+1
             va.ranklist = ranklist
-        progress = "Processing %s of %s\n" % (total, total)
+        progress = "Child :: Processing %s of %s\n" % (total, total)
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
             
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
@@ -386,7 +386,7 @@ class Tariff():
                 
        
         
-        updatestr = "Generating cutoffs\n"
+        updatestr = "Child :: Generating cutoffs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         
         cutoffs = []
@@ -466,7 +466,7 @@ class Tariff():
                     multiple[va.sid].append(cause)
             for vakey in multiple.keys():
                 if len(multiple[vakey]) > 1:
-                    updatestr = "WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
+                    updatestr = "Child :: WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
             if cause34 == '':
                 cause34 = 'Undetermined'
@@ -540,7 +540,8 @@ class Tariff():
             writer.writerow(row)
         
                 
-                    
+        updatestr = "Child :: Done!\n"
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))             
         return 1   
         
     def round5(self, value):

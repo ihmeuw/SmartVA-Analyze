@@ -96,68 +96,75 @@ class WorkerThread(Thread):
     def run(self):
         
         
-        #makes cleanheaders.csv
-        self.cleanheaders.run()
-        if self._want_abort == 1:
+        # makes cleanheaders.csv
+        hasdata = self.cleanheaders.run()
+        if hasdata == 0 or self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-
-        #makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
+       
+        # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
+        # we have data at this point, so all of these files should have been created
         self.prep.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-
-        # #makes adult-presymptom.csv
-        self.adultpresym.run()
+            
+        # makes adult-presymptom.csv
+        adult_data = self.adultpresym.run()
+        if self._want_abort == 1:
+            wx.PostEvent(self._notify_window, ResultEvent(None))
+            return
+             
+        # makes adult-symptom.csv
+        if adult_data == 1:   
+            self.adultsym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
         #
-        # #makes adult-symptom.csv
-        self.adultsym.run()
-        if self._want_abort == 1:
-            wx.PostEvent(self._notify_window, ResultEvent(None))
-            return
-        #
-        # #creates adult output files
-        self.adultresults.run()
+        # creates adult output files
+        if adult_data == 1:   
+            self.adultresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
                
-        #makes child-presymptom.csv
-        self.childpresym.run()
+        # makes child-presymptom.csv
+        child_data = self.childpresym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #makes child-symptom.csv
-        self.childsym.run()
+        # makes child-symptom.csv
+        if child_data == 1:
+            self.childsym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #creates child output files
-        self.childresults.run()
+        # creates child output files
+        if child_data == 1:
+            self.childresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
         #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
-        self.neonatepresym.run()
+        neonate_data = self.neonatepresym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
         #makes neonate-symptom.csv
-        self.neonatesym.run()
+        if neonate_data == 1:
+            self.neonatesym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
         #creates neonate output files
-        self.neonateresults.run()
+        if neonate_data == 1:
+            self.neonateresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return

@@ -23,7 +23,9 @@ class Headers():
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
         first = 1
+        count = 0
         for row in reader:
+            count = count + 1
             newrow = list()
             if (first == 1):
                 first = 2
@@ -40,8 +42,13 @@ class Headers():
             else:
                 writer.writerow(row)
 
-
-        return 1
+        #if count is less than 2, we have no data to process
+        if count < 2:
+            updatestr = "No data to process, stopping\n"
+            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            return 0
+        else:
+            return 1
 
     	
     def abort(self):
