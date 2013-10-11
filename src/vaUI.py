@@ -21,7 +21,7 @@ APP_TITLE = 'Smart VA'
 
 MAX_PATH_LENGTH = 40
 
-WINDOW_WIDTH = 530
+WINDOW_WIDTH = 450
 WINDOW_HEIGHT = 675
 
 COUNTRY_DEFAULT = u'Unknown'
@@ -39,7 +39,7 @@ class vaAbout(wx.Frame):
 class vaDocs(wx.Frame):
     
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(600,600))
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(400,500))
         html = wxHTML(self)
         html.SetStandardFonts()
         docs = 'res' +  str(os.path.sep) + 'docs.html'
@@ -101,10 +101,11 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.onQuit)
         self.SetMenuBar(menubar)
 
-        self.parentPanel = wx.ScrolledWindow(self,-1)
+        self.parentPanel = wx.ScrolledWindow(self)
         self.parentPanel.SetScrollbars(1,1,1,1)
 
         parentBoxSizer = wx.BoxSizer(wx.VERTICAL)
+
 
         # logo
         scaleSize = .35
@@ -186,7 +187,7 @@ class vaUI(wx.Frame):
         startAnalysisStaticBox = wx.StaticBox(self.parentPanel, label='4. Start analysis')
         startAnalysisBoxSizer = wx.StaticBoxSizer(startAnalysisStaticBox, wx.VERTICAL)
 
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(-1, -1),style=wx.TE_MULTILINE | wx.TE_LEFT)
+        self.statusTextCtrl = wx.TextCtrl(self.parentPanel,size=(-1, 200),style=wx.TE_MULTILINE | wx.TE_LEFT)
         self.statusTextCtrl.SetEditable(False)
         self.statusTextCtrl.SetValue(self.statusLog)
         self.statusGauge = wx.Gauge(self.parentPanel,range=100,size=(-1, -1))
