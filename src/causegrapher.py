@@ -130,6 +130,9 @@ class CauseGrapher():
 
     def run(self):
 
+        updatestr = 'Making cause graphs\n'
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+
         module_errors = {}
         for module_key in module_labels:
 
@@ -138,8 +141,6 @@ class CauseGrapher():
             try:
                 csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-predictions.csv', module_key +'-predictions.csv'),'rU'))
 
-                updatestr = module_key.capitalize() + ' :: Making cause graphs\n'
-                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 module_errors[module_key] = 0
                 
                 for row in csv_file:

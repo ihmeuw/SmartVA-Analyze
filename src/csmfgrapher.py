@@ -118,6 +118,9 @@ class CSMFGrapher():
 
     def run(self):
 
+        updatestr = 'Making CSMF graphs\n'
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+
         graph_data_unsorted = get_default_dict()
 
         module_errors = {}
@@ -128,8 +131,6 @@ class CSMFGrapher():
             try:
                 csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-csmf.csv', module_key +'-csmf.csv'),'rU'))
 
-                updatestr = module_key.capitalize() + ' :: Making CSMF graphs\n'
-                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 module_errors[module_key] = 0
 
                 for row in csv_file:
