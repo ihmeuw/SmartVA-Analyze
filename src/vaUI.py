@@ -34,7 +34,16 @@ class vaAbout(wx.Frame):
         html.SetStandardFonts()
         about = 'res' + str(os.path.sep) + 'about.html'
         html.LoadPage(os.path.join(config.basedir, about))
- 
+
+class vaDocs(wx.Frame):
+
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(400,500))
+        html = wxHTML(self)
+        html.SetStandardFonts()
+        about = 'res' + str(os.path.sep) + 'documentation.htm'
+        html.LoadPage(os.path.join(config.basedir, about))
+
 class wxHTML(wx.html.HtmlWindow):
      
      def OnLinkClicked(self, link):
@@ -61,6 +70,8 @@ class vaUI(wx.Frame):
         self.country = None
         self.running = False
         self.worker = None
+        self.docsWindow = None
+        self.aboutWindow = None
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
@@ -320,18 +331,18 @@ class vaUI(wx.Frame):
         if pressed == wx.ID_YES:
             self.OnAbort()
             self.Destroy()
+            if self.aboutWindow:
+                self.aboutWindow.Close()
+            if self.docsWindow:
+                self.docsWindow.Close()
         # do nothing
         #elif pressed == wx.ID_NO:
         #    print 'NO'
 
     def onDocs(self, e):
-        docsPath = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'Documentation.pdf')
-        if platform.system() == "Windows":
-            os.startfile(docsPath)
-        elif platform.system() == "Darwin":
-            os.system("open %s" % docsPath)
-        else:
-            self.ShowErrorMessage('Error','No PDF viewer found')
+        self.docsWindow = vaDocs(None)
+        self.docsWindow.Centre()
+        self.docsWindow.Show()
 
     def onAbout(self, e):
         self.aboutWindow = vaAbout(None)
