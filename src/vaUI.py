@@ -17,7 +17,7 @@ APP_QUIT = 1
 APP_ABOUT = 2
 APP_DOCS = 3
 
-APP_TITLE = 'Smart VA'
+APP_TITLE = 'SmartVA'
 
 MAX_PATH_LENGTH = 40
 
@@ -33,17 +33,8 @@ class vaAbout(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title='About ' + APP_TITLE, size=(400,500))
         html = wxHTML(self)
         html.SetStandardFonts()
-        about = 'res' +  str(os.path.sep) + 'about.html'
+        about = 'res' + str(os.path.sep) + 'about.html'
         html.LoadPage(os.path.join(config.basedir, about))
-
-class vaDocs(wx.Frame):
-    
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(400,500))
-        html = wxHTML(self)
-        html.SetStandardFonts()
-        docs = 'res' +  str(os.path.sep) + 'docs.html'
-        html.LoadPage(os.path.join(config.basedir, docs))
  
 class wxHTML(wx.html.HtmlWindow):
      
@@ -71,7 +62,6 @@ class vaUI(wx.Frame):
         self.country = None
         self.running = False
         self.worker = None
-        self.docsWindow = None
         workerthread.EVT_RESULT(self,self.OnResult)
         workerthread.EVT_PROGRESS(self, self.OnProgress)
 
@@ -271,9 +261,9 @@ class vaUI(wx.Frame):
         if(self.actionButton.GetLabel() == 'Start'):            
             # Make sure you have an input and output path
             if not self.inputFilePath:
-                self.ShowErrorMessage('Error!','Please select an input file.')
+                self.ShowErrorMessage('Error','Please select an input file.')
             elif not self.outputFolderPath:
-                self.ShowErrorMessage('Error!','Please select an output folder.')
+                self.ShowErrorMessage('Error','Please select an output folder.')
             else:
                 self.actionButton.SetLabel('Stop')
                 self.statusGauge.Pulse()
@@ -330,17 +320,19 @@ class vaUI(wx.Frame):
         
         if pressed == wx.ID_YES:
             self.OnAbort()
-            if self.docsWindow:
-                self.docsWindow.Close()
             self.Destroy()
         # do nothing
         #elif pressed == wx.ID_NO:
         #    print 'NO'
 
     def onDocs(self, e):
-        self.docsWindow = vaDocs(None)
-        self.docsWindow.Centre()
-        self.docsWindow.Show()
+        docsPath = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'Documentation.pdf')
+        if platform.system() == "Windows":
+            os.startfile(docsPath)
+        elif platform.system() == "Darwin":
+            os.system("open %s" % docsPath)
+        else:
+            self.ShowErrorMessage('Error','No PDF viewer found')
 
     def onAbout(self, e):
         self.aboutWindow = vaAbout(None)

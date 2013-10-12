@@ -59,11 +59,11 @@ def make_graph(module_key, output_dir):
     cause_keys = graph_data[module_key].keys()
     cause_fractions = graph_data[module_key].values()
 
-    graph_title = module_key + ' CSMF'
+    graph_title = module_key.capitalize() + ' CSMF'
     graph_filename = graph_title.replace(' ','-').lower()
 
     max_value = 1
-    xlocations = np.arange(len(cause_keys))    # the x locations for the groups
+    xlocations = np.arange(len(cause_keys)) # the x locations for the groups
 
     bar_width = .75 # the width of the bars
 
@@ -72,7 +72,7 @@ def make_graph(module_key, output_dir):
     fig, ax = plt.subplots()
 
     ax.set_title(graph_title)
-    ax.set_ylabel('mortality fractions')
+    ax.set_ylabel('Mortality fractions')
     ax.yaxis.grid()
 
     ax.set_xticklabels(cause_keys,rotation=90)

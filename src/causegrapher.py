@@ -62,11 +62,11 @@ def make_graph(cause_key, output_dir):
     female_data = graph_data[cause_key]['female'].values()
     unknown_data = graph_data[cause_key]['unknown'].values()
     
-    graph_title = cause_key +' by age and sex'
+    graph_title = cause_key.capitalize() +' by age and sex'
     graph_filename = re.sub('[^\w_\. ]', '-', cause_key.replace('(','').replace(')','')).replace(' ','-').lower()
 
     max_value = max(max(male_data),max(female_data),max(unknown_data))
-    xlocations = np.arange(len(age_labels))    # the x locations for the groups
+    xlocations = np.arange(len(age_labels)) # the x locations for the groups
 
     bar_width = 0.25 # the width of the bars
 
@@ -78,7 +78,7 @@ def make_graph(cause_key, output_dir):
     rects2 = ax.bar(xlocations+bar_width, female_data, bar_width, color='#1D72AA',align='center')
 
     ax.set_title(graph_title)
-    ax.set_ylabel('number of VAs')
+    ax.set_ylabel('Number of VAs')
     ax.yaxis.grid()
 
     ax.set_xticklabels(age_labels,rotation=90)
