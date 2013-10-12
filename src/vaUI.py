@@ -11,7 +11,6 @@ import threading
 
 # TODO: pull out all strings
 # TODO: why is the first button selected
-# TODO: disable buttons when app is running
 
 APP_QUIT = 1
 APP_ABOUT = 2
@@ -342,7 +341,7 @@ class vaUI(wx.Frame):
     def OnResult(self, event):
         if event.data is None:
             # If it's none we got an abort
-            self.statusTextCtrl.AppendText('computation successfully aborted\n')
+            self.statusTextCtrl.AppendText('Computation successfully aborted\n')
             self.actionButton.Enable(True)        
             self.running = False   
             self.EnableUI(True)
@@ -351,7 +350,7 @@ class vaUI(wx.Frame):
         elif event.data is 'Done':
             # if it's done, then the algorithm is complete
             self.statusGauge.SetValue(1)
-            self.statusTextCtrl.AppendText('Process Complete\n')
+            self.statusTextCtrl.AppendText('Process complete\n')
             self.actionButton.SetLabel('Start')
             self.EnableUI(True)
             self.statusGauge.SetValue(1)
@@ -379,7 +378,7 @@ class vaUI(wx.Frame):
     def OnAbort(self):
         if self.worker:
             # if the thread is running, don't just stop
-            self.statusTextCtrl.AppendText('attempting to cancel, please wait...\n')
+            self.statusTextCtrl.AppendText('Attempting to cancel, please wait...\n')
             self.worker.abort()
             self.actionButton.Enable(False)
             # do we need an else?  doesn't seem like it

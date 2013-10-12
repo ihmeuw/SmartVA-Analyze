@@ -67,7 +67,7 @@ class WorkerThread(Thread):
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
         
-        intermediate_dir = self.output_dir + os.sep + "intermediate_files"
+        intermediate_dir = self.output_dir + os.sep + "intermediate-files"
         figures_dir = self.output_dir + os.sep + "figures"
 
         if not os.path.exists(intermediate_dir):

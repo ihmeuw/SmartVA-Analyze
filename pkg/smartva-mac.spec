@@ -35,5 +35,5 @@ coll = COLLECT(exe,
                upx=False,
                name='SmartVA')
 app = BUNDLE(coll,
-             name='Smart VA.app',
+             name='SmartVA.app',
              icon='pkg/icon.icns')

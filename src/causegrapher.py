@@ -138,7 +138,7 @@ class CauseGrapher():
             try:
                 csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-predictions.csv', module_key +'-predictions.csv'),'rU'))
 
-                updatestr = 'Making cause graphs for ' + module_key + '\n'
+                updatestr = module_key.capitalize() + ' :: Making cause graphs\n'
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 module_errors[module_key] = 0
                 
