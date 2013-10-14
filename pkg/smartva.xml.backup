@@ -11,10 +11,10 @@
             <show>1</show>
             <desktopShortcutList>
                 <shortcut>
-                    <comment>Run ${product_fullname}</comment>
+                    <comment>Run ${product_shortname}</comment>
                     <exec></exec>
                     <icon></icon>
-                    <name>Run ${product_fullname}</name>
+                    <name>Run ${product_shortname}</name>
                     <path></path>
                     <platforms>windows</platforms>
                     <runAsAdmin>0</runAsAdmin>
@@ -33,10 +33,10 @@
                     <platforms>all</platforms>
                     <shortcutList>
                         <shortcut>
-                            <comment>Uninstall</comment>
+                            <comment>Uninstall ${product_shortname}</comment>
                             <exec>${installdir}/${uninstallerName}</exec>
                             <icon></icon>
-                            <name>Uninstall ${product_fullname}</name>
+                            <name>Uninstall ${product_shortname}</name>
                             <path>${installdir}</path>
                             <platforms>all</platforms>
                             <runAsAdmin>0</runAsAdmin>
@@ -58,7 +58,7 @@
                             <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/pkg/Manual Data Entry Forms</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/Smart VA.exe</origin>
+                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/SmartVA.exe</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
@@ -71,8 +71,8 @@
             </folderList>
             <startMenuShortcutList>
                 <startMenuShortcut>
-                    <comment>Uninstall ${product_fullname}</comment>
-                    <name>Uninstall ${product_fullname}</name>
+                    <comment>Uninstall ${product_shortname}</comment>
+                    <name>Uninstall ${product_shortname}</name>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
                     <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
@@ -81,8 +81,8 @@
                     <windowsPath>${installdir}/</windowsPath>
                 </startMenuShortcut>
                 <startMenuShortcut>
-                    <comment>Run ${product_fullname}</comment>
-                    <name>Run ${product_fullname}</name>
+                    <comment>Run ${product_shortname}</comment>
+                    <name>Run ${product_shortname}</name>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
                     <windowsExec>${installdir}/Smart VA.exe</windowsExec>
