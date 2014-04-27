@@ -11,12 +11,13 @@ import workerthread
 # Thread class that executes processing
 class VaPrep():
     """Worker Thread Class."""
-    def __init__(self, notify_window, input_file, output_dir, warningfile):
+    def __init__(self, notify_window, input_file, output_dir, warningfile, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
         self.warningfile = warningfile
+        self.shortform = shortform
 
     def run(self):
         # read stocks data, print status messages
@@ -28,7 +29,10 @@ class VaPrep():
           
         # these are new column headers that we generate since they are not already in the ODK data.
         # any newly created variables at this step should be added here      
-        additionalHeaders = ["adultparalysis1", "adultparalysis2", "adultparalysis3", "adultparalysis4", "adultparalysis5", "adultparalysis6", "adultparalysis7", "adultparalysis8", "adultparalysis9", "adultparalysis10", "adultinjury1", "adultinjury2", "adultinjury3", "adultinjury4", "adultinjury5", "adultinjury6", "adultinjury7", "adultinjury8", "childinjury1", "childinjury2", "childinjury3", "childinjury4", "childinjury5", "childinjury6", "childinjury7", "childinjury8", "childinjury9", "childinjury10", "adultrash1", "adultrash2", "adultrash3", "childabnorm1", "childabnorm2", "childabnorm3", "childabnorm4", "childabnorm5", "childabnorm31", "childabnorm32", "childabnorm33", "childabnorm34", "childabnorm35", "complications1", "complications2", "complications3", "complications4", "complications5", "complications6", "complications7", "complications8", "complications9", "complications10", "complications11", "complications12", "provider1", "provider2", "provider3", "provider4", "provider5", "provider6", "provider7", "provider8", "provider9", "provider10", "provider11", "provider12", "provider13", "provider14", 's99991', 's999910', 's9999100', 's9999101', 's9999102', 's9999103', 's9999104', 's9999105', 's9999106', 's9999107', 's9999108', 's9999109', 's999911', 's9999110', 's9999111', 's9999112', 's9999113', 's9999114', 's9999115', 's9999116', 's9999117', 's9999118', 's9999119', 's999912', 's9999120', 's9999121', 's9999122', 's9999123', 's9999124', 's9999125', 's9999126', 's9999127', 's9999128', 's9999129', 's999913', 's9999130', 's9999131', 's9999132', 's9999133', 's9999134', 's9999135', 's9999136', 's9999137', 's9999138', 's9999139', 's999914', 's9999140', 's9999141', 's9999142', 's9999143', 's9999144', 's9999145', 's9999146', 's9999147', 's9999148', 's9999149', 's999915', 's9999150', 's9999151', 's9999152', 's9999153', 's9999154', 's9999155', 's9999156', 's9999157', 's9999158', 's9999159', 's999916', 's9999160', 's9999161', 's9999162', 's9999163', 's9999164', 's9999165', 's9999166', 's9999167', 's9999168', 's9999169', 's999917', 's9999170', 's9999171', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's999938', 's999939', 's99994', 's999940', 's999941', 's999942', 's999943', 's999944', 's999945', 's999946', 's999947', 's999948', 's999949', 's99995', 's999950', 's999951', 's999952', 's999953', 's999954', 's999955', 's999956', 's999957', 's999958', 's999959', 's99996', 's999960', 's999961', 's999962', 's999963', 's999964', 's999965', 's999966', 's999967', 's999968', 's999969', 's99997', 's999970', 's999971', 's999972', 's999973', 's999974', 's999975', 's999976', 's999977', 's999978', 's999979', 's99998', 's999980', 's999981', 's999982', 's999983', 's999984', 's999985', 's999986', 's999987', 's999988', 's999989', 's99999', 's999990', 's999991', 's999992', 's999993', 's999994', 's999995', 's999996', 's999997', 's999998', 's999999']
+        additionalHeaders = ["adultparalysis1", "adultparalysis2", "adultparalysis3", "adultparalysis4", "adultparalysis5", "adultparalysis6", "adultparalysis7", "adultparalysis8", "adultparalysis9", "adultparalysis10", "adultinjury1", "adultinjury2", "adultinjury3", "adultinjury4", "adultinjury5", "adultinjury6", "adultinjury7", "adultinjury8", "childinjury1", "childinjury2", "childinjury3", "childinjury4", "childinjury5", "childinjury6", "childinjury7", "childinjury8", "childinjury9", "childinjury10", "adultrash1", "adultrash2", "adultrash3", "childabnorm1", "childabnorm2", "childabnorm3", "childabnorm4", "childabnorm5", "childabnorm31", "childabnorm32", "childabnorm33", "childabnorm34", "childabnorm35", "complications1", "complications2", "complications3", "complications4", "complications5", "complications6", "complications7", "complications8", "complications9", "complications10", "complications11", "complications12", "provider1", "provider2", "provider3", "provider4", "provider5", "provider6", "provider7", "provider8", "provider9", "provider10", "provider11", "provider12", "provider13", "provider14", 's99991', 's999910', 's9999100', 's9999101', 's9999102', 's9999103', 's9999104', 's9999105', 's9999106', 's9999107', 's9999108', 's9999109', 's999911', 's9999110', 's9999111', 's9999112', 's9999113', 's9999114', 's9999115', 's9999116', 's9999117', 's9999118', 's9999119', 's999912', 's9999120', 's9999121', 's9999122', 's9999123', 's9999124', 's9999125', 's9999126', 's9999127', 's9999128', 's9999129', 's999913', 's9999130', 's9999131', 's9999132', 's9999133', 's9999134', 's9999135', 's9999136', 's9999137', 's9999138', 's9999139', 's999914', 's9999140', 's9999141', 's9999142', 's9999143', 's9999144', 's9999145', 's9999146', 's9999147', 's9999148', 's9999149', 's999915', 's9999150', 's9999151', 's9999152', 's9999153', 's9999154', 's9999155', 's9999156', 's9999157', 's9999158', 's9999159', 's999916', 's9999160', 's9999161', 's9999162', 's9999163', 's9999164', 's9999165', 's9999166', 's9999167', 's9999168', 's9999169', 's999917', 's9999170', 's9999171', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's999938', 's999939', 's99994', 's999940', 's999941', 's999942', 's999943', 's999944', 's999945', 's999946', 's999947', 's999948', 's999949', 's99995', 's999950', 's999951', 's999952', 's999953', 's999954', 's999955', 's999956', 's999957', 's999958', 's999959', 's99996', 's999960', 's999961', 's999962', 's999963', 's999964', 's999965', 's999966', 's999967', 's999968', 's999969', 's99997', 's999970', 's999971', 's999972', 's999973', 's999974', 's999975', 's999976', 's999977', 's999978', 's999979', 's99998', 's999980', 's999981', 's999982', 's999983', 's999984', 's999985', 's999986', 's999987', 's999988', 's999989', 's99999', 's999990', 's999991', 's999992', 's999993', 's999994', 's999995', 's999996', 's999997', 's999998', 's999999'];
+        
+        if self.shortform:
+            additionalHeaders.extend(['gen_2_1', 'gen_2_2', 'gen_2_2a', 'gen_3_a', 'gen_4_a', 'gen_4_b', 'gen_4_1', 'gen_4_2', 'gen_4_3', 'gen_4_3a', 'gen_4_3b', 'gen_4_3c', 'gen_4_4', 'gen_4_5', 'gen_4_c', 'gen_4_6', 'gen_4_7', 'gen_4_8', 'gen_4_9', 'gen_4_10', 'gen_4_10a', 'gen_4_11', 'gen_4_11a', 'gen_4_12', 'gen_4_12a', 'gen_5_5', 'gen_5_6', 'gen_5_7', 'gen_5_8', 'gen_5_9', 'gen_5_9a', 'gen_5_9b', 'gen_5_b', 'gen_5_91', 'gen_5_92', 'gen_5_93', 'gen_5_94', 'gen_5_95', 'gen_5_96', 'gen_5_97', 'gen_5_98', 'gen_5_99', 'gen_5_910', 'gen_5_911', 'gen_5_912', 'gen_5_913', 'gen_5_914', 'gen_5_915', 'gen_5_916', 'gen_5_917', 'gen_5_918', 'gen_5_919', 'gen_5_920', 'gen_5_921', 'gen_5_922', 'gen_5_923', 'gen_5_924', 'gen_5_925', 'gen_5_926', 'a7_01', 'a7_02', 'a7_03', 'adult_1_1b', 'adult_1_1e', 'adult_1_1f', 'adult_1_1j', 'adult_1_1k', 'adult_2_12', 'adult_2_16', 'adult_2_17', 'adult_2_18', 'adult_2_19', 'adult_2_20', 'adult_2_23', 'adult_2_24', 'adult_2_24a', 'adult_2_24b', 'adult_2_28', 'adult_2_28a', 'adult_2_28b', 'adult_2_3', 'adult_2_37', 'adult_2_37a', 'adult_2_37b', 'adult_2_39', 'adult_2_3a', 'adult_2_4', 'adult_2_40', 'adult_2_41', 'adult_2_41a', 'adult_2_41b', 'adult_2_42', 'adult_2_45', 'adult_2_46', 'adult_2_46a', 'adult_2_48', 'adult_2_48a', 'adult_2_49', 'adult_2_5', 'adult_2_54', 'adult_2_54a', 'adult_2_54b', 'adult_2_6', 'adult_2_65', 'adult_2_65a', 'adult_2_65b', 'adult_2_69', 'adult_2_70', 'adult_2_70a', 'adult_2_70b', 'adult_2_71', 'adult_2_76', 'adult_2_76a', 'adult_2_76b', 'adult_2_78', 'adult_2_79', 'adult_2_79a', 'adult_2_79b', 'adult_2_80', 'adult_2_81', 'adult_2_86', 'adult_2_86a', 'adult_2_86b', 'adult_2_86c', 'adult_3_20', 'adult_4_3', 'adult_4_3a', 'adult_4_5', 'adult_4_6', 'adult_4_a', 'adult_5_5', 'adult_5_5a', 'adult_5_5b', 'adult_5_5c', 'adult_5_5d', 'adult_5_a', 'adult_7_c', 'breathing_dif', 'c6_01', 'c6_02', 'c6_03', 'child_1_23', 'child_1_3a', 'child_2_10', 'child_2_10a', 'child_2_15', 'child_2_15a', 'child_2_16', 'child_2_18', 'child_2_3', 'child_2_6', 'child_2_7', 'child_2_8', 'child_2_8a', 'child_3_1', 'child_3_11', 'child_3_13', 'child_3_14', 'child_3_14a', 'child_3_15', 'child_3_16', 'child_3_18', 'child_3_18a', 'child_3_21', 'child_3_21a', 'child_3_23', 'child_3_27', 'child_3_27a', 'child_3_28', 'child_3_28a', 'child_3_30', 'child_3_30a', 'child_3_31', 'child_3_31a', 'child_3_33', 'child_3_34', 'child_3_35', 'child_3_36', 'child_3_37', 'child_3_38', 'child_3_40', 'child_3_41', 'child_3_42', 'child_3_43', 'child_3_45', 'child_3_45a', 'child_3_46', 'child_3_48', 'child_4_10', 'child_4_10a', 'child_4_15', 'child_4_2', 'child_4_20', 'child_4_21', 'child_4_22', 'child_4_24', 'child_4_2a', 'child_4_3', 'child_4_31', 'child_4_32', 'child_4_34', 'child_4_35', 'child_4_45', 'child_4_5', 'child_4_50', 'child_4_50a', 'child_4_50b', 'child_6_c', 'cold_dif', 'fast_dif', 'fever_dif', 'stools_dif'])
 
         updatestr = "Initial data prep\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -40,12 +44,21 @@ class VaPrep():
         
         # column headers
         headers = list()
+        
+        adult_freetext = False
+        adult_freetext_col = "adult_7_c"
+        child_freetext = False
+        child_freetext_col = "child_6_c"
     
         for row in reader:
             if first == 1:
                 # if reading the first row, add to the column headers
                 for col in row:    
                     headers.append(col)
+                    if (col == adult_freetext_col):
+                        adult_freetext = True
+                    if (col == child_freetext_col):
+                        child_freetext = True
                 first = 0
                 
                 # now add the headers that we create from additionalHeaders
@@ -57,7 +70,17 @@ class VaPrep():
                 for head in additionalHeaders:
                     row.append("0")
                 matrix.append(row)
-                                    
+                                  
+                                  
+        if (adult_freetext == False):
+            for row in matrix:
+                row.append("")
+            headers.append(adult_freetext_col) 
+
+        if (child_freetext == False):
+            for row in matrix:
+                row.append("")
+            headers.append(child_freetext_col) 
         
         ### column header renaming
         # rename adult_2_87 adult287

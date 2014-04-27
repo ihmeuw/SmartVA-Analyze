@@ -17,6 +17,9 @@ from freetext_vars import neonate_freetext
 from vacauses import neonatecauses
 import config
 
+from short_form_remove import neonate_remove
+
+
 
 #excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
 
@@ -32,7 +35,7 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, country):
+    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -41,6 +44,7 @@ class Tariff():
         self.want_abort = 0
         self.iso3 = country
         self.intermediate_dir = intermediate_dir
+        self.shortform = shortform
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -182,6 +186,30 @@ class Tariff():
                         del row[index]
                     validatedheaders.remove(col)  
                     
+        
+        if self.shortform:
+            for d in neonate_remove:
+                try:
+                    index = headers.index(d)
+                    #headers.remove(d)
+                    for row in matrix:
+                        row[index] = 0
+                    #del row[index]
+                    
+                    tariffindex = tariffheaders.index(d)
+                    #tariffheaders.remove(d)
+                    for row in tariffmatrix:
+                        #del row[tariffindex]
+                        row[tariffindex] = 0
+                    
+                    validatedindex = validatedheaders.index(d)
+                    #validatedheaders.remove(d)
+                    for row in validatedmatrix:
+                        #del row[validatedindex]
+                        row[validatedindex] = 0
+                except ValueError:
+                    a = 1 #noop.  if the header doesn't exit, it was probably removed by hce
+        
         
         # list of cause1: s1, s2, s50, ... top 40 svars per cause        
         cause40s = {}        

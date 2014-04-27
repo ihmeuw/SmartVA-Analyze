@@ -16,13 +16,15 @@ from stemming.porter2 import stem
 generatedHeaders = ['g4_03b', 'a2_01b', 'a2_22b', 'a2_24b', 'a2_26b', 'a2_28b', 'a2_33b', 'a2_37b', 'a2_41b', 'a2_54b', 'a2_58b', 'a2_62b', 'a2_65b', 'a2_68b', 'a2_70b', 'a2_73b', 'a2_76b', 'a2_79b', 'a2_83b', 'a2_86b', 'a4_02_1', 'a4_02_2', 'a4_02_3', 'a4_02_4', 'a4_02_5a', 'a4_02_6', 'a4_02_7', 'a5_01_8', 'a5_04b', 'a6_02_1', 'a6_02_2', 'a6_02_3', 'a6_02_4', 'a6_02_5', 'a6_02_6', 'a6_02_8', 'a6_02_9', 'a6_02_10', 'a6_02_11', 'a6_02_12a', 'a6_02_13', 'a6_02_14', 'a6_02_15']
 
 
+
 class PreSymptomPrep():
-    def __init__(self, notify_window, input_file, output_dir, warningfile):
+    def __init__(self, notify_window, input_file, output_dir, warningfile, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
         self.warningfile = warningfile
+        self.shortform = shortform
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -1407,24 +1409,42 @@ class PreSymptomPrep():
                         row[i] = adult_defaultFill[header]
                           
         updatestr = "Adult :: Analyzing free text\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        
+        
+        if self.shortform:
+            for row in matrix:
+                if row[headers_old.index('adult_7_1')] == '1':
+                    self.processFreeText('chronic kidney disease', row, headers)
+                if row[headers_old.index('adult_7_2')] == '1':
+                    self.processFreeText('dialysis', row, headers)
+                if row[headers_old.index('adult_7_3')] == '1':
+                    self.processFreeText('fever', row, headers)
+                if row[headers_old.index('adult_7_4')] == '1':
+                    self.processFreeText('heart attack ami', row, headers)
+                if row[headers_old.index('adult_7_5')] == '1':
+                    self.processFreeText('heart problems', row, headers)
+                if row[headers_old.index('adult_7_6')] == '1':
+                    self.processFreeText('jaundice', row, headers)
+                if row[headers_old.index('adult_7_7')] == '1':
+                    self.processFreeText('liver failure', row, headers)
+                if row[headers_old.index('adult_7_8')] == '1':
+                    self.processFreeText('malaria', row, headers)
+                if row[headers_old.index('adult_7_9')] == '1':
+                   self.processFreeText('pneumonia', row, headers)
+                if row[headers_old.index('adult_7_10')] == '1':
+                    self.processFreeText('renal kidney failure', row, headers)
+                if row[headers_old.index('adult_7_11')] == '1':
+                    self.processFreeText('suicide', row, headers)
+
         freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
-        
-        keyWords = adult_wordsToVars.keys()
-        
+
         # we've already lowercased and removed numbers at this point
         for question in freeText:
             index = headers.index(question)
             for row in matrix:
                 answer = row[index]
-                answerArray = answer.split(' ')
-                for word in answerArray:
-                    for keyword in keyWords:
-                        stemmed = stem(word)
-                        if stemmed == keyword:
-                            svar = adult_wordsToVars[keyword]
-                            sindex = headers.index(svar)
-                            row[sindex] = '1'
+                self.processFreeText(answer, row, headers)
                            
         updatestr = "Adult :: Processing duration variables\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))                
@@ -1506,4 +1526,14 @@ class PreSymptomPrep():
     def abort(self):
         self.want_abort = 1
 
-        
+    def processFreeText(self, answer, row, headers):
+        keyWords = adult_wordsToVars.keys()
+        answerArray = answer.split(' ')
+        for word in answerArray:
+            for keyword in keyWords:
+                stemmed = stem(word)
+                if stemmed == keyword:
+                    svar = adult_wordsToVars[keyword]
+                    sindex = headers.index(svar)
+                    row[sindex] = '1'
+

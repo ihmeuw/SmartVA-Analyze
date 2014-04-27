@@ -16,6 +16,8 @@ from vacauses import adultcauses
 import adultuniformtrain
 import config
 
+from short_form_remove import adult_remove
+
 
 
 # data structure we use to keep track of an manipulate data
@@ -30,7 +32,7 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country):
+    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -40,6 +42,7 @@ class Tariff():
         self.malaria = malaria
         self.iso3 = country
         self.intermediate_dir = intermediate_dir
+        self.shortform = shortform
         
 
     def run(self):
@@ -117,8 +120,7 @@ class Tariff():
                     
             else:
                 validatedmatrix.append(row)
-                
-                
+    
         if len(matrix) == 0:
             #no entries, just return
             return
@@ -185,12 +187,36 @@ class Tariff():
                     index = validatedheaders.index(col)
                     for row in validatedmatrix:
                         del row[index]
-                    validatedheaders.remove(col)  
+                    validatedheaders.remove(col)
+
+        if self.shortform:
+            for d in adult_remove:
+                try:
+                    index = headers.index(d)
+                    #headers.remove(d)
+                    for row in matrix:
+                        row[index] = 0
+                        #del row[index]
+
+                    tariffindex = tariffheaders.index(d)
+                    #tariffheaders.remove(d)
+                    for row in tariffmatrix:
+                        #del row[tariffindex]
+                        row[tariffindex] = 0
+
+                    validatedindex = validatedheaders.index(d)
+                    #validatedheaders.remove(d)
+                    for row in validatedmatrix:
+                        #del row[validatedindex]
+                        row[validatedindex] = 0
+                except ValueError:
+                    a = 1 #noop.  if the header doesn't exit, it was probably removed by hce
                     
-                    
-        
-        # list of cause1: s1, s2, s50, ... top 40 svars per cause        
-        cause40s = {}        
+
+
+
+        # list of cause1: s1, s2, s50, ... top 40 svars per cause
+        cause40s = {}
         # for each cause, create a list with the top 40 's' variables     
         for i, row in enumerate(tariffmatrix):
             cause = row[0]
@@ -208,11 +234,13 @@ class Tariff():
             for val in sorteddict[:40]:
                 slist.append(val[0])
             cause40s[cause] = slist
+                    #print "cause: %s :: %s" % (cause, slist)
         
-        for cause in cause40s.keys():
-            asdf = cause40s[cause]
-            asdf.sort()
-        
+#        for cause in cause40s.keys():
+#            asdf = cause40s[cause]
+#            asdf.sort()
+#            print "cause: %s :: %s" % (cause, asdf)
+
         # creates a list of causes/scores for each va.
         # va1 :: cause1/score, cause2/score...casue46/score
         # va2 :: cause1/score, cause2/score...

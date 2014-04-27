@@ -1,0 +1,8 @@
+wxpython
+stemming
+python-dateutil
+matplotlib
+
+system:
+freetype
+ 

@@ -24,12 +24,13 @@ generatedHeaders = ['g4_03b', 'c1_05b', 'c1_20b', 'c1_21b', 'c2_05b', 'c4_37b', 
 
 
 class PreSymptomPrep():
-    def __init__(self, notify_window, input_file, output_dir, warningfile):
+    def __init__(self, notify_window, input_file, output_dir, warningfile, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
         self.warningfile = warningfile
+        self.shortform = shortform
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -1693,6 +1694,33 @@ class PreSymptomPrep():
                         
         updatestr = "Child :: Analyzing free text\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        
+        if self.shortform:
+            for row in matrix:
+                if row[headers_old.index('child_6_1')] == '1':
+                    self.processFreeText('abdomen', row, headers)
+                if row[headers_old.index('child_6_2')] == '1':
+                    self.processFreeText('cancer', row, headers)
+                if row[headers_old.index('child_6_3')] == '1':
+                    self.processFreeText('chicken pox', row, headers)
+                if row[headers_old.index('child_6_4')] == '1':
+                    self.processFreeText('deyhdration', row, headers)
+                if row[headers_old.index('child_6_5')] == '1':
+                    self.processFreeText('dengue fever', row, headers)
+                if row[headers_old.index('child_6_6')] == '1':
+                    self.processFreeText('diarrhea', row, headers)
+                if row[headers_old.index('child_6_7')] == '1':
+                    self.processFreeText('fever', row, headers)
+                if row[headers_old.index('child_6_8')] == '1':
+                    self.processFreeText('heart problems', row, headers)
+                if row[headers_old.index('child_6_9')] == '1':
+                    self.processFreeText('jaundice yellow skin or eyes', row, headers)
+                if row[headers_old.index('child_6_10')] == '1':
+                    self.processFreeText('pneumonia', row, headers)
+                if row[headers_old.index('child_6_11')] == '1':
+                    self.processFreeText('rash', row, headers)
+
+        
         freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
         
         
@@ -1704,15 +1732,8 @@ class PreSymptomPrep():
             index = headers.index(question)
             for row in matrix:
                 answer = row[index]
-                answerArray = answer.split(' ')
-                for word in answerArray:
-                    for keyword in keyWords:
-                        stemmed = stem(word)
-                        if stemmed == keyword:
-                            svar = child_wordsToVars[keyword]
-                            sindex = headers.index(svar)
-                            row[sindex] = '1'
-                        
+                self.processFreeText(answer, row, headers)
+        
         
                 
         #now do the calculations for the generated variables:
@@ -1942,6 +1963,15 @@ class PreSymptomPrep():
         return 1
     
     def abort(self):
-        self.want_abort = 1    	
-        
-        
+        self.want_abort = 1
+
+    def processFreeText(self, answer, row, headers):
+        keyWords = child_wordsToVars.keys()
+        answerArray = answer.split(' ')
+        for word in answerArray:
+            for keyword in keyWords:
+                stemmed = stem(word)
+                if stemmed == keyword:
+                    svar = child_wordsToVars[keyword]
+                    sindex = headers.index(svar)
+                    row[sindex] = '1'

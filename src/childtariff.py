@@ -16,6 +16,8 @@ from hce_variables import child_hce
 from freetext_vars import child_freetext
 from vacauses import childcauses
 import config
+from short_form_remove import child_remove
+
 
 
 # data structure we use to keep track of an manipulate data
@@ -30,7 +32,7 @@ class ScoredVA:
             
 
 class Tariff():
-    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country):
+    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -40,6 +42,7 @@ class Tariff():
         self.malaria = malaria
         self.iso3 = country
         self.intermediate_dir = intermediate_dir
+        self.shortform = shortform
         
 
     def run(self):
@@ -180,8 +183,34 @@ class Tariff():
                     for row in validatedmatrix:
                         del row[index]
                     validatedheaders.remove(col)  
-        
-        # list of cause1: s1, s2, s50, ... top 40 svars per cause        
+    
+        if self.shortform:
+            for d in child_remove:
+                try:
+                    index = headers.index(d)
+                    #headers.remove(d)
+                    for row in matrix:
+                        row[index] = 0
+                    #del row[index]
+                    
+                    tariffindex = tariffheaders.index(d)
+                    #tariffheaders.remove(d)
+                    for row in tariffmatrix:
+                        #del row[tariffindex]
+                        row[tariffindex] = 0
+                    
+                    validatedindex = validatedheaders.index(d)
+                    #validatedheaders.remove(d)
+                    for row in validatedmatrix:
+                        #del row[validatedindex]
+                        row[validatedindex] = 0
+                except ValueError:
+                    a = 1 #noop.  if the header doesn't exit, it was probably removed by hce
+
+
+
+
+        # list of cause1: s1, s2, s50, ... top 40 svars per cause
         cause40s = {}        
         # for each cause, create a list with the top 40 's' variables     
         for i, row in enumerate(tariffmatrix):

@@ -21,11 +21,12 @@ binaryVars = ['s7', 's17', 's18', 's19', 's110', 's112', 's115', 's118', 's120',
 
 
 class ChildSymptomPrep():
-    def __init__(self, notify_window, input_file, output_dir):
+    def __init__(self, notify_window, input_file, output_dir, shortform):
         self._notify_window = notify_window
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
+        self.shortform = shortform
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
@@ -50,7 +51,7 @@ class ChildSymptomPrep():
                 
         #Add svars for text
         keys = child_conversionVars.keys()
-        keys.extend(['s99991', 's999910', 's999911', 's999912', 's999913', 's999914', 's999915', 's999916', 's999917', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's999938', 's999939', 's99994', 's999940', 's999941', 's999942', 's999943', 's999944', 's999945', 's999946', 's999947', 's999948', 's99995', 's99996', 's99997', 's99998', 's99999'])
+        keys.extend(['s99991', 's999910', 's999911', 's999912', 's999913', 's999914', 's999915', 's999916', 's999917', 's999918', 's999919', 's99992', 's999920', 's999921', 's999922', 's999923', 's999924', 's999925', 's999926', 's999927', 's999928', 's999929', 's99993', 's999930', 's999931', 's999932', 's999933', 's999934', 's999935', 's999936', 's999937', 's999938', 's999939', 's99994', 's999940', 's999941', 's999942', 's999943', 's999944', 's999945', 's999946', 's999947', 's999948', 's999949', 's99995', 's99996', 's99997', 's99998', 's99999'])
         headers_copy = copy.deepcopy(headers)
         for col in headers_copy:
             if col not in keys:
@@ -130,6 +131,7 @@ class ChildSymptomPrep():
             row[ageindex] = row[headers.index('s2')]
             row[genderindex] = row[headers.index('sex')]
             
+            
             for sym in durationSymptoms:
                 index = headers.index(sym)
                 #replace the duration with 1000 if it is over 1000 and not missing
@@ -146,12 +148,14 @@ class ChildSymptomPrep():
             # The "varlist" variables in the loop below are all indicators for different questions about injuries (road traffic, fall, fires)
 	        # We only want to give a VA a "1"/yes response for that question if the injury occured within 10 days of death (i.e. s166<=10)
 	        # Otherwise, we could have people who responded that they were in a car accident 20 years prior to death be assigned to road traffic deaths
-	        for injury in injuries:
-	            index = headers.index(injury)
-	            injury_cut_index = headers.index('s166')
-	            # 30 is the injury cutoff
-	            if float(row[injury_cut_index]) > 10:
-	                row[index] = 0
+
+            if not self.shortform:
+                for injury in injuries:
+                    index = headers.index(injury)
+                    injury_cut_index = headers.index('s166')
+                    # 30 is the injury cutoff
+                    if float(row[injury_cut_index]) > 10:
+                        row[index] = 0
                 
             
             #dichotimize!
