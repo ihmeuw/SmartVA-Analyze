@@ -1415,25 +1415,25 @@ class PreSymptomPrep():
         if self.shortform:
             for row in matrix:
                 if row[headers_old.index('adult_7_1')] == '1':
-                    self.processFreeText('chronic kidney disease', row, headers)
+                    self.processFreeText('kidney', row, headers)
                 if row[headers_old.index('adult_7_2')] == '1':
                     self.processFreeText('dialysis', row, headers)
                 if row[headers_old.index('adult_7_3')] == '1':
                     self.processFreeText('fever', row, headers)
                 if row[headers_old.index('adult_7_4')] == '1':
-                    self.processFreeText('heart attack ami', row, headers)
+                    self.processFreeText('ami', row, headers)
                 if row[headers_old.index('adult_7_5')] == '1':
-                    self.processFreeText('heart problems', row, headers)
+                    self.processFreeText('heart', row, headers)
                 if row[headers_old.index('adult_7_6')] == '1':
                     self.processFreeText('jaundice', row, headers)
                 if row[headers_old.index('adult_7_7')] == '1':
-                    self.processFreeText('liver failure', row, headers)
+                    self.processFreeText('liver', row, headers)
                 if row[headers_old.index('adult_7_8')] == '1':
                     self.processFreeText('malaria', row, headers)
                 if row[headers_old.index('adult_7_9')] == '1':
                    self.processFreeText('pneumonia', row, headers)
                 if row[headers_old.index('adult_7_10')] == '1':
-                    self.processFreeText('renal kidney failure', row, headers)
+                    self.processFreeText('renal', row, headers)
                 if row[headers_old.index('adult_7_11')] == '1':
                     self.processFreeText('suicide', row, headers)
 

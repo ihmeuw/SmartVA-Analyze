@@ -1757,17 +1757,17 @@ class PreSymptomPrep():
         if self.shortform:
             for row in matrix:
                 if row[headers_old.index('neonate_6_1')] == '1':
-                    self.processFreeText('asphyxia lack of oxygen', row, headers)
+                    self.processFreeText('asphyxia', row, headers)
                 if row[headers_old.index('neonate_6_2')] == '1':
                     self.processFreeText('incubator', row, headers)
                 if row[headers_old.index('neonate_6_3')] == '1':
-                    self.processFreeText('lung problems', row, headers)
+                    self.processFreeText('lung', row, headers)
                 if row[headers_old.index('neonate_6_4')] == '1':
                     self.processFreeText('pneumonia', row, headers)
                 if row[headers_old.index('neonate_6_5')] == '1':
-                    self.processFreeText('preterm delivery', row, headers)
+                    self.processFreeText('preterm', row, headers)
                 if row[headers_old.index('neonate_6_6')] == '1':
-                    self.processFreeText('respiratory distress', row, headers)
+                    self.processFreeText('distress', row, headers)
         
         freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
         
