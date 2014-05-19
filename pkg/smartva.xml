@@ -1,7 +1,7 @@
 <project>
     <shortName>SmartVA</shortName>
     <fullName>Smart VA</fullName>
-    <version>1.0</version>
+    <version>1.1</version>
     <componentList>
         <component>
             <name>default</name>
@@ -55,10 +55,10 @@
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/pkg/Manual Data Entry Forms</origin>
+                            <origin>/Users/carlhartung/Desktop/ihme-va/pkg/Manual Data Entry Forms</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>/Volumes/Aequitas/Users/yanokwa/Documents/Work/Nafundi/Projects/IHME/ihme-va/dist/SmartVA.exe</origin>
+                            <origin>/Users/carlhartung/Desktop/SmartVA.exe</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>

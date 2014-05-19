@@ -19,9 +19,9 @@
                     <platforms>windows</platforms>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/Smart VA.exe</windowsExec>
+                    <windowsExec>${installdir}/SmartVA.exe</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
-                    <windowsIcon>${installdir}/Smart VA.exe</windowsIcon>
+                    <windowsIcon>${installdir}/SmartVA.exe</windowsIcon>
                     <windowsPath></windowsPath>
                 </shortcut>
             </desktopShortcutList>
@@ -85,9 +85,9 @@
                     <name>Run ${product_shortname}</name>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/Smart VA.exe</windowsExec>
+                    <windowsExec>${installdir}/SmartVA.exe</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
-                    <windowsIcon>${installdir}/Smart VA.exe</windowsIcon>
+                    <windowsIcon>${installdir}/SmartVA.exe</windowsIcon>
                     <windowsPath></windowsPath>
                 </startMenuShortcut>
                 <startMenuFileShortcut>

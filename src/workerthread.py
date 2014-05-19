@@ -137,7 +137,7 @@ class WorkerThread(Thread):
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-               
+
         # makes child-presymptom.csv
         child_data = self.childpresym.run()
         if self._want_abort == 1:

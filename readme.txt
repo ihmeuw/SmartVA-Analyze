@@ -8,8 +8,15 @@ for mac replace:
 for windows replace:
 Z:\\
 
+and add the whole path to the first line with src/vaUI.py
+and the last line with the icon
+
 # On Mac OS X
 python pyinstaller.py pkg/smartva-mac.spec --onefile --windowed
+
+C:\Documents and Settings\Administrator\Desktop\PyInstaller-2.1>python pyinstall
+er.py "c:\Documents and Settings\Administrator\Desktop\ihme-va\pkg\smartva-win.s
+pec" --onefile --windowed
 
 # On Windows
 python pyinstaller.py pkg\smartva-win.spec --onefile --windowed

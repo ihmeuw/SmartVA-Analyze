@@ -1852,108 +1852,115 @@ class PreSymptomPrep():
                 
                 
         #fix missingness coding for weight from medical record
-        for row in matrix:
-            c5_07_1b = headers.index('c5_07_1b')
-            c5_07_2b = headers.index('c5_07_2b')
-            if (row[c5_07_1b] == '0' or row[c5_07_1b] == '9999' or row[c5_07_1b] == '99' or row[c5_07_1b] == '999'):
-                row[c5_07_1b] = ''
-            if (row[c5_07_2b] == '0' or row[c5_07_2b] == '9999' or row[c5_07_2b] == '99' or row[c5_07_2b] == '999'):
-                row[c5_07_2b] = ''
-                
-            #Date of birth - clean up so you can get at least an estimated age
-            g5_01d = headers.index('g5_01d')
-            if (row[g5_01d] == '99'):
-                row[g5_01d] = 0
-            g5_01m = headers.index('g5_01m')
-            if (row[g5_01m] == '99'):
-                row[g5_01m] = 0
-            g5_01y = headers.index('g5_01y')
-            if (row[g5_01y] == '999'):
-                row[g5_01y] = 0
-                
-            #clean up medical record dates
-            c5_06_1d = headers.index('c5_06_1d')
-            if row[c5_06_1d] == '99' or row[c5_06_1d] == '' or row[c5_06_1d] == None:
-                row[c5_06_1d] = 0
-            c5_06_1m = headers.index('c5_06_1m')
-            if row[c5_06_1m] == '99' or row[c5_06_1m] == '' or row[c5_06_1m] == None:
-                row[c5_06_1m] = 0
-            c5_06_1y = headers.index('c5_06_1y')
-            if row[c5_06_1y] == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] == None:
-                row[c5_06_1y] = 0
-            
-            c5_06_2d = headers.index('c5_06_2d')
-            if row[c5_06_2d] == '99' or row[c5_06_2d] == '' or row[c5_06_2d] == None:
-                row[c5_06_2d] = 0
-            c5_06_2m = headers.index('c5_06_2m')
-            if row[c5_06_2m] == '99' or row[c5_06_2m] == '' or row[c5_06_2m] == None:
-                row[c5_06_2m] = 0
-            c5_06_2y = headers.index('c5_06_2y')
-            if row[c5_06_2y] == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] == None:
-                row[c5_06_2y] = 0
-            
-            knownAge = True
-            if row[g5_01y] == 0 and row[g5_01m] == 0 and row[g5_01d] == 0:
-                knownAge = False
-                
-            if knownAge:
-                #generate how many months after Jan 1 1960 they were born - This is a specific stata function
-                #gen mofd = mofd(mdy(c1_10m, c1_10d, c1_10y))
-                
-                base_date = date(1960, 1, 1)
-                delta = relativedelta(date(int(row[g5_01y]), int(row[g5_01m]), int(row[g5_01d])), base_date)
-                mofd = delta.years*12 + delta.months
-                
-                mofm1 = -1
-                mofm2 = -1
-                if row[c5_06_1y] != 0 and int(row[c5_06_1m]) != 0 and int(row[c5_06_1d]) != 0:
-                    exam1date = date(int(row[c5_06_1y]), int(row[c5_06_1m]), int(row[c5_06_1d]))
-                    exam1delta = relativedelta(exam1date, base_date)
-                    mofm1 = exam1delta.years * 12 + exam1delta.months
+        for row_i, row in enumerate(matrix):
+            try:
+                c5_07_1b = headers.index('c5_07_1b')
+                c5_07_2b = headers.index('c5_07_2b')
+                if (row[c5_07_1b] == '0' or row[c5_07_1b] == '9999' or row[c5_07_1b] == '99' or row[c5_07_1b] == '999'):
+                    row[c5_07_1b] = ''
+                if (row[c5_07_2b] == '0' or row[c5_07_2b] == '9999' or row[c5_07_2b] == '99' or row[c5_07_2b] == '999'):
+                    row[c5_07_2b] = ''
                     
-                if row[c5_06_2y] != 0 and int(row[c5_06_2m]) != 0 and int(row[c5_06_2d]) != 0:
-                    exam2date = date(int(row[c5_06_2y]), int(row[c5_06_2m]), int(row[c5_06_2d]))
-                    exam2delta = relativedelta(exam2date, base_date)
-                    mofm2 = exam2delta.years * 12 + exam2delta.months
-             
-                #identify most recent medical record
-                #gen max_age = max(mofm1, mofm2)
-                max_age = max(mofm1, mofm2)
+                #Date of birth - clean up so you can get at least an estimated age
+                g5_01d = headers.index('g5_01d')
+                if (row[g5_01d] == '99'):
+                    row[g5_01d] = 0
+                g5_01m = headers.index('g5_01m')
+                if (row[g5_01m] == '99'):
+                    row[g5_01m] = 0
+                g5_01y = headers.index('g5_01y')
+                if (row[g5_01y] == '999'):
+                    row[g5_01y] = 0
+                    
+                #clean up medical record dates
+                c5_06_1d = headers.index('c5_06_1d')
+                if row[c5_06_1d] == '99' or row[c5_06_1d] == '' or row[c5_06_1d] == None:
+                    row[c5_06_1d] = 0
+                c5_06_1m = headers.index('c5_06_1m')
+                if row[c5_06_1m] == '99' or row[c5_06_1m] == '' or row[c5_06_1m] == None:
+                    row[c5_06_1m] = 0
+                c5_06_1y = headers.index('c5_06_1y')
+                if row[c5_06_1y] == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] == None:
+                    row[c5_06_1y] = 0
                 
-                month = max_age - mofd
-                 
-                # only keep going if they have a positive age in the right range
-                if month >= 0 and month <= 60:                   
-                    #only child
-                    weight_kg = 0
-                    if max_age == mofm1:
-                        weight_kg = float(row[headers.index('c5_07_1b')])/1000
-                    elif max_age == mofm2:
-                        weight_kg = float(row[headers.index('c5_07_2b')])/1000
+                c5_06_2d = headers.index('c5_06_2d')
+                if row[c5_06_2d] == '99' or row[c5_06_2d] == '' or row[c5_06_2d] == None:
+                    row[c5_06_2d] = 0
+                c5_06_2m = headers.index('c5_06_2m')
+                if row[c5_06_2m] == '99' or row[c5_06_2m] == '' or row[c5_06_2m] == None:
+                    row[c5_06_2m] = 0
+                c5_06_2y = headers.index('c5_06_2y')
+                if row[c5_06_2y] == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] == None:
+                    row[c5_06_2y] = 0
+                
+                knownAge = True
+                if row[g5_01y] == 0 and row[g5_01m] == 0 and row[g5_01d] == 0:
+                    knownAge = False
+                    
+                if knownAge:
+                    #generate how many months after Jan 1 1960 they were born - This is a specific stata function
+                    #gen mofd = mofd(mdy(c1_10m, c1_10d, c1_10y))
+                    
+                    base_date = date(1960, 1, 1)
+                    delta = relativedelta(date(int(row[g5_01y]), int(row[g5_01m]), int(row[g5_01d])), base_date)
+                    mofd = delta.years*12 + delta.months
+                    
+                    mofm1 = -1
+                    mofm2 = -1
+                    if row[c5_06_1y] != 0 and int(row[c5_06_1m]) != 0 and int(row[c5_06_1d]) != 0:
+                        exam1date = date(int(row[c5_06_1y]), int(row[c5_06_1m]), int(row[c5_06_1d]))
+                        exam1delta = relativedelta(exam1date, base_date)
+                        mofm1 = exam1delta.years * 12 + exam1delta.months
                         
-                    # input months, output 3rd standard deviation below
-                    male_sd3 = {0 : 2.1, 1 : 2.9, 2 : 3.8, 3 : 4.4, 4 : 4.9, 5 : 5.3, 6 : 5.7, 7 : 5.9, 8 : 6.2, 9 : 6.4, 10 : 6.6, 11 : 6.8, 12 : 6.9, 13 : 7.1, 14 : 7.2, 15 : 7.4, 16 : 7.5, 17 : 7.7, 18 : 7.8, 19 : 8, 20 : 8.1, 21 : 8.2, 22 : 8.4, 23 : 8.5, 24 : 8.6, 25 : 8.8, 26 : 8.9, 27 : 9, 28 : 9.1, 29 : 9.2, 30 : 9.4, 31 : 9.5, 32 : 9.6, 33 : 9.7, 34 : 9.8, 35 : 9.9, 36 : 10, 37 : 10.1, 38 : 10.2, 39 : 10.3, 40 : 10.4, 41 : 10.5, 42 : 10.6, 43 : 10.7, 44 : 10.8, 45 : 10.9, 46 : 11, 47 : 11.1, 48 : 11.2, 49 : 11.3, 50 : 11.4, 51 : 11.5, 52 : 11.6, 53 : 11.7, 54 : 11.8, 55 : 11.9, 56 : 12, 57 : 12.1, 58 : 12.2, 59 : 12.3, 60 : 12.4}
-      
-                    female_sd3 = {0 : 2, 1 : 2.7, 2 : 3.4, 3 : 4, 4 : 4.4, 5 : 4.8, 6 : 5.1, 7 : 5.3, 8 : 5.6, 9 : 5.8, 10 : 5.9, 11 : 6.1, 12 : 6.3, 13 : 6.4, 14 : 6.6, 15 : 6.7, 16 : 6.9, 17 : 7, 18 : 7.2, 19 : 7.3, 20 : 7.5, 21 : 7.6, 22 : 7.8, 23 : 7.9, 24 : 8.1, 25 : 8.2, 26 : 8.4, 27 : 8.5, 28 : 8.6, 29 : 8.8, 30 : 8.9, 31 : 9, 32 : 9.1, 33 : 9.3, 34 : 9.4, 35 : 9.5, 36 : 9.6, 37 : 9.7, 38 : 9.8, 39 : 9.9, 40 : 10.1, 41 : 10.2, 42 : 10.3, 43 : 10.4, 44 : 10.5, 45 : 10.6, 46 : 10.7, 47 : 10.8, 48 : 10.9, 49 : 11, 50 : 11.1, 51 : 11.2, 52 : 11.3, 53 : 11.4, 54 : 11.5, 55 : 11.6, 56 : 11.7, 57 : 11.8, 58 : 11.9, 59 : 12, 60 : 12.1}
-        
-                    male_sd2 = {0 : 2.5, 1 : 3.4, 2 : 4.3, 3 : 5, 4 : 5.6, 5 : 6, 6 : 6.4, 7 : 6.7, 8 : 6.9, 9 : 7.1, 10 : 7.4, 11 : 7.6, 12 : 7.7, 13 : 7.9, 14 : 8.1, 15 : 8.3, 16 : 8.4, 17 : 8.6, 18 : 8.8, 19 : 8.9, 20 : 9.1, 21 : 9.2, 22 : 9.4, 23 : 9.5, 24 : 9.7, 25 : 9.8, 26 : 10, 27 : 10.1, 28 : 10.2, 29 : 10.4, 30 : 10.5, 31 : 10.7, 32 : 10.8, 33 : 10.9, 34 : 11, 35 : 11.2, 36 : 11.3, 37 : 11.4, 38 : 11.5, 39 : 11.6, 40 : 11.8, 41 : 11.9, 42 : 12, 43 : 12.1, 44 : 12.2, 45 : 12.4, 46 : 12.5, 47 : 12.6, 48 : 12.7, 49 : 12.8, 50 : 12.9, 51 : 13.1, 52 : 13.2, 53 : 13.3, 54 : 13.4, 55 : 13.5, 56 : 13.6, 57 : 13.7, 58 : 13.8, 59 : 14, 60 : 14.1}
-
-                    female_sd2 = {0 : 2.4, 1 : 3.2, 2 : 3.9, 3 : 4.5, 4 : 5, 5 : 5.4, 6 : 5.7, 7 : 6, 8 : 6.3, 9 : 6.5, 10 : 6.7, 11 : 6.9, 12 : 7, 13 : 7.2, 14 : 7.4, 15 : 7.6, 16 : 7.7, 17 : 7.9, 18 : 8.1, 19 : 8.2, 20 : 8.4, 21 : 8.6, 22 : 8.7, 23 : 8.9, 24 : 9, 25 : 9.2, 26 : 9.4, 27 : 9.5, 28 : 9.7, 29 : 9.8, 30 : 10, 31 : 10.1, 32 : 10.3, 33 : 10.4, 34 : 10.5, 35 : 10.7, 36 : 10.8, 37 : 10.9, 38 : 11.1, 39 : 11.2, 40 : 11.3, 41 : 11.5, 42 : 11.6, 43 : 11.7, 44 : 11.8, 45 : 12, 46 : 12.1, 47 : 12.2, 48 : 12.3, 49 : 12.4, 50 : 12.6, 51 : 12.7, 52 : 12.8, 53 : 12.9, 54 : 13, 55 : 13.2, 56 : 13.3, 57 : 13.4, 58 : 13.5, 59 : 13.6, 60 : 13.7}
-            
+                    if row[c5_06_2y] != 0 and int(row[c5_06_2m]) != 0 and int(row[c5_06_2d]) != 0:
+                        exam2date = date(int(row[c5_06_2y]), int(row[c5_06_2m]), int(row[c5_06_2d]))
+                        exam2delta = relativedelta(exam2date, base_date)
+                        mofm2 = exam2delta.years * 12 + exam2delta.months
+                 
+                    #identify most recent medical record
+                    #gen max_age = max(mofm1, mofm2)
+                    max_age = max(mofm1, mofm2)
                     
-                    sex = row[headers.index('g5_02')]
-                    if sex == '1':
-                        if weight_kg < male_sd3[month]:
-                            row[headers.index('s180')] = 1
-                        if weight_kg < male_sd2[month]:
-                            row[headers.index('s181')] = 1
-                    elif sex == '2':
-                        if weight_kg < female_sd3[month]:
-                            row[headers.index('s180')] = 1
-                        if weight_kg < female_sd2[month]:
-                            row[headers.index('s181')] = 1
+                    month = max_age - mofd
+                     
+                    # only keep going if they have a positive age in the right range
+                    if month >= 0 and month <= 60:                   
+                        #only child
+                        weight_kg = 0
+                        if max_age == mofm1:
+                            weight_kg = float(row[headers.index('c5_07_1b')])/1000
+                        elif max_age == mofm2:
+                            weight_kg = float(row[headers.index('c5_07_2b')])/1000
+                            
+                        # input months, output 3rd standard deviation below
+                        male_sd3 = {0 : 2.1, 1 : 2.9, 2 : 3.8, 3 : 4.4, 4 : 4.9, 5 : 5.3, 6 : 5.7, 7 : 5.9, 8 : 6.2, 9 : 6.4, 10 : 6.6, 11 : 6.8, 12 : 6.9, 13 : 7.1, 14 : 7.2, 15 : 7.4, 16 : 7.5, 17 : 7.7, 18 : 7.8, 19 : 8, 20 : 8.1, 21 : 8.2, 22 : 8.4, 23 : 8.5, 24 : 8.6, 25 : 8.8, 26 : 8.9, 27 : 9, 28 : 9.1, 29 : 9.2, 30 : 9.4, 31 : 9.5, 32 : 9.6, 33 : 9.7, 34 : 9.8, 35 : 9.9, 36 : 10, 37 : 10.1, 38 : 10.2, 39 : 10.3, 40 : 10.4, 41 : 10.5, 42 : 10.6, 43 : 10.7, 44 : 10.8, 45 : 10.9, 46 : 11, 47 : 11.1, 48 : 11.2, 49 : 11.3, 50 : 11.4, 51 : 11.5, 52 : 11.6, 53 : 11.7, 54 : 11.8, 55 : 11.9, 56 : 12, 57 : 12.1, 58 : 12.2, 59 : 12.3, 60 : 12.4}
+          
+                        female_sd3 = {0 : 2, 1 : 2.7, 2 : 3.4, 3 : 4, 4 : 4.4, 5 : 4.8, 6 : 5.1, 7 : 5.3, 8 : 5.6, 9 : 5.8, 10 : 5.9, 11 : 6.1, 12 : 6.3, 13 : 6.4, 14 : 6.6, 15 : 6.7, 16 : 6.9, 17 : 7, 18 : 7.2, 19 : 7.3, 20 : 7.5, 21 : 7.6, 22 : 7.8, 23 : 7.9, 24 : 8.1, 25 : 8.2, 26 : 8.4, 27 : 8.5, 28 : 8.6, 29 : 8.8, 30 : 8.9, 31 : 9, 32 : 9.1, 33 : 9.3, 34 : 9.4, 35 : 9.5, 36 : 9.6, 37 : 9.7, 38 : 9.8, 39 : 9.9, 40 : 10.1, 41 : 10.2, 42 : 10.3, 43 : 10.4, 44 : 10.5, 45 : 10.6, 46 : 10.7, 47 : 10.8, 48 : 10.9, 49 : 11, 50 : 11.1, 51 : 11.2, 52 : 11.3, 53 : 11.4, 54 : 11.5, 55 : 11.6, 56 : 11.7, 57 : 11.8, 58 : 11.9, 59 : 12, 60 : 12.1}
+            
+                        male_sd2 = {0 : 2.5, 1 : 3.4, 2 : 4.3, 3 : 5, 4 : 5.6, 5 : 6, 6 : 6.4, 7 : 6.7, 8 : 6.9, 9 : 7.1, 10 : 7.4, 11 : 7.6, 12 : 7.7, 13 : 7.9, 14 : 8.1, 15 : 8.3, 16 : 8.4, 17 : 8.6, 18 : 8.8, 19 : 8.9, 20 : 9.1, 21 : 9.2, 22 : 9.4, 23 : 9.5, 24 : 9.7, 25 : 9.8, 26 : 10, 27 : 10.1, 28 : 10.2, 29 : 10.4, 30 : 10.5, 31 : 10.7, 32 : 10.8, 33 : 10.9, 34 : 11, 35 : 11.2, 36 : 11.3, 37 : 11.4, 38 : 11.5, 39 : 11.6, 40 : 11.8, 41 : 11.9, 42 : 12, 43 : 12.1, 44 : 12.2, 45 : 12.4, 46 : 12.5, 47 : 12.6, 48 : 12.7, 49 : 12.8, 50 : 12.9, 51 : 13.1, 52 : 13.2, 53 : 13.3, 54 : 13.4, 55 : 13.5, 56 : 13.6, 57 : 13.7, 58 : 13.8, 59 : 14, 60 : 14.1}
 
- 
+                        female_sd2 = {0 : 2.4, 1 : 3.2, 2 : 3.9, 3 : 4.5, 4 : 5, 5 : 5.4, 6 : 5.7, 7 : 6, 8 : 6.3, 9 : 6.5, 10 : 6.7, 11 : 6.9, 12 : 7, 13 : 7.2, 14 : 7.4, 15 : 7.6, 16 : 7.7, 17 : 7.9, 18 : 8.1, 19 : 8.2, 20 : 8.4, 21 : 8.6, 22 : 8.7, 23 : 8.9, 24 : 9, 25 : 9.2, 26 : 9.4, 27 : 9.5, 28 : 9.7, 29 : 9.8, 30 : 10, 31 : 10.1, 32 : 10.3, 33 : 10.4, 34 : 10.5, 35 : 10.7, 36 : 10.8, 37 : 10.9, 38 : 11.1, 39 : 11.2, 40 : 11.3, 41 : 11.5, 42 : 11.6, 43 : 11.7, 44 : 11.8, 45 : 12, 46 : 12.1, 47 : 12.2, 48 : 12.3, 49 : 12.4, 50 : 12.6, 51 : 12.7, 52 : 12.8, 53 : 12.9, 54 : 13, 55 : 13.2, 56 : 13.3, 57 : 13.4, 58 : 13.5, 59 : 13.6, 60 : 13.7}
+                
+                        
+                        sex = row[headers.index('g5_02')]
+                        if sex == '1':
+                            if weight_kg < male_sd3[month]:
+                                row[headers.index('s180')] = 1
+                            if weight_kg < male_sd2[month]:
+                                row[headers.index('s181')] = 1
+                        elif sex == '2':
+                            if weight_kg < female_sd3[month]:
+                                row[headers.index('s180')] = 1
+                            if weight_kg < female_sd2[month]:
+                                row[headers.index('s181')] = 1
+            except ValueError as e:
+                updatestr = "Error in row: %s\n" % (row_i + 1)
+                updatestr = updatestr + e.message
+                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                self.warningfile.write(updatestr)
+                import sys
+                self.exc_info = sys.exc_info()
+                raise self.exc_info[1], None, self.exc_info[2]
                         
         childwriter.writerow(headers)
         
