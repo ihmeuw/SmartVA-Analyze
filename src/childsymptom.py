@@ -95,7 +95,7 @@ class ChildSymptomPrep():
             s4 = float(s4)/365
             #combine
             s2 = float(s2) + s3 + s4    
-            row[headers.index('s2')]  = s2
+            row[headers.index('s2')]  = int(s2)
             
             index = headers.index('s2')
             s2991index = headers.index('s2991')

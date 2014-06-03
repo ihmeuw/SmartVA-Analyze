@@ -1863,40 +1863,45 @@ class PreSymptomPrep():
                     
                 #Date of birth - clean up so you can get at least an estimated age
                 g5_01d = headers.index('g5_01d')
-                if (row[g5_01d] == '99'):
-                    row[g5_01d] = 0
+                if (row[g5_01d] == '99' or row[g5_01d] == ''):
+                    row[g5_01d] = 1
                 g5_01m = headers.index('g5_01m')
-                if (row[g5_01m] == '99'):
-                    row[g5_01m] = 0
+                if (row[g5_01m] == '99' or row[g5_01m] == ''):
+                    row[g5_01m] = 1
                 g5_01y = headers.index('g5_01y')
-                if (row[g5_01y] == '999'):
+                if (row[g5_01y] == '999' or row[g5_01y] == ''):
                     row[g5_01y] = 0
-                    
+                
+
+
                 #clean up medical record dates
                 c5_06_1d = headers.index('c5_06_1d')
                 if row[c5_06_1d] == '99' or row[c5_06_1d] == '' or row[c5_06_1d] == None:
-                    row[c5_06_1d] = 0
+                    row[c5_06_1d] = 1
                 c5_06_1m = headers.index('c5_06_1m')
                 if row[c5_06_1m] == '99' or row[c5_06_1m] == '' or row[c5_06_1m] == None:
-                    row[c5_06_1m] = 0
+                    row[c5_06_1m] = 1
                 c5_06_1y = headers.index('c5_06_1y')
                 if row[c5_06_1y] == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] == None:
                     row[c5_06_1y] = 0
                 
                 c5_06_2d = headers.index('c5_06_2d')
                 if row[c5_06_2d] == '99' or row[c5_06_2d] == '' or row[c5_06_2d] == None:
-                    row[c5_06_2d] = 0
+                    row[c5_06_2d] = 1
                 c5_06_2m = headers.index('c5_06_2m')
                 if row[c5_06_2m] == '99' or row[c5_06_2m] == '' or row[c5_06_2m] == None:
-                    row[c5_06_2m] = 0
+                    row[c5_06_2m] = 1
                 c5_06_2y = headers.index('c5_06_2y')
                 if row[c5_06_2y] == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] == None:
                     row[c5_06_2y] = 0
                 
                 knownAge = True
-                if row[g5_01y] == 0 and row[g5_01m] == 0 and row[g5_01d] == 0:
+                if row[g5_01y] == 0:
                     knownAge = False
-                    
+
+                print "KNOWN %s" % knownAge
+                print "date is :: %s : %s : %s" % (row[g5_01y], row[g5_01m], row[g5_01d])
+
                 if knownAge:
                     #generate how many months after Jan 1 1960 they were born - This is a specific stata function
                     #gen mofd = mofd(mdy(c1_10m, c1_10d, c1_10y))
@@ -1907,12 +1912,12 @@ class PreSymptomPrep():
                     
                     mofm1 = -1
                     mofm2 = -1
-                    if row[c5_06_1y] != 0 and int(row[c5_06_1m]) != 0 and int(row[c5_06_1d]) != 0:
+                    if row[c5_06_1y] != 0:
                         exam1date = date(int(row[c5_06_1y]), int(row[c5_06_1m]), int(row[c5_06_1d]))
                         exam1delta = relativedelta(exam1date, base_date)
                         mofm1 = exam1delta.years * 12 + exam1delta.months
-                        
-                    if row[c5_06_2y] != 0 and int(row[c5_06_2m]) != 0 and int(row[c5_06_2d]) != 0:
+                    
+                    if row[c5_06_2y] != 0:
                         exam2date = date(int(row[c5_06_2y]), int(row[c5_06_2m]), int(row[c5_06_2d]))
                         exam2delta = relativedelta(exam2date, base_date)
                         mofm2 = exam2delta.years * 12 + exam2delta.months
@@ -1954,7 +1959,9 @@ class PreSymptomPrep():
                             if weight_kg < female_sd2[month]:
                                 row[headers.index('s181')] = 1
             except ValueError as e:
-                updatestr = "Error in row: %s\n" % (row_i + 1)
+                updatestr = "Error in row: %s\n" % (row_i + 2)  #python starts on 0, excel starts on 1, excel first row is headers
+                print "args? + %s" % e.args
+                print "values? %s " + e.value
                 updatestr = updatestr + e.message
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 self.warningfile.write(updatestr)

@@ -1849,22 +1849,22 @@ class PreSymptomPrep():
                     
                 #Date of birth - clean up so you can get at least an estimated age
                 g5_01d = headers.index('g5_01d')
-                if (str(row[g5_01d]) == '99'):
-                    row[g5_01d] = 0
+                if (str(row[g5_01d]) == '99' or str(row[g5_01d]) == ''):
+                    row[g5_01d] = 1
                 g5_01m = headers.index('g5_01m')
-                if (str(row[g5_01m]) == '99'):
-                    row[g5_01m] = 0
+                if (str(row[g5_01m]) == '99' or str(row[g5_01m]) == ''):
+                    row[g5_01m] = 1
                 g5_01y = headers.index('g5_01y')
-                if (str(row[g5_01y]) == '999'):
+                if (str(row[g5_01y]) == '999' or str(row[g5_01y]) == ''):
                     row[g5_01y] = 0
                     
                 #clean up medical record dates
                 c5_06_1d = headers.index('c5_06_1d')
                 if str(row[c5_06_1d]) == '99' or row[c5_06_1d] == '' or row[c5_06_1d] == None:
-                    row[c5_06_1d] = 0
+                    row[c5_06_1d] = 1
                 c5_06_1m = headers.index('c5_06_1m')
                 if str(row[c5_06_1m]) == '99' or row[c5_06_1m] == '' or row[c5_06_1m] == None:
-                    row[c5_06_1m] = 0
+                    row[c5_06_1m] = 1
                 c5_06_1y = headers.index('c5_06_1y')
                 if str(row[c5_06_1y]) == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] == None:
                     row[c5_06_1y] = 0
@@ -1872,17 +1872,17 @@ class PreSymptomPrep():
                 
                 c5_06_2d = headers.index('c5_06_2d')
                 if str(row[c5_06_2d]) == '99' or row[c5_06_2d] == '' or row[c5_06_2d] == None:
-                    row[c5_06_2d] = 0
+                    row[c5_06_2d] = 1
                 c5_06_2m = headers.index('c5_06_2m')
                 if str(row[c5_06_2m]) == '99' or row[c5_06_2m] == '' or row[c5_06_2m] == None:
-                    row[c5_06_2m] = 0
+                    row[c5_06_2m] = 1
                 c5_06_2y = headers.index('c5_06_2y')
                 if str(row[c5_06_2y]) == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] == None:
                     row[c5_06_2y] = 0
                 
 
                 knownAge = True
-                if row[g5_01y] == 0 and row[g5_01m] == 0 and row[g5_01d] == 0:
+                if row[g5_01y] == 0:
                     knownAge = False
                                 
                 if knownAge:
@@ -1898,12 +1898,12 @@ class PreSymptomPrep():
                     
                     mofm1 = -1
                     mofm2 = -1
-                    if row[c5_06_1y] != 0 and int(row[c5_06_1m]) != 0 and int(row[c5_06_1d]) != 0:
+                    if row[c5_06_1y] != 0:
                         exam1date = date(int(row[c5_06_1y]), int(row[c5_06_1m]), int(row[c5_06_1d]))
                         exam1delta = relativedelta(exam1date, base_date)
                         mofm1 = exam1delta.years * 12 + exam1delta.months
                         
-                    if row[c5_06_2y] != 0 and int(row[c5_06_2m]) != 0 and int(row[c5_06_2d]) != 0:
+                    if row[c5_06_2y] != 0:
                         exam2date = date(int(row[c5_06_2y]), int(row[c5_06_2m]), int(row[c5_06_2d]))
                         exam2delta = relativedelta(exam2date, base_date)
                         mofm2 = exam2delta.years * 12 + exam2delta.months
