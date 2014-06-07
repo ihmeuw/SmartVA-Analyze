@@ -4,7 +4,6 @@
 import csv
 import os
 import re
-import sys
 from collections import defaultdict
 from collections import OrderedDict
 
@@ -101,12 +100,7 @@ def make_graph(cause_key, output_dir):
 
     # clear the current figure
     plt.clf()
-
-    # plt.close() causes a crash in os x.
-    if sys.platform == 'darwin':
-        del fig # cleans up the memory
-    else:
-        plt.close()
+    plt.close()
 
 # labels for dict
 global module_labels

@@ -3,7 +3,6 @@
 
 import csv
 import os
-import sys
 from collections import OrderedDict
 
 import matplotlib.pyplot as plt
@@ -93,12 +92,7 @@ def make_graph(module_key, output_dir):
 
     # clear the current figure
     plt.clf()
-
-    # plt.close() causes a crash in os x.
-    if sys.platform == 'darwin':
-        del fig # cleans up the memory
-    else:
-        plt.close()
+    plt.close()
 
 # labels for dict
 global module_labels
