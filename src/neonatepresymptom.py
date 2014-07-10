@@ -124,6 +124,7 @@ class PreSymptomPrep():
         
 
         #do the calculations for the generated variables:
+        #i.e. recode
         for row in matrix:
             index = headers.index('g4_03b')
             if row[headers.index('g4_03a')] == str(11):
@@ -182,6 +183,114 @@ class PreSymptomPrep():
                 
             if (row[headers.index('c1_25b')] != '' and int(row[headers.index('c1_25b')]) >= 1 and int(row[headers.index('c1_25b')]) <= 28):
                 row[headers.index('c1_26')] = 1
+                    
+            # added for shortform
+            if self.shortform:
+                index = headers.index('c1_06a')
+                temp = row[headers_old.index('child_1_6')]
+                if temp == '1':
+                    row[index] = '1'
+                if temp == '2':
+                    row[index] = '2'
+                if temp == '3':
+                    row[index] = '4'
+                if temp == '4':
+                    row[index] = '5'
+                if temp == '5':
+                    row[index] = '6'
+                
+                index = headers.index('c1_22a')
+                temp = row[headers_old.index('child_1_22')]
+                if temp == '1':
+                    row[index] = '1'
+                if temp == '2':
+                    row[index] = '2'
+                if temp == '3':
+                    row[index] = '4'
+                if temp == '4':
+                    row[index] = '5'
+                if temp == '5':
+                    row[index] = '6'
+                if temp == '8':
+                    row[index] = '8'
+                if temp == '9':
+                    row[index] = '9'
+                
+                index = headers.index('c2_01_1')
+                temp = row[headers_old.index('complications1')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_2')
+                temp = row[headers_old.index('complications2')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_3')
+                temp = row[headers_old.index('complications3')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_4')
+                temp = row[headers_old.index('complications4')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_5')
+                temp = row[headers_old.index('complications5')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_6')
+                temp = row[headers_old.index('complications6')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_7')
+                temp = row[headers_old.index('complications7')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_8')
+                temp = row[headers_old.index('complications8')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_9')
+                temp = row[headers_old.index('complications9')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_10')
+                temp = row[headers_old.index('complications10')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_11')
+                temp = row[headers_old.index('complications11')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c2_01_12')
+                temp = row[headers_old.index('complications12')]
+                if temp == '1':
+                    row[index] = '1'
+                
+                index = headers.index('c3_03_1')
+                temp = row[headers_old.index('childabnorm1')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c3_03_2')
+                temp = row[headers_old.index('childabnorm2')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c3_03_3')
+                temp = row[headers_old.index('childabnorm3')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c3_03_4a')
+                temp = row[headers_old.index('childabnorm4')]
+                if temp == '1':
+                    row[index] = '1'
+                index = headers.index('c3_03_5')
+                temp = row[headers_old.index('childabnorm5')]
+                if temp == '1':
+                    row[index] = '1'
+                
+                index = headers.index('c4_08a')
+                temp = row[headers_old.index('child_4_8')]
+                if temp == '2':
+                    row[index] = '1'
+
                 
                 
         #Test skip patterns
@@ -1738,7 +1847,23 @@ class PreSymptomPrep():
                 #    self.warningfile.write(updatestr)
                 #                    g5_06b = str(neonate_defaultFill.get(''))
         
-        
+            #added for short form
+            if c5_04 != '1' or c5_05 != 1:
+                c5_07_1b = row[headers.index('c5_07_1b')]
+                if not (c5_07_1b is None or c5_07_1b == ''):
+                    updatestr = "Child :: WARNING: value at row %s col %s for variable c5_07_1b should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_07_1b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('c5_07_1b')] = str(neonate_defaultFill.get('c5_07_1b'))
+                c5_07_2b = row[headers.index('c5_07_2b')]
+                if not (c5_07_2b is None or c5_07_2b == ''):
+                    updatestr = "Child :: WARNING: value at row %s col %s for variable c5_07_2b should be blank, setting to default and continuing\n" % (i+2, headers.index('c5_07_2b'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('c5_07_2b')] = str(neonate_defaultFill.get('c5_07_2b'))
+
+
+
         # fill in missing values:
         updatestr = "Neonate :: Filling in default values for empty columns\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -1921,7 +2046,15 @@ class PreSymptomPrep():
                         if row[headers.index('c5_07_2b')] == '' or row[headers.index('c5_07_2b')] == None or row[headers.index('c5_07_1b')] == '' or row[headers.index('c5_07_1b')] == None:
                                 month = 0
                         
-                        maxweight = float(max(row[c5_07_1b], row[c5_07_2b]))
+                        weight_kg = 0
+                        c5_07_1b = row[headers.index('c5_07_1b')]
+                        c5_07_2b = row[headers.index('c5_07_2b')]
+                        if c5_07_1b == '':
+                            c5_07_1b = 0
+                        if c5_07_2b == '':
+                            c5_07_2b = 0
+                        
+                        maxweight = max(float(c5_07_1b), float(c5_07_2b))
                         weight_kg = maxweight/1000
                         
                         # input months, output 3rd standard deviation below

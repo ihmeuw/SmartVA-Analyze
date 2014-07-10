@@ -120,6 +120,7 @@ class PreSymptomPrep():
             
             
         #calculations for the generated variables:
+        #i.e. recode
         #do this before skip patterns so generted variabels aren't 0
         for row in matrix:
             index = headers.index('g4_03b')
@@ -313,9 +314,37 @@ class PreSymptomPrep():
             if '88' in adult62list:
                 row[headers.index('a6_02_14')] = '1'
             if '99' in adult62list:
-                row[headers.index('a6_02_15')] = '1'    
+                row[headers.index('a6_02_15')] = '1'
             
-        
+            #added for shortform
+            if self.shortform:
+                index = headers.index('a2_08b')
+                if row[headers.index('a2_08a')] == '4':
+                    row[index] = row[headers_old.index('adult_2_8a')]
+                index = headers.index('a2_15b')
+                if row[headers.index('a2_15a')] == '4':
+                    row[index] = row[headers_old.index('adult_2_15a')]
+                index = headers.index('a3_08b')
+                if row[headers.index('a3_08a')] == '3':
+                    row[index] = row[headers_old.index('adult_3_8a')]
+                index = headers.index('a3_11b')
+                if row[headers.index('a3_11a')] == '2':
+                    row[index] = row[headers_old.index('adult_3_11a')]
+                index = headers.index('a3_16b')
+                if row[headers.index('a3_16a')] == '5':
+                    row[index] = row[headers_old.index('adult_3_16a')]
+                index = headers.index('a4_04')
+                if row[headers.index('adult_4_4')] == '1':
+                    row[index] = row[headers_old.index('adult_4_4a')]
+                if row[headers.index('adult_4_4')] == '9':
+                    row[index] = '999'
+
+
+
+
+
+
+    
                       
         # check skip patterns
         for i, row in enumerate(matrix):
@@ -1225,7 +1254,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_03')] = str(adult_defaultFill.get('a3_03'))
             a3_03 = row[headers.index('a3_03')]
-            if g5_02 != '2' or a3_03 != '0': 
+            if g5_02 != '2' or a3_03 == '1':
                 a3_05 = row[headers.index('a3_05')]
                 if not (a3_05 is None or a3_05 == '' or a3_05 == '0'):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_05 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_05'))
@@ -1251,7 +1280,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_10')] = str(adult_defaultFill.get('a3_10'))
             a3_07 = row[headers.index('a3_07')]
-            if g5_02 != '2' or a3_03 != '0' or a3_07 != '1': 
+            if g5_02 != '2' or a3_03 == '1' or a3_07 != '1':
                 a3_08a = row[headers.index('a3_08a')]
                 if not (a3_08a is None or a3_08a == ''):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_08a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_08a'))
@@ -1271,7 +1300,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_09')] = str(adult_defaultFill.get('a3_09'))
             a3_10 = row[headers.index('a3_10')]
-            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1':
+            if g5_02 != '2' or a3_03 == '1' or a3_10 != '1':
                 a3_11a = row[headers.index('a3_11a')]
                 if not (a3_11a is None or a3_11a == ''):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_11a should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_11a'))
@@ -1291,7 +1320,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_12')] = str(adult_defaultFill.get('a3_12'))
             a3_12 = row[headers.index('a3_12')]
-            if g5_02 != '2' or a3_03 != '0' or a3_10 != '1' or a3_12 == '1':
+            if g5_02 != '2' or a3_03 == '1' or a3_10 != '1' or a3_12 == '1':
                 a3_13 = row[headers.index('a3_13')]
                 if not (a3_13 is None or a3_13 == ''):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_13 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_13'))
@@ -1323,7 +1352,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_16b')] = str(adult_defaultFill.get('a3_16b'))
             a3_15 = row[headers.index('a3_15')]
-            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1':
+            if g5_02 != '2' or a3_03 == '1' or a3_12 == '1' or a3_15 == '1':
                 a3_17 = row[headers.index('a3_17')]
                 if not (a3_17 is None or a3_17 == '' or a3_17 == '0'):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_17 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_17'))
@@ -1331,7 +1360,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_17')] = str(adult_defaultFill.get('a3_17'))
             a3_17 = row[headers.index('a3_17')]
-            if g5_02 != '2' or a3_03 != '0' or a3_12 == '1' or a3_15 == '1' or a3_17 == '1':
+            if g5_02 != '2' or a3_03 == '1' or a3_12 == '1' or a3_15 == '1' or a3_17 == '1':
                 a3_18 = row[headers.index('a3_18')]
                 if not (a3_18 is None or a3_18 == '' or a3_18 == '0'):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_18 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_18'))
@@ -1352,7 +1381,7 @@ class PreSymptomPrep():
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_20')] = str(adult_defaultFill.get('a3_20'))    
-            if g5_02 != '2' or a3_03 == '0':
+            if g5_02 != '2' or a3_03 != '1':
                 a3_04 = row[headers.index('a3_04')]
                 if not (a3_04 is None or a3_04 == ''):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_04 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_04'))
@@ -1396,6 +1425,18 @@ class PreSymptomPrep():
                 #    self.warningfile.write(updatestr)
                 #                     g5_06b')] = str(adult_defaultFill.get(''))
 
+            #added for short form
+            a4_02_2 = row[headers.index('a4_02_2')]
+            a4_02_3 = row[headers.index('a4_02_3')]
+            a4_02_4 = row[headers.index('a4_02_4')]
+            a4_02_5a = row[headers.index('a4_02_5a')]
+            if a4_01 != '1' or (a4_02_2 != '1' and a4_02_3 != '1' and a4_02_4 != '1' and a4_02_5a != '1'):
+                a4_03 = row[headers.index('a4_03')]
+                if not (a4_03 is None or a4_03 == ''):
+                    updatestr = "Adult :: WARNING: value at row %s col %s for variable a4_03 should be blank, setting to default and continuing\n" % (i+2, headers.index('a4_03'))
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    self.warningfile.write(updatestr)
+                    row[headers.index('a4_03')] = str(adult_defaultFill.get('a4_03'))
        
         
         updatestr = "Adult :: Filling in default values for empty columns\n"

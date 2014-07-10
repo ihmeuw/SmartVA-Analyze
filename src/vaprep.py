@@ -507,27 +507,36 @@ class VaPrep():
             age = int(a[headers.index("gen_5_4a")])
             days = int(a[headers.index("gen_5_4c")])
             months = int(a[headers.index("gen_5_4b")])
-            
+            aaa = a[headers.index('sid')]
+            #print "for SID :: %s " % (aaa)
+                        
             if age == 0 and days == 0 and months == 0:
                 module = a[headers.index("gen_5_4d")]
                 if module == '1':
+                    #print "neonate because gen_5_4d == 1"
                     neonatewriter.writerow(a)
                 elif module == '2':
+                    #print "child because gen_5_4d == 2"
                     childwriter.writerow(a)
                 elif module == '3':
+                    #print "adult because gen_5_4d == 3"
                     adultwriter.writerow(a)
                 else:
+                    #print "neonate because no value for age"
                     updatestr = "SID: %s has no values for age, defaulting to neonate\n" % a[headers.index('sid')]
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
                     neonatewriter.writerow(a)
             else:
                 if age >= 12:
+                    #print "adult because age >= 12"
                     adultwriter.writerow(a)
                 else:    
                     if days <= 28 and months == 0 and age == 0:
+                        #print "neonage because age <= 28"
                         neonatewriter.writerow(a)
                     else:
+                        #print "child because nothing else"
                         childwriter.writerow(a)
                
         return 1
