@@ -6,7 +6,6 @@ import wx
 import copy
 import workerthread
 import os
-from defaultfill import adult_defaultFill
 from answer_ranges import adult_rangelist
 from presymptom_conversions import adult_conversionVars
 from word_conversions import adult_wordsToVars
@@ -27,6 +26,12 @@ class PreSymptomPrep():
         self.shortform = shortform
 
     def run(self):
+        
+        if self.shortform:
+            from defaultfill import adult_short as adult_defaultFill
+        else:
+            from defaultfill import adult_defaultFill
+        
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         self.warningfile.write("Adult presymptom warnings:\n")
         
@@ -224,8 +229,8 @@ class PreSymptomPrep():
             index = headers.index('a2_73b')
             if row[headers.index('a2_73a')] == '4':
                 row[index] = row[headers_old.index('adult_2_73a')]
-            if row[headers.index('a2_73a')] == '5':
-                row[index] = row[headers_old.index('adult_2_73b')] 
+            if row[headers.index('a2_73a')] == '2':
+                row[index] = row[headers_old.index('adult_2_73b')]
             
             index = headers.index('a2_76b')
             if row[headers.index('a2_76a')] == '4':
@@ -266,9 +271,9 @@ class PreSymptomPrep():
             if '11' in adult42list:
                 row[headers.index('a4_02_5a')] = '1'
             if '8' in adult42list:
-                row[headers.index('a4_02_6')] = '5'
+                row[headers.index('a4_02_6')] = '1'
             if '9' in adult42list:
-                row[headers.index('a4_02_7')] = '5'
+                row[headers.index('a4_02_7')] = '1'
             
             index = headers.index('a5_01_8')
             if row[headers.index('adult_5_1')] == '0':
@@ -336,14 +341,8 @@ class PreSymptomPrep():
                 index = headers.index('a4_04')
                 if row[headers.index('adult_4_4')] == '1':
                     row[index] = row[headers_old.index('adult_4_4a')]
-                if row[headers.index('adult_4_4')] == '9':
-                    row[index] = '999'
-
-
-
-
-
-
+                else:
+                    row[index] = '0'
     
                       
         # check skip patterns
@@ -1280,6 +1279,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_10')] = str(adult_defaultFill.get('a3_10'))
             a3_07 = row[headers.index('a3_07')]
+            #changed this per abie email
             if g5_02 != '2' or a3_03 == '1' or a3_07 != '1':
                 a3_08a = row[headers.index('a3_08a')]
                 if not (a3_08a is None or a3_08a == ''):
@@ -1293,6 +1293,7 @@ class PreSymptomPrep():
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_08b')] = str(adult_defaultFill.get('a3_08b'))
+                        #abie.  same for this one?
                 a3_09 = row[headers.index('a3_09')]
                 if not (a3_09 is None or a3_09 == ''):
                     updatestr = "Adult :: WARNING: value at row %s col %s for variable a3_09 should be blank, setting to default and continuing\n" % (i+2, headers.index('a3_09'))
@@ -1320,6 +1321,7 @@ class PreSymptomPrep():
                     self.warningfile.write(updatestr)
                     row[headers.index('a3_12')] = str(adult_defaultFill.get('a3_12'))
             a3_12 = row[headers.index('a3_12')]
+                #abie.  same for all?
             if g5_02 != '2' or a3_03 == '1' or a3_10 != '1' or a3_12 == '1':
                 a3_13 = row[headers.index('a3_13')]
                 if not (a3_13 is None or a3_13 == ''):
@@ -1499,6 +1501,8 @@ class PreSymptomPrep():
                 row.append("")
                     
         for var in durationVars:
+            if var == 'a3_16' and self.shortform:
+                continue
             a = var + 'a'
             b = var + 'b'
             aindex = headers.index(a)
@@ -1547,10 +1551,10 @@ class PreSymptomPrep():
         dropme = headers.index('a4_02')
         headers.remove('a4_02')
         for row in matrix:
-                del row[dropme]
-		    
-		#get rid of all unused 'adult' headers
-		headers_copy = copy.deepcopy(headers)
+            del row[dropme]
+        
+        #get rid of all unused 'adult' headers
+        headers_copy = copy.deepcopy(headers)
         for col in headers_copy:
             if col.startswith("adult"):
                 index = headers.index(col)

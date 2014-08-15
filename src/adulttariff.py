@@ -6,6 +6,7 @@ import math
 from decimal import Decimal
 import os
 import platform
+import sys
 
 import wx
 
@@ -60,7 +61,8 @@ class Tariff():
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
-        if platform.system() == "Windows":
+#        if (platform.system() == "Windows" or platform.system() == "Darwin") and getattr(sys, 'frozen', None):
+        if getattr(sys, 'frozen', None):
             tarifffile = os.path.join(config.basedir, 'tariffs-adult.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-adult.csv')
             undeterminedfile = os.path.join(config.basedir,  undeterminedfile)

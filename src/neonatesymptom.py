@@ -160,128 +160,100 @@ class NeonateSymptomPrep():
             index = headers.index('s5_1')
             val = row[headers.index('s5')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s6_1')
             val = row[headers.index('s6')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2 or val == 3):
-                row[index] = 1
+                val = '0'
+            if (val == '2' or val == '3'):
+                row[index] = '1'
                 
             index = headers.index('s8991')
             val = row[headers.index('s8')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1):
-                row[index] = 1
+                val = '0'
+            if (val == '1'):
+                row[index] = '1'
                 
             index = headers.index('s8992')
             val = row[headers.index('s8')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s11991')
             val = row[headers.index('s11')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 4 or val == 5):
-                row[index] = 1
+                val = '0'
+            if (val == '4' or val == '5'):
+                row[index] = '1'
                 
             index = headers.index('s13_1')
             val = row[headers.index('s13')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1 or val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '1' or val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s16_1')
             val = row[headers.index('s16')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s30991')
             val = row[headers.index('s30')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3 or val == 4):
-                row[index] = 1
+                val = '0'
+            if (val == '3' or val == '4'):
+                row[index] = '1'
                 
             index = headers.index('s46991')
             val = row[headers.index('s46')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1):
-                row[index] = 1
+                val = '0'
+            if (val == '1'):
+                row[index] = '1'
                 
             index = headers.index('s46992')
             val = row[headers.index('s46')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3):
-                row[index] = 1
+                val = '0'
+            if (val == '3'):
+                row[index] = '1'
                 
             index = headers.index('s49991')
             val = row[headers.index('s49')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s50991')
             val = row[headers.index('s50')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 2:
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s51991')
             val = row[headers.index('s51')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1 or val == 3):
-                row[index] = 1
+                val = '0'
+            if (val == '1' or val == '3'):
+                row[index] = '1'
                 
             index = headers.index('s55991')
             val = row[headers.index('s55')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1 or val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '1' or val == '2'):
+                row[index] = '1'
                 
             #not in electronic    
             # index = headers.index('s56991')
@@ -296,89 +268,72 @@ class NeonateSymptomPrep():
             index = headers.index('s57991')
             val = row[headers.index('s57')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (not(val == 1 or val == 2)):
-                row[index] = 1
+                val = '0'
+            if (not(val == '1' or val == '2')):
+                row[index] = '1'
                 
             index = headers.index('s58991')
             val = row[headers.index('s58')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 1:
-                row[index] = 1
+                val = '0'
+            if val == '1':
+                row[index] = '1'
             
             index = headers.index('s58992')
             val = row[headers.index('s58')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 2:
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s58993')
             val = row[headers.index('s58')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 3:
-                row[index] = 1
+                val = '0'
+            if val == '3':
+                row[index] = '1'
                 
             index = headers.index('s58994')
             val = row[headers.index('s58')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 4:
-                row[index] = 1
+                val = '0'
+            if val == '4':
+                row[index] = '1'
                 
             index = headers.index('s69991')
             val = row[headers.index('s69')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 3 or val == 4:
-                row[index] = 1
+                val = '0'
+            if val == '3' or val == '4':
+                row[index] = '1'
                 
             index = headers.index('s71991')
             val = row[headers.index('s71')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 2:
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s76991')
             val = row[headers.index('s76')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 2:
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s105_1')
             val = row[headers.index('s105')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val > 1:
-                row[index] = 1
+                val = '0'
+            # this works for strings, too
+            if val > '1':
+                row[index] = '1'
                 
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:
                 val = row[headers.index(bin)]
-                if val == '' or int(val) != 1:
-                    row[headers.index(bin)] = 0
+                if val == '' or val != '1':
+                    row[headers.index(bin)] = '0'
             
                 
             
@@ -397,6 +352,18 @@ class NeonateSymptomPrep():
         for key in rename.keys():
             index = headers.index(key)
             headers[index] = rename[key]
+        
+        #makes s24-27 come from c3_03 instead of c1_19_N
+        for row in matrix:
+            s24 = headers.index('s24')
+            s62 = headers.index('s62')
+            row[s24] = row[s62]
+            s25 = headers.index('s25')
+            s63 = headers.index('s63')
+            row[s25] = row[s63]
+            s26 = headers.index('s26')
+            s64 = headers.index('s64')
+            row[s26] = row[s64]
         
         adultwriter.writerow(headers)
         for row in matrix:

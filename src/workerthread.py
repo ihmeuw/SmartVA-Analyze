@@ -119,21 +119,21 @@ class WorkerThread(Thread):
             return
             
         # makes adult-presymptom.csv
-        #adult_data = self.adultpresym.run()
+        adult_data = self.adultpresym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
              
         # makes adult-symptom.csv
-#        if adult_data == 1:   
-#            self.adultsym.run()
+        if adult_data == 1:   
+            self.adultsym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
         #
         # creates adult output files
-#        if adult_data == 1:   
-#            self.adultresults.run()
+        if adult_data == 1:   
+            self.adultresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return

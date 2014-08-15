@@ -95,7 +95,7 @@ class ChildSymptomPrep():
             s4 = float(s4)/365
             #combine
             s2 = float(s2) + s3 + s4    
-            row[headers.index('s2')]  = int(s2)
+            row[headers.index('s2')]  = float(s2)
             
             index = headers.index('s2')
             s2991index = headers.index('s2991')
@@ -103,6 +103,10 @@ class ChildSymptomPrep():
             s2993index = headers.index('s2993')
             s2994index = headers.index('s2994')
             s2995index = headers.index('s2995')
+            
+#            if row[headers.index('sid')] == '9':
+#                print "s2 num %s" % float(row[index])
+
             if float(row[index]) <= .4166667:
                 row[s2991index] = 1
             elif float(row[index]) > .4166667 and float(row[index]) <= 1:
@@ -162,104 +166,82 @@ class ChildSymptomPrep():
             index = headers.index('s5991')
             val = row[headers.index('s5')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2):
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s6991')
             val = row[headers.index('s6')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 2 or val == 3):
-                row[index] = 1
+                val = '0'
+            if (val == '2' or val == '3'):
+                row[index] = '1'
                 
             index1 = headers.index('s8991')
             index2 = headers.index('s8992')
             val = row[headers.index('s8')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1):
-                row[index1] = 1
-            elif val == 2:
-                row[index2] = 1
+                val = '0'
+            if (val == '1'):
+                row[index1] = '1'
+            elif val == '2':
+                row[index2] = '1'
                 
             index = headers.index('s11991')
             val = row[headers.index('s11')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 4 or val == 5):
-                row[index] = 1
+                val = '0'
+            if val == '4' or val == '5':
+                row[index] = '1'
             
             index = headers.index('s13991')
             val = row[headers.index('s13')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 1 or val == 2):
-                row[index] = 1
+                val = '0'
+            if (val == '1' or val == '2'):
+                row[index] = '1'
                 
             index = headers.index('s16991')
             val = row[headers.index('s16')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if val == 2:
-                row[index] = 1
+                val = '0'
+            if val == '2':
+                row[index] = '1'
                 
             index = headers.index('s30991')
             val = row[headers.index('s30')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3 or val == 4):
-                row[index] = 1
+                val = '0'
+            if (val == '3' or val == '4'):
+                row[index] = '1'
                 
             index = headers.index('s113991')
             val = row[headers.index('s113')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3):
-                row[index] = 1
+                val = '0'
+            if val == '3':
+                row[index] = '1'
                 
             index = headers.index('s114991')
             val = row[headers.index('s114')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3 or val == 2):
-                row[index] = 1
+                val = '0'
+            if val == '3' or val == '2':
+                row[index] = '1'
                 
             index = headers.index('s116991')
             val = row[headers.index('s116')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val > 2):
-                row[index] = 1
+                val = '0'
+            if val > '2':
+                row[index] = '1'
             
             index = headers.index('s135991')
             val = row[headers.index('s135')]
             if val == '':
-                val = 0
-            else:
-                val = int(val)
-            if (val == 3):
-                row[index] = 1
+                val = '0'
+            if val == '3':
+                row[index] = '1'
             
             #s139 can be multiple    
             index = headers.index('s139991')
@@ -269,7 +251,7 @@ class ChildSymptomPrep():
             else:
                 val = val.split(' ')
             if '1' in val:
-                row[index] = 1
+                row[index] = '1'
                 
             #s141 can me multiple, but we only care if 1 (and only 1) is selected
             index = headers.index('s141991')
@@ -279,14 +261,14 @@ class ChildSymptomPrep():
             else:
                val = val.split(' ')
             if '1' in val and len(val) == 1:
-               row[index] = 1
+               row[index] = '1'
            
          
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:
                 val = row[headers.index(bin)]
-                if val == '' or int(val) != 1:
-                    row[headers.index(bin)] = 0
+                if val == '' or val != '1':
+                    row[headers.index(bin)] = '0'
                     
         #rename s2 -> age
         s2index = headers.index('s2')
