@@ -132,7 +132,7 @@ class CSMFGrapher():
                         return
 
                     cause_key = row['cause'].rstrip()
-                    cause_fraction = row['percentage']
+                    cause_fraction = row['CSMF']
 
                     graph_data_unsorted[module_key][cause_key] = float(cause_fraction)
 

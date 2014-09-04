@@ -73,7 +73,6 @@ class vaUI(wx.Frame):
         self.docsWindow = None
         self.aboutWindow = None
         workerthread.EVT_RESULT(self,self.OnResult)
-        workerthread.EVT_PROGRESS(self, self.OnProgress)
 
         menubar = wx.MenuBar()
         fileMenu = wx.Menu()
@@ -276,7 +275,6 @@ class vaUI(wx.Frame):
                 self.ShowErrorMessage('Error','Please select an output folder.')
             else:
                 self.actionButton.SetLabel('Stop')
-                self.statusGauge.Pulse()
                 self.running = True
                 self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath, self.freetext, self.malaria, self.country)
                 self.EnableUI(False)
@@ -316,9 +314,6 @@ class vaUI(wx.Frame):
         else:
             self.country = None
 
-    def addText(self, newText):
-        self.statusTextCtrl.AppendText(newText)
-    
     def ShowErrorMessage(self, title, message):
         dialog = wx.MessageDialog(None, message, title, 
             wx.OK | wx.ICON_ERROR)
@@ -376,16 +371,11 @@ class vaUI(wx.Frame):
                     position = self.statusTextCtrl.GetLastPosition()
                     self.statusTextCtrl.Remove(position - len(lastline), position)
                     self.statusTextCtrl.AppendText(event.data)
-                else: 
-                    # append
+                else:
                     self.statusTextCtrl.AppendText(event.data)
-                
-            else:    
+            else:
                 self.statusTextCtrl.AppendText(event.data)
 
-    def OnProgress(self, event):
-        self.statusGauge.Pulse()
-        
     def OnAbort(self):
         if self.worker:
             # if the thread is running, don't just stop
@@ -408,7 +398,7 @@ class vaUI(wx.Frame):
         if self.worker is not None and self.worker.isAlive():
             self.statusGauge.Pulse()
             # call f() again in 60 seconds
-            threading.Timer(.01, self.incrementProgressBar).start()
+            threading.Timer(.3, self.incrementProgressBar).start()
         else:
             self.statusGauge.SetValue(1)
             self.statusGauge.SetValue(0)

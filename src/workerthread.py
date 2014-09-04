@@ -18,6 +18,7 @@ import neonatetariff
 import causegrapher
 import csmfgrapher
 import short_form_test
+import time
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -123,14 +124,15 @@ class WorkerThread(Thread):
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-             
+    
         # makes adult-symptom.csv
         if adult_data == 1:   
             self.adultsym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-        #
+
+		#
         # creates adult output files
         if adult_data == 1:   
             self.adultresults.run()

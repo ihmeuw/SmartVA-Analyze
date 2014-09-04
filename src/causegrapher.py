@@ -25,9 +25,9 @@ def get_default_dict():
 def get_gender_key(gender_value):
 
     gender_key = 'unknown'
-    if gender_value == 1:
+    if gender_value == '1':
         gender_key = 'female'
-    elif gender_value == 0:
+    elif gender_value == '0':
         gender_key = 'male'
     return gender_key
 
@@ -142,7 +142,7 @@ class CauseGrapher():
                         return
 
                     age_key = get_age_key(module_key,float(row['age']))
-                    gender_key = get_gender_key(int(row['sex']))
+                    gender_key = get_gender_key(row['sex'])
                     cause_key = row['cause34']
 
                     graph_data[cause_key][gender_key][age_key] += 1

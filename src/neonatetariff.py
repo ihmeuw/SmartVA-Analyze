@@ -62,7 +62,7 @@ class Tariff():
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
-        if getattr(sys, 'frozen', None):
+        if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-neonate.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-neonate.csv')
             undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
@@ -276,7 +276,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Neonate :: Processing %s of %s" % (cnt, total)
                 if (cnt % 1000 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -360,7 +360,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Neonate :: Processing %s of %s" % (cnt, total)
                 if (cnt % 10 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -531,7 +531,7 @@ class Tariff():
             rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
                             
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-csmf.csv', 'wb', buffering=0))
-        csmfheaders = ["cause", "percentage"]
+        csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
             percent = float(causecounts[causekey])/float(len(matrix))

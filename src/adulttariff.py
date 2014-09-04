@@ -62,7 +62,7 @@ class Tariff():
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
 #        if (platform.system() == "Windows" or platform.system() == "Darwin") and getattr(sys, 'frozen', None):
-        if getattr(sys, 'frozen', None):
+        if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-adult.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-adult.csv')
             undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
@@ -285,7 +285,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Adult :: Processing %s of %s" % (cnt, total)
                 if (cnt % 1000 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -367,7 +367,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Adult :: Processing %s of %s" % (cnt, total)
                 if (cnt % 10 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -550,8 +550,10 @@ class Tariff():
                         causecounts[cause34] = 1.0
                 else:
                     # for undetermined, look up the values for each cause using keys (age, sex, country) and add them to the 'count' for that cause
+                    determined = 0
+                    undetermined = 0
                     for uRow in undeterminedmatrix:
-                        if uRow[undeterminedheaders.index('sex')] == va.gender and int(uRow[undeterminedheaders.index('age')]) >= int(va.age) and (int(uRow[undeterminedheaders.index('age')]) < (int(va.age)+5) or int(va.age) > 80) and uRow[undeterminedheaders.index('iso3')] == self.iso3:
+                        if uRow[undeterminedheaders.index('sex')] == va.gender and ((int(uRow[undeterminedheaders.index('age')]) >= int(va.age) and int(uRow[undeterminedheaders.index('age')]) < int(va.age)+5) or (int(va.age) > 80 and int(uRow[undeterminedheaders.index('age')]) == 80)) and uRow[undeterminedheaders.index('iso3')] == self.iso3:
                             #get the value and add it
                             if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
                                 causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
@@ -566,7 +568,7 @@ class Tariff():
             rankwriter.writerow([va.sid, causereduction[realcause], cause34, va.age, va.gender])
         
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
-        csmfheaders = ["cause", "percentage"]
+        csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
             percent = float(causecounts[causekey])/float(len(matrix))

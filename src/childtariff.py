@@ -61,7 +61,7 @@ class Tariff():
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
-        if getattr(sys, 'frozen', None):
+        if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-child.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-child.csv')
             undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
@@ -273,7 +273,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Child :: Processing %s of %s" % (cnt, total)
                 if (cnt % 1000 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -355,7 +355,7 @@ class Tariff():
                 cnt = cnt + 1
                 progress = "Child :: Processing %s of %s" % (cnt, total)
                 if (cnt % 10 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -511,11 +511,11 @@ class Tariff():
                         ageValidated = False
                         if int(uRow[undeterminedheaders.index('age')]) == 0 and float(va.age) < 1:
                             ageValidated = True
-                        elif int(uRow[undeterminedheaders.index('age')]) == 1 and float(va.age) >=1 and float(va.age) < 5:
+                        elif int(uRow[undeterminedheaders.index('age')]) == 1 and float(va.age) >= 1 and float(va.age) < 5:
                             ageValidated = True
-                        elif int(uRow[undeterminedheaders.index('age')]) == 2 and float(va.age) >= 5 and float(va.age) < 9:
+                        elif int(uRow[undeterminedheaders.index('age')]) == 5 and float(va.age) >= 5 and float(va.age) < 9:
                             ageValidated = True
-                        elif int(uRow[undeterminedheaders.index('age')]) == 3 and float(va.age) >= 10 and float(va.age) < 15:
+                        elif int(uRow[undeterminedheaders.index('age')]) == 10 and float(va.age) >= 10 and float(va.age) < 15:
                             ageValidated = True
                         if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
                             #get the value and add it
@@ -532,7 +532,7 @@ class Tariff():
             rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
         
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'child-csmf.csv', 'wb', buffering=0))
-        csmfheaders = ["cause", "percentage"]
+        csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
             percent = float(causecounts[causekey])/float(len(matrix))
