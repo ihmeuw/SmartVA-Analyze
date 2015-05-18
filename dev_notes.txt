@@ -1,0 +1,58 @@
+On the Mac:
+Get pyinstaller.py.
+
+  # port install py27-pip
+  # pip install pyinstaller
+
+It built, but the app failed with no error messages. I ran the executable:
+  # ~/Desktop/IHME/SmartVA/Mac/dist/SmartVA.app/Contents/MacOS/SmartVA 
+   ImportError: No module named wx
+   ImportError: No module named stemming.porter2
+
+  # port install py27-wxpython-2.8
+  # pip install stemming
+  # rm -rf dist
+
+# Build it (cd to the directory where src, dist, build, ..., are.
+  # cd ~/Desktop/IHME/SmartVA/Mac
+  # pyinstaller pkg/smartva-mac.spec --clean --onefile --windowed
+
+# Go break into the debugger
+  # use pdb.set_trace()
+  # run it: 
+  #  ~/Desktop/IHME/SmartVA/Mac/dist/SmartVA/SmartVA
+  #  file: ~/Desktop/IHME/SmartVA/Bhojpur VA data.csv
+
+
+On the PC:
+  # install Anaconda (provides pip and matplotlib)
+  
+  # pip install pyinstaller
+    
+  # Go to http://www.wxpython.org/download.php and run the installer for python 2.7
+  # pip install stemming
+  # pip install pywin
+
+# Fix pywintypes27.dll and pythoncom27.dll location issue
+
+# copy c:/Users/gma1/AppData/Local/Continuum/Anaconda/Lib/site-packages/win32/(pywintypes27.dll, pythoncom27.dll) 
+#   to c:/Users/gma1/AppData/Local/Continuum/Anaconda/Lib/site-packages/win32/lib
+
+# Install wxPython
+# PROBABLY NOT THE RIGHT VERSION -- http://downloads.sourceforge.net/project/wxpython/wxPython3.0-win64-3.0.2.0-py27.exe
+
+# Build it (cd to the directory where src, dist, build, ..., are.
+  # cd ./Windoze
+  # pyinstaller pkg/smartva-win.spec --clean --onefile --windowed
+  
+
+
+# Stillbirth mod:
+# In ~/Desktop/IHME/SmartVA/Mac/src/neonatetariff.py, added the following lines at line 506
+
+            # Check to see if there is a special stillbirth value
+            if va.s20 == '1':
+                # set cause34 to stillbirth
+                cause34 = '6'
+                causenum = '6'
+            
