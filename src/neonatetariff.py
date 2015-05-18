@@ -62,6 +62,7 @@ class Tariff():
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
+        import sys                      # gma
         if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-neonate.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-neonate.csv')
@@ -474,6 +475,14 @@ class Tariff():
         causecounts = {}
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-predictions.csv', 'wb', buffering=0))
         rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
+
+        # Insert stillborn (never cried, moved, or breathed) into va
+        # c1_15 in the pre-symptom file, AKA s20 in the symptom file, AKA child_1_15 in the original input.
+        indx = headers.index('s20')
+        S20 = zip(*matrix)[indx]    # Transpose
+        for s20, va in zip(S20, vacauselist):
+            va.s20 = s20
+
         for va in vacauselist:
             causescore = lowest
             realcause = 'Undetermined'
@@ -493,6 +502,13 @@ class Tariff():
                 if len(multiple[vakey]) > 1:
                     updatestr = "Neonate :: WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    
+            # Check to see if there is a special stillbirth value
+            if va.s20 == '1':
+                # set cause34 to stillbirth
+                cause34 = '6'
+                causenum = '6'
+            
             #replace number with word for cause:
             if cause34 == '':
                 cause34 = 'Undetermined'
