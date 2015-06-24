@@ -574,6 +574,10 @@ class Tariff():
             percent = float(causecounts[causekey])/float(len(matrix))
             csmfwriter.writerow([causekey, percent])
                     
+        # TODO: refactor this test so that it is exercised before
+        # merging new pull requests
+        assert int(sum(causecounts.values())) == len(matrix), \
+                     'CSMF must sum to one'
              
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
