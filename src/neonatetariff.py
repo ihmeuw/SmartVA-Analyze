@@ -545,13 +545,25 @@ class Tariff():
                     #print "starting at 1"
             #print "neonate va was %s" % cause34
             rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
-                            
+
+
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
-            percent = float(causecounts[causekey])/float(len(matrix))
-            csmfwriter.writerow([causekey, percent])        
+            # FIXME: original approach to calculating CSMFs did not sum to
+            # 100%; perhaps this is due to deaths where the age is
+            # missing, which is handled in block of a complex conditionals
+            # above.
+            # percent = float(causecounts[causekey])/float(len(matrix))
+            percent = float(causecounts[causekey])/float(sum(causecounts.values()))
+
+            csmfwriter.writerow([causekey, percent])
+
+        # TODO: enable this test, that confirm that csmf sums to 100%
+        # (after fixing issue flagged above)
+        # assert int(sum(causecounts.values())) == len(matrix), \
+        #             'CSMF must sum to one'
                 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'neonate-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []

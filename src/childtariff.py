@@ -520,7 +520,7 @@ class Tariff():
                         if uRow[undeterminedheaders.index('sex')] == va.gender and ageValidated == True and uRow[undeterminedheaders.index('iso3')] == self.iso3:
                             #get the value and add it
                             if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
-                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')])
+                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] = causecounts[uRow[undeterminedheaders.index('gs_text34')]] + float(uRow[undeterminedheaders.index('weight')]) # FIXME: may need to do this differently if self.malaria is None ?
                             else:
                                 causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
             else:
@@ -537,6 +537,11 @@ class Tariff():
         for causekey in causecounts.keys():
             percent = float(causecounts[causekey])/float(len(matrix))
             csmfwriter.writerow([causekey, percent])            
+
+        # TODO: refactor this test so that it is exercised before
+        # merging new pull requests
+        assert int(sum(causecounts.values())) == len(matrix), \
+                     'CSMF must sum to one'
             
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
