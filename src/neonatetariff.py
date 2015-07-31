@@ -440,7 +440,7 @@ class Tariff():
                     # as the original stata tool
                     locallist.append(j+1)
             #make it an int, don't round
-            index = int(len(locallist) * .95)
+            index = int(len(locallist) * .91)
             cutoffs.append(locallist[index])
         
                         
@@ -469,7 +469,9 @@ class Tariff():
             for i in range(1, 7):
                 if float(va.ranklist["cause"+str(i)]) > float(cutoffs[i-1]):
                     va.ranklist["cause"+str(i)] = lowest
-                elif float(va.ranklist["cause"+str(i)]) > float(len(uniformlist) * .18):
+                elif float(va.ranklist["cause"+str(i)]) > float(len(uniformlist) * .35):
+                    va.ranklist["cause"+str(i)] = lowest
+                elif float(va.causescores["cause"+str(i)]) < 1.0:
                     va.ranklist["cause"+str(i)] = lowest
                     
         causecounts = {}
