@@ -447,7 +447,6 @@ class Tariff():
                     # as the original stata tool
                     locallist.append(j+1)
 
-            asdf = float(len(locallist) * .89)
             #make it an int, don't round
             index = int(len(locallist) * .89)  
             cutoffs.append(locallist[index])
@@ -516,7 +515,9 @@ class Tariff():
                     va.ranklist["cause"+str(i)] = lowest
                 elif float(va.ranklist["cause"+str(i)]) > float(len(uniformlist) * .18):
                     va.ranklist["cause"+str(i)] = lowest
-                    
+                elif float(va.causescores["cause"+str(i)]) < 5.0:  # EXPERIMENT: reject tariff scores less than a fixed amount as well
+                    va.ranklist["cause"+str(i)] = lowest
+
         
         #changing 46 causes to 34 causes:
         causereduction = {'cause1' : '1', 'cause2' : '1', 'cause3' : '21', 'cause4' : '2', 'cause5' : '3', 'cause6' : '4', 'cause7' : '5', 'cause8' : '6', 'cause9' : '7', 'cause10' : '8', 'cause11' : '9', 'cause12' : '9', 'cause13' : '9', 'cause14' : '10', 'cause15' : '11', 'cause16' : '12', 'cause17' : '13', 'cause18' : '14', 'cause19' : '15', 'cause20' : '21', 'cause21' : '16', 'cause22' : '21', 'cause23' : '17', 'cause24' : '22', 'cause25' : '22', 'cause26' : '18', 'cause27' : '19', 'cause28' : '18', 'cause29' : '20', 'cause30' : '25', 'cause31' : '22', 'cause32' : '25', 'cause33' : '23', 'cause34' : '24', 'cause35' : '25', 'cause36' : '21', 'cause37' : '26', 'cause38' : '27', 'cause39' : '28', 'cause40' : '29', 'cause41' : '30', 'cause42' : '21', 'cause43' : '31', 'cause44' : '32', 'cause45' : '33', 'cause46' : '34', 'Undetermined' : ''}
@@ -571,13 +572,13 @@ class Tariff():
         csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
-            percent = float(causecounts[causekey])/float(len(matrix))
+            percent = float(causecounts[causekey])/float(sum(causecounts.values()))
             csmfwriter.writerow([causekey, percent])
                     
         # TODO: refactor this test so that it is exercised before
         # merging new pull requests
-        assert int(sum(causecounts.values())) == len(matrix), \
-                     'CSMF must sum to one'
+        # assert int(sum(causecounts.values())) == len(matrix), \
+        #              'CSMF must sum to one'
              
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []

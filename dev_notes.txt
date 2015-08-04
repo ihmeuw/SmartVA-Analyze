@@ -31,7 +31,7 @@ On the PC:
     
   # Go to http://www.wxpython.org/download.php and run the installer for python 2.7
   # pip install stemming
-  # pip install pywin
+  # pip install pywin  # note: ADF had to d/l a .exe through the web and run it through windows gui
 
 # Fix pywintypes27.dll and pythoncom27.dll location issue
 
