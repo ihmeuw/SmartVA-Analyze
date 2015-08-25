@@ -1132,13 +1132,19 @@ class PreSymptomPrep():
                 c5_07_2a = row[headers.index('c5_07_2a')]
                 if not (c5_07_2a is None or c5_07_2a == ''):
                     self.printWarning( 'c5_07_2a', i, row, headers, child_defaultFill)
-                c5_08d = row[headers.index('c5_08d')]
+                c5_08d = None
+                if 'c5_08d' in headers:
+                    c5_08d = row[headers.index('c5_08d')]
                 if not (c5_08d is None or c5_08d == ''):
                     self.printWarning( 'c5_08d', i, row, headers, child_defaultFill)
-                c5_08m = row[headers.index('c5_08m')]
+                c5_08m = None
+                if 'c5_08m' in headers:
+                    c5_08m = row[headers.index('c5_08m')]
                 if not (c5_08m is None or c5_08m == ''):
                     self.printWarning( 'c5_08m', i, row, headers, child_defaultFill)
-                c5_08y = row[headers.index('c5_08y')]
+                c5_08y = None
+                if 'c5_08y' in headers:
+                    c5_08y = row[headers.index('c5_08y')]
                 if not (c5_08y is None or c5_08y == ''):
                     self.printWarning( 'c5_08y', i, row, headers, child_defaultFill)
                 c5_09 = row[headers.index('c5_09')]
