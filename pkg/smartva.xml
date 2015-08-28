@@ -55,10 +55,10 @@
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>/Users/carlhartung/Desktop/ihme-va/pkg/Manual Data Entry Forms</origin>
+                            <origin>pkg/Manual Data Entry Forms</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>/Users/carlhartung/Desktop/SmartVA.exe</origin>
+                            <origin>SmartVA.exe</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
