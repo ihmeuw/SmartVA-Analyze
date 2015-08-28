@@ -406,8 +406,7 @@ class vaUI(wx.Frame):
         # print hsize
 
 
-if __name__ == '__main__':
-
+def main():
     windebug = 0
     if windebug is 1:
         try:
@@ -422,3 +421,7 @@ if __name__ == '__main__':
         app.SetAppName(APP_TITLE)
         vaUI(None, title=APP_TITLE)
         app.MainLoop()
+
+
+if __name__ == '__main__':
+    main()
