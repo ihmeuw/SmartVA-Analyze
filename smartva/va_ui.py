@@ -56,157 +56,167 @@ class vaUI(wx.Frame):
                                    style=(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.SYSTEM_MENU |
                                           wx.CAPTION | wx.RESIZE_BORDER | wx.CLOSE_BOX | wx.CLIP_CHILDREN))
 
-        self.InitUI()
-        self.Centre()
-        self.Show()
-
-    def InitUI(self):
-        self.inputFilePath = ''
-        self.outputFolderPath = ''
-        self.statusLog = ''
+        self.input_file_path = ''
+        self.output_folder_path = ''
         self.hce = 'hce'
         self.freetext = 'freetext'
         self.malaria = 'malaria'
         self.country = None
         self.running = False
         self.worker = None
-        self.docsWindow = None
-        self.aboutWindow = None
-        workerthread.EVT_RESULT(self, self.OnResult)
+        self.docs_window = None
+        self.about_window = None
+        
+        self.enabled_widgets = []
 
-        menubar = wx.MenuBar()
-        fileMenu = wx.Menu()
-        helpMenu = wx.Menu()
+        self.chosen_file_text = None
+        self.chosen_folder_text = None
 
-        qmi = wx.MenuItem(fileMenu, APP_QUIT, '&Quit\tCtrl+Q')
-        ami = wx.MenuItem(helpMenu, APP_ABOUT, '&About ' + APP_TITLE)
-        dmi = wx.MenuItem(helpMenu, APP_DOCS, '&Documentation')
+        self.status_gauge = None
+        self.action_button = None
 
-        fileMenu.AppendItem(qmi)
-        helpMenu.AppendItem(ami)
-        helpMenu.AppendItem(dmi)
+        self.init_ui()
 
-        menubar.Append(fileMenu, '&File')
-        menubar.Append(helpMenu, '&About')
+        self.Center()
+        self.Show()
 
-        self.Bind(wx.EVT_MENU, self.onQuit, id=APP_QUIT)
-        self.Bind(wx.EVT_MENU, self.onAbout, id=APP_ABOUT)
-        self.Bind(wx.EVT_MENU, self.onDocs, id=APP_DOCS)
+    def init_ui(self):
+        workerthread.EVT_RESULT(self, self.on_result)
 
-        self.Bind(wx.EVT_CLOSE, self.onQuit)
-        self.SetMenuBar(menubar)
+        menu_bar = wx.MenuBar()
+        file_menu = wx.Menu()
+        help_menu = wx.Menu()
 
-        self.parentPanel = wx.ScrolledWindow(self)
-        self.parentPanel.SetScrollbars(1, 1, 1, 1)
+        qmi = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
+        ami = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
+        dmi = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
 
-        parentBoxSizer = wx.BoxSizer(wx.VERTICAL)
+        file_menu.AppendItem(qmi)
+        help_menu.AppendItem(ami)
+        help_menu.AppendItem(dmi)
 
+        menu_bar.Append(file_menu, '&File')
+        menu_bar.Append(help_menu, '&About')
+
+        self.Bind(wx.EVT_MENU, self.on_quit, id=APP_QUIT)
+        self.Bind(wx.EVT_MENU, self.on_about, id=APP_ABOUT)
+        self.Bind(wx.EVT_MENU, self.on_docs, id=APP_DOCS)
+
+        self.Bind(wx.EVT_CLOSE, self.on_quit)
+        self.SetMenuBar(menu_bar)
+
+        parent_panel = wx.ScrolledWindow(self)
+        parent_panel.SetScrollbars(1, 1, 1, 1)
+
+        parent_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # logo
-        scaleSize = .35
-        logoFilepath = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
-        logo = wx.Image(logoFilepath, wx.BITMAP_TYPE_ANY)
-        scaled_image = logo.Scale(logo.GetWidth() * scaleSize, logo.GetHeight() * scaleSize, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        scale_size = .35
+        logo_file_path = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
+        logo = wx.Image(logo_file_path, wx.BITMAP_TYPE_ANY)
+        scaled_image = logo.Scale(logo.GetWidth() * scale_size, logo.GetHeight() * scale_size, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
 
-        logoBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        logoBoxSizer.AddStretchSpacer()
-        logoBoxSizer.Add(wx.StaticBitmap(self.parentPanel, -1, scaled_image), flag=wx.RIGHT, border=12)
-        logoBoxSizer.AddStretchSpacer()
-
+        logo_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        logo_box_sizer.AddStretchSpacer()
+        logo_box_sizer.Add(wx.StaticBitmap(parent_panel, -1, scaled_image), flag=wx.RIGHT, border=12)
+        logo_box_sizer.AddStretchSpacer()
 
         # choose input file
-        chooseInputStaticBox = wx.StaticBox(self.parentPanel, label='1. Choose input file')
-        chooseInputStaticBoxSizer = wx.StaticBoxSizer(chooseInputStaticBox, wx.HORIZONTAL)
+        choose_input_static_box = wx.StaticBox(parent_panel, label='1. Choose input file')
+        choose_input_static_box_sizer = wx.StaticBoxSizer(choose_input_static_box, wx.HORIZONTAL)
 
-        self.chooseFileButton = wx.Button(self.parentPanel, label='Choose file...')
-        self.chooseFileButton.Bind(wx.EVT_BUTTON, self.onOpenFile)
-        self.choosenFileText = wx.StaticText(self.parentPanel, label='', size=(-1, -1))
+        choose_file_button = wx.Button(parent_panel, label='Choose file...')
+        choose_file_button.Bind(wx.EVT_BUTTON, self.on_open_file)
+        self.chosen_file_text = wx.StaticText(parent_panel, label='', size=(-1, -1))
+        self.enabled_widgets.append(choose_file_button)
 
-        chooseFileBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        chooseFileBoxSizer.Add(self.chooseFileButton, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
-        chooseFileBoxSizer.Add(self.choosenFileText, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        choose_file_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        choose_file_box_sizer.Add(choose_file_button, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
+        choose_file_box_sizer.Add(self.chosen_file_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
 
-        chooseInputStaticBoxSizer.Add(chooseFileBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-
+        choose_input_static_box_sizer.Add(choose_file_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         # choose output folder
-        chooseOutputStaticBox = wx.StaticBox(self.parentPanel, label='2. Choose output folder')
-        chooseOutputStaticBoxSizer = wx.StaticBoxSizer(chooseOutputStaticBox, wx.HORIZONTAL)
+        choose_output_static_box = wx.StaticBox(parent_panel, label='2. Choose output folder')
+        choose_output_static_box_sizer = wx.StaticBoxSizer(choose_output_static_box, wx.HORIZONTAL)
 
-        self.chooseFolderButton = wx.Button(self.parentPanel, label='Choose folder...')
-        self.chooseFolderButton.Bind(wx.EVT_BUTTON, self.onOpenFolder)
-        self.choosenFolderText = wx.StaticText(self.parentPanel, label='', size=(-1, -1))
+        choose_folder_button = wx.Button(parent_panel, label='Choose folder...')
+        choose_folder_button.Bind(wx.EVT_BUTTON, self.on_open_folder)
+        self.chosen_folder_text = wx.StaticText(parent_panel, label='', size=(-1, -1))
+        self.enabled_widgets.append(choose_folder_button)
 
-        chooseFolderBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        chooseFolderBoxSizer.Add(self.chooseFolderButton, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
-        chooseFolderBoxSizer.Add(self.choosenFolderText, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        choose_folder_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        choose_folder_box_sizer.Add(choose_folder_button, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
+        choose_folder_box_sizer.Add(self.chosen_folder_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
 
-        chooseOutputStaticBoxSizer.Add(chooseFolderBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-
+        choose_output_static_box_sizer.Add(choose_folder_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         # set processing options
-        setOptionsStaticBox = wx.StaticBox(self.parentPanel, label='3. Set processing options')
-        setOptionsStaticBoxSizer = wx.StaticBoxSizer(setOptionsStaticBox, wx.VERTICAL)
+        set_options_static_box = wx.StaticBox(parent_panel, label='3. Set processing options')
+        set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
-        self.countryLabel = wx.StaticText(self.parentPanel, label='Data origin (country)')
-        self.countryComboBox = wx.ComboBox(self.parentPanel, choices=COUNTRIES, style=wx.CB_READONLY)
-        self.Bind(wx.EVT_COMBOBOX, self.changeCountry)
+        country_label = wx.StaticText(parent_panel, label='Data origin (country)')
+        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES, style=wx.CB_READONLY)
+        self.Bind(wx.EVT_COMBOBOX, self.change_country)
+        self.enabled_widgets.append(country_combo_box)
 
-        countryBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        countryBoxSizer.Add(self.countryLabel, flag=wx.TOP | wx.RIGHT | wx.LEFT, border=5)
-        countryBoxSizer.Add(self.countryComboBox)
+        country_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        country_box_sizer.Add(country_label, flag=wx.TOP | wx.RIGHT | wx.LEFT, border=5)
+        country_box_sizer.Add(country_combo_box)
 
-        self.hceCheckBox = wx.CheckBox(self.parentPanel, label='Health Care Experience (HCE) variables')
-        self.hceCheckBox.SetValue(True)
-        self.Bind(wx.EVT_CHECKBOX, self.toggleHCE, id=self.hceCheckBox.GetId())
+        hce_check_box = wx.CheckBox(parent_panel, label='Health Care Experience (HCE) variables')
+        hce_check_box.SetValue(True)
+        self.Bind(wx.EVT_CHECKBOX, self.toggle_hce, id=hce_check_box.GetId())
+        self.enabled_widgets.append(hce_check_box)
 
-        self.freetextCheckBox = wx.CheckBox(self.parentPanel, label='Free text variables')
-        self.freetextCheckBox.SetValue(True)
-        self.Bind(wx.EVT_CHECKBOX, self.toggleFreetext, id=self.freetextCheckBox.GetId())
+        freetext_check_box = wx.CheckBox(parent_panel, label='Free text variables')
+        freetext_check_box.SetValue(True)
+        self.Bind(wx.EVT_CHECKBOX, self.toggle_freetext, id=freetext_check_box.GetId())
+        self.enabled_widgets.append(freetext_check_box)
 
-        self.malariaCheckBox = wx.CheckBox(self.parentPanel, label='Malaria region')
-        self.malariaCheckBox.SetValue(True)
-        self.Bind(wx.EVT_CHECKBOX, self.toggleMalaria, id=self.malariaCheckBox.GetId())
+        malaria_check_box = wx.CheckBox(parent_panel, label='Malaria region')
+        malaria_check_box.SetValue(True)
+        self.Bind(wx.EVT_CHECKBOX, self.toggle_malaria, id=malaria_check_box.GetId())
+        self.enabled_widgets.append(malaria_check_box)
 
-        setOptionsStaticBoxSizer.Add(countryBoxSizer)
-        setOptionsStaticBoxSizer.AddSpacer(5)
-        setOptionsStaticBoxSizer.Add(self.malariaCheckBox, flag=wx.LEFT | wx.TOP, border=5)
-        setOptionsStaticBoxSizer.AddSpacer(3)
-        setOptionsStaticBoxSizer.Add(self.hceCheckBox, flag=wx.LEFT | wx.TOP, border=5)
-        setOptionsStaticBoxSizer.AddSpacer(3)
-        setOptionsStaticBoxSizer.Add(self.freetextCheckBox, flag=wx.LEFT | wx.TOP, border=5)
-        setOptionsStaticBoxSizer.AddSpacer(3)
-
+        set_options_static_box_sizer.Add(country_box_sizer)
+        set_options_static_box_sizer.AddSpacer(5)
+        set_options_static_box_sizer.Add(malaria_check_box, flag=wx.LEFT | wx.TOP, border=5)
+        set_options_static_box_sizer.AddSpacer(3)
+        set_options_static_box_sizer.Add(hce_check_box, flag=wx.LEFT | wx.TOP, border=5)
+        set_options_static_box_sizer.AddSpacer(3)
+        set_options_static_box_sizer.Add(freetext_check_box, flag=wx.LEFT | wx.TOP, border=5)
+        set_options_static_box_sizer.AddSpacer(3)
 
         # start analysis
-        startAnalysisStaticBox = wx.StaticBox(self.parentPanel, label='4. Start analysis')
-        startAnalysisBoxSizer = wx.StaticBoxSizer(startAnalysisStaticBox, wx.VERTICAL)
+        start_analysis_box = wx.StaticBox(parent_panel, label='4. Start analysis')
+        start_analysis_box_sizer = wx.StaticBoxSizer(start_analysis_box, wx.VERTICAL)
 
-        self.statusTextCtrl = wx.TextCtrl(self.parentPanel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
-        self.statusTextCtrl.SetEditable(False)
-        self.statusTextCtrl.SetValue(self.statusLog)
-        self.statusGauge = wx.Gauge(self.parentPanel, range=100, size=(-1, -1))
-        self.actionButton = wx.Button(self.parentPanel, label='Start')
-        self.actionButton.Bind(wx.EVT_BUTTON, self.onAction)
+        # TODO: Use logging to update status text.
+        self.status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
+        self.status_text_ctrl.SetEditable(False)
+        self.status_text_ctrl.SetValue('')
+        self.status_gauge = wx.Gauge(parent_panel, range=100, size=(-1, -1))
+        self.action_button = wx.Button(parent_panel, label='Start')
+        self.action_button.Bind(wx.EVT_BUTTON, self.on_action)
 
-        statusGaugeBoxSizer = wx.BoxSizer(wx.HORIZONTAL)
-        statusGaugeBoxSizer.Add(self.statusGauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
-        statusGaugeBoxSizer.Add(self.actionButton, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_gauge_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        status_gauge_box_sizer.Add(self.status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_gauge_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        startAnalysisBoxSizer.Add(statusGaugeBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        startAnalysisBoxSizer.Add(self.statusTextCtrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
-
+        start_analysis_box_sizer.Add(status_gauge_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(self.status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
-        parentBoxSizer.Add(logoBoxSizer, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
-        parentBoxSizer.Add(chooseInputStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        parentBoxSizer.Add(chooseOutputStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        parentBoxSizer.Add(setOptionsStaticBoxSizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        parentBoxSizer.Add(startAnalysisBoxSizer, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(logo_box_sizer, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        parent_box_sizer.Add(choose_input_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(choose_output_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(set_options_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(start_analysis_box_sizer, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
-        self.parentPanel.SetSizer(parentBoxSizer)
+        parent_panel.SetSizer(parent_box_sizer)
 
-    def shortenPath(self, path, maxLength):
+    def shorten_path(self, path, maxLength):
         pathLength = 0
         pathLengthMax = maxLength
         shortenedPathList = []
@@ -230,12 +240,12 @@ class vaUI(wx.Frame):
         shortenedPathList.reverse()
         shortenedPath = os.path.sep.join(shortenedPathList)
         # for shorter path, add ...
-        if (shortenedPath.startswith(os.path.sep) or re.match('[A-Z]:', shortenedPath)):
+        if shortenedPath.startswith(os.path.sep) or re.match('[A-Z]:', shortenedPath):
             return shortenedPath
         else:
             return '..' + os.path.sep + shortenedPath
 
-    def onOpenFile(self, e):
+    def on_open_file(self, event):
         """
         Create and show the Open FileDialog
         """
@@ -247,12 +257,12 @@ class vaUI(wx.Frame):
         )
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
-            self.inputFilePath = dlg.GetPath()
+            self.input_file_path = dlg.GetPath()
             # print 'You chose the following file: ' + self.inputFilePath
-            self.choosenFileText.SetLabel(self.shortenPath(self.inputFilePath, MAX_PATH_LENGTH))
+            self.chosen_file_text.SetLabel(self.shorten_path(self.input_file_path, MAX_PATH_LENGTH))
         dlg.Destroy()
 
-    def onOpenFolder(self, e):
+    def on_open_folder(self, event):
         """
         Create and show the Open DirDialog
         """
@@ -261,160 +271,150 @@ class vaUI(wx.Frame):
             style=wx.DD_DEFAULT_STYLE | wx.DD_CHANGE_DIR)
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
-            self.outputFolderPath = dlg.GetPath()
-            self.choosenFolderText.SetLabel(self.shortenPath(self.outputFolderPath, MAX_PATH_LENGTH))
+            self.output_folder_path = dlg.GetPath()
+            self.chosen_folder_text.SetLabel(self.shorten_path(self.output_folder_path, MAX_PATH_LENGTH))
         dlg.Destroy()
 
-    def onAction(self, e):
-        if (self.actionButton.GetLabel() == 'Start'):
+    def on_action(self, event):
+        if self.action_button.GetLabel() == 'Start':
             # Make sure you have an input and output path
-            if not self.inputFilePath:
-                self.ShowErrorMessage('Error', 'Please select an input file.')
-            elif not self.outputFolderPath:
-                self.ShowErrorMessage('Error', 'Please select an output folder.')
+            if not self.input_file_path:
+                self.show_error_message('Error', 'Please select an input file.')
+            elif not self.output_folder_path:
+                self.show_error_message('Error', 'Please select an output folder.')
             else:
-                self.actionButton.SetLabel('Stop')
+                self.action_button.SetLabel('Stop')
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.inputFilePath, self.hce, self.outputFolderPath,
+                self.worker = workerthread.WorkerThread(self, self.input_file_path, self.hce, self.output_folder_path,
                                                         self.freetext, self.malaria, self.country)
-                self.EnableUI(False)
-                self.incrementProgressBar()
+                self.enable_ui(False)
+                self.increment_progress_bar()
 
-        elif (self.actionButton.GetLabel() == 'Stop'):
-            self.actionButton.SetLabel('Start')
-            self.statusGauge.SetValue(1)
-            self.statusGauge.SetValue(0)
-            self.OnAbort()
+        elif self.action_button.GetLabel() == 'Stop':
+            self.action_button.SetLabel('Start')
+            self.status_gauge.SetValue(1)
+            self.status_gauge.SetValue(0)
+            self.on_abort()
 
-    def toggleHCE(self, event):
+    def toggle_hce(self, event):
         # just a toggle
         if self.hce is 'hce':
             self.hce = None
         else:
             self.hce = 'hce'
 
-    def toggleFreetext(self, event):
+    def toggle_freetext(self, event):
         # just a toggle
         if self.freetext is 'freetext':
             self.freetext = None
         else:
             self.freetext = 'freetext'
 
-    def toggleMalaria(self, event):
+    def toggle_malaria(self, event):
         # just a toggle
         if self.malaria is 'malaria':
             self.malaria = None
         else:
             self.malaria = 'malaria'
 
-    def changeCountry(self, event):
-        if (event.GetString() != COUNTRY_DEFAULT):
+    def change_country(self, event):
+        if event.GetString() != COUNTRY_DEFAULT:
             match = re.search('\(([A-Z]{3})\)$', event.GetString())
             self.country = match.group(1)
         else:
             self.country = None
 
-    def ShowErrorMessage(self, title, message):
+    def show_error_message(self, title, message):
         dialog = wx.MessageDialog(None, message, title, wx.OK | wx.ICON_ERROR)
         dialog.ShowModal()
 
-    def onQuit(self, e):
+    def on_quit(self, event):
         quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit ' + APP_TITLE, wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
 
         if pressed == wx.ID_YES:
-            self.OnAbort()
+            self.on_abort()
             self.Destroy()
-            if self.aboutWindow:
-                self.aboutWindow.Close()
-            if self.docsWindow:
-                self.docsWindow.Close()
-        # do nothing
-        # elif pressed == wx.ID_NO:
-        #    print 'NO'
+            if self.about_window:
+                self.about_window.Close()
+            if self.docs_window:
+                self.docs_window.Close()
 
-    def onDocs(self, e):
-        self.docsWindow = vaDocs(None)
-        self.docsWindow.Centre()
-        self.docsWindow.Show()
+    def on_docs(self, event):
+        self.docs_window = vaDocs(None)
+        self.docs_window.Centre()
+        self.docs_window.Show()
 
-    def onAbout(self, e):
-        self.aboutWindow = vaAbout(None)
-        self.aboutWindow.Centre()
-        self.aboutWindow.Show()
+    def on_about(self, event):
+        self.about_window = vaAbout(None)
+        self.about_window.Centre()
+        self.about_window.Show()
 
-    def OnResult(self, event):
+    def on_result(self, event):
         if event.data is None:
             # If it's none we got an abort
-            self.statusTextCtrl.AppendText('Computation successfully aborted\n')
-            self.actionButton.Enable(True)
+            self.status_text_ctrl.AppendText('Computation successfully aborted\n')
+            self.action_button.Enable(True)
             self.running = False
-            self.EnableUI(True)
-            self.statusGauge.SetValue(1)
-            self.statusGauge.SetValue(0)
+            self.enable_ui(True)
+            self.status_gauge.SetValue(1)
+            self.status_gauge.SetValue(0)
         elif event.data is 'Done':
             # if it's done, then the algorithm is complete
-            self.statusGauge.SetValue(1)
-            self.statusTextCtrl.AppendText('Process complete\n')
-            self.actionButton.SetLabel('Start')
-            self.EnableUI(True)
-            self.statusGauge.SetValue(1)
-            self.statusGauge.SetValue(0)
+            self.status_gauge.SetValue(1)
+            self.status_text_ctrl.AppendText('Process complete\n')
+            self.action_button.SetLabel('Start')
+            self.enable_ui(True)
+            self.status_gauge.SetValue(1)
+            self.status_gauge.SetValue(0)
 
         else:
             # everything else is update status text
             if event.data.startswith('Adult :: Processing') or event.data.startswith('Child :: Processing') or event.data.startswith('Neonate :: Processing'):
-                lastline = self.statusTextCtrl.GetLineText(long(self.statusTextCtrl.GetNumberOfLines() - 1))
-                if lastline.startswith('Adult :: Processing') or lastline.startswith('Child :: Processing') or lastline.startswith('Neonate :: Processing'):
+                last_line = self.status_text_ctrl.GetLineText(long(self.status_text_ctrl.GetNumberOfLines() - 1))
+                if last_line.startswith('Adult :: Processing') or last_line.startswith('Child :: Processing') or last_line.startswith('Neonate :: Processing'):
                     # replace
-                    position = self.statusTextCtrl.GetLastPosition()
-                    self.statusTextCtrl.Remove(position - len(lastline), position)
-                    self.statusTextCtrl.AppendText(event.data)
+                    position = self.status_text_ctrl.GetLastPosition()
+                    self.status_text_ctrl.Remove(position - len(last_line), position)
+                    self.status_text_ctrl.AppendText(event.data)
                 else:
-                    self.statusTextCtrl.AppendText(event.data)
+                    self.status_text_ctrl.AppendText(event.data)
             else:
-                self.statusTextCtrl.AppendText(event.data)
+                self.status_text_ctrl.AppendText(event.data)
 
-    def OnAbort(self):
+    def on_abort(self):
         if self.worker:
             # if the thread is running, don't just stop
-            self.statusTextCtrl.AppendText('Attempting to cancel, please wait...\n')
+            self.status_text_ctrl.AppendText('Attempting to cancel, please wait...\n')
             self.worker.abort()
-            self.actionButton.Enable(False)
+            self.action_button.Enable(False)
             # do we need an else?  doesn't seem like it
 
-    def EnableUI(self, enable):
+    def enable_ui(self, enable):
         # Turns UI elements on and off
-        self.chooseFileButton.Enable(enable)
-        self.chooseFolderButton.Enable(enable)
-        self.countryComboBox.Enable(enable)
-        self.hceCheckBox.Enable(enable)
-        self.freetextCheckBox.Enable(enable)
-        self.malariaCheckBox.Enable(enable)
+        for widget in self.enabled_widgets:
+            widget.Enable(enable)
 
-    def incrementProgressBar(self):
+    def increment_progress_bar(self):
         if self.worker is not None and self.worker.isAlive():
-            self.statusGauge.Pulse()
+            self.status_gauge.Pulse()
             # call f() again in 60 seconds
-            threading.Timer(.3, self.incrementProgressBar).start()
+            threading.Timer(.3, self.increment_progress_bar).start()
         else:
-            self.statusGauge.SetValue(1)
-            self.statusGauge.SetValue(0)
-
-    def onSize(self, event):
-        hsize = event.GetSize()[0] * 0.75
-        # print hsize
+            self.status_gauge.SetValue(1)
+            self.status_gauge.SetValue(0)
 
 
 def main():
-    windebug = 0
-    if windebug is 1:
+    win_debug = 0
+    if win_debug is 1:
         try:
             app = wx.App()
             app.SetAppName(APP_TITLE)
             vaUI(None, title=APP_TITLE)
             app.MainLoop()
-        except Exception as ex:
+        except Exception as e:
+            print(e)
             raw_input()
     else:
         app = wx.App()
