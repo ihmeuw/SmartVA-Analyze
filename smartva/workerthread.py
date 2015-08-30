@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 import wx
 from threading import *
@@ -22,27 +19,31 @@ import time
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
- 
+
+
 def EVT_RESULT(win, func):
     """Define Result Event."""
     win.Connect(-1, -1, EVT_RESULT_ID, func)
-    
+
+
 def EVT_PROGRESS(win, func):
     """Define Result Event."""
     win.Connect(-1, -1, EVT_PROGRESS_ID, func)
 
-    
+
 class ResultEvent(wx.PyEvent):
     """Simple event to carry arbitrary result data."""
+
     def __init__(self, data):
         """Init Result Event."""
         wx.PyEvent.__init__(self)
         self.SetEventType(EVT_RESULT_ID)
         self.data = data
-        
+
 
 class ProgressEvent(wx.PyEvent):
     """Simple event to carry arbitrary result data."""
+
     def __init__(self, progress=None, progressmax=None):
         """Init Result Event."""
         wx.PyEvent.__init__(self)
@@ -50,9 +51,11 @@ class ProgressEvent(wx.PyEvent):
         self.progress = progress
         self.progressmax = progressmax
 
+
 # Thread class that executes processing
 class WorkerThread(Thread):
     """Worker Thread Class."""
+
     def __init__(self, notify_window, input_file, hce, output_dir, freetext, malaria, country):
         """Init Worker Thread Class."""
         Thread.__init__(self)
@@ -68,29 +71,27 @@ class WorkerThread(Thread):
         self.country = country
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
-        
+
         self.shortform = False
-
-
 
         self.start()
 
     def run(self):
-        
+
         intermediate_dir = self.output_dir + os.sep + "intermediate-files"
         figures_dir = self.output_dir + os.sep + "figures"
-        
+
         if not os.path.exists(intermediate_dir):
             os.mkdir(intermediate_dir)
         if not os.path.exists(figures_dir):
             os.mkdir(figures_dir)
-        
+
         self.shortFormTest = short_form_test.ShortFormTest(self._notify_window, self.inputFilePath)
         self.shortform = self.shortFormTest.run()
 
 
         # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
-        #set up the function calls
+        # set up the function calls
         self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, intermediate_dir)
         self.prep = vaprep.VaPrep(self._notify_window, intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.warningfile, self.shortform)
         self.adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
@@ -104,37 +105,36 @@ class WorkerThread(Thread):
         self.neonateresults = neonatetariff.Tariff(self._notify_window, intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.country, self.shortform)
         self.causegrapher = causegrapher.CauseGrapher(self._notify_window, self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
         self.csmfgrapher = csmfgrapher.CSMFGrapher(self._notify_window, self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
-        
-        
+
         # makes cleanheaders.csv
         hasdata = self.cleanheaders.run()
         if hasdata == 0 or self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-       
+
         # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         # we have data at this point, so all of these files should have been created
         self.prep.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-            
+
         # makes adult-presymptom.csv
         adult_data = self.adultpresym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
-    
+
         # makes adult-symptom.csv
-        if adult_data == 1:   
+        if adult_data == 1:
             self.adultsym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-		#
+        #
         # creates adult output files
-        if adult_data == 1:   
+        if adult_data == 1:
             self.adultresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
@@ -160,45 +160,46 @@ class WorkerThread(Thread):
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #makes neonate-presymptom.csv  TODO:  right now this is the same as child presymptom, should probably just combine into one
+        # makes neonate-presymptom.csv
+        # TODO:  right now this is the same as child presymptom, should probably just combine into one
         neonate_data = self.neonatepresym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #makes neonate-symptom.csv
+        # makes neonate-symptom.csv
         if neonate_data == 1:
             self.neonatesym.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #creates neonate output files
+        # creates neonate output files
         if neonate_data == 1:
             self.neonateresults.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #generate all cause graphs
+        # generate all cause graphs
         self.causegrapher.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
-        #generate all csmf graphs
+        # generate all csmf graphs
         self.csmfgrapher.run()
         if self._want_abort == 1:
             wx.PostEvent(self._notify_window, ResultEvent(None))
             return
 
         wx.PostEvent(self._notify_window, ResultEvent("Done"))
-    	#status.set('Done. Results are written to results.csv')
-    	return
+        # status.set('Done. Results are written to results.csv')
+        return
 
     def abort(self):
         """abort worker thread."""
-        #Method for use by main thread to signal an abort
+        # Method for use by main thread to signal an abort
         self._want_abort = 1
         self.cleanheaders.abort()
         self.prep.abort()
@@ -214,9 +215,4 @@ class WorkerThread(Thread):
         self.causegrapher.abort()
         self.csmfgrapher.abort()
         if self.data:
-            #print "trying to cancel"
             self.data.setCancelled();
-        #else:
-            #print "no data"
-            #wx.PostEvent(self._notify_window, ResultEvent(None))
-            
