@@ -226,7 +226,7 @@ class vaUI(wx.Frame):
 
         # start from end and iterate through each path element,
         for pathItem in reversed(splitPathList):
-            # sum the lenth of the path so far
+            # sum the length of the path so far
             pathLength += len(pathItem)
             # if less than max
             if pathLength <= pathLengthMax:
