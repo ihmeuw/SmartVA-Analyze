@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['smartva/vaUI.py'],
+a = Analysis(['smartva/va_ui.py'],
              hiddenimports=[],
              hookspath=None,
              runtime_hooks=None)
