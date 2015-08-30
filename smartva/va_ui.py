@@ -17,7 +17,7 @@ from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
 
 APP_QUIT = wx.ID_EXIT
 APP_ABOUT = wx.ID_ABOUT
-APP_DOCS = 3
+APP_DOCS = wx.NewId()
 
 APP_TITLE = 'SmartVA'
 
@@ -87,13 +87,13 @@ class vaUI(wx.Frame):
         file_menu = wx.Menu()
         help_menu = wx.Menu()
 
-        qmi = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
-        ami = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
-        dmi = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
+        quit_menu_item = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
+        about_menu_item = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
+        docs_menu_item = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
 
-        file_menu.AppendItem(qmi)
-        help_menu.AppendItem(ami)
-        help_menu.AppendItem(dmi)
+        file_menu.AppendItem(quit_menu_item)
+        help_menu.AppendItem(about_menu_item)
+        help_menu.AppendItem(docs_menu_item)
 
         menu_bar.Append(file_menu, '&File')
         menu_bar.Append(help_menu, '&About')
