@@ -15,8 +15,8 @@ from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
 # TODO: pull out all strings
 # TODO: why is the first button selected
 
-APP_QUIT = 1
-APP_ABOUT = 2
+APP_QUIT = wx.ID_EXIT
+APP_ABOUT = wx.ID_ABOUT
 APP_DOCS = 3
 
 APP_TITLE = 'SmartVA'
