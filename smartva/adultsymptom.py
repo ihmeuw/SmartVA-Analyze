@@ -32,8 +32,7 @@ binaryVars = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11'
 
 
 class AdultSymptomPrep(object):
-    def __init__(self, notify_window, input_file, output_dir, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
