@@ -1,7 +1,6 @@
 import csv
-import wx
 
-import workerthread
+from smartva.loggers import status_logger
 
 
 class ShortFormTest(object):
@@ -17,22 +16,19 @@ class ShortFormTest(object):
     def run(self):
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
 
-        updatestr = "Checking form\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Checking form')
 
         first = True
         for row in reader:
             if first:
                 for column in row:
                     if (column.find("adult_7_11") != -1):
-                        updatestr = "Detected SHORT form\n"
-                        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                        status_logger.info('Detected SHORT form')
 
                         return True
                 first = False
             else:
-                updatestr = "Detected standard form\n"
-                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                status_logger.info('Detected standard form')
                 return False
 
     def abort(self):
