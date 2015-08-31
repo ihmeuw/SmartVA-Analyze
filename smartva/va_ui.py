@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import io
+import logging
 import re
 import os
 import threading
@@ -12,6 +13,7 @@ from smartva import config
 from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
+from smartva.loggers import logger, status_logger
 
 
 # TODO: pull out all strings
@@ -247,7 +249,7 @@ class vaUI(wx.Frame):
         status_gauge_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
         start_analysis_box_sizer.Add(status_gauge_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        start_analysis_box_sizer.Add(self.status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
         parent_box_sizer.Add(logo_box_sizer, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
@@ -366,7 +368,7 @@ class vaUI(wx.Frame):
     def on_result(self, event):
         if event.data is None:
             # If it's none we got an abort
-            self.status_text_ctrl.AppendText('Computation successfully aborted\n')
+            status_logger.info('Computation successfully aborted')
             self.action_button.Enable(True)
             self.running = False
             self.enable_ui(True)
@@ -375,7 +377,7 @@ class vaUI(wx.Frame):
         elif event.data is 'Done':
             # if it's done, then the algorithm is complete
             self.status_gauge.SetValue(1)
-            self.status_text_ctrl.AppendText('Process complete\n')
+            status_logger.info('Process complete')
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
             self.status_gauge.SetValue(1)
@@ -383,22 +385,14 @@ class vaUI(wx.Frame):
 
         else:
             # everything else is update status text
-            if event.data.startswith('Adult :: Processing') or event.data.startswith('Child :: Processing') or event.data.startswith('Neonate :: Processing'):
-                last_line = self.status_text_ctrl.GetLineText(long(self.status_text_ctrl.GetNumberOfLines() - 1))
-                if last_line.startswith('Adult :: Processing') or last_line.startswith('Child :: Processing') or last_line.startswith('Neonate :: Processing'):
-                    # replace
-                    position = self.status_text_ctrl.GetLastPosition()
-                    self.status_text_ctrl.Remove(position - len(last_line), position)
-                    self.status_text_ctrl.AppendText(event.data)
-                else:
-                    self.status_text_ctrl.AppendText(event.data)
-            else:
-                self.status_text_ctrl.AppendText(event.data)
+            status_logger.info(event.data)
+            logger.warning('Got event: {}'.format(event.data))
+
 
     def on_abort(self):
         if self.worker:
             # if the thread is running, don't just stop
-            self.status_text_ctrl.AppendText('Attempting to cancel, please wait...\n')
+            status_logger.info('Attempting to cancel, please wait...')
             self.worker.abort()
             self.action_button.Enable(False)
             # do we need an else?  doesn't seem like it
