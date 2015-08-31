@@ -8,6 +8,7 @@ import wx
 import wx.html
 
 from smartva import config
+from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
 
@@ -216,35 +217,6 @@ class vaUI(wx.Frame):
 
         parent_panel.SetSizer(parent_box_sizer)
 
-    def shorten_path(self, path, maxLength):
-        pathLength = 0
-        pathLengthMax = maxLength
-        shortenedPathList = []
-
-        # split path into list
-        splitPathList = path.split(os.path.sep)
-
-        # start from end and iterate through each path element,
-        for pathItem in reversed(splitPathList):
-            # sum the length of the path so far
-            pathLength += len(pathItem)
-            # if less than max
-            if pathLength <= pathLengthMax:
-                # create shorted path
-                shortenedPathList.append(pathItem)
-            else:
-                # no need to go through the loop
-                break
-
-        # reverse the shortened path, convert to a string
-        shortenedPathList.reverse()
-        shortenedPath = os.path.sep.join(shortenedPathList)
-        # for shorter path, add ...
-        if shortenedPath.startswith(os.path.sep) or re.match('[A-Z]:', shortenedPath):
-            return shortenedPath
-        else:
-            return '..' + os.path.sep + shortenedPath
-
     def on_open_file(self, event):
         """
         Create and show the Open FileDialog
@@ -259,7 +231,7 @@ class vaUI(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             self.input_file_path = dlg.GetPath()
             # print 'You chose the following file: ' + self.inputFilePath
-            self.chosen_file_text.SetLabel(self.shorten_path(self.input_file_path, MAX_PATH_LENGTH))
+            self.chosen_file_text.SetLabel(utils.shorten_path(self.input_file_path, MAX_PATH_LENGTH))
         dlg.Destroy()
 
     def on_open_folder(self, event):
@@ -272,7 +244,7 @@ class vaUI(wx.Frame):
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
             self.output_folder_path = dlg.GetPath()
-            self.chosen_folder_text.SetLabel(self.shorten_path(self.output_folder_path, MAX_PATH_LENGTH))
+            self.chosen_folder_text.SetLabel(utils.shorten_path(self.output_folder_path, MAX_PATH_LENGTH))
         dlg.Destroy()
 
     def on_action(self, event):
