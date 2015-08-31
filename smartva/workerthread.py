@@ -1,21 +1,22 @@
 import os
+import threading
+
 import wx
-from threading import *
-import headers
-import vaprep
-import adultpresymptom
-import adultsymptom
-import adulttariff
-import childpresymptom
-import childsymptom
-import childtariff
-import neonatepresymptom
-import neonatesymptom
-import neonatetariff
-import causegrapher
-import csmfgrapher
-import short_form_test
-import time
+
+from smartva import headers
+from smartva import vaprep
+from smartva import adultpresymptom
+from smartva import adultsymptom
+from smartva import adulttariff
+from smartva import childpresymptom
+from smartva import childsymptom
+from smartva import childtariff
+from smartva import neonatepresymptom
+from smartva import neonatesymptom
+from smartva import neonatetariff
+from smartva import causegrapher
+from smartva import csmfgrapher
+from smartva import short_form_test
 
 EVT_RESULT_ID = wx.NewId()
 EVT_PROGRESS_ID = wx.NewId()
@@ -53,12 +54,12 @@ class ProgressEvent(wx.PyEvent):
 
 
 # Thread class that executes processing
-class WorkerThread(Thread):
+class WorkerThread(threading.Thread):
     """Worker Thread Class."""
 
     def __init__(self, notify_window, input_file, hce, output_dir, freetext, malaria, country):
         """Init Worker Thread Class."""
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self._notify_window = notify_window
         self._want_abort = 0
         self.inputFilePath = input_file
