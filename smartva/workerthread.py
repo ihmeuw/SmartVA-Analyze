@@ -93,7 +93,7 @@ class WorkerThread(threading.Thread):
 
         # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
         # set up the function calls
-        self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, intermediate_dir)
+        self.cleanheaders = headers.Headers(self.inputFilePath, intermediate_dir)
         self.prep = vaprep.VaPrep(self._notify_window, intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.warningfile, self.shortform)
         self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
         self.adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.shortform)
