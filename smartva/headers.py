@@ -1,6 +1,5 @@
 import csv
 import os
-import string
 
 from smartva.loggers import status_logger
 
@@ -23,24 +22,19 @@ class Headers(object):
         status_logger.info('Cleaning column headers')
 
         count = 0
-        for row in reader:
-            count += 1
-            newrow = list()
-            if count == 1:
+        for count, row in enumerate(reader):
+            if count == 0:
+                new_row = []
                 for col in row:
-                    try:
-                        lastindex = string.rindex(col, '-')
-                        newcolname = col[lastindex + 1:]
-                    except ValueError:
-                        newcolname = col
-                    newrow.append(newcolname)
+                    # Split the column name at each '-' and take the last item.
+                    new_row.append(col.split('-')[-1])
 
-                writer.writerow(newrow)
+                writer.writerow(new_row)
             else:
                 writer.writerow(row)
 
-        # if count is less than 2, we have no data to process
-        if count < 2:
+        # if count is less than 1, we have no data to process
+        if count < 1:
             status_logger.info('No data to process, stopping')
             return 0
         return 1
