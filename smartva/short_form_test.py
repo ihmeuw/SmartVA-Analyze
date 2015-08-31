@@ -18,18 +18,12 @@ class ShortFormTest(object):
 
         status_logger.info('Checking form')
 
-        first = True
-        for row in reader:
-            if first:
-                for column in row:
-                    if (column.find("adult_7_11") != -1):
-                        status_logger.info('Detected SHORT form')
+        if 'adult_7_11' in next(reader):
+            status_logger.info('Detected standard form')
+            return False
 
-                        return True
-                first = False
-            else:
-                status_logger.info('Detected standard form')
-                return False
+        status_logger.info('Detected SHORT form')
+        return True
 
     def abort(self):
         self.want_abort = 1
