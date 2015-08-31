@@ -47,14 +47,11 @@ class AdultSymptomPrep(object):
         matrix = []
         headers = []
 
-        first = 1
         # read in new .csv for processing
         # we add the generated headers later this time
-        for row in reader:
-            if first == 1:
-                for col in row:
-                    headers.append(col)
-                first = 0
+        for count, row in enumerate(reader):
+            if count == 0:
+                headers.extend(row)
 
             else:
                 matrix.append(row)
