@@ -94,7 +94,7 @@ class WorkerThread(Thread):
         # set up the function calls
         self.cleanheaders = headers.Headers(self._notify_window, self.inputFilePath, intermediate_dir)
         self.prep = vaprep.VaPrep(self._notify_window, intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.warningfile, self.shortform)
-        self.adultpresym = adultpresymptom.PreSymptomPrep(self._notify_window, intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
+        self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
         self.adultsym = adultsymptom.AdultSymptomPrep(self._notify_window, intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.shortform)
         self.adultresults = adulttariff.Tariff(self._notify_window, intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
         self.childpresym = childpresymptom.PreSymptomPrep(self._notify_window, intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
