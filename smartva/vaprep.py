@@ -27,19 +27,19 @@ class VaPrep(object):
 
         # these are new column headers that we generate since they are not already in the ODK data.
         # any newly created variables at this step should be added here      
-        additionalHeaders = ["adultparalysis1", "adultparalysis2", "adultparalysis3", "adultparalysis4",
-                             "adultparalysis5", "adultparalysis6", "adultparalysis7", "adultparalysis8",
-                             "adultparalysis9", "adultparalysis10", "adultinjury1", "adultinjury2", "adultinjury3",
-                             "adultinjury4", "adultinjury5", "adultinjury6", "adultinjury7", "adultinjury8",
-                             "childinjury1", "childinjury2", "childinjury3", "childinjury4", "childinjury5",
-                             "childinjury6", "childinjury7", "childinjury8", "childinjury9", "childinjury10",
-                             "adultrash1", "adultrash2", "adultrash3", "childabnorm1", "childabnorm2", "childabnorm3",
-                             "childabnorm4", "childabnorm5", "childabnorm31", "childabnorm32", "childabnorm33",
-                             "childabnorm34", "childabnorm35", "complications1", "complications2", "complications3",
-                             "complications4", "complications5", "complications6", "complications7", "complications8",
-                             "complications9", "complications10", "complications11", "complications12", "provider1",
-                             "provider2", "provider3", "provider4", "provider5", "provider6", "provider7", "provider8",
-                             "provider9", "provider10", "provider11", "provider12", "provider13", "provider14",
+        additionalHeaders = ['adultparalysis1', 'adultparalysis2', 'adultparalysis3', 'adultparalysis4',
+                             'adultparalysis5', 'adultparalysis6', 'adultparalysis7', 'adultparalysis8',
+                             'adultparalysis9', 'adultparalysis10', 'adultinjury1', 'adultinjury2', 'adultinjury3',
+                             'adultinjury4', 'adultinjury5', 'adultinjury6', 'adultinjury7', 'adultinjury8',
+                             'childinjury1', 'childinjury2', 'childinjury3', 'childinjury4', 'childinjury5',
+                             'childinjury6', 'childinjury7', 'childinjury8', 'childinjury9', 'childinjury10',
+                             'adultrash1', 'adultrash2', 'adultrash3', 'childabnorm1', 'childabnorm2', 'childabnorm3',
+                             'childabnorm4', 'childabnorm5', 'childabnorm31', 'childabnorm32', 'childabnorm33',
+                             'childabnorm34', 'childabnorm35', 'complications1', 'complications2', 'complications3',
+                             'complications4', 'complications5', 'complications6', 'complications7', 'complications8',
+                             'complications9', 'complications10', 'complications11', 'complications12', 'provider1',
+                             'provider2', 'provider3', 'provider4', 'provider5', 'provider6', 'provider7', 'provider8',
+                             'provider9', 'provider10', 'provider11', 'provider12', 'provider13', 'provider14',
                              's99991', 's999910', 's9999100', 's9999101', 's9999102', 's9999103', 's9999104',
                              's9999105', 's9999106', 's9999107', 's9999108', 's9999109', 's999911', 's9999110',
                              's9999111', 's9999112', 's9999113', 's9999114', 's9999115', 's9999116', 's9999117',
@@ -131,9 +131,9 @@ class VaPrep(object):
         headers = list()
 
         adult_freetext = False
-        adult_freetext_col = "adult_7_c"
+        adult_freetext_col = 'adult_7_c'
         child_freetext = False
-        child_freetext_col = "child_6_c"
+        child_freetext_col = 'child_6_c'
 
         for row in reader:
             if first == 1:
@@ -154,7 +154,7 @@ class VaPrep(object):
                 # if it's not the first row, create spaces in the current row to match additionalHeaders,
                 # then add the row to our matrix
                 for head in additionalHeaders:
-                    row.append("0")
+                    row.append('0')
                 matrix.append(row)
 
         if self.shortform:
@@ -164,162 +164,162 @@ class VaPrep(object):
 
         if adult_freetext is False:
             for row in matrix:
-                row.append("")
+                row.append('')
             headers.append(adult_freetext_col)
 
         if child_freetext is False:
             for row in matrix:
-                row.append("")
+                row.append('')
             headers.append(child_freetext_col)
 
         # column header renaming
         # rename adult_2_87 adult287
-        index = headers.index("adult_2_87")
-        headers[index] = "orgadult287"
+        index = headers.index('adult_2_87')
+        headers[index] = 'orgadult287'
 
         # rename adult_5_2 adult52
-        index = headers.index("adult_5_2")
-        headers[index] = "orgadult52"
+        index = headers.index('adult_5_2')
+        headers[index] = 'orgadult52'
 
         # rename child_4_48 orgchild448
-        index = headers.index("child_4_48")
-        headers[index] = "orgchild448"
+        index = headers.index('child_4_48')
+        headers[index] = 'orgchild448'
 
         # rename child_1_19 to child119
-        index = headers.index("child_1_19")
-        headers[index] = "child119"
+        index = headers.index('child_1_19')
+        headers[index] = 'child119'
 
         # rename child_1_19a to child119a
-        index = headers.index("child_1_19a")
-        headers[index] = "child119a"
+        index = headers.index('child_1_19a')
+        headers[index] = 'child119a'
 
         # rename child_3_3 child33
-        index = headers.index("child_3_3")
-        headers[index] = "orgchild33"
+        index = headers.index('child_3_3')
+        headers[index] = 'orgchild33'
 
         # rename child_2_1 child21
-        index = headers.index("child_2_1")
-        headers[index] = "orgchild21"
+        index = headers.index('child_2_1')
+        headers[index] = 'orgchild21'
 
         # rename child_5_2 child52
-        index = headers.index("child_5_2")
-        headers[index] = "child52"
+        index = headers.index('child_5_2')
+        headers[index] = 'child52'
 
         # loop through each row, updating values (mostly additionalHeaders), based on user's answers
         for row in matrix:
             # fill in blank values for age
-            index = headers.index("gen_5_4a")
-            if row[index] == "":
+            index = headers.index('gen_5_4a')
+            if row[index] == '':
                 row[index] = 0
-            index = headers.index("gen_5_4b")
-            if row[index] == "":
+            index = headers.index('gen_5_4b')
+            if row[index] == '':
                 row[index] = 0
-            index = headers.index("gen_5_4c")
-            if row[index] == "":
+            index = headers.index('gen_5_4c')
+            if row[index] == '':
                 row[index] = 0
 
             # set paralysis variables based on multiple choice question
-            index = headers.index("orgadult287")
+            index = headers.index('orgadult287')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("adultparalysis1")
+                subindex = headers.index('adultparalysis1')
                 row[subindex] = 1
             if '2' in val:
-                subindex = headers.index("adultparalysis2")
+                subindex = headers.index('adultparalysis2')
                 row[subindex] = 1
             if '3' in val:
-                subindex = headers.index("adultparalysis3")
+                subindex = headers.index('adultparalysis3')
                 row[subindex] = 1
             if '4' in val:
-                subindex = headers.index("adultparalysis4")
+                subindex = headers.index('adultparalysis4')
                 row[subindex] = 1
             if '5' in val:
-                subindex = headers.index("adultparalysis5")
+                subindex = headers.index('adultparalysis5')
                 row[subindex] = 1
             if '6' in val:
-                subindex = headers.index("adultparalysis6")
+                subindex = headers.index('adultparalysis6')
                 row[subindex] = 1
             if '7' in val:
-                subindex = headers.index("adultparalysis7")
+                subindex = headers.index('adultparalysis7')
                 row[subindex] = 1
             if '8' in val:
-                subindex = headers.index("adultparalysis8")
+                subindex = headers.index('adultparalysis8')
                 row[subindex] = 1
             if '9' in val:
-                subindex = headers.index("adultparalysis9")
-                row[subindex] = "1"
+                subindex = headers.index('adultparalysis9')
+                row[subindex] = '1'
             if '11' in val:
-                subindex = headers.index("adultparalysis10")
+                subindex = headers.index('adultparalysis10')
                 row[subindex] = 1
 
             # set adultinjury variables based on multiple choice question
-            index = headers.index("orgadult52")
+            index = headers.index('orgadult52')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("adultinjury1")
+                subindex = headers.index('adultinjury1')
                 row[subindex] = 1
             if '2' in val:
-                subindex = headers.index("adultinjury2")
+                subindex = headers.index('adultinjury2')
                 row[subindex] = 1
             if '3' in val:
-                subindex = headers.index("adultinjury3")
+                subindex = headers.index('adultinjury3')
                 row[subindex] = 1
             if '4' in val:
-                subindex = headers.index("adultinjury4")
+                subindex = headers.index('adultinjury4')
                 row[subindex] = 1
             if '5' in val:
-                subindex = headers.index("adultinjury5")
+                subindex = headers.index('adultinjury5')
                 row[subindex] = 1
             if '6' in val:
-                subindex = headers.index("adultinjury6")
+                subindex = headers.index('adultinjury6')
                 row[subindex] = 1
             if '7' in val:
-                subindex = headers.index("adultinjury7")
+                subindex = headers.index('adultinjury7')
                 row[subindex] = 1
             if '11' in val:
-                subindex = headers.index("adultinjury8")
+                subindex = headers.index('adultinjury8')
                 row[subindex] = 1
 
             # set childinjury variables based on multiple choice question
-            index = headers.index("orgchild448")
+            index = headers.index('orgchild448')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("childinjury1")
+                subindex = headers.index('childinjury1')
                 row[subindex] = 1
             if '2' in val:
-                subindex = headers.index("childinjury2")
+                subindex = headers.index('childinjury2')
                 row[subindex] = 1
             if '3' in val:
-                subindex = headers.index("childinjury3")
+                subindex = headers.index('childinjury3')
                 row[subindex] = 1
             if '4' in val:
-                subindex = headers.index("childinjury4")
+                subindex = headers.index('childinjury4')
                 row[subindex] = 1
             if '5' in val:
-                subindex = headers.index("childinjury5")
+                subindex = headers.index('childinjury5')
                 row[subindex] = 1
             if '6' in val:
-                subindex = headers.index("childinjury6")
+                subindex = headers.index('childinjury6')
                 row[subindex] = 1
             if '7' in val:
-                subindex = headers.index("childinjury7")
+                subindex = headers.index('childinjury7')
                 row[subindex] = 1
             if '11' in val:
-                subindex = headers.index("childinjury8")
+                subindex = headers.index('childinjury8')
                 row[subindex] = 1
             if '8' in val:
-                subindex = headers.index("childinjury9")
+                subindex = headers.index('childinjury9')
                 row[subindex] = 1
             if '9' in val:
-                subindex = headers.index("childinjury10")
+                subindex = headers.index('childinjury10')
                 row[subindex] = 1
 
             # set adultrash variables based on multiple choice question
-            index = headers.index("adult_2_9")
+            index = headers.index('adult_2_9')
             val = row[index].split(' ')
-            adultrash1index = headers.index("adultrash1")
-            adultrash2index = headers.index("adultrash2")
-            adultrash3index = headers.index("adultrash3")
+            adultrash1index = headers.index('adultrash1')
+            adultrash2index = headers.index('adultrash2')
+            adultrash3index = headers.index('adultrash3')
 
             # if 1, 2, and 3 are selected, then change the value to 4 (all)
             if '1' in val and '2' in val and '3' in val:
@@ -340,196 +340,196 @@ class VaPrep(object):
                     row[adultrash3index] = words[2]
 
             # set child abnormality values
-            index = headers.index("child119")
+            index = headers.index('child119')
             first = row[index].split(' ')
-            index = headers.index("child119a")
+            index = headers.index('child119a')
             second = row[index].split(' ')
 
             if '1' in first or '1' in second:
-                subindex = headers.index("childabnorm1")
+                subindex = headers.index('childabnorm1')
                 row[subindex] = 1
             if '2' in first or '2' in second:
-                subindex = headers.index("childabnorm2")
+                subindex = headers.index('childabnorm2')
                 row[subindex] = 1
             if '3' in first or '3' in second:
-                subindex = headers.index("childabnorm3")
+                subindex = headers.index('childabnorm3')
                 row[subindex] = 1
             if '11' in first or '11' in second:
-                subindex = headers.index("childabnorm4")
+                subindex = headers.index('childabnorm4')
                 row[subindex] = 1
             if '8' in first or '8' in second:
-                subindex = headers.index("childabnorm5")
+                subindex = headers.index('childabnorm5')
                 row[subindex] = 1
 
             # set child abnormality values
-            index = headers.index("orgchild33")
+            index = headers.index('orgchild33')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("childabnorm31")
+                subindex = headers.index('childabnorm31')
                 row[subindex] = 1
             if '2' in val:
-                subindex = headers.index("childabnorm32")
+                subindex = headers.index('childabnorm32')
                 row[subindex] = 1
             if '3' in val:
-                subindex = headers.index("childabnorm33")
+                subindex = headers.index('childabnorm33')
                 row[subindex] = 1
             if '11' in val:
-                subindex = headers.index("childabnorm34")
+                subindex = headers.index('childabnorm34')
                 row[subindex] = 1
             if '8' in val:
-                subindex = headers.index("childabnorm35")
+                subindex = headers.index('childabnorm35')
                 row[subindex] = 1
 
             # set complications values
-            index = headers.index("orgchild21")
+            index = headers.index('orgchild21')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("complications1")
+                subindex = headers.index('complications1')
                 row[subindex] = 1
             if '2' in val:
-                subindex = headers.index("complications2")
+                subindex = headers.index('complications2')
                 row[subindex] = 1
             if '3' in val:
-                subindex = headers.index("complications3")
+                subindex = headers.index('complications3')
                 row[subindex] = 1
             if '4' in val:
-                subindex = headers.index("complications4")
+                subindex = headers.index('complications4')
                 row[subindex] = 1
             if '5' in val:
-                subindex = headers.index("complications5")
+                subindex = headers.index('complications5')
                 row[subindex] = 1
             if '6' in val:
-                subindex = headers.index("complications6")
+                subindex = headers.index('complications6')
                 row[subindex] = 1
             if '7' in val:
-                subindex = headers.index("complications7")
+                subindex = headers.index('complications7')
                 row[subindex] = 1
             if '8' in val:
-                subindex = headers.index("complications8")
+                subindex = headers.index('complications8')
                 row[subindex] = 1
             if '9' in val:
-                subindex = headers.index("complications9")
+                subindex = headers.index('complications9')
                 row[subindex] = 1
             if '10' in val:
-                subindex = headers.index("complications10")
+                subindex = headers.index('complications10')
                 row[subindex] = 1
             if '88' in val:
-                subindex = headers.index("complications11")
+                subindex = headers.index('complications11')
                 row[subindex] = 1
             if '99' in val:
-                subindex = headers.index("complications12")
+                subindex = headers.index('complications12')
                 row[subindex] = 1
 
             # set provider values
-            index = headers.index("child52")
+            index = headers.index('child52')
             val = row[index].split(' ')
             if '1' in val:
-                subindex = headers.index("provider1")
+                subindex = headers.index('provider1')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider1")
+                subindex = headers.index('provider1')
                 row[subindex] = 0
             if '2' in val:
-                subindex = headers.index("provider2")
+                subindex = headers.index('provider2')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider2")
+                subindex = headers.index('provider2')
                 row[subindex] = 0
             if '3' in val:
-                subindex = headers.index("provider3")
+                subindex = headers.index('provider3')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider3")
+                subindex = headers.index('provider3')
                 row[subindex] = 0
             if '4' in val:
-                subindex = headers.index("provider4")
+                subindex = headers.index('provider4')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider4")
+                subindex = headers.index('provider4')
                 row[subindex] = 0
             if '5' in val:
-                subindex = headers.index("provider5")
+                subindex = headers.index('provider5')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider5")
+                subindex = headers.index('provider5')
                 row[subindex] = 0
             if '6' in val:
-                subindex = headers.index("provider6")
+                subindex = headers.index('provider6')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider6")
+                subindex = headers.index('provider6')
                 row[subindex] = 0
             if '7' in val:
-                subindex = headers.index("provider7")
+                subindex = headers.index('provider7')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider7")
+                subindex = headers.index('provider7')
                 row[subindex] = 0
             if '8' in val:
-                subindex = headers.index("provider8")
+                subindex = headers.index('provider8')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider8")
+                subindex = headers.index('provider8')
                 row[subindex] = 0
             if '9' in val:
-                subindex = headers.index("provider9")
+                subindex = headers.index('provider9')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider9")
+                subindex = headers.index('provider9')
                 row[subindex] = 0
             if '10' in val:
-                subindex = headers.index("provider10")
+                subindex = headers.index('provider10')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider10")
+                subindex = headers.index('provider10')
                 row[subindex] = 0
             if '11' in val:
-                subindex = headers.index("provider11")
+                subindex = headers.index('provider11')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider11")
+                subindex = headers.index('provider11')
                 row[subindex] = 0
             if '12' in val:
-                subindex = headers.index("provider12")
+                subindex = headers.index('provider12')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider12")
+                subindex = headers.index('provider12')
                 row[subindex] = 0
             if '88' in val:
-                subindex = headers.index("provider13")
+                subindex = headers.index('provider13')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider13")
+                subindex = headers.index('provider13')
                 row[subindex] = 0
             if '99' in val:
-                subindex = headers.index("provider14")
+                subindex = headers.index('provider14')
                 row[subindex] = 1
             else:
-                subindex = headers.index("provider14")
+                subindex = headers.index('provider14')
                 row[subindex] = 0
 
             # weights
-            index = headers.index("child_1_8")
+            index = headers.index('child_1_8')
             val = row[index]
-            index18a = headers.index("child_1_8a")
-            index18b = headers.index("child_1_8b")
+            index18a = headers.index('child_1_8a')
+            index18b = headers.index('child_1_8b')
             if val == '2':
                 row[index18a] = float(row[index18b]) * 1000
                 row[index] = 1
 
-            index = headers.index("child_5_6e")
+            index = headers.index('child_5_6e')
             val = row[index]
             if val == '2':
-                index56f = headers.index("child_5_6f")
-                index56g = headers.index("child_5_6g")
+                index56f = headers.index('child_5_6f')
+                index56g = headers.index('child_5_6g')
                 row[index56f] = float(row[index56g]) * 1000
                 row[index] = 1
 
-            index = headers.index("child_5_7e")
+            index = headers.index('child_5_7e')
             val = row[index]
             if val == '2':
-                index57f = headers.index("child_5_7f")
-                index57g = headers.index("child_5_7g")
+                index57f = headers.index('child_5_7f')
+                index57g = headers.index('child_5_7g')
                 row[index57f] = float(row[index57g]) * 1000
                 row[index] = 1
 
@@ -604,22 +604,22 @@ class VaPrep(object):
         # write out data by row into appropriate age range (adult, child, neonate)
         # blank values have already been replaced with 0 (int) here
         for a in matrix:
-            age = int(a[headers.index("gen_5_4a")])
-            days = int(a[headers.index("gen_5_4c")])
-            months = int(a[headers.index("gen_5_4b")])
+            age = int(a[headers.index('gen_5_4a')])
+            days = int(a[headers.index('gen_5_4c')])
+            months = int(a[headers.index('gen_5_4b')])
             aaa = a[headers.index('sid')]
-            # print "for SID :: %s " % (aaa)
+            # print 'for SID :: %s ' % (aaa)
 
             if age == 0 and days == 0 and months == 0:
-                module = a[headers.index("gen_5_4d")]
+                module = a[headers.index('gen_5_4d')]
                 if module == '1':
-                    # print "neonate because gen_5_4d == 1"
+                    # print 'neonate because gen_5_4d == 1'
                     neonatewriter.writerow(a)
                 elif module == '2':
-                    # print "child because gen_5_4d == 2"
+                    # print 'child because gen_5_4d == 2'
                     childwriter.writerow(a)
                 elif module == '3':
-                    # print "adult because gen_5_4d == 3"
+                    # print 'adult because gen_5_4d == 3'
                     adultwriter.writerow(a)
                 else:
                     # print 'neonate because no value for age'
@@ -629,14 +629,14 @@ class VaPrep(object):
                     neonatewriter.writerow(a)
             else:
                 if age >= 12:
-                    # print "adult because age >= 12"
+                    # print 'adult because age >= 12'
                     adultwriter.writerow(a)
                 else:
                     if days <= 28 and months == 0 and age == 0:
-                        # print "neonage because age <= 28"
+                        # print 'neonage because age <= 28'
                         neonatewriter.writerow(a)
                     else:
-                        # print "child because nothing else"
+                        # print 'child because nothing else'
                         childwriter.writerow(a)
 
         return 1
@@ -647,7 +647,7 @@ class VaPrep(object):
     # this also gets rid of punctuation    
     def stripNumbers(self, answer):
         newString = ''
-        validLetters = "abcdefghijklmnopqrstuvwxyz "
+        validLetters = 'abcdefghijklmnopqrstuvwxyz '
         for char in answer:
             if char in validLetters:
                 newString += char
