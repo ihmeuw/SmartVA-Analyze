@@ -371,10 +371,10 @@ class AdultSymptomPrep(object):
                 row[headers.index('s107')] = 1
 
             # ensure all binary variables actually ARE 0 or 1:
-            for bin in binaryVars:
-                val = row[headers.index(bin)]
+            for var in binaryVars:
+                val = row[headers.index(var)]
                 if val == '' or int(val) != 1:
-                    row[headers.index(bin)] = 0
+                    row[headers.index(var)] = 0
 
         droplist = ['s163', 's36', 's18', 's19', 's23', 's25', 's56', 's55', 's64', 's82', 's150', 's108']
         for d in droplist:
