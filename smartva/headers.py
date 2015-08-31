@@ -26,15 +26,12 @@ class Headers(object):
         updatestr = 'Cleaning column headers\n'
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
-        first = 1
         count = 0
         for row in reader:
-            count = count + 1
+            count += 1
             newrow = list()
-            if first == 1:
-                first = 2
+            if count == 1:
                 for col in row:
-                    newcolname = ""
                     try:
                         lastindex = string.rindex(col, '-')
                         newcolname = col[lastindex + 1:]
@@ -51,8 +48,7 @@ class Headers(object):
             updatestr = 'No data to process, stopping\n'
             wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
             return 0
-        else:
-            return 1
+        return 1
 
     def abort(self):
         self.want_abort = 1
