@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import io
 import re
 import os
 import threading
@@ -26,6 +27,40 @@ MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
 WINDOW_HEIGHT = 690
+
+
+class TextEntryStream(io.TextIOBase):
+    def __init__(self, text_entry_widget):
+        """
+        The TextEntryStream will write to any widget that extends the `TextEntryBase` class or implements the
+        `AppendText(str)` method.
+        :type text_entry_widget: wx.TextEntry
+        """
+        io.TextIOBase.__init__(self)
+        self._text_entry = text_entry_widget
+
+    def readable(self):
+        return False
+
+    def seekable(self):
+        return False
+
+    def write(self, msg):
+        # self._text_entry.AppendText(msg)
+        if msg.startswith('Adult :: Processing') or msg.startswith('Child :: Processing') or msg.startswith('Neonate :: Processing'):
+            last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 1))
+            if last_line.startswith('Adult :: Processing') or last_line.startswith('Child :: Processing') or last_line.startswith('Neonate :: Processing'):
+                # replace
+                position = self._text_entry.GetLastPosition()
+                self._text_entry.Remove(position - len(last_line), position)
+                self._text_entry.AppendText(msg)
+            else:
+                self._text_entry.AppendText(msg)
+        else:
+            self._text_entry.AppendText(msg)
+
+    def flush(self):
+        pass
 
 
 class vaAbout(wx.Frame):
@@ -193,10 +228,16 @@ class vaUI(wx.Frame):
         start_analysis_box = wx.StaticBox(parent_panel, label='4. Start analysis')
         start_analysis_box_sizer = wx.StaticBoxSizer(start_analysis_box, wx.VERTICAL)
 
-        # TODO: Use logging to update status text.
-        self.status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
-        self.status_text_ctrl.SetEditable(False)
-        self.status_text_ctrl.SetValue('')
+        # Define the status text control widget.
+        status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
+        status_text_ctrl.SetEditable(False)
+        status_text_ctrl.SetValue('')
+
+        # Send INFO level log messages to the status text control widget
+        gui_log_handler = logging.StreamHandler(TextEntryStream(status_text_ctrl))
+        gui_log_handler.setLevel(logging.INFO)
+        status_logger.addHandler(gui_log_handler)
+
         self.status_gauge = wx.Gauge(parent_panel, range=100, size=(-1, -1))
         self.action_button = wx.Button(parent_panel, label='Start')
         self.action_button.Bind(wx.EVT_BUTTON, self.on_action)
