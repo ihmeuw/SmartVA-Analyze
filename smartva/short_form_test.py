@@ -1,21 +1,22 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
-
 import csv
-import string
 import wx
-import workerthread
-import os
 
-# Thread class that executes processing
-class ShortFormTest():
-    """Worker Thread Class."""
+import workerthread
+
+
+class ShortFormTest(object):
+    """
+    Check headers to determine if the short form is used.
+    """
+
     def __init__(self, notify_window, input_file):
         self._notify_window = notify_window
         self.inputFilePath = input_file
-    
+        self.want_abort = 0
+
     def run(self):
-        reader = csv.reader(open( self.inputFilePath, 'Ub'))
-        
+        reader = csv.reader(open(self.inputFilePath, 'Ub'))
+
         updatestr = "Checking form\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
@@ -34,6 +35,5 @@ class ShortFormTest():
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 return False
 
-    	
     def abort(self):
         self.want_abort = 1
