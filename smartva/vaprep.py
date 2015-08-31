@@ -1,9 +1,8 @@
 import csv
 import string
 import os
-import wx
 
-import workerthread
+from smartva.loggers import status_logger
 
 
 class VaPrep(object):
@@ -11,8 +10,7 @@ class VaPrep(object):
     This file cleans up input and converts from ODK collected data to VA variables.
     """
 
-    def __init__(self, notify_window, input_file, output_dir, warningfile, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, warningfile, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
@@ -122,8 +120,7 @@ class VaPrep(object):
                                             '0', '0', '0', '9', '9', '0', '0', '0', '9', '1', '0', '0', '0', '0', '0',
                                             '0', '0']
 
-        updatestr = "Initial data prep\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Initial data prep')
 
         first = 1
 
@@ -536,8 +533,7 @@ class VaPrep(object):
                 row[index57f] = float(row[index57g]) * 1000
                 row[index] = 1
 
-        updatestr = "Text substitution\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Text substitution')
 
         wordSubs = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'accident',
                     'accidental': 'accident', 'accidently': 'accident', 'acute myocardial infarction': 'ami',
@@ -598,8 +594,7 @@ class VaPrep(object):
         # going forward, now all of the answers are lowercase, without numbers or punctuation,
         # and whitespace has been eliminated, so it's just a list of words separated by spaces
 
-        updatestr = "Writing adult, child, neonate prepped.csv files\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Writing adult, child, neonate prepped.csv files')
 
         # write out header files
         adultwriter.writerow(headers)
@@ -627,10 +622,10 @@ class VaPrep(object):
                     # print "adult because gen_5_4d == 3"
                     adultwriter.writerow(a)
                 else:
-                    # print "neonate because no value for age"
-                    updatestr = "SID: %s has no values for age, defaulting to neonate\n" % a[headers.index('sid')]
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                    self.warningfile.write(updatestr)
+                    # print 'neonate because no value for age'
+                    updatestr = 'SID: %s has no values for age, defaulting to neonate' % a[headers.index('sid')]
+                    status_logger.info(updatestr)
+                    self.warningfile.write(updatestr + '\n')
                     neonatewriter.writerow(a)
             else:
                 if age >= 12:
