@@ -6,16 +6,13 @@ import platform
 import os
 import sys
 
-import wx
-
-import adultuniformtrain
-import config
-from freetext_vars import adult_freetext
-from hce_variables import adult_hce
-from short_form_remove import adult_remove
-from vacauses import adultcauses
-import workerthread
-
+from smartva import adultuniformtrain
+from smartva import config
+from smartva.freetext_vars import adult_freetext
+from smartva.hce_variables import adult_hce
+from smartva.loggers import status_logger
+from smartva.short_form_remove import adult_remove
+from smartva.vacauses import adultcauses
 
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
@@ -45,8 +42,7 @@ class Tariff(object):
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
 
-        updatestr = "Adult :: Processing Adult tariffs\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Processing Adult tariffs')
 
         tarifffile = 'tariffs-adult.csv'
         validatedfile = 'validated-adult.csv'
@@ -255,8 +251,7 @@ class Tariff(object):
             va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])
             vacauselist.append(va)
 
-        updatestr = "Adult :: Calculating scores for validated dataset.  (This takes a few minutes)\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Calculating scores for validated dataset.  (This takes a few minutes)')
 
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
@@ -271,9 +266,8 @@ class Tariff(object):
                 if self.want_abort == 1:
                     return
                 cnt = cnt + 1
-                progress = "Adult :: Processing %s of %s" % (cnt, total)
                 if cnt % 1000 == 0:
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+                    status_logger.info('Adult :: Processing %s of %s' % (cnt, total))
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -288,11 +282,9 @@ class Tariff(object):
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, 0, 0)
             vavalidatedcauselist.append(va)
-        progress = "Adult :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+        status_logger.info('Adult :: Processing %s of %s' % (total, total))
 
-        updatestr = "Adult :: Creating uniform training set\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
         # as the sample size
@@ -340,8 +332,7 @@ class Tariff(object):
             for va in vas:
                 uniformlist.append(va)
 
-        updatestr = "Adult :: Generating cause rankings. (This takes a few minutes)\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Generating cause rankings. (This takes a few minutes)')
 
         total = len(vacauselist) * 46
         cnt = 0
@@ -352,9 +343,8 @@ class Tariff(object):
                 if (self.want_abort == 1):
                     return
                 cnt = cnt + 1
-                progress = "Adult :: Processing %s of %s" % (cnt, total)
                 if cnt % 10 == 0:
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+                    status_logger.info('Adult :: Processing %s of %s' % (cnt, total))
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -386,8 +376,7 @@ class Tariff(object):
                 # answer as the original stata tool
                 ranklist[cause] = index + 1
             va.ranklist = ranklist
-        progress = "Adult :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+        status_logger.info('Adult :: Processing %s of %s' % (total, total))
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
@@ -412,8 +401,7 @@ class Tariff(object):
             for j, item in enumerate(sortedcauselist):
                 item[2].ranklist[cause] = j
 
-        updatestr = "Adult :: Generating cutoffs\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Generating cutoffs')
 
         cutoffs = []
         for i in range(1, 47):
@@ -530,8 +518,7 @@ class Tariff(object):
                     multiple[va.sid].append(cause)
             for vakey in multiple.keys():
                 if len(multiple[vakey]) > 1:
-                    updatestr = "Adult :: WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    status_logger.info('Adult :: WARNING: VA %s had multiple matching results %s, using the first found' % (vakey, multiple[vakey]))
             if cause34 == '':
                 cause34 = 'Undetermined'
                 if self.iso3 is None:
@@ -601,8 +588,7 @@ class Tariff(object):
         for row in matrix:
             writer.writerow(row)
 
-        updatestr = "Adult :: Done!\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Adult :: Done!')
         return 1
 
     def round5(self, value):
