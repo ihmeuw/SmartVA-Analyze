@@ -1,23 +1,21 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
-
 import csv
 import copy
-import math
 from decimal import Decimal
-import os
+import math
 import platform
+import os
 import sys
 
 import wx
 
-import workerthread
-from freetext_vars import adult_freetext
-from hce_variables import adult_hce
-from vacauses import adultcauses
 import adultuniformtrain
 import config
-
+from freetext_vars import adult_freetext
+from hce_variables import adult_hce
 from short_form_remove import adult_remove
+from vacauses import adultcauses
+import workerthread
+
 
 
 
@@ -158,7 +156,7 @@ class Tariff():
                     tariffheaders.remove(col)
             
             validatedheaders_copy = copy.deepcopy(validatedheaders)
-            for col in headers_copy:
+            for col in validatedheaders_copy:
                 if col in adult_hce:
                     index = validatedheaders.index(col)
                     for row in validatedmatrix:
