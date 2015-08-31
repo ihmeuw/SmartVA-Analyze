@@ -474,7 +474,7 @@ class Tariff(object):
             # can't have cancer if under 15
             cancers = [6, 7, 9, 17, 27, 30, 39, 43]
             if age < 15:
-                for cancer in cancers:
+                for cause in cancers:
                     rankingsrow["cause" + str(cause)] = lowest
 
             if self.malaria is None:
