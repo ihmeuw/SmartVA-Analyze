@@ -216,4 +216,4 @@ class WorkerThread(threading.Thread):
         self.causegrapher.abort()
         self.csmfgrapher.abort()
         if self.data:
-            self.data.setCancelled();
+            self.data.setCancelled()
