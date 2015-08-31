@@ -2,9 +2,7 @@ import csv
 import os
 import string
 
-import wx
-
-import workerthread
+from smartva.loggers import status_logger
 
 
 # Thread class that executes processing
@@ -13,8 +11,7 @@ class Headers(object):
     TODO - Write good doc string.
     """
 
-    def __init__(self, notify_window, input_file, output_dir):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
@@ -23,8 +20,7 @@ class Headers(object):
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
         writer = csv.writer(open(self.output_dir + os.sep + 'cleanheaders.csv', 'wb', buffering=0))
 
-        updatestr = 'Cleaning column headers\n'
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Cleaning column headers')
 
         count = 0
         for row in reader:
@@ -45,8 +41,7 @@ class Headers(object):
 
         # if count is less than 2, we have no data to process
         if count < 2:
-            updatestr = 'No data to process, stopping\n'
-            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            status_logger.info('No data to process, stopping')
             return 0
         return 1
 
