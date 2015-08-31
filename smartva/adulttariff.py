@@ -14,6 +14,7 @@ from smartva.loggers import status_logger
 from smartva.short_form_remove import adult_remove
 from smartva.vacauses import adultcauses
 
+
 # data structure we use to keep track of an manipulate data
 class ScoredVA:
     def __init__(self, causescores, cause, sid, age, gender):
@@ -26,8 +27,7 @@ class ScoredVA:
 
 
 class Tariff(object):
-    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.hce = hce
@@ -340,7 +340,7 @@ class Tariff(object):
             sortedtariffs = []
             ranklist = {}
             for i in range(1, 47):
-                if (self.want_abort == 1):
+                if self.want_abort == 1:
                     return
                 cnt = cnt + 1
                 if cnt % 10 == 0:
