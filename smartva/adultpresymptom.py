@@ -381,13 +381,15 @@ class PreSymptomPrep(object):
                 a2_09_2a = row[headers.index('a2_09_2a')]
                 if not (a2_09_2a is None or a2_09_2a == '' or a2_09_2a == '0'):
                     self.printWarning('a2_09_2a', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code.
                 # doesn't exist in electronic version
                 # a2_09_2b = row[headers.index('a2_09_2b')]
-                #                if not (a2_09_2b is None or a2_09_2b == ''):
-                #                    updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_09_2b'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #    self.warningfile.write(updatestr)
-                #                    a2_09_2b')] = str(adult_defaultFill.get(''))
+                # if not (a2_09_2b is None or a2_09_2b == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing" % (i + 2, headers.index('a2_09_2b'))
+                #     self.warningfile.write(updatestr)
+                #     a2_09_2b')] = str(adult_defaultFill.get(''))
+
             a2_10 = row[headers.index('a2_10')]
             if a2_10 != '1':
                 a2_11 = row[headers.index('a2_11')]
@@ -471,13 +473,15 @@ class PreSymptomPrep(object):
                 a2_39_1 = row[headers.index('a2_39_1')]
                 if not (a2_39_1 is None or a2_39_1 == ''):
                     self.printWarning('a2_39_1', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code.
                 # doesn't exist in electronic version
                 # a2_39_2 = row[headers.index('a2_39_2')]
-                #                if not (a2_39_2 is None or a2_39_2 == ''):
-                #                    updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_2'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #   self.warningfile.write(updatestr)
-                #                    a2_39_2')] = str(adult_defaultFill.get(''))
+                # if not (a2_39_2 is None or a2_39_2 == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_39_2'))
+                #     self.warningfile.write(updatestr)
+                #     a2_39_2')] = str(adult_defaultFill.get(''))
+
             a2_40 = row[headers.index('a2_40')]
             if a2_40 != '1':
                 a2_41a = row[headers.index('a2_41a')]
@@ -549,13 +553,15 @@ class PreSymptomPrep(object):
                 a2_63_1 = row[headers.index('a2_63_1')]
                 if not (a2_63_1 is None or a2_63_1 == ''):
                     self.printWarning('a2_63_1', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code
                 # not in electronic version
                 # a2_63_2 = row[headers.index('a2_63_2')]
-                #                if not (a2_63_2 is None or a2_63_2 == ''):
-                #                    updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_2'))
-                #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #    self.warningfile.write(updatestr)
-                #                    a2_63_2')] = str(adult_defaultFill.get(''))
+                # if not (a2_63_2 is None or a2_63_2 == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a2_63_2'))
+                #     self.warningfile.write(updatestr)
+                #     a2_63_2')] = str(adult_defaultFill.get(''))
+
             a2_64 = row[headers.index('a2_64')]
             if a2_64 != '1':
                 a2_65a = row[headers.index('a2_65a')]
@@ -744,13 +750,15 @@ class PreSymptomPrep(object):
                 a6_02_6 = row[headers.index('a6_02_6')]
                 if not (a6_02_6 is None or a6_02_6 == '' or a6_02_6 == '0'):
                     self.printWarning('a6_02_6', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code.
                 # not in electronic version
                 # a6_02_7 = row[headers.index('a6_02_7')]
-                #                 if not (a6_02_7 is None or a6_02_7 == ''):
-                #                     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_7'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #    self.warningfile.write(updatestr)
-                #                     a6_02_7')] = str(adult_defaultFill.get(''))
+                # if not (a6_02_7 is None or a6_02_7 == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_7'))
+                #     self.warningfile.write(updatestr)
+                #     a6_02_7')] = str(adult_defaultFill.get(''))
+
                 a6_02_8 = row[headers.index('a6_02_8')]
                 if not (a6_02_8 is None or a6_02_8 == '' or a6_02_8 == '0'):
                     self.printWarning('a6_02_8', i, row, headers, adult_defaultFill)
@@ -766,13 +774,15 @@ class PreSymptomPrep(object):
                 a6_02_12a = row[headers.index('a6_02_12a')]
                 if not (a6_02_12a is None or a6_02_12a == '' or a6_02_12a == '0'):
                     self.printWarning('a6_02_12a', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code.
                 # not in electronic version
                 # a6_02_12b = row[headers.index('a6_02_12b')]
-                #                 if not (a6_02_12b is None or a6_02_12b == ''):
-                #                     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12b'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #    self.warningfile.write(updatestr)
-                #                     a6_02_12b')] = str(adult_defaultFill.get(''))
+                # if not (a6_02_12b is None or a6_02_12b == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing\n" % (i+2, headers.index('a6_02_12b'))
+                #     self.warningfile.write(updatestr)
+                #     a6_02_12b')] = str(adult_defaultFill.get(''))
+
                 a6_02_13 = row[headers.index('a6_02_13')]
                 if not (a6_02_13 is None or a6_02_13 == '' or a6_02_13 == '0'):
                     self.printWarning('a6_02_13', i, row, headers, adult_defaultFill)
@@ -934,16 +944,19 @@ class PreSymptomPrep(object):
                 a3_04 = row[headers.index('a3_04')]
                 if not (a3_04 is None or a3_04 == ''):
                     self.printWarning('a3_04', i, row, headers, adult_defaultFill)
+
             # general vars
+
+            # TODO - Verify this code.
             # not in electronic version
             # g1_07a = row[headers.index('g1_07a')]
-            #            if g1_07a < '12' or g1_07a == '999':
-            #                g1_08 = row[headers.index('g1_08')]
-            #                if not (g1_08 is None or g1_08 == ''):
-            #                    updatestr = "Adult :: WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('g1_08'))
-            #                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-            #        self.warningfile.write(updatestr)
-            #                    g1_08 = str(adult_defaultFill.get(''))
+            # if g1_07a < '12' or g1_07a == '999':
+            #     g1_08 = row[headers.index('g1_08')]
+            # if not (g1_08 is None or g1_08 == ''):
+            #     updatestr = "Adult :: WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing\n" % (i+2, headers.index('g1_08'))
+            #     self.warningfile.write(updatestr)
+            #     g1_08 = str(adult_defaultFill.get(''))
+
             g5_04a = row[headers.index('g5_04a')]
             if g5_04a is not None and g5_04a != '':
                 g5_04a = int(g5_04a)
@@ -957,13 +970,14 @@ class PreSymptomPrep(object):
                 g5_06a = row[headers.index('g5_06a')]
                 if not (g5_06a is None or g5_06a == ''):
                     self.printWarning('g5_06a', i, row, headers, adult_defaultFill)
+
+                # TODO - Verify this code.
                 # not in electronic version
                 # g5_06b = row[headers.index('g5_06b')]
-                #                 if not (g5_06b is None or g5_06b == ''):
-                #                     updatestr = "Adult :: WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06b'))
-                #                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-                #    self.warningfile.write(updatestr)
-                #                     g5_06b')] = str(adult_defaultFill.get(''))
+                # if not (g5_06b is None or g5_06b == ''):
+                #     updatestr = "Adult :: WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing\n" % (i+2, headers.index('g5_06b'))
+                #     self.warningfile.write(updatestr)
+                #     g5_06b')] = str(adult_defaultFill.get(''))
 
             # added for short form
             a4_02_2 = row[headers.index('a4_02_2')]
