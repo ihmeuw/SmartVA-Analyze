@@ -8,8 +8,7 @@ class ShortFormTest(object):
     Check headers to determine if the short form is used.
     """
 
-    def __init__(self, notify_window, input_file):
-        self._notify_window = notify_window
+    def __init__(self, input_file):
         self.inputFilePath = input_file
         self.want_abort = 0
 

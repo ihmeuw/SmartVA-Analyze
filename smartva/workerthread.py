@@ -87,7 +87,7 @@ class WorkerThread(threading.Thread):
         if not os.path.exists(figures_dir):
             os.mkdir(figures_dir)
 
-        self.shortFormTest = short_form_test.ShortFormTest(self._notify_window, self.inputFilePath)
+        self.shortFormTest = short_form_test.ShortFormTest(self.inputFilePath)
         self.shortform = self.shortFormTest.run()
 
 
