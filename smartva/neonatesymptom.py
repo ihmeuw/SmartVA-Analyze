@@ -29,8 +29,7 @@ binaryVars = ['s7', 's17', 's18', 's19', 's20', 's21', 's22', 's23', 's24', 's25
 
 
 class NeonateSymptomPrep(object):
-    def __init__(self, notify_window, input_file, output_dir):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
