@@ -4,6 +4,7 @@ import os
 
 from stemming.porter2 import stem
 
+from smartva import defaultfill
 from smartva.answer_ranges import adult_rangelist
 from smartva.presymptom_conversions import adult_conversionVars
 from smartva.word_conversions import adult_wordsToVars
@@ -29,9 +30,9 @@ class PreSymptomPrep(object):
     def run(self):
 
         if self.shortform:
-            from defaultfill import adult_short as adult_defaultFill
+            adult_defaultFill = defaultfill.adult_short
         else:
-            from defaultfill import adult_defaultFill
+            adult_defaultFill = defaultfill.adult_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         self.warningfile.write("Adult presymptom warnings:\n")
