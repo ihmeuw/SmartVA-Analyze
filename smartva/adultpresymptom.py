@@ -98,7 +98,6 @@ class PreSymptomPrep(object):
 
         error = 0
         status_logger.info('Adult :: Verifying answers fall within legal bounds')
-        # verify that answer is within legal bounds
         for j, row in enumerate(matrix):
             for i, col in enumerate(row):
                 header = headers[i]
@@ -110,7 +109,7 @@ class PreSymptomPrep(object):
                         for answer in answerArray:
                             if int(answer) not in rangetest:
                                 # ERROR
-                                updatestr = "value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values\n" % (col, j + 2, i + 1, header)
+                                updatestr = "Adult :: value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values\n" % (col, j + 2, i + 1, header)
                                 self.warningfile.write(updatestr)
                                 error = 1
         if error == 0:
