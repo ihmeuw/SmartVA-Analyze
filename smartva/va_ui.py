@@ -10,6 +10,7 @@ import wx
 import wx.html
 
 from smartva import config
+from smartva import prog_name
 from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
@@ -23,7 +24,7 @@ APP_QUIT = wx.ID_EXIT
 APP_ABOUT = wx.ID_ABOUT
 APP_DOCS = wx.NewId()
 
-APP_TITLE = 'SmartVA'
+APP_TITLE = prog_name
 
 MAX_PATH_LENGTH = 55
 
