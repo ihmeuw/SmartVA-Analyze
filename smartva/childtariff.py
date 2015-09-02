@@ -7,15 +7,13 @@ import platform
 import string
 import sys
 
-import wx
-
-import workerthread
 from smartva import config
 from smartva import childuniformtrain
 from smartva.hce_variables import child_hce
 from smartva.freetext_vars import child_freetext
 from smartva.vacauses import childcauses
 from smartva.short_form_remove import child_remove
+from smartva.loggers import status_logger
 
 
 # data structure we use to keep track of an manipulate data
@@ -47,8 +45,7 @@ class Tariff(object):
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
 
-        updatestr = "Child :: Processing tariffs\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Processing tariffs')
 
         tarifffile = 'tariffs-child.csv'
         validatedfile = 'validated-child.csv'
@@ -249,8 +246,7 @@ class Tariff(object):
                           row[headers.index('real_gender')])
             vacauselist.append(va)
 
-        updatestr = "Child :: Calculating scores for validated dataset. (This takes a few minutes)\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Calculating scores for validated dataset. (This takes a few minutes)')
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
         # ... 
@@ -264,9 +260,8 @@ class Tariff(object):
                 if self.want_abort == 1:
                     return
                 cnt = cnt + 1
-                progress = "Child :: Processing %s of %s" % (cnt, total)
                 if (cnt % 1000 == 0):
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+                    status_logger.info('Child :: Processing %s of %s' % (cnt, total))
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -281,11 +276,9 @@ class Tariff(object):
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
-        progress = "Child :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+        status_logger.info('Child :: Processing %s of %s' % (total, total))
 
-        updatestr = "Child :: Creating uniform training set\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
         # as the sample size
@@ -333,8 +326,7 @@ class Tariff(object):
             for va in vas:
                 uniformlist.append(va)
 
-        updatestr = "Child :: Generating cause rankings. (This takes a few minutes)\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Generating cause rankings. (This takes a few minutes)')
 
         total = len(vacauselist) * 21
         cnt = 0
@@ -345,9 +337,8 @@ class Tariff(object):
                 if self.want_abort == 1:
                     return
                 cnt = cnt + 1
-                progress = "Child :: Processing %s of %s" % (cnt, total)
                 if cnt % 10 == 0:
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+                    status_logger.info('Child :: Processing %s of %s' % (cnt, total))
                 cause = "cause" + str(i)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
@@ -379,8 +370,7 @@ class Tariff(object):
                 # answer as the original stata tool
                 ranklist[cause] = index + 1
             va.ranklist = ranklist
-        progress = "Child :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+        status_logger.info('Child :: Processing %s of %s' % (total, total))
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
@@ -404,8 +394,7 @@ class Tariff(object):
             for j, item in enumerate(sortedcauselist):
                 item[2].ranklist[cause] = j
 
-        updatestr = "Child :: Generating cutoffs\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Generating cutoffs')
 
         cutoffs = []
         for i in range(1, 22):
@@ -483,8 +472,7 @@ class Tariff(object):
                     multiple[va.sid].append(cause)
             for vakey in multiple.keys():
                 if len(multiple[vakey]) > 1:
-                    updatestr = "Child :: WARNING: VA %s had multiple matching results %s, using the first found \n" % (vakey, multiple[vakey])
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+                    status_logger.info('Child :: WARNING: VA %s had multiple matching results %s, using the first found' % (vakey, multiple[vakey]))
             if cause34 == '':
                 cause34 = 'Undetermined'
                 if self.iso3 is None:
@@ -560,8 +548,7 @@ class Tariff(object):
         for row in matrix:
             writer.writerow(row)
 
-        updatestr = "Child :: Done!\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Child :: Done!')
         return 1
 
     def round5(self, value):
