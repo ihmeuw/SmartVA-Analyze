@@ -23,8 +23,7 @@ generatedHeaders = ['g4_03b', 'c1_05b', 'c1_20b', 'c1_21b', 'c2_05b', 'c4_37b', 
 
 
 class PreSymptomPrep(object):
-    def __init__(self, notify_window, input_file, output_dir, warningfile, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, warningfile, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0

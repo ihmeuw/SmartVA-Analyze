@@ -98,7 +98,7 @@ class WorkerThread(threading.Thread):
         self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
         self.adultsym = adultsymptom.AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.shortform)
         self.adultresults = adulttariff.Tariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
-        self.childpresym = childpresymptom.PreSymptomPrep(self._notify_window, intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
+        self.childpresym = childpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
         self.childsym = childsymptom.ChildSymptomPrep(self._notify_window, intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.shortform)
         self.childresults = childtariff.Tariff(self._notify_window, intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(self._notify_window, intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
