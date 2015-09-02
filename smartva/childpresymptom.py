@@ -817,7 +817,7 @@ class PreSymptomPrep(object):
                     row[headers.index('c3_12')] = '0'
             elif c1_26 == '2' or c3_11 == '1':
                 c3_12 = row[headers.index('c3_12')]
-                if (c3_12 != '1'):
+                if c3_12 != '1':
                     updatestr = 'Child :: WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing\n' % (i + 2, headers.index('c3_12'))
                     self.warningfile.write(updatestr)
                     row[headers.index('c3_12')] = '1'
