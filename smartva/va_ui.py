@@ -48,15 +48,14 @@ class TextEntryStream(io.TextIOBase):
         return False
 
     def write(self, msg):
-        # self._text_entry.AppendText(msg)
-        if msg.startswith('Adult :: Processing') or msg.startswith('Child :: Processing') or msg.startswith(
-                'Neonate :: Processing'):
-            last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 1))
-            if last_line.startswith('Adult :: Processing') or last_line.startswith(
-                    'Child :: Processing') or last_line.startswith('Neonate :: Processing'):
+        # If processing, overwrite previous line.
+        # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
+        if re.match('(Adult|Child|Neonate) :: Processing \d+', msg):
+            last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 2))
+            if re.match('(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
                 position = self._text_entry.GetLastPosition()
-                self._text_entry.Remove(position - len(last_line), position)
+                self._text_entry.Remove(position - len(last_line) - 2, position)
                 self._text_entry.AppendText(msg)
             else:
                 self._text_entry.AppendText(msg)
