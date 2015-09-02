@@ -274,10 +274,10 @@ class ChildSymptomPrep(object):
                 row[index] = '1'
 
             # ensure all binary variables actually ARE 0 or 1:
-            for bin in binaryVars:
-                val = row[headers.index(bin)]
+            for var in binaryVars:
+                val = row[headers.index(var)]
                 if val == '' or val != '1':
-                    row[headers.index(bin)] = '0'
+                    row[headers.index(var)] = '0'
 
         # rename s2 -> age
         s2index = headers.index('s2')
