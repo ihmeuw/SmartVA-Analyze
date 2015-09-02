@@ -4,10 +4,8 @@ from collections import OrderedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
-import wx
 
-import workerthread
-
+from smartva.loggers import status_logger
 
 # labels for dict
 module_labels = ('adult', 'child', 'neonate')
@@ -109,8 +107,7 @@ class CSMFGrapher(object):
 
     def run(self):
 
-        updatestr = 'Making CSMF graphs\n'
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Making CSMF graphs')
 
         graph_data_unsorted = get_default_dict()
 
@@ -145,8 +142,7 @@ class CSMFGrapher(object):
                 graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1], reverse=True))
                 make_graph(module_key, self.output_dir)
 
-        updatestr = 'Finished making CSMF graphs\n'
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Finished making CSMF graphs')
 
     def abort(self):
         self.want_abort = 1
