@@ -812,13 +812,13 @@ class PreSymptomPrep(object):
             if c1_15 == '1':
                 c3_12 = row[headers.index('c3_12')]
                 if c3_12 != '0':
-                    status_logger.info('Child :: WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing' % (i + 2, headers.index('c3_12')))
+                    updatestr = 'Child :: WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing\n' % (i + 2, headers.index('c3_12'))
                     self.warningfile.write(updatestr)
                     row[headers.index('c3_12')] = '0'
             elif c1_26 == '2' or c3_11 == '1':
                 c3_12 = row[headers.index('c3_12')]
                 if (c3_12 != '1'):
-                    status_logger.info('Child :: WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing' % (i + 2, headers.index('c3_12')))
+                    updatestr = 'Child :: WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing\n' % (i + 2, headers.index('c3_12'))
                     self.warningfile.write(updatestr)
                     row[headers.index('c3_12')] = '1'
             c3_12 = row[headers.index('c3_12')]
@@ -1541,7 +1541,6 @@ class PreSymptomPrep(object):
 
     def printWarning(self, var, row_num, row, headers, child_defaultFill):
         updatestr = "Child :: WARNING: value at row %s col %s for variable %s should be blank, setting to default and continuing\n" % (row_num + 2, headers.index(var), var)
-        # wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         self.warningfile.write(updatestr)
         row[headers.index(var)] = str(child_defaultFill.get(var))
         self.warnings = 1
