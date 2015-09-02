@@ -47,11 +47,12 @@ class Tariff(object):
         tarifffile = 'tariffs-adult.csv'
         validatedfile = 'validated-adult.csv'
         undeterminedfile = 'adult_undetermined_weights'
-        if self.hce is None:
+
+        if not self.hce:
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
-#        if (platform.system() == "Windows" or platform.system() == "Darwin") and getattr(sys, 'frozen', None):
+
         if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-adult.csv')
             validatedfile = os.path.join(config.basedir, 'validated-adult.csv')
@@ -126,7 +127,7 @@ class Tariff(object):
             else:
                 undeterminedmatrix.append(row)
 
-        if self.hce is None:
+        if not self.hce:
             # remove all hce variables
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:
@@ -152,7 +153,7 @@ class Tariff(object):
                         del row[index]
                     validatedheaders.remove(col)
 
-        if self.freetext is None and self.hce is 'hce':
+        if self.freetext is None and self.hce:
             # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:

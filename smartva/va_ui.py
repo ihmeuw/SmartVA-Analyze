@@ -98,7 +98,7 @@ class vaUI(wx.Frame):
 
         self.input_file_path = ''
         self.output_folder_path = ''
-        self.hce = 'hce'
+        self.hce = True
         self.freetext = 'freetext'
         self.malaria = 'malaria'
         self.country = None
@@ -206,7 +206,7 @@ class vaUI(wx.Frame):
         country_box_sizer.Add(country_combo_box)
 
         hce_check_box = wx.CheckBox(parent_panel, label='Health Care Experience (HCE) variables')
-        hce_check_box.SetValue(True)
+        hce_check_box.SetValue(self.hce)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_hce, id=hce_check_box.GetId())
         self.enabled_widgets.append(hce_check_box)
 
@@ -316,11 +316,10 @@ class vaUI(wx.Frame):
             self.on_abort()
 
     def toggle_hce(self, event):
-        # just a toggle
-        if self.hce is 'hce':
-            self.hce = None
-        else:
-            self.hce = 'hce'
+        """
+        :type event: wx.CommandEvent
+        """
+        self.hce = event.EventObject.Value
 
     def toggle_freetext(self, event):
         # just a toggle
