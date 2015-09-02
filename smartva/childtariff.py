@@ -431,7 +431,7 @@ class Tariff(object):
         lowest = lowest + 1
 
         # check malaria vaue
-        if self.malaria is None:
+        if not self.malaria:
             for i, row in enumerate(matrix):
                 rankingsrow = vacauselist[i].ranklist
                 rankingsrow["cause29"] = lowest

@@ -478,7 +478,7 @@ class Tariff(object):
                 for cause in cancers:
                     rankingsrow["cause" + str(cause)] = lowest
 
-            if self.malaria is None:
+            if not self.malaria:
                 rankingsrow["cause29"] = lowest
 
         for va in vacauselist:

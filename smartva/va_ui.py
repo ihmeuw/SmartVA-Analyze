@@ -100,7 +100,7 @@ class vaUI(wx.Frame):
         self.output_folder_path = ''
         self.hce = True
         self.freetext = True
-        self.malaria = 'malaria'
+        self.malaria = True
         self.country = None
         self.running = False
         self.worker = None
@@ -216,7 +216,7 @@ class vaUI(wx.Frame):
         self.enabled_widgets.append(freetext_check_box)
 
         malaria_check_box = wx.CheckBox(parent_panel, label='Malaria region')
-        malaria_check_box.SetValue(True)
+        malaria_check_box.SetValue(self.malaria)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_malaria, id=malaria_check_box.GetId())
         self.enabled_widgets.append(malaria_check_box)
 
@@ -328,11 +328,10 @@ class vaUI(wx.Frame):
         self.freetext = event.EventObject.Value
 
     def toggle_malaria(self, event):
-        # just a toggle
-        if self.malaria is 'malaria':
-            self.malaria = None
-        else:
-            self.malaria = 'malaria'
+        """
+        :type event: wx.CommandEvent
+        """
+        self.malaria = event.EventObject.Value
 
     def change_country(self, event):
         if event.GetString() != COUNTRY_DEFAULT:
