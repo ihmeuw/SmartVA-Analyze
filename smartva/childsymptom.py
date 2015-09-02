@@ -25,8 +25,7 @@ binaryVars = ['s7', 's17', 's18', 's19', 's110', 's112', 's115', 's118', 's120',
 
 
 class ChildSymptomPrep(object):
-    def __init__(self, notify_window, input_file, output_dir, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
