@@ -103,7 +103,7 @@ class WorkerThread(threading.Thread):
         self.childresults = childtariff.Tariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
         self.neonatepresym = neonatepresymptom.PreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.warningfile, self.shortform)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir)
-        self.neonateresults = neonatetariff.Tariff(self._notify_window, intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.country, self.shortform)
+        self.neonateresults = neonatetariff.Tariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.country, self.shortform)
         self.causegrapher = causegrapher.CauseGrapher(self._notify_window, self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
         self.csmfgrapher = csmfgrapher.CSMFGrapher(self._notify_window, self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
 

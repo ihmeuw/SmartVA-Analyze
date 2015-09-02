@@ -29,8 +29,7 @@ class ScoredVA:
 
 
 class Tariff(object):
-    def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.hce = hce
