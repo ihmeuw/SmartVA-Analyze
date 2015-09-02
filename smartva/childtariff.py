@@ -152,7 +152,7 @@ class Tariff(object):
                         del row[index]
                     validatedheaders.remove(col)
 
-        if self.freetext is None and self.hce:
+        if not self.freetext and self.hce:
             # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:

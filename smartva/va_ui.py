@@ -99,7 +99,7 @@ class vaUI(wx.Frame):
         self.input_file_path = ''
         self.output_folder_path = ''
         self.hce = True
-        self.freetext = 'freetext'
+        self.freetext = True
         self.malaria = 'malaria'
         self.country = None
         self.running = False
@@ -211,7 +211,7 @@ class vaUI(wx.Frame):
         self.enabled_widgets.append(hce_check_box)
 
         freetext_check_box = wx.CheckBox(parent_panel, label='Free text variables')
-        freetext_check_box.SetValue(True)
+        freetext_check_box.SetValue(self.freetext)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_freetext, id=freetext_check_box.GetId())
         self.enabled_widgets.append(freetext_check_box)
 
@@ -322,11 +322,10 @@ class vaUI(wx.Frame):
         self.hce = event.EventObject.Value
 
     def toggle_freetext(self, event):
-        # just a toggle
-        if self.freetext is 'freetext':
-            self.freetext = None
-        else:
-            self.freetext = 'freetext'
+        """
+        :type event: wx.CommandEvent
+        """
+        self.freetext = event.EventObject.Value
 
     def toggle_malaria(self, event):
         # just a toggle
