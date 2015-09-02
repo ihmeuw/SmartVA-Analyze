@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import csv
 import os
 from collections import OrderedDict
@@ -11,17 +8,25 @@ import wx
 
 import workerthread
 
+
+# labels for dict
+module_labels = ('adult', 'child', 'neonate')
+
+
 # default dict for csmf graph
 def get_default_dict():
-
     default_dict = dict()
     for module in module_labels:
         default_dict[module] = dict()
     return default_dict
 
+
+# build ordered dict for values to be graphed. indexed by module
+graph_data = get_default_dict()
+
+
 # convert value from csv to key for dict
 def get_gender_key(gender_value):
-
     gender_key = 'unknown'
     if gender_value == 1:
         gender_key = 'female'
@@ -29,9 +34,9 @@ def get_gender_key(gender_value):
         gender_key = 'male'
     return gender_key
 
+
 # convert value from csv to key for dict
 def get_age_key(module_key, age_value):
-
     age_key = 'unknown'
     # TODO are age values correct for neonate and child?
     if module_key == 'neonate' and (age_value >= 0 and age_value <= 28):
@@ -52,19 +57,19 @@ def get_age_key(module_key, age_value):
         age_key = '60+ years'
     return age_key
 
+
 # make and save csmf graph
 def make_graph(module_key, output_dir):
-
     cause_keys = graph_data[module_key].keys()
     cause_fractions = graph_data[module_key].values()
 
     graph_title = module_key.capitalize() + ' CSMF'
-    graph_filename = graph_title.replace(' ','-').lower()
+    graph_filename = graph_title.replace(' ', '-').lower()
 
     max_value = 1
-    xlocations = np.arange(len(cause_keys)) # the x locations for the groups
+    xlocations = np.arange(len(cause_keys))  # the x locations for the groups
 
-    bar_width = .75 # the width of the bars
+    bar_width = .75  # the width of the bars
 
     # interactive mode off
     plt.ioff()
@@ -74,36 +79,28 @@ def make_graph(module_key, output_dir):
     ax.set_ylabel('Mortality fractions')
     ax.yaxis.grid()
 
-    ax.set_xticklabels(cause_keys,rotation=90)
+    ax.set_xticklabels(cause_keys, rotation=90)
     ax.set_xticks(xlocations)
 
-    ax.bar(xlocations, cause_fractions, bar_width, color='#C44440',align='center')
+    ax.bar(xlocations, cause_fractions, bar_width, color='#C44440', align='center')
 
-    #add whitespace at top of bar
+    # add whitespace at top of bar
     ax.set_ylim(top=max_value)
 
-    #add whitespace before first bar and after last
+    # add whitespace before first bar and after last
     plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
 
-    #add some spacing for rotated xlabels
+    # add some spacing for rotated xlabels
     plt.subplots_adjust(bottom=0.60)
 
-    plt.savefig(output_dir + os.sep + graph_filename +'-figure.png',dpi=150)
+    plt.savefig(output_dir + os.sep + graph_filename + '-figure.png', dpi=150)
 
     # clear the current figure
     plt.clf()
     plt.close()
 
-# labels for dict
-global module_labels
-module_labels = ('adult','child','neonate')
 
-# build ordered dict for values to be graphed. indexed by module
-global graph_data
-graph_data = get_default_dict()
-
-class CSMFGrapher():
-
+class CSMFGrapher(object):
     def __init__(self, notify_window, input_file, output_dir):
         self._notify_window = notify_window
         self.inputFilePath = input_file
@@ -123,7 +120,7 @@ class CSMFGrapher():
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
             try:
-                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-csmf.csv', module_key +'-csmf.csv'),'rU'))
+                csv_file = csv.DictReader(open(self.inputFilePath.replace('$module-csmf.csv', module_key + '-csmf.csv'), 'rU'))
 
                 module_errors[module_key] = 0
 
@@ -145,11 +142,11 @@ class CSMFGrapher():
         for module_key in module_labels:
             if module_errors[module_key] != 1:
                 # sort data in decreasing order
-                graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1],reverse=True))
-                make_graph(module_key,self.output_dir)
+                graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1], reverse=True))
+                make_graph(module_key, self.output_dir)
 
         updatestr = 'Finished making CSMF graphs\n'
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-    
+
     def abort(self):
         self.want_abort = 1
