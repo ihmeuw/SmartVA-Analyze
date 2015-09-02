@@ -1,6 +1,9 @@
 import click
 
 from smartva import prog_name, version
+from smartva import workerthread
+
+worker = None
 
 
 @click.command()
@@ -9,8 +12,8 @@ from smartva import prog_name, version
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables.')
 @click.version_option(version=version, prog_name=prog_name)
-@click.argument('input', type=click.File('rb'))
-@click.argument('output', type=click.Path(file_okay=False, dir_okay=True, writable=True))
+@click.argument('input', type=click.Path(file_okay=True, dir_okay=False, readable=True, exists=True))
+@click.argument('output', type=click.Path(file_okay=False, dir_okay=True, writable=True, exists=True))
 # @click.option('--config', help='Specify options in a YAML file.')
 # @click.option('--about', help='About this application.)
 def main(*args, **kwargs):
@@ -20,6 +23,15 @@ def main(*args, **kwargs):
     click.echo('freetext {}'.format(kwargs['freetext']))
     click.echo('input {}'.format(kwargs['input']))
     click.echo('output {}'.format(kwargs['output']))
+
+    global worker
+    worker = workerthread.WorkerThread(kwargs['input'], kwargs['hce'], kwargs['output'],
+                                       kwargs['freetext'], kwargs['malaria'], kwargs['country'],
+                                       completion_callback=completion)
+
+
+def completion(event):
+    print(event)
 
 
 if __name__ == '__main__':
