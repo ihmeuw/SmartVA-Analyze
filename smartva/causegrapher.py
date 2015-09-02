@@ -109,8 +109,7 @@ def make_graph(cause_key, output_dir):
 
 
 class CauseGrapher(object):
-    def __init__(self, notify_window, input_file, output_dir):
-        self._notify_window = notify_window
+    def __init__(self, input_file, output_dir):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
