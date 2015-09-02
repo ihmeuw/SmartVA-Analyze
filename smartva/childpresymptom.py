@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 import wx
 
+from smartva import defaultfill
 from answer_ranges import child_rangelist
 from presymptom_conversions import child_conversionVars
 from word_conversions import child_wordsToVars
@@ -35,9 +36,9 @@ class PreSymptomPrep(object):
     def run(self):
 
         if self.shortform:
-            from defaultfill import child_short as child_defaultFill
+            child_defaultFill = defaultfill.child_short
         else:
-            from defaultfill import child_defaultFill
+            child_defaultFill = defaultfill.child_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         self.warningfile.write("Child presymptom warnings:\n")
