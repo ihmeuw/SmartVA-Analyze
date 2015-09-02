@@ -6,10 +6,8 @@ from collections import OrderedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
-import wx
 
-import workerthread
-
+from smartva.loggers import status_logger
 
 # labels for dict
 module_labels = ('adult', 'child', 'neonate')
@@ -119,8 +117,7 @@ class CauseGrapher(object):
 
     def run(self):
 
-        updatestr = 'Making cause graphs\n'
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Making cause graphs')
 
         module_errors = {}
         for module_key in module_labels:
@@ -155,8 +152,7 @@ class CauseGrapher(object):
             if module_errors[module_key] != 1:
                 make_graph(cause_key, self.output_dir)
 
-        updatestr = 'Finished making cause graphs\n'
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Finished making cause graphs')
 
     def abort(self):
         self.want_abort = 1
