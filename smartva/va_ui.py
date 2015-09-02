@@ -13,7 +13,7 @@ from smartva import config
 from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
-from smartva.loggers import logger, status_logger
+from smartva.loggers import status_logger
 
 
 # TODO: pull out all strings
@@ -49,9 +49,11 @@ class TextEntryStream(io.TextIOBase):
 
     def write(self, msg):
         # self._text_entry.AppendText(msg)
-        if msg.startswith('Adult :: Processing') or msg.startswith('Child :: Processing') or msg.startswith('Neonate :: Processing'):
+        if msg.startswith('Adult :: Processing') or msg.startswith('Child :: Processing') or msg.startswith(
+                'Neonate :: Processing'):
             last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 1))
-            if last_line.startswith('Adult :: Processing') or last_line.startswith('Child :: Processing') or last_line.startswith('Neonate :: Processing'):
+            if last_line.startswith('Adult :: Processing') or last_line.startswith(
+                    'Child :: Processing') or last_line.startswith('Neonate :: Processing'):
                 # replace
                 position = self._text_entry.GetLastPosition()
                 self._text_entry.Remove(position - len(last_line), position)
@@ -104,7 +106,7 @@ class vaUI(wx.Frame):
         self.worker = None
         self.docs_window = None
         self.about_window = None
-        
+
         self.enabled_widgets = []
 
         self.chosen_file_text = None
@@ -119,8 +121,6 @@ class vaUI(wx.Frame):
         self.Show()
 
     def init_ui(self):
-        workerthread.EVT_RESULT(self, self.on_result)
-
         menu_bar = wx.MenuBar()
         file_menu = wx.Menu()
         help_menu = wx.Menu()
@@ -152,7 +152,8 @@ class vaUI(wx.Frame):
         scale_size = .35
         logo_file_path = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
         logo = wx.Image(logo_file_path, wx.BITMAP_TYPE_ANY)
-        scaled_image = logo.Scale(logo.GetWidth() * scale_size, logo.GetHeight() * scale_size, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        scaled_image = logo.Scale(logo.GetWidth() * scale_size, logo.GetHeight() * scale_size,
+                                  wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
 
         logo_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
         logo_box_sizer.AddStretchSpacer()
@@ -170,7 +171,8 @@ class vaUI(wx.Frame):
 
         choose_file_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
         choose_file_box_sizer.Add(choose_file_button, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
-        choose_file_box_sizer.Add(self.chosen_file_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        choose_file_box_sizer.Add(self.chosen_file_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP,
+                                  border=5)
 
         choose_input_static_box_sizer.Add(choose_file_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
@@ -185,7 +187,8 @@ class vaUI(wx.Frame):
 
         choose_folder_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
         choose_folder_box_sizer.Add(choose_folder_button, proportion=0, flag=wx.LEFT | wx.RIGHT, border=0)
-        choose_folder_box_sizer.Add(self.chosen_folder_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
+        choose_folder_box_sizer.Add(self.chosen_folder_text, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP,
+                                    border=5)
 
         choose_output_static_box_sizer.Add(choose_folder_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
@@ -300,8 +303,9 @@ class vaUI(wx.Frame):
             else:
                 self.action_button.SetLabel('Stop')
                 self.running = True
-                self.worker = workerthread.WorkerThread(self, self.input_file_path, self.hce, self.output_folder_path,
-                                                        self.freetext, self.malaria, self.country)
+                self.worker = workerthread.WorkerThread(self.input_file_path, self.hce, self.output_folder_path,
+                                                        self.freetext, self.malaria, self.country,
+                                                        completion_callback=self.on_result)
                 self.enable_ui(False)
                 self.increment_progress_bar()
 
@@ -344,7 +348,8 @@ class vaUI(wx.Frame):
         dialog.ShowModal()
 
     def on_quit(self, event):
-        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit ' + APP_TITLE, wx.YES_NO | wx.NO_DEFAULT)
+        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit ' + APP_TITLE,
+                                      wx.YES_NO | wx.NO_DEFAULT)
         pressed = quitDialog.ShowModal()
 
         if pressed == wx.ID_YES:
@@ -366,7 +371,13 @@ class vaUI(wx.Frame):
         self.about_window.Show()
 
     def on_result(self, event):
-        if event.data is None:
+        """
+        Completion callback.
+        :type event: workerthread.CompletionStatus
+        :param event:
+        :return:
+        """
+        if event is workerthread.CompletionStatus.ABORT:
             # If it's none we got an abort
             status_logger.info('Computation successfully aborted')
             self.action_button.Enable(True)
@@ -374,7 +385,7 @@ class vaUI(wx.Frame):
             self.enable_ui(True)
             self.status_gauge.SetValue(1)
             self.status_gauge.SetValue(0)
-        elif event.data is 'Done':
+        elif event is workerthread.CompletionStatus.DONE:
             # if it's done, then the algorithm is complete
             self.status_gauge.SetValue(1)
             status_logger.info('Process complete')
@@ -382,12 +393,6 @@ class vaUI(wx.Frame):
             self.enable_ui(True)
             self.status_gauge.SetValue(1)
             self.status_gauge.SetValue(0)
-
-        else:
-            # everything else is update status text
-            status_logger.info(event.data)
-            logger.warning('Got event: {}'.format(event.data))
-
 
     def on_abort(self):
         if self.worker:
