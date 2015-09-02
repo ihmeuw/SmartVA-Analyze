@@ -2,11 +2,8 @@ import csv
 import copy
 import os
 
-import wx
-
-import workerthread
 from smartva.symptom_conversions import neonate_conversionVars
-
+from smartva.loggers import status_logger
 
 # removed because they don't exist in the form:
 
@@ -45,8 +42,7 @@ class NeonateSymptomPrep(object):
         matrix = list()
         headers = list()
 
-        updatestr = "Neonate :: Processing symptom data\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info("Neonate :: Processing symptom data")
 
         first = 1
         # read in new .csv for processing
