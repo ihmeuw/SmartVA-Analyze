@@ -27,7 +27,7 @@ class ScoredVA:
         self.sid = sid
         self.age = age
         self.gender = gender
-            
+
 
 class Tariff():
     def __init__(self, notify_window, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
@@ -41,16 +41,16 @@ class Tariff():
         self.iso3 = country
         self.intermediate_dir = intermediate_dir
         self.shortform = shortform
-        
+
 
     def run(self):
         reader = csv.reader(open( self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
-        
+
         updatestr = "Child :: Processing tariffs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        
-        
+
+
         tarifffile = 'tariffs-child.csv'
         validatedfile = 'validated-child.csv'
         undeterminedfile = 'child_undetermined_weights'
@@ -62,74 +62,74 @@ class Tariff():
             tarifffile = os.path.join(config.basedir, 'tariffs-child.csv')
             validatedfile =  os.path.join(config.basedir, 'validated-child.csv')
             undeterminedfile = os.path.join(config.basedir,  undeterminedfile)
-        
+
         tariffreader = csv.reader(open(tarifffile, 'rU'))
         validatedreader = csv.reader(open(validatedfile, 'rU'))
         undeterminedreader = csv.reader(open(undeterminedfile, 'rU'))
-        
+
         matrix = list()
         headers = list()
-        
+
         tariffheaders = list()
         tariffmatrix = list()
-        
+
         validatedheaders = list()
         validatedmatrix = list()
-        
+
         undeterminedheaders = list()
         undeterminedmatrix = list()
-    
+
         first = 1
         # read in new .csv for processing
         # we add the generated headers later this time
         for row in reader:
             if first == 1:
-                for col in row:    
+                for col in row:
                     headers.append(col)
                 first = 0
-                    
+
             else:
                 matrix.append(row)
-                
+
         first = 1
         # read in new tariffs.csv for processing
         # we add the generated headers later this time
         for row in tariffreader:
             if first == 1:
-                for col in row:    
+                for col in row:
                     tariffheaders.append(col)
                 first = 0
-                    
+
             else:
                 tariffmatrix.append(row)
-                                
+
         first = 1
         # read in new validated .csv for processing
         # we add the generated headers later this time
         for row in validatedreader:
             if first == 1:
-                for col in row:    
+                for col in row:
                     validatedheaders.append(col)
                 first = 0
-                    
+
             else:
                 validatedmatrix.append(row)
-                
+
         if len(matrix) == 0:
             #no entries, just return
             return
-            
+
         first = 1
         # read in new undetermined .csv for processing
         for row in undeterminedreader:
             if first == 1:
-                for col in row:    
+                for col in row:
                     undeterminedheaders.append(col)
                 first = 0
-                    
+
             else:
                 undeterminedmatrix.append(row)
-            
+
         if self.hce is None:
             # remove all hce variables
             headers_copy = copy.deepcopy(headers)
@@ -139,7 +139,7 @@ class Tariff():
                     for row in matrix:
                         del row[index]
                     headers.remove(col)
-                
+
             tariffheaders_copy = copy.deepcopy(tariffheaders)
             for col in tariffheaders_copy:
                 if col in child_hce:
@@ -147,15 +147,15 @@ class Tariff():
                     for row in tariffmatrix:
                         del row[index]
                     tariffheaders.remove(col)
-            
+
             validatedheaders_copy = copy.deepcopy(validatedheaders)
-            for col in headers_copy:
+            for col in validatedheaders_copy:
                 if col in child_hce:
                     index = validatedheaders.index(col)
                     for row in validatedmatrix:
                         del row[index]
                     validatedheaders.remove(col)
-        
+
         if self.freetext is None and self.hce is 'hce':
             # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
             headers_copy = copy.deepcopy(headers)
@@ -165,7 +165,7 @@ class Tariff():
                     for row in matrix:
                         del row[index]
                     headers.remove(col)
-                
+
             tariffheaders_copy = copy.deepcopy(tariffheaders)
             for col in tariffheaders_copy:
                 if col in child_freetext:
@@ -173,15 +173,15 @@ class Tariff():
                     for row in tariffmatrix:
                         del row[index]
                     tariffheaders.remove(col)
-            
+
             validatedheaders_copy = copy.deepcopy(validatedheaders)
             for col in validatedheaders_copy:
                 if col in child_freetext:
                     index = validatedheaders.index(col)
                     for row in validatedmatrix:
                         del row[index]
-                    validatedheaders.remove(col)  
-    
+                    validatedheaders.remove(col)
+
         if self.shortform:
             for d in child_remove:
                 try:
@@ -190,13 +190,13 @@ class Tariff():
                     for row in matrix:
                         row[index] = 0
                     #del row[index]
-                    
+
                     tariffindex = tariffheaders.index(d)
                     #tariffheaders.remove(d)
                     for row in tariffmatrix:
                         #del row[tariffindex]
                         row[tariffindex] = 0
-                    
+
                     validatedindex = validatedheaders.index(d)
                     #validatedheaders.remove(d)
                     for row in validatedmatrix:
@@ -209,7 +209,7 @@ class Tariff():
 
 
         # list of cause1: s1, s2, s50, ... top 40 svars per cause
-        cause40s = {}        
+        cause40s = {}
         # for each cause, create a list with the top 40 's' variables     
         for i, row in enumerate(tariffmatrix):
             cause = row[0]
@@ -227,7 +227,7 @@ class Tariff():
             for val in sorteddict[:40]:
                 slist.append(val[0])
             cause40s[cause] = slist
-                
+
         # creates a list of causes/scores for each va.
         # va1 :: cause1/score, cause2/score...casue46/score
         # va2 :: cause1/score, cause2/score...
@@ -251,14 +251,14 @@ class Tariff():
             sid = row[headers.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])
             vacauselist.append(va)
-            
-       
+
+
         updatestr = "Child :: Calculating scores for validated dataset. (This takes a few minutes)\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))    
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
         # ... 
-        
+
         vavalidatedcauselist = []
         total = len(validatedmatrix) * 21
         cnt = 0
@@ -286,15 +286,15 @@ class Tariff():
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
         progress = "Child :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
 
         updatestr = "Child :: Creating uniform training set\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))        
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
         # as the sample size
         # also track row indexes of each cause
-        
+
         #va34 is the validated cause of death
         index = validatedheaders.index('va34')
         # count is a dictionary of {cause : count}
@@ -311,12 +311,12 @@ class Tariff():
                 # if the key does exist, increment it by 1
                 causecount[cause] = causecount[cause] + 1
                 causeindexes[cause].append(i)
-                            
+
         # now sort by size
         sortedcausecount = sorted(causecount.items(), key=lambda t: t[1], reverse=True)
         # sample size is the first (0th) element of the list, and the second (1th) item of that element
         samplesize = sortedcausecount[0][1]
-        
+
         #create new uniform training set using the frequencies file
         uniformtrain = {}
         for cause in range(1, 22):
@@ -328,7 +328,7 @@ class Tariff():
                 count = int(childuniformtrain.frequencies[sid])
                 for i in range(0, count):
                     uniformtrain[str(cause)].append(vavalidatedcauselist[causeindex])
-        
+
         # create a list of ALL the VAs in our uniform set
         uniformlist = []
         for key in uniformtrain.keys():
@@ -336,8 +336,8 @@ class Tariff():
             vas = uniformtrain[key]
             for va in vas:
                 uniformlist.append(va)
-        
-        
+
+
         updatestr = "Child :: Generating cause rankings. (This takes a few minutes)\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
@@ -368,7 +368,7 @@ class Tariff():
 
                 minlist = []
                 minval = None
-                
+
                 # loop through all the new scores, find the minimum value, store that index
                 # if there are multiple minimum values that are the same, take the mean of the indexes
                 for index, val in enumerate(sortedtariffs):
@@ -378,15 +378,15 @@ class Tariff():
                         minlist = [index]
                     elif val == minval:
                         minlist.append(index)
-                
+
                 index = sum(minlist)/float(len(minlist))
                 # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
                 ranklist[cause] = index+1
             va.ranklist = ranklist
         progress = "Child :: Processing %s of %s\n" % (total, total)
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress)) 
-            
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(progress))
+
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
@@ -399,9 +399,9 @@ class Tariff():
             for cause in va.ranklist.keys():
                 newrow.append(va.ranklist[cause])
             rankwriter.writerow(newrow)
-                
 
-            
+
+
         for i in range(1, 22):
             cause = "cause" + str(i)
             causelist = []
@@ -410,12 +410,12 @@ class Tariff():
             sortedcauselist = sorted(causelist, key=lambda t:t[1], reverse=True)
             for j, item in enumerate(sortedcauselist):
                 item[2].ranklist[cause] = j
-                
-       
-        
+
+
+
         updatestr = "Child :: Generating cutoffs\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
-        
+
         cutoffs = []
         for i in range(1, 22):
             causelist = []
@@ -435,13 +435,13 @@ class Tariff():
             #make it an int, don't round
             index = int(len(locallist) * .95)
             cutoffs.append(locallist[index])
-        
-                        
+
+
         f = open(self.intermediate_dir + os.sep + 'child-cutoffs.txt','w')
         for i, cutoff in enumerate(cutoffs):
             f.write(str(i+1) + " : " + str(cutoff) + "\n")
         f.close()
-        
+
         # lowest rank is actually the biggest number
         lowest = 0
         # find the lowest rank and then add 1 to it
@@ -450,21 +450,21 @@ class Tariff():
                 if float(va.ranklist[cause]) > 0 and float(va.ranklist[cause]) > lowest:
                         lowest = float(va.ranklist[cause])
         lowest = lowest + 1
-        
+
         # check malaria vaue
         if self.malaria is None:
             for i, row in enumerate(matrix):
                 rankingsrow = vacauselist[i].ranklist
                 rankingsrow["cause29"] = lowest
-        
+
         # if a VA has a tariff score less than 0 for a certain cause,
         # replace the rank for that cause with the lowest possible rank
         for va in vacauselist:
             for cause in va.causescores.keys():
                 if float(va.causescores[cause]) < 0:
                    va.ranklist[cause] = lowest
-	
-	        
+
+
         for va in vacauselist:
             for i in range(1, 22):
                 if float(va.ranklist["cause"+str(i)]) > float(cutoffs[i-1]):
@@ -473,11 +473,11 @@ class Tariff():
                     va.ranklist["cause"+str(i)] = lowest
                 elif float(va.causescores["cause"+str(i)]) < 5.0:
                     va.ranklist["cause"+str(i)] = lowest
-                    
-        
+
+
         causecounts = {}
         rankwriter = csv.writer(open(self.output_dir + os.sep + 'child-predictions.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])    
+        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
         for va in vacauselist:
             causescore = lowest
             realcause = 'Undetermined'
@@ -529,19 +529,19 @@ class Tariff():
                 else:
                     causecounts[cause34] = 1.0
             rankwriter.writerow([va.sid, causenum, cause34, va.age, va.gender])
-        
+
         csmfwriter = csv.writer(open(self.output_dir + os.sep + 'child-csmf.csv', 'wb', buffering=0))
         csmfheaders = ["cause", "CSMF"]
         csmfwriter.writerow(csmfheaders)
         for causekey in causecounts.keys():
             percent = float(causecounts[causekey])/float(sum(causecounts.values()))
-            csmfwriter.writerow([causekey, percent])            
+            csmfwriter.writerow([causekey, percent])
 
         # TODO: refactor this test so that it is exercised before
         # merging new pull requests
         # assert int(sum(causecounts.values())) == len(matrix), \
         #              'CSMF must sum to one'
-            
+
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-ranks.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
@@ -554,7 +554,7 @@ class Tariff():
             for cause in va.ranklist.keys():
                 newrow.append(va.ranklist[cause])
             rankwriter.writerow(newrow)
-            
+
         tariffwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-scores.csv', 'wb', buffering=0))
         headerrow = []
         headerrow.append("sid")
@@ -567,23 +567,23 @@ class Tariff():
             for cause in va.causescores.keys():
                 newrow.append(va.causescores[cause])
             tariffwriter.writerow(newrow)
-        
+
 
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)
-        
-                
+
+
         updatestr = "Child :: Done!\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))             
-        return 1   
-        
+        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        return 1
+
     def round5(self, value):
         return round(value/Decimal(.5))*.5
-        
+
     def abort(self):
         self.want_abort = 1
-        
-    
-        
-        
+
+
+
+
