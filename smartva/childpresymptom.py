@@ -1,17 +1,16 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
-
 import csv
-import string
-import wx
 import copy
-import workerthread
-import os
 from datetime import date
+import os
+
 from dateutil.relativedelta import relativedelta
+from stemming.porter2 import stem
+import wx
+
 from answer_ranges import child_rangelist
 from presymptom_conversions import child_conversionVars
 from word_conversions import child_wordsToVars
-from stemming.porter2 import stem
+import workerthread
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
