@@ -5,6 +5,7 @@ import math
 import os
 import platform
 import string
+import sys
 
 from smartva import config
 from smartva import neonateuniformtrain
@@ -53,7 +54,7 @@ class Tariff(object):
             undeterminedfile = undeterminedfile + "-hce0.csv"
         else:
             undeterminedfile = undeterminedfile + "-hce1.csv"
-        import sys  # gma
+
         if getattr(sys, 'frozen', None) or platform.system() == "Windows":
             tarifffile = os.path.join(config.basedir, 'tariffs-neonate.csv')
             validatedfile = os.path.join(config.basedir, 'validated-neonate.csv')
