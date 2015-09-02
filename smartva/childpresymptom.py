@@ -46,8 +46,8 @@ class PreSymptomPrep(object):
         updatestr = "Child :: Processing presymptom data\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
-        matrix = list()
-        headers = list()
+        matrix = []
+        headers = []
 
         first = 1
         # read in new .csv for processing
@@ -100,7 +100,6 @@ class PreSymptomPrep(object):
             for h in generatedHeaders:
                 row.append("0")
 
-                # verify that answer is within legal bounds
         error = 0
         updatestr = "Child :: Verifying answers fall within legal bounds\n"
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -127,8 +126,7 @@ class PreSymptomPrep(object):
             updatestr = "Child :: WARNINGS found, please check %s\n" % self.warningfile.name
             wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
 
-
-            # TODO: this wasn't here prior to short form edits, but I think it should have been all along...?
+        # TODO: this wasn't here prior to short form edits, but I think it should have been all along...?
         # do the calculations for the generated variables:
         # i.e. recode
         for row in matrix:
@@ -224,9 +222,6 @@ class PreSymptomPrep(object):
             if temp != '4':
                 # row[index] = row[headers_old.index('child_4_33a')]
                 row[index] = '0'
-
-
-
 
             # added for shortform
             if self.shortform:
@@ -823,7 +818,7 @@ class PreSymptomPrep(object):
             # This is a unique case because c3_12 can have different 'default' values depending on other variables
             if c1_15 == '1':
                 c3_12 = row[headers.index('c3_12')]
-                if (c3_12 != '0'):
+                if c3_12 != '0':
                     updatestr = "Child :: WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing\n" % (
                     i + 2, headers.index('c3_12'))
                     wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
@@ -1215,7 +1210,7 @@ class PreSymptomPrep(object):
 
         # special case: 'child_4_50b' should be set to 1000 if it's missing
         for row in matrix:
-            if row[headers.index('child_4_50b')] == '' or row[headers.index('child_4_50b')] == None:
+            if row[headers.index('child_4_50b')] == '' or row[headers.index('child_4_50b')] is None:
                 row[headers.index('child_4_50b')] = 1000
 
         if self.warnings == 1:
@@ -1262,6 +1257,7 @@ class PreSymptomPrep(object):
 
         freeText = ['c5_09', 'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
 
+        # TODO - fix unused variable
         keyWords = child_wordsToVars.keys()
 
         # we've already lowercased and removed numbers at this point
@@ -1388,41 +1384,41 @@ class PreSymptomPrep(object):
             try:
                 c5_07_1b = headers.index('c5_07_1b')
                 c5_07_2b = headers.index('c5_07_2b')
-                if (row[c5_07_1b] == '0' or row[c5_07_1b] == '9999' or row[c5_07_1b] == '99' or row[c5_07_1b] == '999'):
+                if row[c5_07_1b] == '0' or row[c5_07_1b] == '9999' or row[c5_07_1b] == '99' or row[c5_07_1b] == '999':
                     row[c5_07_1b] = ''
-                if (row[c5_07_2b] == '0' or row[c5_07_2b] == '9999' or row[c5_07_2b] == '99' or row[c5_07_2b] == '999'):
+                if row[c5_07_2b] == '0' or row[c5_07_2b] == '9999' or row[c5_07_2b] == '99' or row[c5_07_2b] == '999':
                     row[c5_07_2b] = ''
 
                 # Date of birth - clean up so you can get at least an estimated age
                 g5_01d = headers.index('g5_01d')
-                if (row[g5_01d] == '99' or row[g5_01d] == ''):
+                if row[g5_01d] == '99' or row[g5_01d] == '':
                     row[g5_01d] = 1
                 g5_01m = headers.index('g5_01m')
-                if (row[g5_01m] == '99' or row[g5_01m] == ''):
+                if row[g5_01m] == '99' or row[g5_01m] == '':
                     row[g5_01m] = 1
                 g5_01y = headers.index('g5_01y')
-                if (row[g5_01y] == '999' or row[g5_01y] == ''):
+                if row[g5_01y] == '999' or row[g5_01y] == '':
                     row[g5_01y] = 0
 
                 # clean up medical record dates
                 c5_06_1d = headers.index('c5_06_1d')
-                if row[c5_06_1d] == '99' or row[c5_06_1d] == '' or row[c5_06_1d] == None:
+                if row[c5_06_1d] == '99' or row[c5_06_1d] == '' or row[c5_06_1d] is None:
                     row[c5_06_1d] = 1
                 c5_06_1m = headers.index('c5_06_1m')
-                if row[c5_06_1m] == '99' or row[c5_06_1m] == '' or row[c5_06_1m] == None:
+                if row[c5_06_1m] == '99' or row[c5_06_1m] == '' or row[c5_06_1m] is None:
                     row[c5_06_1m] = 1
                 c5_06_1y = headers.index('c5_06_1y')
-                if row[c5_06_1y] == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] == None:
+                if row[c5_06_1y] == '9999' or row[c5_06_1y] == '' or row[c5_06_1y] is None:
                     row[c5_06_1y] = 0
 
                 c5_06_2d = headers.index('c5_06_2d')
-                if row[c5_06_2d] == '99' or row[c5_06_2d] == '' or row[c5_06_2d] == None:
+                if row[c5_06_2d] == '99' or row[c5_06_2d] == '' or row[c5_06_2d] is None:
                     row[c5_06_2d] = 1
                 c5_06_2m = headers.index('c5_06_2m')
-                if row[c5_06_2m] == '99' or row[c5_06_2m] == '' or row[c5_06_2m] == None:
+                if row[c5_06_2m] == '99' or row[c5_06_2m] == '' or row[c5_06_2m] is None:
                     row[c5_06_2m] = 1
                 c5_06_2y = headers.index('c5_06_2y')
-                if row[c5_06_2y] == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] == None:
+                if row[c5_06_2y] == '9999' or row[c5_06_2y] == '' or row[c5_06_2y] is None:
                     row[c5_06_2y] = 0
 
                 knownAge = True
@@ -1528,6 +1524,7 @@ class PreSymptomPrep(object):
                                 if weight_kg < female_sd2[month]:
                                     row[headers.index('s181')] = 1
             except ValueError as e:
+                # TODO - Fix this mess.
                 updatestr = "Error in row: %s\n" % (row_i + 2)  # python starts on 0, excel starts on 1, excel first row is headers
                 updatestr = updatestr + e.message
                 wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
