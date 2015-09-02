@@ -8,10 +8,11 @@ from stemming.porter2 import stem
 import wx
 
 from smartva import defaultfill
-from answer_ranges import child_rangelist
-from presymptom_conversions import child_conversionVars
-from word_conversions import child_wordsToVars
 import workerthread
+from smartva.answer_ranges import child_rangelist
+from smartva.presymptom_conversions import child_conversionVars
+from smartva.word_conversions import child_wordsToVars
+from smartva.loggers import status_logger
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
