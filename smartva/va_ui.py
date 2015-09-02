@@ -370,7 +370,7 @@ class vaUI(wx.Frame):
     def on_result(self, event):
         """
         Completion callback.
-        :type event: workerthread.CompletionStatus
+        :type event: int
         :param event:
         :return:
         """
@@ -430,7 +430,3 @@ def main():
         app.SetAppName(APP_TITLE)
         vaUI(None, title=APP_TITLE)
         app.MainLoop()
-
-
-if __name__ == '__main__':
-    main()
