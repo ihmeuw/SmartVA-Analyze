@@ -5,12 +5,11 @@ import os
 
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
-import wx
 
-import workerthread
 from smartva.answer_ranges import neonate_rangelist
 from smartva.presymptom_conversions import neonate_conversionVars
 from smartva.word_conversions import neonate_wordsToVars
+from smartva.loggers import status_logger
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -42,8 +41,7 @@ class PreSymptomPrep(object):
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         self.warningfile.write("Neonate presymptom warnings:\n")
 
-        updatestr = "Neonate :: Processing presymptom data\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Neonate :: Processing presymptom data')
 
         matrix = list()
         headers = list()
@@ -61,8 +59,7 @@ class PreSymptomPrep(object):
                 matrix.append(row)
 
         if len(matrix) < 1:
-            updatestr = "Neonate :: No data, skipping module.\n"
-            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            status_logger.info('Neonate :: No data, skipping module.')
             return 0
         childwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-presymptom.csv', 'wb', buffering=0))
 
@@ -98,8 +95,7 @@ class PreSymptomPrep(object):
                 row.append("0")
 
         error = 0
-        updatestr = "Neonate :: Verifying answers fall within legal bounds\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Neonate :: Verifying answers fall within legal bounds')
         for j, row in enumerate(matrix):
             for i, col in enumerate(row):
                 header = headers[i]
@@ -117,11 +113,9 @@ class PreSymptomPrep(object):
                                 error = 1
 
         if error == 0:
-            updatestr = "Neonate :: Answers verified\n"
-            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            status_logger.info('Neonate :: Answers verified')
         else:
-            updatestr = "Neonate :: WARNINGS found, please check %s\n" % self.warningfile.name
-            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            status_logger.info('Neonate :: WARNINGS found, please check %s' % self.warningfile.name)
 
         # do the calculations for the generated variables:
         # i.e. recode
@@ -810,14 +804,12 @@ class PreSymptomPrep(object):
                 c3_12 = row[headers.index('c3_12')]
                 if c3_12 != '0':
                     updatestr = "Child :: WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing\n" % (i + 2, headers.index('c3_12'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
                     row[headers.index('c3_12')] = '0'
             elif c1_26 == '2' or c3_11 == '1':
                 c3_12 = row[headers.index('c3_12')]
                 if c3_12 != '1':
                     updatestr = "Child :: WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing\n" % (i + 2, headers.index('c3_12'))
-                    wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                     self.warningfile.write(updatestr)
                     row[headers.index('c3_12')] = '1'
             c3_12 = row[headers.index('c3_12')]
@@ -1191,12 +1183,10 @@ class PreSymptomPrep(object):
                     self.printWarning('c5_07_2b', i, row, headers, neonate_defaultFill)
 
         if self.warnings == 1:
-            updatestr = "Neonate :: WARNINGS found, please check %s\n" % self.warningfile.name
-            wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+            status_logger.info('Neonate :: WARNINGS found, please check %s' % self.warningfile.name)
 
         # fill in missing values:
-        updatestr = "Neonate :: Filling in default values for empty columns\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Neonate :: Filling in default values for empty columns')
         for row in matrix:
             for i, col in enumerate(row):
                 header = headers[i]
@@ -1204,8 +1194,7 @@ class PreSymptomPrep(object):
                 if default is not None and col == '':
                     row[i] = neonate_defaultFill[header]
 
-        updatestr = "Neonate :: Analyzing free text\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Neonate :: Analyzing free text')
 
         if self.shortform:
             for row in matrix:
@@ -1234,8 +1223,7 @@ class PreSymptomPrep(object):
                 self.processFreeText(answer, row, headers)
 
         # fix duration variables
-        updatestr = "Neonate :: Processing duration variables\n"
-        wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        status_logger.info('Neonate :: Processing duration variables')
         durationVars = ['c1_05', 'c1_20', 'c1_21', 'c1_25', 'c2_02', 'c2_05', 'c2_10', 'c3_14', 'c3_18', 'c3_19',
                         'c3_21', 'c3_22', 'c3_27', 'c3_28', 'c3_30', 'c3_31', 'c4_02', 'c4_08', 'c4_10', 'c4_13',
                         'c4_17', 'c4_19', 'c4_33', 'c4_37', 'c4_49']
@@ -1433,11 +1421,10 @@ class PreSymptomPrep(object):
             except ValueError as e:
                 updatestr = "Error in row: %s\n" % (row_i + 1)
                 updatestr = updatestr + e.message
-                wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
                 self.warningfile.write(updatestr)
                 import sys
-                self.exc_info = sys.exc_info()
-                raise self.exc_info[1], None, self.exc_info[2]
+                exc_info = sys.exc_info()
+                raise exc_info[1], None, exc_info[2]
 
         childwriter.writerow(headers)
         for row in matrix:
@@ -1460,9 +1447,7 @@ class PreSymptomPrep(object):
                     row[sindex] = '1'
 
     def printWarning(self, var, row_num, row, headers, neonate_defaultFill):
-        updatestr = "Neonate :: WARNING: value at row %s col %s for variable %s should be blank, setting to default and continuing\n" % (
-        row_num + 2, headers.index(var), var)
-        # wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
+        updatestr = "Neonate :: WARNING: value at row %s col %s for variable %s should be blank, setting to default and continuing\n" % (row_num + 2, headers.index(var), var)
         self.warningfile.write(updatestr)
         row[headers.index(var)] = str(neonate_defaultFill.get(var))
         self.warnings = 1
