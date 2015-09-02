@@ -31,6 +31,16 @@ class ScoredVA:
 
 class Tariff(object):
     def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
+        """
+        :type input_file: str
+        :type output_dir: str
+        :type intermediate_dir: str
+        :type hce: bool
+        :type freetext: bool
+        :type malaria: bool
+        :type country: str
+        :type shortform: bool
+        """
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.hce = hce

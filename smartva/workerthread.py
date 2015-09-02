@@ -27,7 +27,16 @@ class WorkerThread(threading.Thread):
     """Worker Thread Class."""
 
     def __init__(self, input_file, hce, output_dir, freetext, malaria, country, completion_callback):
-        """Init Worker Thread Class."""
+        """
+        Init Worker Thread Class.
+        :type input_file: str
+        :type hce: bool
+        :type output_dir: str
+        :type freetext: bool
+        :type malaria: bool
+        :type country: str
+        :type completion_callback: callable
+        """
         threading.Thread.__init__(self)
         self._completion_callback = completion_callback
         self._want_abort = 0
