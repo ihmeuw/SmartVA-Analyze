@@ -1,24 +1,21 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
-
-import csv
-import string
 import copy
-import math
+import csv
 from decimal import Decimal
+import math
 import os
 import platform
+import string
 import sys
 
 import wx
 
 import workerthread
-import childuniformtrain
-from hce_variables import child_hce
-from freetext_vars import child_freetext
-from vacauses import childcauses
-import config
-from short_form_remove import child_remove
-
+from smartva import config
+from smartva import childuniformtrain
+from smartva.hce_variables import child_hce
+from smartva.freetext_vars import child_freetext
+from smartva.vacauses import childcauses
+from smartva.short_form_remove import child_remove
 
 
 # data structure we use to keep track of an manipulate data
