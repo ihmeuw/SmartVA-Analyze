@@ -1,17 +1,16 @@
-#!/opt/virtualenvs/ihme-va/bin/pythonw
-
-import csv
-import string
-import wx
 import copy
-import workerthread
-import os
+import csv
 from datetime import date
+import os
+
 from dateutil.relativedelta import relativedelta
-from answer_ranges import neonate_rangelist
-from presymptom_conversions import neonate_conversionVars
-from word_conversions import neonate_wordsToVars
 from stemming.porter2 import stem
+import wx
+
+import workerthread
+from smartva.answer_ranges import neonate_rangelist
+from smartva.presymptom_conversions import neonate_conversionVars
+from smartva.word_conversions import neonate_wordsToVars
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
