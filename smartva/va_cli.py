@@ -1,12 +1,19 @@
-import signal
 import click
+import logging
+import signal
 import sys
 
 from smartva import prog_name, version
 from smartva import workerthread
 from smartva.countries import COUNTRIES, COUNTRY_DEFAULT
+from smartva.loggers import status_logger
 
 worker = None
+
+
+def configure_logger():
+    console_handler = logging.StreamHandler()
+    status_logger.addHandler(console_handler)
 
 
 def check_country(ctx, param, value):
@@ -23,7 +30,7 @@ def check_country(ctx, param, value):
 
 @click.command()
 @click.option('--country', default=COUNTRY_DEFAULT, callback=check_country,
-              help='Data origin country (abbreviation). "LIST" to display all.')
+              help='Data origin country abbreviation. "LIST" displays all. Default is "{}".'.format(COUNTRY_DEFAULT))
 @click.option('--malaria', default=True, type=click.BOOL, help='Data is a from Malaria region.')
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables.')
@@ -33,13 +40,17 @@ def check_country(ctx, param, value):
 # @click.option('--config', help='Specify options in a YAML file.')
 # @click.option('--about', help='About this application.)
 def main(*args, **kwargs):
-    click.echo('Starting analysis with options:')
-    click.echo('- Input file: {}'.format(kwargs['input']))
-    click.echo('- Output folder: {}'.format(kwargs['output']))
-    click.echo('- Country: {}'.format(kwargs['country']))
-    click.echo('- Malaria Region: {}'.format(kwargs['malaria']))
-    click.echo('- HCE variables: {}'.format(kwargs['hce']))
-    click.echo('- Free text variables: {}'.format(kwargs['freetext']))
+    configure_logger()
+
+    status_logger.info('')
+    status_logger.info('Starting analysis with options:')
+    status_logger.info('- Input file: {}'.format(kwargs['input']))
+    status_logger.info('- Output folder: {}'.format(kwargs['output']))
+    status_logger.info('- Country: {}'.format(kwargs['country']))
+    status_logger.info('- Malaria Region: {}'.format(kwargs['malaria']))
+    status_logger.info('- HCE variables: {}'.format(kwargs['hce']))
+    status_logger.info('- Free text variables: {}'.format(kwargs['freetext']))
+    status_logger.info('')
 
     # Note - does not work on Windows with Python 2.7, does work elsewhere.
     _init_handle_shutdown()
@@ -69,4 +80,7 @@ def _init_handle_shutdown():
 
 def _shutdown(signum, frame):
     global worker
-    worker.abort()
+    try:
+        worker.abort()
+    except AttributeError:
+        pass  # Worker has not been started.
