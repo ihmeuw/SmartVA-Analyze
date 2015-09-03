@@ -33,12 +33,13 @@ def check_country(ctx, param, value):
 # @click.option('--config', help='Specify options in a YAML file.')
 # @click.option('--about', help='About this application.)
 def main(*args, **kwargs):
-    click.echo('country {}'.format(kwargs['country']))
-    click.echo('malaria {}'.format(kwargs['malaria']))
-    click.echo('hce {}'.format(kwargs['hce']))
-    click.echo('freetext {}'.format(kwargs['freetext']))
-    click.echo('input {}'.format(kwargs['input']))
-    click.echo('output {}'.format(kwargs['output']))
+    click.echo('Starting analysis with options:')
+    click.echo('- Input file: {}'.format(kwargs['input']))
+    click.echo('- Output folder: {}'.format(kwargs['output']))
+    click.echo('- Country: {}'.format(kwargs['country']))
+    click.echo('- Malaria Region: {}'.format(kwargs['malaria']))
+    click.echo('- HCE variables: {}'.format(kwargs['hce']))
+    click.echo('- Free text variables: {}'.format(kwargs['freetext']))
 
     # Note - does not work on Windows with Python 2.7, does work elsewhere.
     _init_handle_shutdown()
