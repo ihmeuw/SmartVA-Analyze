@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['smartva/va_ui.py'],
+a = Analysis(['app.py'],
              hiddenimports=[],
              hookspath=None,
              runtime_hooks=None)
@@ -11,7 +11,8 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=False,
-          console=False , icon='pkg/icon.icns')
+          console=True,
+          icon='pkg/icon.icns')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
