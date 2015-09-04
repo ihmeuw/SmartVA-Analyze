@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 a = Analysis(['app.py'],
-             hiddenimports=[],
-             hookspath=None,
+             hiddenimports=None,
+             hookspath=['pkg/hooks'],
              runtime_hooks=None)
 for d in a.datas:
   if 'pyconfig' in d[0]:
