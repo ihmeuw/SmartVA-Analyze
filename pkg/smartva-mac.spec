@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['app.py'],
-             hiddenimports=[],
+             hiddenimports=None,
              hookspath=['pkg/hooks'],
              runtime_hooks=None)
 pyz = PYZ(a.pure)
