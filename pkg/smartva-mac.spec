@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 a = Analysis(['app.py'],
-             hiddenimports=[],
-             hookspath=None,
+             hiddenimports=None,
+             hookspath=['pkg/hooks'],
              runtime_hooks=None)
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
