@@ -1,0 +1,17 @@
+click
+colorama
+distribute
+matplotlib
+numpy
+pip
+py
+PyInstaller
+pyparsing
+pytest
+python-dateutil
+pytz
+setuptools
+six
+stemming
+tornado
+wheel
