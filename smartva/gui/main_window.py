@@ -115,33 +115,35 @@ class vaUI(wx.Frame):
         self.status_gauge = None
         self.action_button = None
 
-        self.init_ui()
+        self._init_menu_bar()
+        self._init_ui()
 
         self.Center()
         self.Show()
 
-    def init_ui(self):
-        menu_bar = wx.MenuBar()
+    def _init_menu_bar(self):
         file_menu = wx.Menu()
         help_menu = wx.Menu()
 
         quit_menu_item = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
-        about_menu_item = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
-        docs_menu_item = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
-
+        self.Bind(wx.EVT_MENU, self.on_quit, id=APP_QUIT)
         file_menu.AppendItem(quit_menu_item)
+
+        about_menu_item = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
+        self.Bind(wx.EVT_MENU, self.on_about, id=APP_ABOUT)
         help_menu.AppendItem(about_menu_item)
+
+        docs_menu_item = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
+        self.Bind(wx.EVT_MENU, self.on_docs, id=APP_DOCS)
         help_menu.AppendItem(docs_menu_item)
 
+        menu_bar = wx.MenuBar()
         menu_bar.Append(file_menu, '&File')
         menu_bar.Append(help_menu, '&About')
-
-        self.Bind(wx.EVT_MENU, self.on_quit, id=APP_QUIT)
-        self.Bind(wx.EVT_MENU, self.on_about, id=APP_ABOUT)
-        self.Bind(wx.EVT_MENU, self.on_docs, id=APP_DOCS)
-
-        self.Bind(wx.EVT_CLOSE, self.on_quit)
         self.SetMenuBar(menu_bar)
+
+    def _init_ui(self):
+        self.Bind(wx.EVT_CLOSE, self.on_quit)
 
         parent_panel = wx.ScrolledWindow(self)
         parent_panel.SetScrollbars(1, 1, 1, 1)
