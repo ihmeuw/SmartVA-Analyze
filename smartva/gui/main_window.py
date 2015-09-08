@@ -345,17 +345,16 @@ class vaUI(wx.Frame):
         dialog.ShowModal()
 
     def on_quit(self, event):
-        quitDialog = wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit ' + APP_TITLE,
-                                      wx.YES_NO | wx.NO_DEFAULT)
-        pressed = quitDialog.ShowModal()
-
-        if pressed == wx.ID_YES:
-            self.on_abort()
-            self.Destroy()
-            if self.about_window:
-                self.about_window.Close()
-            if self.docs_window:
-                self.docs_window.Close()
+        """
+        Quit, without showing a quit dialog.
+        :param event: Not used
+        """
+        self.on_abort()
+        if self.about_window:
+            self.about_window.Close()
+        if self.docs_window:
+            self.docs_window.Close()
+        self.Destroy()
 
     def on_docs(self, event):
         self.docs_window = vaDocs(None)
