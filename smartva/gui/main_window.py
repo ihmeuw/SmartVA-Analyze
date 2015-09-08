@@ -338,13 +338,13 @@ class vaUI(wx.Frame):
         """
         :type event: wx.CommandEvent
         """
-        self.freetext = event.EventObject.Value
+        self.freetext = event.EventObject.IsChecked()
 
     def toggle_malaria(self, event):
         """
         :type event: wx.CommandEvent
         """
-        self.malaria = event.EventObject.Value
+        self.malaria = event.EventObject.IsChecked()
 
     def change_country(self, event):
         if event.GetString() != COUNTRY_DEFAULT:
