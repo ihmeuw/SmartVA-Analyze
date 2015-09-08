@@ -131,7 +131,7 @@ class vaUI(wx.Frame):
         menu_bar.Append(file_menu, title='&File')
 
         quit_menu_item = wx.MenuItem(file_menu, id=APP_QUIT, text='&Quit\tCtrl+Q')
-        self.Bind(wx.EVT_MENU, handler=self.on_quit, id=APP_QUIT)
+        self.Bind(wx.EVT_MENU, handler=self.on_quit, id=quit_menu_item.GetId())
         file_menu.AppendItem(quit_menu_item)
 
         # Help Menu
@@ -139,7 +139,7 @@ class vaUI(wx.Frame):
         menu_bar.Append(help_menu, title='&About')
 
         about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
-        self.Bind(wx.EVT_MENU, handler=self.on_about, id=APP_ABOUT)
+        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
         help_menu.AppendItem(about_menu_item)
 
         docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
