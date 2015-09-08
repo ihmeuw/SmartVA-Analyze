@@ -125,21 +125,21 @@ class vaUI(wx.Frame):
         file_menu = wx.Menu()
         help_menu = wx.Menu()
 
-        quit_menu_item = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
-        self.Bind(wx.EVT_MENU, self.on_quit, id=APP_QUIT)
+        quit_menu_item = wx.MenuItem(file_menu, id=APP_QUIT, text='&Quit\tCtrl+Q')
+        self.Bind(wx.EVT_MENU, handler=self.on_quit, id=APP_QUIT)
         file_menu.AppendItem(quit_menu_item)
 
-        about_menu_item = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
-        self.Bind(wx.EVT_MENU, self.on_about, id=APP_ABOUT)
+        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
+        self.Bind(wx.EVT_MENU, handler=self.on_about, id=APP_ABOUT)
         help_menu.AppendItem(about_menu_item)
 
-        docs_menu_item = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
-        self.Bind(wx.EVT_MENU, self.on_docs, id=APP_DOCS)
+        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
+        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=APP_DOCS)
         help_menu.AppendItem(docs_menu_item)
 
         menu_bar = wx.MenuBar()
-        menu_bar.Append(file_menu, '&File')
-        menu_bar.Append(help_menu, '&About')
+        menu_bar.Append(file_menu, title='&File')
+        menu_bar.Append(help_menu, title='&About')
         self.SetMenuBar(menu_bar)
 
     def _init_ui(self):
