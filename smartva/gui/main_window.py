@@ -24,6 +24,7 @@ APP_QUIT = wx.ID_EXIT
 APP_ABOUT = wx.ID_ABOUT
 APP_DOCS = wx.NewId()
 OPT_HCE = wx.NewId()
+OPT_FREE_TEXT = wx.NewId()
 
 APP_TITLE = prog_name
 
@@ -100,7 +101,7 @@ class vaUI(wx.Frame):
         self.input_file_path = ''
         self.output_folder_path = ''
         self.hce = True
-        self.freetext = True
+        self.free_text = True
         self.malaria = True
         self.country = None
         self.running = False
@@ -157,6 +158,13 @@ class vaUI(wx.Frame):
         hce_menu_item.Check(check=self.hce)
         self.enabled_widgets.append(hce_menu_item)
 
+        free_text_menu_item = wx.MenuItem(options_menu, id=OPT_FREE_TEXT, text='Use &Free text variables',
+                                          kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self.toggle_free_text, id=free_text_menu_item.GetId())
+        options_menu.AppendItem(free_text_menu_item)
+        free_text_menu_item.Check(self.free_text)
+        self.enabled_widgets.append(free_text_menu_item)
+
     def _init_ui(self):
         self.Bind(wx.EVT_CLOSE, self.on_quit)
 
@@ -210,7 +218,7 @@ class vaUI(wx.Frame):
         choose_output_static_box_sizer.Add(choose_folder_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         # set processing options
-        set_options_static_box = wx.StaticBox(parent_panel, label='3. Set processing options')
+        set_options_static_box = wx.StaticBox(parent_panel, label='3. Choose geography')
         set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
         country_label = wx.StaticText(parent_panel, label='Data origin (country)')
@@ -223,11 +231,6 @@ class vaUI(wx.Frame):
         country_box_sizer.Add(country_label, flag=wx.TOP | wx.RIGHT | wx.LEFT, border=5)
         country_box_sizer.Add(country_combo_box)
 
-        freetext_check_box = wx.CheckBox(parent_panel, label='Free text variables')
-        freetext_check_box.SetValue(self.freetext)
-        self.Bind(wx.EVT_CHECKBOX, self.toggle_freetext, id=freetext_check_box.GetId())
-        self.enabled_widgets.append(freetext_check_box)
-
         malaria_check_box = wx.CheckBox(parent_panel, label='Malaria region')
         malaria_check_box.SetValue(self.malaria)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_malaria, id=malaria_check_box.GetId())
@@ -236,8 +239,6 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer.Add(country_box_sizer)
         set_options_static_box_sizer.AddSpacer(5)
         set_options_static_box_sizer.Add(malaria_check_box, flag=wx.LEFT | wx.TOP, border=5)
-        set_options_static_box_sizer.AddSpacer(3)
-        set_options_static_box_sizer.Add(freetext_check_box, flag=wx.LEFT | wx.TOP, border=5)
         set_options_static_box_sizer.AddSpacer(3)
 
         # start analysis
@@ -315,7 +316,7 @@ class vaUI(wx.Frame):
                 self.action_button.SetLabel('Stop')
                 self.running = True
                 self.worker = workerthread.WorkerThread(self.input_file_path, self.hce, self.output_folder_path,
-                                                        self.freetext, self.malaria, self.country,
+                                                        self.free_text, self.malaria, self.country,
                                                         completion_callback=self.on_result)
                 self.enable_ui(False)
                 self.increment_progress_bar()
@@ -335,11 +336,14 @@ class vaUI(wx.Frame):
         elif isinstance(event.EventObject, wx.CheckBox):
             self.hce = event.EventObject.IsChecked()
 
-    def toggle_freetext(self, event):
+    def toggle_free_text(self, event):
         """
         :type event: wx.CommandEvent
         """
-        self.freetext = event.EventObject.IsChecked()
+        if isinstance(event.EventObject, wx.Menu):
+            self.free_text = event.EventObject.IsChecked(id=event.GetId())
+        elif isinstance(event.EventObject, wx.CheckBox):
+            self.free_text = event.EventObject.IsChecked()
 
     def toggle_malaria(self, event):
         """
