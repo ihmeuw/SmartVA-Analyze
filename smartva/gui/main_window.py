@@ -214,8 +214,9 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
         country_label = wx.StaticText(parent_panel, label='Data origin (country)')
-        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES, style=wx.CB_READONLY)
-        self.Bind(wx.EVT_COMBOBOX, self.change_country)
+        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES,
+                                        style=wx.CB_READONLY | wx.CB_DROPDOWN | wx.CB_SORT)
+        self.Bind(wx.EVT_COMBOBOX, handler=self.change_country, id=country_combo_box.GetId())
         self.enabled_widgets.append(country_combo_box)
 
         country_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -348,7 +349,7 @@ class vaUI(wx.Frame):
 
     def change_country(self, event):
         if event.GetString() != COUNTRY_DEFAULT:
-            match = re.search('\(([A-Z]{3})\)$', event.GetString())
+            match = re.search(r'\(([A-Z]{3})\)$', event.GetString())
             self.country = match.group(1)
         else:
             self.country = None
