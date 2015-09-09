@@ -23,6 +23,7 @@ from smartva.loggers import status_logger
 APP_QUIT = wx.ID_EXIT
 APP_ABOUT = wx.ID_ABOUT
 APP_DOCS = wx.NewId()
+OPT_HCE = wx.NewId()
 
 APP_TITLE = prog_name
 
@@ -115,33 +116,49 @@ class vaUI(wx.Frame):
         self.status_gauge = None
         self.action_button = None
 
-        self.init_ui()
+        self._init_menu_bar()
+        self._init_ui()
 
         self.Center()
         self.Show()
 
-    def init_ui(self):
+    def _init_menu_bar(self):
         menu_bar = wx.MenuBar()
+        self.SetMenuBar(menu_bar)
+
+        # File Menu
         file_menu = wx.Menu()
-        help_menu = wx.Menu()
+        menu_bar.Append(file_menu, title='&File')
 
-        quit_menu_item = wx.MenuItem(file_menu, APP_QUIT, '&Quit\tCtrl+Q')
-        about_menu_item = wx.MenuItem(help_menu, APP_ABOUT, '&About ' + APP_TITLE)
-        docs_menu_item = wx.MenuItem(help_menu, APP_DOCS, '&Documentation')
-
+        quit_menu_item = wx.MenuItem(file_menu, id=APP_QUIT, text='&Quit\tCtrl+Q')
+        self.Bind(wx.EVT_MENU, handler=self.on_quit, id=quit_menu_item.GetId())
         file_menu.AppendItem(quit_menu_item)
+
+        # Help Menu
+        help_menu = wx.Menu()
+        menu_bar.Append(help_menu, title='&About')
+
+        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
+        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
         help_menu.AppendItem(about_menu_item)
+
+        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
+        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
         help_menu.AppendItem(docs_menu_item)
 
-        menu_bar.Append(file_menu, '&File')
-        menu_bar.Append(help_menu, '&About')
+        # Options Menu
+        options_menu = wx.Menu()
+        menu_bar.Append(options_menu, title='&Options')
 
-        self.Bind(wx.EVT_MENU, self.on_quit, id=APP_QUIT)
-        self.Bind(wx.EVT_MENU, self.on_about, id=APP_ABOUT)
-        self.Bind(wx.EVT_MENU, self.on_docs, id=APP_DOCS)
+        hce_menu_item = wx.MenuItem(options_menu, id=OPT_HCE, text='Use &Health Care Experience (HCE) variables',
+                                    kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self.toggle_hce, id=hce_menu_item.GetId())
+        options_menu.AppendItem(hce_menu_item)
+        hce_menu_item.Check(check=self.hce)
+        self.enabled_widgets.append(hce_menu_item)
 
+    def _init_ui(self):
         self.Bind(wx.EVT_CLOSE, self.on_quit)
-        self.SetMenuBar(menu_bar)
 
         parent_panel = wx.ScrolledWindow(self)
         parent_panel.SetScrollbars(1, 1, 1, 1)
@@ -205,11 +222,6 @@ class vaUI(wx.Frame):
         country_box_sizer.Add(country_label, flag=wx.TOP | wx.RIGHT | wx.LEFT, border=5)
         country_box_sizer.Add(country_combo_box)
 
-        hce_check_box = wx.CheckBox(parent_panel, label='Health Care Experience (HCE) variables')
-        hce_check_box.SetValue(self.hce)
-        self.Bind(wx.EVT_CHECKBOX, self.toggle_hce, id=hce_check_box.GetId())
-        self.enabled_widgets.append(hce_check_box)
-
         freetext_check_box = wx.CheckBox(parent_panel, label='Free text variables')
         freetext_check_box.SetValue(self.freetext)
         self.Bind(wx.EVT_CHECKBOX, self.toggle_freetext, id=freetext_check_box.GetId())
@@ -223,8 +235,6 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer.Add(country_box_sizer)
         set_options_static_box_sizer.AddSpacer(5)
         set_options_static_box_sizer.Add(malaria_check_box, flag=wx.LEFT | wx.TOP, border=5)
-        set_options_static_box_sizer.AddSpacer(3)
-        set_options_static_box_sizer.Add(hce_check_box, flag=wx.LEFT | wx.TOP, border=5)
         set_options_static_box_sizer.AddSpacer(3)
         set_options_static_box_sizer.Add(freetext_check_box, flag=wx.LEFT | wx.TOP, border=5)
         set_options_static_box_sizer.AddSpacer(3)
@@ -319,19 +329,22 @@ class vaUI(wx.Frame):
         """
         :type event: wx.CommandEvent
         """
-        self.hce = event.EventObject.Value
+        if isinstance(event.EventObject, wx.Menu):
+            self.hce = event.EventObject.IsChecked(id=event.GetId())
+        elif isinstance(event.EventObject, wx.CheckBox):
+            self.hce = event.EventObject.IsChecked()
 
     def toggle_freetext(self, event):
         """
         :type event: wx.CommandEvent
         """
-        self.freetext = event.EventObject.Value
+        self.freetext = event.EventObject.IsChecked()
 
     def toggle_malaria(self, event):
         """
         :type event: wx.CommandEvent
         """
-        self.malaria = event.EventObject.Value
+        self.malaria = event.EventObject.IsChecked()
 
     def change_country(self, event):
         if event.GetString() != COUNTRY_DEFAULT:
