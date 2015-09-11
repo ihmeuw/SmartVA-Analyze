@@ -4,6 +4,7 @@ import io
 import logging
 import re
 import os
+import platform
 import threading
 
 import wx
@@ -33,13 +34,26 @@ MAX_PATH_LENGTH = 55
 WINDOW_WIDTH = 560
 WINDOW_HEIGHT = 690
 
+# OS dependant configuration.
+if platform.system().lower() == 'windows':
+    # Windows uses \r\n
+    LINE_DELIM_LEN = 2
+else:
+    # Everyone else uses \n
+    LINE_DELIM_LEN = 1
+
+COMBO_BOX_STYLE = wx.CB_READONLY | wx.CB_DROPDOWN
+if platform.system().lower() != 'darwin':
+    # Mac does not support sort style
+    COMBO_BOX_STYLE |= wx.CB_SORT
+
 
 class TextEntryStream(io.TextIOBase):
     def __init__(self, text_entry_widget):
         """
         The TextEntryStream will write to any widget that extends the `TextEntryBase` class or implements the
         `AppendText(str)` method.
-        :type text_entry_widget: wx.TextEntry
+        :type text_entry_widget: wx.TextCtrl
         """
         io.TextIOBase.__init__(self)
         self._text_entry = text_entry_widget
@@ -51,6 +65,9 @@ class TextEntryStream(io.TextIOBase):
         return False
 
     def write(self, msg):
+        wx.CallAfter(self._write, msg)
+
+    def _write(self, msg):
         # If processing, overwrite previous line.
         # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
         if re.match(r'(Adult|Child|Neonate) :: Processing \d+', msg):
@@ -58,8 +75,7 @@ class TextEntryStream(io.TextIOBase):
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
                 position = self._text_entry.GetLastPosition()
-                self._text_entry.Remove(position - len(last_line) - 2, position)
-                self._text_entry.AppendText(msg)
+                self._text_entry.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
             else:
                 self._text_entry.AppendText(msg)
         else:
@@ -222,8 +238,7 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
         country_label = wx.StaticText(parent_panel, label='Data origin (country)')
-        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES,
-                                        style=wx.CB_READONLY | wx.CB_DROPDOWN | wx.CB_SORT)
+        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES, style=COMBO_BOX_STYLE)
         self.Bind(wx.EVT_COMBOBOX, handler=self.change_country, id=country_combo_box.GetId())
         self.enabled_widgets.append(country_combo_box)
 
