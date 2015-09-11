@@ -2,15 +2,13 @@ import csv
 import copy
 from decimal import Decimal
 import math
-import platform
 import os
-import sys
 
 from smartva import adultuniformtrain
 from smartva import config
 from smartva.freetext_vars import adult_freetext
 from smartva.hce_variables import adult_hce
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.short_form_remove import adult_remove
 from smartva.vacauses import adultcauses
 
@@ -520,9 +518,14 @@ class Tariff(object):
                     multiple[va.sid] = [cause]
                 elif causescore == float(va.ranklist[cause]) and causescore != lowest:
                     multiple[va.sid].append(cause)
-            for vakey in multiple.keys():
-                if len(multiple[vakey]) > 1:
-                    status_logger.info('Adult :: WARNING: VA %s had multiple matching results %s, using the first found' % (vakey, multiple[vakey]))
+
+            # Notify user if multiple causes have been determined.
+            for sid_key, causes in multiple.items():
+                if len(causes) > 1:
+                    warning_logger.info(
+                        '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
+                            group=self.AGE_GROUP.capitalize(), sid=sid_key, causes=causes))
+
             if cause34 == '':
                 cause34 = 'Undetermined'
                 if self.iso3 is None:
