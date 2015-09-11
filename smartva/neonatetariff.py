@@ -30,6 +30,8 @@ class ScoredVA:
 
 
 class Tariff(object):
+    AGE_GROUP = 'neonate'
+
     def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
         """
         :type input_file: str
@@ -56,23 +58,14 @@ class Tariff(object):
 
         status_logger.info('Neonate :: Calculating tariffs')
 
-        tarifffile = 'tariffs-neonate.csv'
-        validatedfile = 'validated-neonate.csv'
-        undeterminedfile = 'neonate_undetermined_weights'
+        tariff_file = os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+        validated_file = os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP))
+        # If hce is False, use hce0, else use hce1
+        undetermined_file = os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
 
-        if not self.hce:
-            undeterminedfile = undeterminedfile + "-hce0.csv"
-        else:
-            undeterminedfile = undeterminedfile + "-hce1.csv"
-
-        if getattr(sys, 'frozen', None) or platform.system() == "Windows":
-            tarifffile = os.path.join(config.basedir, 'tariffs-neonate.csv')
-            validatedfile = os.path.join(config.basedir, 'validated-neonate.csv')
-            undeterminedfile = os.path.join(config.basedir, undeterminedfile)
-
-        tariffreader = csv.reader(open(tarifffile, 'rU'))
-        validatedreader = csv.reader(open(validatedfile, 'rU'))
-        undeterminedreader = csv.reader(open(undeterminedfile, 'rU'))
+        tariffreader = csv.reader(open(tariff_file, 'rU'))
+        validatedreader = csv.reader(open(validated_file, 'rU'))
+        undeterminedreader = csv.reader(open(undetermined_file, 'rU'))
 
         matrix = list()
         headers = list()
