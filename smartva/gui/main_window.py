@@ -4,6 +4,7 @@ import io
 import logging
 import re
 import os
+import platform
 import threading
 
 import wx
@@ -33,6 +34,14 @@ MAX_PATH_LENGTH = 55
 WINDOW_WIDTH = 560
 WINDOW_HEIGHT = 690
 
+# OS dependant configuration.
+if platform.system().lower() == 'windows':
+    # Windows uses \r\n
+    LINE_DELIM_LEN = 2
+else:
+    # Everyone else uses \n
+    LINE_DELIM_LEN = 1
+
 
 class TextEntryStream(io.TextIOBase):
     def __init__(self, text_entry_widget):
@@ -61,7 +70,7 @@ class TextEntryStream(io.TextIOBase):
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
                 position = self._text_entry.GetLastPosition()
-                self._text_entry.Replace(position - len(last_line) - 2, position, msg)
+                self._text_entry.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
             else:
                 self._text_entry.AppendText(msg)
         else:
