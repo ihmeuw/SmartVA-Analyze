@@ -39,7 +39,7 @@ class TextEntryStream(io.TextIOBase):
         """
         The TextEntryStream will write to any widget that extends the `TextEntryBase` class or implements the
         `AppendText(str)` method.
-        :type text_entry_widget: wx.TextEntry
+        :type text_entry_widget: wx.TextCtrl
         """
         io.TextIOBase.__init__(self)
         self._text_entry = text_entry_widget
@@ -51,6 +51,9 @@ class TextEntryStream(io.TextIOBase):
         return False
 
     def write(self, msg):
+        wx.CallAfter(self._write, msg)
+
+    def _write(self, msg):
         # If processing, overwrite previous line.
         # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
         if re.match(r'(Adult|Child|Neonate) :: Processing \d+', msg):
@@ -58,8 +61,7 @@ class TextEntryStream(io.TextIOBase):
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
                 position = self._text_entry.GetLastPosition()
-                self._text_entry.Remove(position - len(last_line) - 2, position)
-                self._text_entry.AppendText(msg)
+                self._text_entry.Replace(position - len(last_line) - 2, position, msg)
             else:
                 self._text_entry.AppendText(msg)
         else:
