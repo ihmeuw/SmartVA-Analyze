@@ -2,7 +2,7 @@ import csv
 import string
 import os
 
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 
 
 class VaPrep(object):
@@ -10,11 +10,10 @@ class VaPrep(object):
     This file cleans up input and converts from ODK collected data to VA variables.
     """
 
-    def __init__(self, input_file, output_dir, warningfile, shortform):
+    def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
         self.want_abort = 0
-        self.warningfile = warningfile
         self.shortform = shortform
 
     def run(self):
@@ -625,7 +624,7 @@ class VaPrep(object):
                     # print 'neonate because no value for age'
                     updatestr = 'SID: %s has no values for age, defaulting to neonate' % a[headers.index('sid')]
                     status_logger.info(updatestr)
-                    self.warningfile.write(updatestr + '\n')
+                    warning_logger.warning(updatestr)
                     neonatewriter.writerow(a)
             else:
                 if age >= 12:
