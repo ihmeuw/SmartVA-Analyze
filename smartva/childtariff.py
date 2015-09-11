@@ -3,17 +3,15 @@ import csv
 from decimal import Decimal
 import math
 import os
-import platform
 import string
-import sys
 
 from smartva import config
 from smartva import childuniformtrain
-from smartva.hce_variables import child_hce
 from smartva.freetext_vars import child_freetext
-from smartva.vacauses import childcauses
+from smartva.hce_variables import child_hce
+from smartva.loggers import status_logger, warning_logger
 from smartva.short_form_remove import child_remove
-from smartva.loggers import status_logger
+from smartva.vacauses import childcauses
 
 
 # data structure we use to keep track of an manipulate data
@@ -473,9 +471,14 @@ class Tariff(object):
                     multiple[va.sid] = [cause]
                 elif causescore == float(va.ranklist[cause]) and causescore != lowest:
                     multiple[va.sid].append(cause)
-            for vakey in multiple.keys():
-                if len(multiple[vakey]) > 1:
-                    status_logger.info('Child :: WARNING: VA %s had multiple matching results %s, using the first found' % (vakey, multiple[vakey]))
+
+            # Notify user if multiple causes have been determined.
+            for sid_key, causes in multiple.items():
+                if len(causes) > 1:
+                    warning_logger.info(
+                        '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
+                            group=self.AGE_GROUP.capitalize(), sid=sid_key, causes=causes))
+
             if cause34 == '':
                 cause34 = 'Undetermined'
                 if self.iso3 is None:

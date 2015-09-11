@@ -3,9 +3,7 @@ import copy
 from decimal import Decimal
 import math
 import os
-import platform
 import string
-import sys
 
 from smartva import config
 from smartva import neonateuniformtrain
@@ -13,7 +11,7 @@ from smartva.freetext_vars import neonate_freetext
 from smartva.hce_variables import neonate_hce
 from smartva.short_form_remove import neonate_remove
 from smartva.vacauses import neonatecauses
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 
 
 # excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
@@ -475,10 +473,13 @@ class Tariff(object):
                     multiple[va.sid] = [cause]
                 elif causescore == float(va.ranklist[cause]) and causescore != lowest:
                     multiple[va.sid].append(cause)
-            for vakey in multiple.keys():
-                if len(multiple[vakey]) > 1:
-                    status_logger.info(
-                        'Neonate :: WARNING: VA %s had multiple matching results %s, using the first found' % (vakey, multiple[vakey]))
+
+            # Notify user if multiple causes have been determined.
+            for sid_key, causes in multiple.items():
+                if len(causes) > 1:
+                    warning_logger.info(
+                        '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
+                            group=self.AGE_GROUP.capitalize(), sid=sid_key, causes=causes))
 
             # Check to see if there is a special stillbirth value
             if va.s20 == '1':
