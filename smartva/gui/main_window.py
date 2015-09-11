@@ -42,6 +42,11 @@ else:
     # Everyone else uses \n
     LINE_DELIM_LEN = 1
 
+COMBO_BOX_STYLE = wx.CB_READONLY | wx.CB_DROPDOWN
+if platform.system().lower() != 'darwin':
+    # Mac does not support sort style
+    COMBO_BOX_STYLE |= wx.CB_SORT
+
 
 class TextEntryStream(io.TextIOBase):
     def __init__(self, text_entry_widget):
@@ -233,8 +238,7 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
         country_label = wx.StaticText(parent_panel, label='Data origin (country)')
-        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES,
-                                        style=wx.CB_READONLY | wx.CB_DROPDOWN | wx.CB_SORT)
+        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES, style=COMBO_BOX_STYLE)
         self.Bind(wx.EVT_COMBOBOX, handler=self.change_country, id=country_combo_box.GetId())
         self.enabled_widgets.append(country_combo_box)
 
