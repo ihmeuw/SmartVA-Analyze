@@ -15,6 +15,7 @@ from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 
 # TODO: pull out all strings
@@ -135,6 +136,8 @@ class vaUI(wx.Frame):
 
         self._init_menu_bar()
         self._init_ui()
+
+        status_notifier.register(self.handle_update)
 
         self.Center()
         self.Show()
@@ -433,6 +436,29 @@ class vaUI(wx.Frame):
         for widget in self.enabled_widgets:
             widget.Enable(enable)
 
+    @staticmethod
+    def _update_gauge(gauge, progress):
+        if len(progress) > 1:
+            if progress[1]:
+                gauge.SetRange(progress[1])
+        gauge.SetValue(progress[0])
+
+    def handle_update(self, data):
+        """
+        Processes status notification updates into progress bar updates.
+
+        The following key: value items are processed:
+        progress: (value, [range]) - Update value of progress bar
+        sub_progress: (value, [range]) - Update value of sub progress bar
+        Note: If range is not present, previous range is used.
+
+        :type data: dict
+        :param data: Dictionary of status update metadata.
+        """
+        if data.get('progress'):
+            wx.CallAfter(self._update_gauge, self.status_gauge, data['progress'])
+        if data.get('sub_progress'):
+            wx.CallAfter(self._update_gauge, self.sub_status_gauge, data['sub_progress'])
 
 
 def start():
