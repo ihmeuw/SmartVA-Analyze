@@ -12,6 +12,7 @@ from smartva.hce_variables import child_hce
 from smartva.loggers import status_logger, warning_logger
 from smartva.short_form_remove import child_remove
 from smartva.vacauses import childcauses
+from smartva.utils import status_notifier
 
 
 # data structure we use to keep track of an manipulate data
@@ -50,6 +51,8 @@ class Tariff(object):
         self.shortform = shortform
 
     def run(self):
+        status_notifier.update({'progress': (9,)})
+
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))
 
@@ -253,16 +256,21 @@ class Tariff(object):
         # ... 
 
         vavalidatedcauselist = []
-        total = len(validatedmatrix) * 21
-        cnt = 0
+        max_cause = 21
+
+        total = len(validatedmatrix) * max_cause
+        div = min(10 ** len(str(abs(total))), 100)
+        status_notifier.update({'sub_progress': (0, total)})
+
         for i, row in enumerate(validatedmatrix):
             causedict = {}
-            for causenum in range(1, 22):
+            for causenum in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = cnt + 1
-                if (cnt % 1000 == 0):
+                cnt = (i * max_cause) + causenum
+                if cnt % max((total / div), 1) == 0:
                     status_logger.info('Child :: Processing %s of %s' % (cnt, total))
+                    status_notifier.update({'sub_progress': (cnt,)})
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -277,7 +285,9 @@ class Tariff(object):
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
+
         status_logger.info('Child :: Processing %s of %s' % (total, total))
+        status_notifier.update({'sub_progress': (0, 1)})
 
         status_logger.info('Child :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
@@ -329,18 +339,21 @@ class Tariff(object):
 
         status_logger.info('Child :: Generating cause rankings. (This takes a few minutes)')
 
-        total = len(vacauselist) * 21
-        cnt = 0
-        for va in vacauselist:
+        total = len(vacauselist) * max_cause
+        div = min(10 ** len(str(abs(total))), 100)
+        status_notifier.update({'sub_progress': (0, total)})
+
+        for i, va in enumerate(vacauselist):
             sortedtariffs = []
             ranklist = {}
-            for i in range(1, 22):
+            for causenum in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = cnt + 1
-                if cnt % 10 == 0:
+                cnt = (i * max_cause) + causenum
+                if cnt % max((total / div), 1) == 0:
                     status_logger.info('Child :: Processing %s of %s' % (cnt, total))
-                cause = "cause" + str(i)
+                    status_notifier.update({'sub_progress': (cnt,)})
+                cause = "cause" + str(causenum)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
                 # make a list of tariffs of ALL validated VAs for this cause
@@ -371,7 +384,9 @@ class Tariff(object):
                 # answer as the original stata tool
                 ranklist[cause] = index + 1
             va.ranklist = ranklist
+
         status_logger.info('Child :: Processing %s of %s' % (total, total))
+        status_notifier.update({'sub_progress': (0, 1)})
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'child-external-ranks.csv', 'wb', buffering=0))
         headerrow = []

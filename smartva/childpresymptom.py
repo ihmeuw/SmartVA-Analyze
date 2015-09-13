@@ -11,6 +11,7 @@ from smartva.answer_ranges import child_rangelist
 from smartva.presymptom_conversions import child_conversionVars
 from smartva.word_conversions import child_wordsToVars
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -31,6 +32,7 @@ class PreSymptomPrep(object):
         self.warnings = 0
 
     def run(self):
+        status_notifier.update({'progress': (7,)})
 
         if self.shortform:
             child_defaultFill = defaultfill.child_short
