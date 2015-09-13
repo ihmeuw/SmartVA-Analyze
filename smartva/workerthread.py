@@ -61,7 +61,7 @@ class WorkerThread(threading.Thread):
         self.start()
 
     def run(self):
-        status_notifier.update({'progress': (0, 14), 'sub_progress': (0, 1)})
+        status_notifier.update({'progress': (0, 15), 'sub_progress': (0, 1)})
 
         intermediate_dir = self.output_dir + os.sep + "intermediate-files"
         figures_dir = self.output_dir + os.sep + "figures"
