@@ -32,7 +32,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 690
+WINDOW_HEIGHT = 440
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -267,6 +267,7 @@ class vaUI(wx.Frame):
         status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
         status_text_ctrl.SetEditable(False)
         status_text_ctrl.SetValue('')
+        status_text_ctrl.Hide()
 
         # Send INFO level log messages to the status text control widget
         gui_log_handler = logging.StreamHandler(TextEntryStream(status_text_ctrl))
