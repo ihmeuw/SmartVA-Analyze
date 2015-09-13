@@ -5,7 +5,6 @@ import logging
 import re
 import os
 import platform
-import threading
 
 import wx
 import wx.html
@@ -131,6 +130,7 @@ class vaUI(wx.Frame):
         self.chosen_folder_text = None
 
         self.status_gauge = None
+        self.sub_status_gauge = None
         self.action_button = None
 
         self._init_menu_bar()
@@ -270,15 +270,20 @@ class vaUI(wx.Frame):
         gui_log_handler.setLevel(logging.INFO)
         status_logger.addHandler(gui_log_handler)
 
-        self.status_gauge = wx.Gauge(parent_panel, range=100, size=(-1, -1))
+        self.status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
+        self.sub_status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
         self.action_button = wx.Button(parent_panel, label='Start')
         self.action_button.Bind(wx.EVT_BUTTON, self.on_action)
 
-        status_gauge_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        status_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        status_gauge_box_sizer = wx.BoxSizer(wx.VERTICAL)
         status_gauge_box_sizer.Add(self.status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
-        status_gauge_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_gauge_box_sizer.AddSpacer(5)
+        status_gauge_box_sizer.Add(self.sub_status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_box_sizer.AddSizer(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        start_analysis_box_sizer.Add(status_gauge_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
@@ -286,7 +291,7 @@ class vaUI(wx.Frame):
         parent_box_sizer.Add(choose_input_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         parent_box_sizer.Add(choose_output_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         parent_box_sizer.Add(set_options_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        parent_box_sizer.Add(start_analysis_box_sizer, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(start_analysis_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         parent_panel.SetSizer(parent_box_sizer)
 
