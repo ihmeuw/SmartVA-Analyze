@@ -17,6 +17,7 @@ from smartva import causegrapher
 from smartva import csmfgrapher
 from smartva import short_form_test
 from smartva.loggers import warning_logger
+from smartva.utils import status_notifier
 
 
 class CompletionStatus(object):
@@ -60,6 +61,7 @@ class WorkerThread(threading.Thread):
         self.start()
 
     def run(self):
+        status_notifier.update({'progress': (0, 14), 'sub_progress': (0, 1)})
 
         intermediate_dir = self.output_dir + os.sep + "intermediate-files"
         figures_dir = self.output_dir + os.sep + "figures"
@@ -202,4 +204,5 @@ class WorkerThread(threading.Thread):
         for handler in warning_logger.handlers:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
+        status_notifier.update({'progress': (int(not status), 1), 'sub_progress': (int(not status), 1)})
         self._completion_callback(status)
