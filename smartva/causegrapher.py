@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 # labels for dict
 module_labels = ('adult', 'child', 'neonate')
@@ -115,11 +116,14 @@ class CauseGrapher(object):
         self.want_abort = 0
 
     def run(self):
-
         status_logger.info('Making cause graphs')
+        status_notifier.update({'progress': (13,)})
 
         module_errors = {}
-        for module_key in module_labels:
+        status_notifier.update({'sub_progress': (0, len(module_labels))})
+
+        for cnt, module_key in enumerate(module_labels):
+            status_notifier.update({'sub_progress': (cnt,)})
 
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
@@ -146,12 +150,17 @@ class CauseGrapher(object):
                 module_errors[module_key] = 1
 
         # make cause of death graphs
-        for cause_key in graph_data.keys():
+        status_notifier.update({'sub_progress': (0, len(graph_data))})
+
+        for cnt, cause_key in enumerate(graph_data.keys()):
+            status_notifier.update({'sub_progress': (cnt,)})
+
             # TODO - Fix this. Module key may not be the correct variable here.
             if module_errors[module_key] != 1:
                 make_graph(cause_key, self.output_dir)
 
         status_logger.info('Finished making cause graphs')
+        status_notifier.update({'sub_progress': (0, 1)})
 
     def abort(self):
         self.want_abort = 1
