@@ -339,12 +339,9 @@ class vaUI(wx.Frame):
                                                         self.free_text, self.malaria, self.country,
                                                         completion_callback=self.on_result)
                 self.enable_ui(False)
-                self.increment_progress_bar()
 
         elif self.action_button.GetLabel() == 'Stop':
             self.action_button.SetLabel('Start')
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
             self.on_abort()
 
     def toggle_hce(self, event):
@@ -417,16 +414,11 @@ class vaUI(wx.Frame):
             self.action_button.Enable(True)
             self.running = False
             self.enable_ui(True)
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
         elif event is workerthread.CompletionStatus.DONE:
             # if it's done, then the algorithm is complete
-            self.status_gauge.SetValue(1)
             status_logger.info('Process complete')
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
 
     def on_abort(self):
         if self.worker:
@@ -441,14 +433,6 @@ class vaUI(wx.Frame):
         for widget in self.enabled_widgets:
             widget.Enable(enable)
 
-    def increment_progress_bar(self):
-        if self.worker is not None and self.worker.isAlive():
-            self.status_gauge.Pulse()
-            # call f() again in 60 seconds
-            threading.Timer(.3, self.increment_progress_bar).start()
-        else:
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
 
 
 def start():
