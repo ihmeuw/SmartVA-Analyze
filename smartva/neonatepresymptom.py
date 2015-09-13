@@ -10,6 +10,7 @@ from smartva.answer_ranges import neonate_rangelist
 from smartva.presymptom_conversions import neonate_conversionVars
 from smartva.word_conversions import neonate_wordsToVars
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -30,6 +31,7 @@ class PreSymptomPrep(object):
         self.warnings = 1
 
     def run(self):
+        status_notifier.update({'progress': (10,)})
 
         if self.shortform:
             from defaultfill import neonate_short as neonate_defaultFill
