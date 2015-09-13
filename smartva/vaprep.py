@@ -3,6 +3,7 @@ import string
 import os
 
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 
 class VaPrep(object):
@@ -17,6 +18,8 @@ class VaPrep(object):
         self.shortform = shortform
 
     def run(self):
+        status_notifier.update({'progress': (3,)})
+
         # read stocks data, print status messages
         reader = csv.reader(open(self.inputFilePath, 'rU'))
 

@@ -1,6 +1,7 @@
 import csv
 
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 
 class ShortFormTest(object):
@@ -13,6 +14,8 @@ class ShortFormTest(object):
         self.want_abort = 0
 
     def run(self):
+        status_notifier.update({'progress': (1,)})
+
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
 
         status_logger.info('Checking form')
