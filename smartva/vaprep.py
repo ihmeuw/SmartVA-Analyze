@@ -3,6 +3,7 @@ import string
 import os
 
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 
 class VaPrep(object):
@@ -17,6 +18,8 @@ class VaPrep(object):
         self.shortform = shortform
 
     def run(self):
+        status_notifier.update({'progress': (3,)})
+
         # read stocks data, print status messages
         reader = csv.reader(open(self.inputFilePath, 'rU'))
 
@@ -119,7 +122,7 @@ class VaPrep(object):
                                             '0', '0', '0', '9', '9', '0', '0', '0', '9', '1', '0', '0', '0', '0', '0',
                                             '0', '0']
 
-        status_logger.info('Initial data prep')
+        status_logger.debug('Initial data prep')
 
         first = 1
 
@@ -532,7 +535,7 @@ class VaPrep(object):
                 row[index57f] = float(row[index57g]) * 1000
                 row[index] = 1
 
-        status_logger.info('Text substitution')
+        status_logger.debug('Text substitution')
 
         wordSubs = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'accident',
                     'accidental': 'accident', 'accidently': 'accident', 'acute myocardial infarction': 'ami',
@@ -593,7 +596,7 @@ class VaPrep(object):
         # going forward, now all of the answers are lowercase, without numbers or punctuation,
         # and whitespace has been eliminated, so it's just a list of words separated by spaces
 
-        status_logger.info('Writing adult, child, neonate prepped.csv files')
+        status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
         # write out header files
         adultwriter.writerow(headers)
@@ -623,7 +626,6 @@ class VaPrep(object):
                 else:
                     # print 'neonate because no value for age'
                     updatestr = 'SID: %s has no values for age, defaulting to neonate' % a[headers.index('sid')]
-                    status_logger.info(updatestr)
                     warning_logger.warning(updatestr)
                     neonatewriter.writerow(a)
             else:

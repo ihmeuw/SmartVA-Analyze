@@ -4,6 +4,7 @@ import os
 
 from smartva.symptom_conversions import neonate_conversionVars
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 # removed because they don't exist in the form:
 
@@ -35,6 +36,8 @@ class NeonateSymptomPrep(object):
         self.want_abort = 0
 
     def run(self):
+        status_notifier.update({'progress': (11,)})
+
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-symptom.csv', 'wb', buffering=0))
 

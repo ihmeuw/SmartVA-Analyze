@@ -1,7 +1,8 @@
 import csv
 import os
 
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 
 # Thread class that executes processing
@@ -16,10 +17,12 @@ class Headers(object):
         self.want_abort = 0
 
     def run(self):
+        status_notifier.update({'progress': (2,)})
+
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
         writer = csv.writer(open(self.output_dir + os.sep + 'cleanheaders.csv', 'wb', buffering=0))
 
-        status_logger.info('Cleaning column headers')
+        status_logger.debug('Cleaning column headers')
 
         count = 0
         for count, row in enumerate(reader):
@@ -35,7 +38,7 @@ class Headers(object):
 
         # if count is less than 1, we have no data to process
         if count < 1:
-            status_logger.info('No data to process, stopping')
+            warning_logger.debug('No data to process, stopping')
             return 0
         return 1
 

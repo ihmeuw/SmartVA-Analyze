@@ -11,6 +11,7 @@ from smartva.answer_ranges import child_rangelist
 from smartva.presymptom_conversions import child_conversionVars
 from smartva.word_conversions import child_wordsToVars
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 # NOTES:
 # these variables don't exist in the electronic version of the form:
@@ -28,9 +29,10 @@ class PreSymptomPrep(object):
         self.output_dir = output_dir
         self.want_abort = 0
         self.shortform = shortform
-        self.warnings = 0
+        self.warnings = False
 
     def run(self):
+        status_notifier.update({'progress': (7,)})
 
         if self.shortform:
             child_defaultFill = defaultfill.child_short
@@ -38,7 +40,6 @@ class PreSymptomPrep(object):
             child_defaultFill = defaultfill.child_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
-        warning_logger.warning('Child presymptom warnings:')
 
         status_logger.info('Child :: Processing presymptom data')
 
@@ -59,7 +60,7 @@ class PreSymptomPrep(object):
 
         # make sure we have data, else stop this module
         if len(matrix) < 1:
-            status_logger.info('Child :: No data, skipping module')
+            warning_logger.debug('Child :: No data, skipping module')
             return 0
 
         childwriter = csv.writer(open(self.output_dir + os.sep + 'child-presymptom.csv', 'wb', buffering=0))
@@ -96,7 +97,7 @@ class PreSymptomPrep(object):
                 row.append("0")
 
         error = 0
-        status_logger.info('Child :: Verifying answers fall within legal bounds')
+        status_logger.debug('Child :: Verifying answers fall within legal bounds')
         for j, row in enumerate(matrix):
             for i, col in enumerate(row):
                 header = headers[i]
@@ -108,14 +109,9 @@ class PreSymptomPrep(object):
                         for answer in answerArray:
                             if int(answer) not in rangetest:
                                 # ERROR
-                                updatestr = 'Child :: value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
+                                updatestr = 'Child :: Value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
                                 warning_logger.warning(updatestr)
-                                error = 1
-
-        if error == 0:
-            status_logger.info('Child :: Answers verified')
-        else:
-            status_logger.info('Child :: Warnings found, please check warnings.txt')
+                                self.warnings = True
 
         # TODO: this wasn't here prior to short form edits, but I think it should have been all along...?
         # do the calculations for the generated variables:
@@ -810,13 +806,13 @@ class PreSymptomPrep(object):
             if c1_15 == '1':
                 c3_12 = row[headers.index('c3_12')]
                 if c3_12 != '0':
-                    updatestr = 'Child :: WARNING: value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing' % (i + 2, headers.index('c3_12'))
+                    updatestr = 'Child :: Value at row %s col %s for variable c3_12 should be 0, setting to 0 and continuing' % (i + 2, headers.index('c3_12'))
                     warning_logger.warning(updatestr)
                     row[headers.index('c3_12')] = '0'
             elif c1_26 == '2' or c3_11 == '1':
                 c3_12 = row[headers.index('c3_12')]
                 if c3_12 != '1':
-                    updatestr = 'Child :: WARNING: value at row %s col %s for variable c3_12 should be 1, setting to default and continuing' % (i + 2, headers.index('c3_12'))
+                    updatestr = 'Child :: Value at row %s col %s for variable c3_12 should be 1, setting to default and continuing' % (i + 2, headers.index('c3_12'))
                     warning_logger.warning(updatestr)
                     row[headers.index('c3_12')] = '1'
             c3_12 = row[headers.index('c3_12')]
@@ -1200,11 +1196,13 @@ class PreSymptomPrep(object):
             if row[headers.index('child_4_50b')] == '' or row[headers.index('child_4_50b')] is None:
                 row[headers.index('child_4_50b')] = 1000
 
-        if self.warnings == 1:
+        if not self.warnings:
+            status_logger.debug('Child :: Answers verified')
+        else:
             status_logger.info('Child :: Warnings found, please check warnings.txt')
 
         # fill in missing values:
-        status_logger.info('Child :: Filling in default values for empty columns')
+        status_logger.debug('Child :: Filling in default values for empty columns')
         for row in matrix:
             for i, col in enumerate(row):
                 header = headers[i]
@@ -1212,7 +1210,7 @@ class PreSymptomPrep(object):
                 if default is not None and col == '':
                     row[i] = child_defaultFill[header]
 
-        status_logger.info('Child :: Analyzing free text')
+        status_logger.debug('Child :: Analyzing free text')
 
         if self.shortform:
             for row in matrix:
@@ -1309,7 +1307,7 @@ class PreSymptomPrep(object):
                 row[headers.index('c1_25a')] = '4'
 
         # fix duration variables
-        status_logger.info('Child :: Processing duration variables')
+        status_logger.debug('Child :: Processing duration variables')
         durationVars = ['c1_05', 'c1_20', 'c1_21', 'c1_25', 'c2_02', 'c2_05', 'c2_10', 'c3_14', 'c3_18', 'c3_19',
                         'c3_21', 'c3_22', 'c3_27', 'c3_28', 'c3_30', 'c3_31', 'c4_02', 'c4_08', 'c4_10', 'c4_13',
                         'c4_17', 'c4_19', 'c4_33', 'c4_37', 'c4_49']
@@ -1537,7 +1535,7 @@ class PreSymptomPrep(object):
                     row[sindex] = '1'
 
     def printWarning(self, var, row_num, row, headers, child_defaultFill):
-        updatestr = 'Child :: WARNING: value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
+        updatestr = 'Child :: Value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
         warning_logger.warning(updatestr)
         row[headers.index(var)] = str(child_defaultFill.get(var))
-        self.warnings = 1
+        self.warnings = True

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 # labels for dict
 module_labels = ('adult', 'child', 'neonate')
@@ -105,13 +106,16 @@ class CSMFGrapher(object):
         self.want_abort = 0
 
     def run(self):
-
         status_logger.info('Making CSMF graphs')
+        status_notifier.update({'progress': (14,)})
 
         graph_data_unsorted = get_default_dict()
 
         module_errors = {}
-        for module_key in module_labels:
+        status_notifier.update({'sub_progress': (0, len(module_labels))})
+
+        for cnt, module_key in enumerate(module_labels):
+            status_notifier.update({'sub_progress': (cnt,)})
 
             # read and process data from csv. rU gives universal newline support
             # TODO what happens if you don't have a module
@@ -135,13 +139,17 @@ class CSMFGrapher(object):
                 module_errors[module_key] = 1
 
         # make csmf graphs
-        for module_key in module_labels:
+        status_notifier.update({'sub_progress': (0, len(module_labels))})
+
+        for cnt, module_key in enumerate(module_labels):
+            status_notifier.update({'sub_progress': (cnt,)})
+
             if module_errors[module_key] != 1:
                 # sort data in decreasing order
                 graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1], reverse=True))
                 make_graph(module_key, self.output_dir)
 
-        status_logger.info('Finished making CSMF graphs')
+        status_notifier.update({'sub_progress': (0, 1)})
 
     def abort(self):
         self.want_abort = 1

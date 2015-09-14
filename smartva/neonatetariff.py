@@ -12,6 +12,7 @@ from smartva.hce_variables import neonate_hce
 from smartva.short_form_remove import neonate_remove
 from smartva.vacauses import neonatecauses
 from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier
 
 
 # excel function..  =INDEX(B$1:D$1,MATCH(MIN(B2:D2),B2:D2,0))
@@ -51,6 +52,8 @@ class Tariff(object):
         self.shortform = shortform
 
     def run(self):
+        status_notifier.update({'progress': (12,)})
+
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'neonate-tariff-results.csv', 'wb', buffering=0))
 
@@ -248,22 +251,27 @@ class Tariff(object):
                           row[headers.index('real_gender')])
             vacauselist.append(va)
 
-        status_logger.info('Neonate :: Calculating scores for validated dataset.  (This takes a few minutes)')
+        status_logger.debug('Neonate :: Calculating scores for validated dataset.')
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
         # ... 
 
         vavalidatedcauselist = []
-        total = len(validatedmatrix) * 6
-        cnt = 0
+        max_cause = 6
+
+        total = len(validatedmatrix) * max_cause
+        div = min(10 ** len(str(abs(total))), 100)
+        status_notifier.update({'sub_progress': (0, total)})
+
         for i, row in enumerate(validatedmatrix):
             causedict = {}
-            for causenum in range(1, 7):
+            for causenum in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = cnt + 1
-                if cnt % 1000 == 0:
-                    status_logger.info('Neonate :: Processing %s of %s' % (cnt, total))
+                cnt = (i * max_cause) + causenum
+                if cnt % max((total / div), 1) == 0:
+                    status_logger.debug('Neonate :: Processing %s of %s' % (cnt, total))
+                    status_notifier.update({'sub_progress': (cnt,)})
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
                 causeval = 0.0
@@ -278,9 +286,11 @@ class Tariff(object):
             sid = row[validatedheaders.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, 0, 0)
             vavalidatedcauselist.append(va)
-        status_logger.info('Neonate :: Processing %s of %s' % (total, total))
 
-        status_logger.info('Neonate :: Creating uniform training set')
+        status_logger.debug('Neonate :: Processing %s of %s' % (total, total))
+        status_notifier.update({'sub_progress': (0, 1)})
+
+        status_logger.debug('Neonate :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
         # as the sample size
@@ -328,20 +338,23 @@ class Tariff(object):
             for va in vas:
                 uniformlist.append(va)
 
-        status_logger.info('Neonate :: Generating cause rankings. (This takes a few minutes)')
+        status_logger.debug('Neonate :: Generating cause rankings.')
 
-        total = len(vacauselist) * 6
-        cnt = 0
-        for va in vacauselist:
+        total = len(vacauselist) * max_cause
+        div = min(10 ** len(str(abs(total))), 100)
+        status_notifier.update({'sub_progress': (0, total)})
+
+        for i, va in enumerate(vacauselist):
             sortedtariffs = []
             ranklist = {}
-            for i in range(1, 7):
+            for causenum in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = cnt + 1
-                if cnt % 10 == 0:
-                    status_logger.info('Neonate :: Processing %s of %s' % (cnt, total))
-                cause = "cause" + str(i)
+                cnt = (i * max_cause) + causenum
+                if cnt % max((total / div), 1) == 0:
+                    status_logger.debug('Neonate :: Processing %s of %s' % (cnt, total))
+                    status_notifier.update({'sub_progress': (cnt,)})
+                cause = "cause" + str(causenum)
                 # get the tariff score for this cause for this external VA
                 deathscore = va.causescores[cause]
                 # make a list of tariffs of ALL validated VAs for this cause
@@ -371,7 +384,9 @@ class Tariff(object):
                 # answer as the original stata tool
                 ranklist[cause] = index + 1
             va.ranklist = ranklist
-        status_logger.info('Neonate :: Processing %s of %s' % (total, total))
+
+        status_logger.debug('Neonate :: Processing %s of %s' % (total, total))
+        status_notifier.update({'sub_progress': (0, 1)})
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'neonate-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
@@ -395,7 +410,7 @@ class Tariff(object):
             for j, item in enumerate(sortedcauselist):
                 item[2].ranklist[cause] = j
 
-        status_logger.info('Neonate :: Generating cutoffs')
+        status_logger.debug('Neonate :: Generating cutoffs')
 
         cutoffs = []
         for i in range(1, 7):
@@ -574,7 +589,6 @@ class Tariff(object):
         for row in matrix:
             writer.writerow(row)
 
-        status_logger.info('Neonate :: Done!')
         return 1
 
     def round5(self, value):

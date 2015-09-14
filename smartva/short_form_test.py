@@ -1,6 +1,7 @@
 import csv
 
-from smartva.loggers import status_logger
+from smartva.loggers import warning_logger
+from smartva.utils import status_notifier
 
 
 class ShortFormTest(object):
@@ -13,15 +14,15 @@ class ShortFormTest(object):
         self.want_abort = 0
 
     def run(self):
+        status_notifier.update({'progress': (1,)})
+
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
 
-        status_logger.info('Checking form')
-
         if 'adult_7_11' in next(reader):
-            status_logger.info('Detected standard form')
+            warning_logger.debug('Detected standard form')
             return False
 
-        status_logger.info('Detected SHORT form')
+        warning_logger.debug('Detected short form')
         return True
 
     def abort(self):

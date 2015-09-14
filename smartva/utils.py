@@ -1,5 +1,6 @@
 import os
 import re
+import threading
 
 
 def shorten_path(path, maxLength):
@@ -30,3 +31,36 @@ def shorten_path(path, maxLength):
         return shortenedPath
     else:
         return '..' + os.path.sep + shortenedPath
+
+
+def synchronized(fn):
+    def fn_wrap(self, *args, **kwargs):
+        with self.mutex:
+            fn(self, *args, **kwargs)
+
+    return fn_wrap
+
+
+class StatusNotifier(object):
+    def __init__(self):
+        self.mutex = threading.RLock()
+        self._handlers = set()
+
+    @synchronized
+    def register(self, handler):
+        self._handlers.add(handler)
+
+    @synchronized
+    def unregister(self, handler):
+        self._handlers.remove(handler)
+
+    @synchronized
+    def notify(self, data):
+        for handler in self._handlers:
+            handler(data)
+
+    def update(self, data):
+        self.notify(data)
+
+
+status_notifier = StatusNotifier()

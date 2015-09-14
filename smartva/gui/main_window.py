@@ -5,7 +5,6 @@ import logging
 import re
 import os
 import platform
-import threading
 
 import wx
 import wx.html
@@ -17,6 +16,7 @@ from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
 from smartva.gui.prompting_combo_box import PromptingComboBox
 from smartva.loggers import status_logger
+from smartva.utils import status_notifier
 
 
 # TODO: pull out all strings
@@ -33,7 +33,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 690
+WINDOW_HEIGHT = 440
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -132,10 +132,13 @@ class vaUI(wx.Frame):
         self.chosen_folder_text = None
 
         self.status_gauge = None
+        self.sub_status_gauge = None
         self.action_button = None
 
         self._init_menu_bar()
         self._init_ui()
+
+        status_notifier.register(self.handle_update)
 
         self.Center()
         self.Show()
@@ -265,21 +268,27 @@ class vaUI(wx.Frame):
         status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
         status_text_ctrl.SetEditable(False)
         status_text_ctrl.SetValue('')
+        status_text_ctrl.Hide()
 
         # Send INFO level log messages to the status text control widget
         gui_log_handler = logging.StreamHandler(TextEntryStream(status_text_ctrl))
         gui_log_handler.setLevel(logging.INFO)
         status_logger.addHandler(gui_log_handler)
 
-        self.status_gauge = wx.Gauge(parent_panel, range=100, size=(-1, -1))
+        self.status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
+        self.sub_status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
         self.action_button = wx.Button(parent_panel, label='Start')
         self.action_button.Bind(wx.EVT_BUTTON, self.on_action)
 
-        status_gauge_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        status_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        status_gauge_box_sizer = wx.BoxSizer(wx.VERTICAL)
         status_gauge_box_sizer.Add(self.status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
-        status_gauge_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_gauge_box_sizer.AddSpacer(5)
+        status_gauge_box_sizer.Add(self.sub_status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_box_sizer.AddSizer(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        start_analysis_box_sizer.Add(status_gauge_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
@@ -287,7 +296,7 @@ class vaUI(wx.Frame):
         parent_box_sizer.Add(choose_input_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         parent_box_sizer.Add(choose_output_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         parent_box_sizer.Add(set_options_static_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
-        parent_box_sizer.Add(start_analysis_box_sizer, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        parent_box_sizer.Add(start_analysis_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         parent_panel.SetSizer(parent_box_sizer)
 
@@ -335,12 +344,9 @@ class vaUI(wx.Frame):
                                                         self.free_text, self.malaria, self.country,
                                                         completion_callback=self.on_result)
                 self.enable_ui(False)
-                self.increment_progress_bar()
 
         elif self.action_button.GetLabel() == 'Stop':
             self.action_button.SetLabel('Start')
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
             self.on_abort()
 
     def toggle_hce(self, event):
@@ -414,16 +420,11 @@ class vaUI(wx.Frame):
             self.action_button.Enable(True)
             self.running = False
             self.enable_ui(True)
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
         elif event is workerthread.CompletionStatus.DONE:
             # if it's done, then the algorithm is complete
-            self.status_gauge.SetValue(1)
             status_logger.info('Process complete')
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
 
     def on_abort(self):
         if self.worker:
@@ -438,14 +439,24 @@ class vaUI(wx.Frame):
         for widget in self.enabled_widgets:
             widget.Enable(enable)
 
-    def increment_progress_bar(self):
-        if self.worker is not None and self.worker.isAlive():
-            self.status_gauge.Pulse()
-            # call f() again in 60 seconds
-            threading.Timer(.3, self.increment_progress_bar).start()
-        else:
-            self.status_gauge.SetValue(1)
-            self.status_gauge.SetValue(0)
+    @staticmethod
+    def _update_gauge(gauge, progress):
+        if len(progress) > 1:
+            if progress[1]:
+                gauge.SetRange(progress[1])
+        gauge.SetValue(progress[0])
+
+    def handle_update(self, data):
+        """
+        Processes status notification updates into progress bar updates.
+
+        :type data: dict
+        :param data: Dictionary of status update metadata.
+        """
+        if data.get('progress'):
+            wx.CallAfter(self._update_gauge, self.status_gauge, data['progress'])
+        if data.get('sub_progress'):
+            wx.CallAfter(self._update_gauge, self.sub_status_gauge, data['sub_progress'])
 
 
 def start():
