@@ -15,6 +15,7 @@ from smartva import prog_name
 from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
+from smartva.gui.prompting_combo_box import PromptingComboBox
 from smartva.loggers import status_logger
 
 
@@ -42,7 +43,7 @@ else:
     # Everyone else uses \n
     LINE_DELIM_LEN = 1
 
-COMBO_BOX_STYLE = wx.CB_READONLY | wx.CB_DROPDOWN
+COMBO_BOX_STYLE = wx.CB_DROPDOWN
 if platform.system().lower() != 'darwin':
     # Mac does not support sort style
     COMBO_BOX_STYLE |= wx.CB_SORT
@@ -238,7 +239,7 @@ class vaUI(wx.Frame):
         set_options_static_box_sizer = wx.StaticBoxSizer(set_options_static_box, wx.VERTICAL)
 
         country_label = wx.StaticText(parent_panel, label='Data origin (country)')
-        country_combo_box = wx.ComboBox(parent_panel, choices=COUNTRIES, style=COMBO_BOX_STYLE)
+        country_combo_box = PromptingComboBox(parent_panel, value=COUNTRY_DEFAULT, choices=COUNTRIES, style=COMBO_BOX_STYLE)
         self.Bind(wx.EVT_COMBOBOX, handler=self.change_country, id=country_combo_box.GetId())
         self.enabled_widgets.append(country_combo_box)
 
@@ -367,8 +368,9 @@ class vaUI(wx.Frame):
         self.malaria = event.EventObject.IsChecked()
 
     def change_country(self, event):
-        if event.GetString() != COUNTRY_DEFAULT:
-            match = re.search(r'\(([A-Z]{3})\)$', event.GetString())
+        value = event.EventObject.Value
+        if value != COUNTRY_DEFAULT and value in COUNTRIES:
+            match = re.search(r'\(([A-Z]{3})\)$', value)
             self.country = match.group(1)
         else:
             self.country = None
