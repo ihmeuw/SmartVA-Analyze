@@ -256,7 +256,7 @@ class Tariff(object):
             va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])
             vacauselist.append(va)
 
-        status_logger.info('Adult :: Calculating scores for validated dataset.  (This takes a few minutes)')
+        status_logger.debug('Adult :: Calculating scores for validated dataset.')
 
         # creates a list of causes/scores for each VALIDATED va.
         # va1 :: cause1/score, cause2/score...casue46/score
@@ -276,7 +276,7 @@ class Tariff(object):
                     return
                 cnt = (i * max_cause) + causenum
                 if cnt % max((total / div), 1) == 0:
-                    status_logger.info('Adult :: Processing %s of %s' % (cnt, total))
+                    status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
                     status_notifier.update({'sub_progress': (cnt,)})
                 cause = "cause" + str(causenum)
                 slist = cause40s[cause]
@@ -293,10 +293,10 @@ class Tariff(object):
             va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, 0, 0)
             vavalidatedcauselist.append(va)
 
-        status_logger.info('Adult :: Processing %s of %s' % (total, total))
+        status_logger.debug('Adult :: Processing %s of %s' % (total, total))
         status_notifier.update({'sub_progress': (0, 1)})
 
-        status_logger.info('Adult :: Creating uniform training set')
+        status_logger.debug('Adult :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
         # find the cause of death with the most deaths, and use that number
         # as the sample size
@@ -344,7 +344,7 @@ class Tariff(object):
             for va in vas:
                 uniformlist.append(va)
 
-        status_logger.info('Adult :: Generating cause rankings. (This takes a few minutes)')
+        status_logger.debug('Adult :: Generating cause rankings.')
 
         total = len(vacauselist) * max_cause
         div = min(10 ** len(str(abs(total))), 100)
@@ -358,7 +358,7 @@ class Tariff(object):
                     return
                 cnt = (i * max_cause) + causenum
                 if cnt % max((total / div), 1) == 0:
-                    status_logger.info('Adult :: Processing %s of %s' % (cnt, total))
+                    status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
                     status_notifier.update({'sub_progress': (cnt,)})
                 cause = "cause" + str(causenum)
                 # get the tariff score for this cause for this external VA
@@ -392,7 +392,7 @@ class Tariff(object):
                 ranklist[cause] = index + 1
             va.ranklist = ranklist
 
-        status_logger.info('Adult :: Processing %s of %s' % (total, total))
+        status_logger.debug('Adult :: Processing %s of %s' % (total, total))
         status_notifier.update({'sub_progress': (0, 1)})
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
@@ -418,7 +418,7 @@ class Tariff(object):
             for j, item in enumerate(sortedcauselist):
                 item[2].ranklist[cause] = j
 
-        status_logger.info('Adult :: Generating cutoffs')
+        status_logger.debug('Adult :: Generating cutoffs')
 
         cutoffs = []
         for i in range(1, 47):
@@ -610,7 +610,6 @@ class Tariff(object):
         for row in matrix:
             writer.writerow(row)
 
-        status_logger.info('Adult :: Done!')
         return 1
 
     def round5(self, value):

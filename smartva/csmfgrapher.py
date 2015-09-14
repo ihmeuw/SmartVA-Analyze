@@ -149,7 +149,6 @@ class CSMFGrapher(object):
                 graph_data[module_key] = OrderedDict(sorted(graph_data_unsorted[module_key].iteritems(), key=lambda x: x[1], reverse=True))
                 make_graph(module_key, self.output_dir)
 
-        status_logger.info('Finished making CSMF graphs')
         status_notifier.update({'sub_progress': (0, 1)})
 
     def abort(self):

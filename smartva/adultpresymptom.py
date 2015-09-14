@@ -25,7 +25,7 @@ class PreSymptomPrep(object):
         self.output_dir = output_dir
         self.want_abort = 0
         self.shortform = shortform
-        self.warnings = 0
+        self.warnings = False
 
     def run(self):
         status_notifier.update({'progress': (4,)})
@@ -36,7 +36,6 @@ class PreSymptomPrep(object):
             adult_defaultFill = defaultfill.adult_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
-        warning_logger.warning('Adult presymptom warnings:')
 
         matrix = list()
         headers = list()
@@ -57,7 +56,7 @@ class PreSymptomPrep(object):
 
         # make sure we have data, else just stop this module        
         if len(matrix) < 1:
-            status_logger.info('Adult :: No Adult data, skipping module.')
+            warning_logger.debug('Adult :: No Adult data, skipping module')
             return 0
 
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-presymptom.csv', 'wb', buffering=0))
@@ -98,7 +97,7 @@ class PreSymptomPrep(object):
                     row.append("0")
 
         error = 0
-        status_logger.info('Adult :: Verifying answers fall within legal bounds')
+        status_logger.debug('Adult :: Verifying answers fall within legal bounds')
         for j, row in enumerate(matrix):
             for i, col in enumerate(row):
                 header = headers[i]
@@ -110,13 +109,9 @@ class PreSymptomPrep(object):
                         for answer in answerArray:
                             if int(answer) not in rangetest:
                                 # ERROR
-                                updatestr = 'Adult :: value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
+                                updatestr = 'Adult :: Value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
                                 warning_logger.warning(updatestr)
-                                error = 1
-        if error == 0:
-            status_logger.info('Adult :: Answers verified')
-        else:
-            status_logger.info('Adult :: Warnings found, please check warnings.txt')
+                                self.warnings = True
 
         # calculations for the generated variables:
         # i.e. recode
@@ -982,10 +977,12 @@ class PreSymptomPrep(object):
                 if not (a4_03 is None or a4_03 == ''):
                     self.printWarning('a4_03', i, row, headers, adult_defaultFill)
 
-        if self.warnings == 1:
+        if not self.warnings:
+            status_logger.debug('Adult :: Answers verified')
+        else:
             status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
-        status_logger.info('Adult :: Filling in default values for empty columns')
+        status_logger.debug('Adult :: Filling in default values for empty columns')
         # fill in missing default values:
         for row in matrix:
             for i, col in enumerate(row):
@@ -994,7 +991,7 @@ class PreSymptomPrep(object):
                 if default is not None and col == '':
                     row[i] = adult_defaultFill[header]
 
-        status_logger.info('Adult :: Analyzing free text')
+        status_logger.debug('Adult :: Analyzing free text')
 
         if self.shortform:
             for row in matrix:
@@ -1030,7 +1027,7 @@ class PreSymptomPrep(object):
                 answer = row[index]
                 self.processFreeText(answer, row, headers)
 
-        status_logger.info('Adult :: Processing duration variables')
+        status_logger.debug('Adult :: Processing duration variables')
         # fix duration variables
         durationVars = ['a2_01', 'a2_03', 'a2_08', 'a2_15', 'a2_22', 'a2_24', 'a2_26', 'a2_28', 'a2_33', 'a2_37',
                         'a2_41', 'a2_48', 'a2_54', 'a2_58', 'a2_62', 'a2_65', 'a2_68', 'a2_70', 'a2_73', 'a2_76',
@@ -1125,7 +1122,7 @@ class PreSymptomPrep(object):
                     row[sindex] = '1'
 
     def printWarning(self, var, row_num, row, headers, adult_defaultFill):
-        updatestr = 'Adult :: WARNING: value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
+        updatestr = 'Adult :: Value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
         warning_logger.warning(updatestr)
         row[headers.index(var)] = str(adult_defaultFill.get(var))
-        self.warnings = 1
+        self.warnings = True
