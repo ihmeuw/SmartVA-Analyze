@@ -20,8 +20,10 @@ def check_country(ctx, param, value):
     """
     Check that the specified country is in the list of valid countries. If not, print out a list of valid countries.
     """
-    if not value.upper() in (country.split(' ')[-1].strip('()').upper() for country in COUNTRIES):
-        click.echo('Country list:')
+    if value.upper() == COUNTRY_DEFAULT.upper():
+        return None
+    elif not value.upper() in (country.split(u' ')[-1].strip(u'()').upper() for country in COUNTRIES):
+        click.echo(u'Country list:')
         for country in COUNTRIES:
             click.echo(u'- {}'.format(country))
         ctx.exit()
