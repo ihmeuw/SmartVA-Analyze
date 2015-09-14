@@ -27,7 +27,14 @@ class CompletionStatus(object):
 
 # Thread class that executes processing
 class WorkerThread(threading.Thread):
-    """Worker Thread Class."""
+    """
+    Worker Thread Class.
+
+    For status notifier updates, the following key: value pairs are supplied:
+        progress: (value, [range]) - Update value of progress bar
+        sub_progress: (value, [range]) - Update value of sub progress bar
+    Note: If optional range is not present, the previous range should be used.
+    """
 
     def __init__(self, input_file, hce, output_dir, freetext, malaria, country, completion_callback):
         """

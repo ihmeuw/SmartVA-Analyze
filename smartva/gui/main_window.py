@@ -448,11 +448,6 @@ class vaUI(wx.Frame):
         """
         Processes status notification updates into progress bar updates.
 
-        The following key: value items are processed:
-        progress: (value, [range]) - Update value of progress bar
-        sub_progress: (value, [range]) - Update value of sub progress bar
-        Note: If range is not present, previous range is used.
-
         :type data: dict
         :param data: Dictionary of status update metadata.
         """
