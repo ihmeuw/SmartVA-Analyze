@@ -219,7 +219,8 @@ adult_conversionVars = {
     'adult_7_4': 'a_7_4',
     'adult_7_3': 'a_7_3',
     'adult_7_2': 'a_7_2',
-    'adult_7_1': 'a_7_1'}
+    'adult_7_1': 'a_7_1'
+}
 
 child_conversionVars = {
     'sid': 'sid',
@@ -491,7 +492,8 @@ child_conversionVars = {
     'child_6_4': 'c_6_4',
     'child_6_3': 'c_6_3',
     'child_6_2': 'c_6_2',
-    'child_6_1': 'c_6_1'}
+    'child_6_1': 'c_6_1'
+}
 
 neonate_conversionVars = {
     'sid': 'sid',
@@ -758,4 +760,5 @@ neonate_conversionVars = {
     'neonate_6_4': 'n_6_4',
     'neonate_6_3': 'n_6_3',
     'neonate_6_2': 'n_6_2',
-    'neonate_6_1': 'n_6_1'}
+    'neonate_6_1': 'n_6_1'
+}
