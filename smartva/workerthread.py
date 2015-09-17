@@ -3,18 +3,18 @@ import logging
 import os
 import threading
 
-from smartva import vaprep
-from smartva import adultpresymptom
-from smartva import adultsymptom
-from smartva import adulttariff
-from smartva import childpresymptom
-from smartva import childsymptom
-from smartva import childtariff
-from smartva import neonatepresymptom
-from smartva import neonatesymptom
-from smartva import neonatetariff
-from smartva import causegrapher
-from smartva import csmfgrapher
+from smartva.vaprep import VaPrep
+from smartva.adultpresymptom import PreSymptomPrep as AdultPreSymptomPrep
+from smartva.adultsymptom import AdultSymptomPrep
+from smartva.adulttariff import Tariff as AdultTariff
+from smartva.childpresymptom import PreSymptomPrep as ChildPreSymptomPrep
+from smartva.childsymptom import ChildSymptomPrep
+from smartva.childtariff import Tariff as ChildTariff
+from smartva.neonatepresymptom import PreSymptomPrep as NeonatePreSymptomPrep
+from smartva.neonatesymptom import NeonateSymptomPrep
+from smartva.neonatetariff import Tariff as NeonateTariff
+from smartva.causegrapher import CauseGrapher
+from smartva.csmfgrapher import CSMFGrapher
 from smartva.loggers import warning_logger
 from smartva.utils import status_notifier
 
@@ -52,8 +52,8 @@ class WorkerThread(threading.Thread):
         """
         threading.Thread.__init__(self)
         self._completion_callback = completion_callback
-        self._want_abort = 0
-        self.data = None
+        self._want_abort = False
+        self._abort_list = []
 
         self.hce = hce
         self.free_text = free_text
@@ -109,97 +109,112 @@ class WorkerThread(threading.Thread):
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
-        self.prep = vaprep.VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
-        self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
-        self.adultsym = adultsymptom.AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
-        self.adultresults = adulttariff.Tariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
-        self.childpresym = childpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.short_form)
-        self.childsym = childsymptom.ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.short_form)
-        self.childresults = childtariff.Tariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
-        self.neonatepresym = neonatepresymptom.PreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.short_form)
-        self.neonatesym = neonatesymptom.NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir)
-        self.neonateresults = neonatetariff.Tariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.country, self.short_form)
-        self.causegrapher = causegrapher.CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
-        self.csmfgrapher = csmfgrapher.CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
+        va_prep = VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
+        adult_pre_symptom = AdultPreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
+        adult_symptom = AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
+        adult_results = AdultTariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
+        child_pre_symptom = ChildPreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.short_form)
+        child_symptom = ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.short_form)
+        child_results = ChildTariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
+        neonate_pre_symptom = NeonatePreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.short_form)
+        neonate_symptom = NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir)
+        neonate_results = NeonateTariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.country, self.short_form)
+        cause_grapher = CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
+        csmf_grapher = CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
+
+        self._abort_list.extend([
+            va_prep,
+            adult_pre_symptom,
+            adult_symptom,
+            adult_results,
+            child_pre_symptom,
+            child_symptom,
+            child_results,
+            neonate_pre_symptom,
+            neonate_symptom,
+            neonate_results,
+            cause_grapher,
+            csmf_grapher,
+        ])
 
         # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         # we have data at this point, so all of these files should have been created
-        self.prep.run()
-        if self._want_abort == 1:
+        va_prep.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes adult-presymptom.csv
-        adult_data = self.adultpresym.run()
-        if self._want_abort == 1:
+        adult_data = adult_pre_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes adult-symptom.csv
-        if adult_data == 1:
-            self.adultsym.run()
-        if self._want_abort == 1:
+        if adult_data:
+            adult_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         #
         # creates adult output files
-        if adult_data == 1:
-            self.adultresults.run()
-        if self._want_abort == 1:
+        if adult_data:
+            adult_results.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes child-presymptom.csv
-        child_data = self.childpresym.run()
-        if self._want_abort == 1:
+        child_data = child_pre_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes child-symptom.csv
-        if child_data == 1:
-            self.childsym.run()
-        if self._want_abort == 1:
+        if child_data:
+            child_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # creates child output files
-        if child_data == 1:
-            self.childresults.run()
-        if self._want_abort == 1:
+        if child_data:
+            child_results.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes neonate-presymptom.csv
         # TODO:  right now this is the same as child presymptom, should probably just combine into one
-        neonate_data = self.neonatepresym.run()
-        if self._want_abort == 1:
+        neonate_data = neonate_pre_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # makes neonate-symptom.csv
-        if neonate_data == 1:
-            self.neonatesym.run()
-        if self._want_abort == 1:
+        if neonate_data:
+            neonate_symptom.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # creates neonate output files
-        if neonate_data == 1:
-            self.neonateresults.run()
-        if self._want_abort == 1:
+        if neonate_data:
+            neonate_results.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # generate all cause graphs
-        self.causegrapher.run()
-        if self._want_abort == 1:
+        cause_grapher.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
         # generate all csmf graphs
-        self.csmfgrapher.run()
-        if self._want_abort == 1:
+        csmf_grapher.run()
+        if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return
 
@@ -209,21 +224,9 @@ class WorkerThread(threading.Thread):
     def abort(self):
         """abort worker thread."""
         # Method for use by main thread to signal an abort
-        self._want_abort = 1
-        self.prep.abort()
-        self.adultpresym.abort()
-        self.adultsym.abort()
-        self.adultresults.abort()
-        self.childpresym.abort()
-        self.childsym.abort()
-        self.childresults.abort()
-        self.neonatepresym.abort()
-        self.neonatesym.abort()
-        self.neonateresults.abort()
-        self.causegrapher.abort()
-        self.csmfgrapher.abort()
-        if self.data:
-            self.data.setCancelled()
+        self._want_abort = True
+        for item in self._abort_list:
+            item.abort()
 
     def _complete(self, status):
         for handler in warning_logger.handlers:
