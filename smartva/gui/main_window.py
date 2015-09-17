@@ -138,7 +138,7 @@ class vaUI(wx.Frame):
         self._init_menu_bar()
         self._init_ui()
 
-        status_notifier.register(self.handle_update)
+        status_notifier.register(self._handle_notification)
 
         self.Center()
         self.Show()
@@ -342,7 +342,7 @@ class vaUI(wx.Frame):
                 self.running = True
                 self.worker = workerthread.WorkerThread(self.input_file_path, self.hce, self.output_folder_path,
                                                         self.free_text, self.malaria, self.country,
-                                                        completion_callback=self.on_result)
+                                                        completion_callback=self._completion_handler)
                 self.enable_ui(False)
 
         elif self.action_button.GetLabel() == 'Stop':
@@ -407,24 +407,28 @@ class vaUI(wx.Frame):
         self.about_window.Centre()
         self.about_window.Show()
 
-    def on_result(self, event):
+    def _completion_handler(self, status, message=''):
         """
         Completion callback.
-        :type event: int
-        :param event:
+        :type status: int
+        :param status:
         :return:
         """
-        if event is workerthread.CompletionStatus.ABORT:
-            # If it's none we got an abort
-            status_logger.info('Computation successfully aborted')
-            self.action_button.Enable(True)
-            self.running = False
-            self.enable_ui(True)
-        elif event is workerthread.CompletionStatus.DONE:
-            # if it's done, then the algorithm is complete
-            status_logger.info('Process complete')
-            self.action_button.SetLabel('Start')
-            self.enable_ui(True)
+        style = ''
+        status_message = ''
+        if status == workerthread.CompletionStatus.ABORT:
+            status_message = 'Computation successfully aborted. ' + message
+        elif status == workerthread.CompletionStatus.DONE:
+            status_message = 'Process complete. ' + message
+        elif status == workerthread.CompletionStatus.FAIL:
+            status_message = 'Process failed. ' + message
+            style = 'error'
+        status_logger.info(status_message)
+        status_notifier.update({'message': (status_message, style)})
+        self.running = False
+        self.action_button.Enable(True)
+        self.action_button.SetLabel('Start')
+        self.enable_ui(True)
 
     def on_abort(self):
         if self.worker:
@@ -441,12 +445,47 @@ class vaUI(wx.Frame):
 
     @staticmethod
     def _update_gauge(gauge, progress):
+        """
+        Update a gauge value and range.
+        :param gauge: Gauge to update
+        :type gauge: wx.Gauge
+        :param progress: List, set, or tuple with the first pos as the value, and second pos as the range.
+        :type progress: (list, set, tuple)
+        """
         if len(progress) > 1:
             if progress[1]:
                 gauge.SetRange(progress[1])
         gauge.SetValue(progress[0])
 
-    def handle_update(self, data):
+    @staticmethod
+    def _show_message(parent, message_data):
+        """
+        Display a simple message dialog.
+        :param parent: Message dialog parent object.
+        :type parent: wx.Panel
+        :param message_data: List, set, or tuple with the first pos as the message, and second pos as the style.
+        :type message_data: (list, set, tuple)
+        """
+        style = 0
+        if isinstance(message_data, (set, list, tuple)):
+            # Message is in pos 0, style is in pos 1
+            message = message_data[0]
+            if len(message_data) > 1:
+                # Get style and default to INFORMATION
+                style = {
+                    'exclamation': wx.ICON_EXCLAMATION,
+                    'error': wx.ICON_ERROR,
+                    'question': wx.ICON_QUESTION,
+                    'warning': wx.ICON_WARNING,
+                }.get(message_data[-1].lower(), wx.ICON_INFORMATION)
+        else:
+            message = message_data
+
+        dlg = wx.MessageDialog(parent, message=message, style=style)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def _handle_notification(self, data):
         """
         Processes status notification updates into progress bar updates.
 
@@ -457,6 +496,8 @@ class vaUI(wx.Frame):
             wx.CallAfter(self._update_gauge, self.status_gauge, data['progress'])
         if data.get('sub_progress'):
             wx.CallAfter(self._update_gauge, self.sub_status_gauge, data['sub_progress'])
+        if data.get('message'):
+            wx.CallAfter(self._show_message, self, data['message'])
 
 
 def start():
