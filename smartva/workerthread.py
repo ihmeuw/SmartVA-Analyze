@@ -1,3 +1,4 @@
+import csv
 import logging
 import os
 import threading
@@ -15,7 +16,6 @@ from smartva import neonatesymptom
 from smartva import neonatetariff
 from smartva import causegrapher
 from smartva import csmfgrapher
-from smartva import short_form_test
 from smartva.loggers import warning_logger
 from smartva.utils import status_notifier
 
@@ -36,13 +36,13 @@ class WorkerThread(threading.Thread):
     Note: If optional range is not present, the previous range should be used.
     """
 
-    def __init__(self, input_file, hce, output_dir, freetext, malaria, country, completion_callback):
+    def __init__(self, input_file, hce, output_dir, free_text, malaria, country, completion_callback):
         """
         Init Worker Thread Class.
         :type input_file: str
         :type hce: bool
         :type output_dir: str
-        :type freetext: bool
+        :type free_text: bool
         :type malaria: bool
         :type country: str
         :type completion_callback: callable
@@ -50,50 +50,57 @@ class WorkerThread(threading.Thread):
         threading.Thread.__init__(self)
         self._completion_callback = completion_callback
         self._want_abort = 0
-        self.inputFilePath = input_file
         self.data = None
+
         self.hce = hce
-        self.output_dir = output_dir
-        self.freetext = freetext
+        self.free_text = free_text
         self.malaria = malaria
         self.country = country
+
+        self.input_file_path = input_file
+        self.output_dir = output_dir
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
 
         warning_file_handler = logging.FileHandler(os.path.join(self.output_dir, 'warnings.txt'), mode='w', delay=True)
         warning_logger.addHandler(warning_file_handler)
 
-        self.shortform = False
+        self.short_form = False
 
         self.start()
+
+    @staticmethod
+    def short_form_test(file_path):
+        with open(file_path, 'Ub') as f:
+            return 'adult_7_11' not in next(csv.reader(f))
 
     def run(self):
         status_notifier.update({'progress': (0, 15), 'sub_progress': (0, 1)})
 
-        intermediate_dir = self.output_dir + os.sep + "intermediate-files"
-        figures_dir = self.output_dir + os.sep + "figures"
+        intermediate_dir = os.path.join(self.output_dir, 'intermediate-files')
+        figures_dir = os.path.join(self.output_dir, 'figures')
 
         if not os.path.exists(intermediate_dir):
             os.mkdir(intermediate_dir)
         if not os.path.exists(figures_dir):
             os.mkdir(figures_dir)
 
-        self.shortFormTest = short_form_test.ShortFormTest(self.inputFilePath)
-        self.shortform = self.shortFormTest.run()
+        self.short_form = self.short_form_test(self.input_file_path)
+        warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
         # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
         # set up the function calls
-        self.cleanheaders = headers.Headers(self.inputFilePath, intermediate_dir)
-        self.prep = vaprep.VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.shortform)
-        self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.shortform)
-        self.adultsym = adultsymptom.AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.shortform)
-        self.adultresults = adulttariff.Tariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
-        self.childpresym = childpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.shortform)
-        self.childsym = childsymptom.ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.shortform)
-        self.childresults = childtariff.Tariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.malaria, self.country, self.shortform)
-        self.neonatepresym = neonatepresymptom.PreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.shortform)
+        self.cleanheaders = headers.Headers(self.input_file_path, intermediate_dir)
+        self.prep = vaprep.VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
+        self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
+        self.adultsym = adultsymptom.AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
+        self.adultresults = adulttariff.Tariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
+        self.childpresym = childpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.short_form)
+        self.childsym = childsymptom.ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.short_form)
+        self.childresults = childtariff.Tariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
+        self.neonatepresym = neonatepresymptom.PreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.short_form)
         self.neonatesym = neonatesymptom.NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir)
-        self.neonateresults = neonatetariff.Tariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.freetext, self.country, self.shortform)
+        self.neonateresults = neonatetariff.Tariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.country, self.short_form)
         self.causegrapher = causegrapher.CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
         self.csmfgrapher = csmfgrapher.CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
 
