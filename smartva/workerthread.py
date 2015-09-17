@@ -36,6 +36,8 @@ class WorkerThread(threading.Thread):
     For status notifier updates, the following key: value pairs are supplied:
         progress: (value, [range]) - Update value of progress bar
         sub_progress: (value, [range]) - Update value of sub progress bar
+        message: (text, [style]) - Display a message with an optional style
+            Defined styles: exclamation, error, question, information
     Note: If optional range is not present, the previous range should be used.
     """
 
@@ -80,9 +82,13 @@ class WorkerThread(threading.Thread):
                     reader = csv.reader(in_f)
                     writer = csv.writer(out_f)
                     writer.writerow([col.split('-')[-1] for col in next(reader)])
+                    writer.writerow(next(reader))
                     writer.writerows(reader)
         except StopIteration:
             # Empty file
+            message = 'Source file "{}" does not contain data.'.format(source_path)
+            status_notifier.update({'message': (message, 'error')})
+            warning_logger.warning(message)
             return False
         return True
 
