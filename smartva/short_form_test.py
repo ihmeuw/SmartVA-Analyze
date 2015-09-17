@@ -18,12 +18,18 @@ class ShortFormTest(object):
 
         reader = csv.reader(open(self.inputFilePath, 'Ub'))
 
-        if 'adult_7_11' in next(reader):
-            warning_logger.debug('Detected standard form')
-            return False
+        first = True
+        for row in reader:
+            if first:
+                for column in row:
+                    if column.find("adult_7_11") != -1:
+                        warning_logger.debug('Detected SHORT form')
 
-        warning_logger.debug('Detected short form')
-        return True
+                        return True
+                first = False
+            else:
+                warning_logger.debug('Detected standard form')
+                return False
 
     def abort(self):
         self.want_abort = 1
