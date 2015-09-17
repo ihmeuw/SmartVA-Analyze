@@ -36,8 +36,8 @@ class WorkerThread(threading.Thread):
     For status notifier updates, the following key: value pairs are supplied:
         progress: (value, [range]) - Update value of progress bar
         sub_progress: (value, [range]) - Update value of sub progress bar
-        message: (text, [style]) - Display a message with an optional style
-            Defined styles: exclamation, error, question, information
+        message: (text, [style]) - Display a message with an optional style (default: information)
+            Defined styles: exclamation, error, question, warning, information
     Note: If optional range is not present, the previous range should be used.
     """
 
@@ -76,21 +76,13 @@ class WorkerThread(threading.Thread):
 
     @staticmethod
     def format_headers(source_path, dest_path):
-        try:
-            with open(source_path, 'Ub') as in_f:
-                with open(dest_path, 'wb') as out_f:
-                    reader = csv.reader(in_f)
-                    writer = csv.writer(out_f)
-                    writer.writerow([col.split('-')[-1] for col in next(reader)])
-                    writer.writerow(next(reader))
-                    writer.writerows(reader)
-        except StopIteration:
-            # Empty file
-            message = 'Source file "{}" does not contain data.'.format(source_path)
-            status_notifier.update({'message': (message, 'error')})
-            warning_logger.warning(message)
-            return False
-        return True
+        with open(source_path, 'Ub') as in_f:
+            with open(dest_path, 'wb') as out_f:
+                reader = csv.reader(in_f)
+                writer = csv.writer(out_f)
+                writer.writerow([col.split('-')[-1] for col in next(reader)])
+                writer.writerow(next(reader))
+                writer.writerows(reader)
 
     @staticmethod
     def short_form_test(file_path):
@@ -108,8 +100,13 @@ class WorkerThread(threading.Thread):
         if not os.path.exists(figures_dir):
             os.mkdir(figures_dir)
 
-        if not self.format_headers(self.input_file_path, os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME)):
-            self._complete(CompletionStatus.FAIL)
+        try:
+            self.format_headers(self.input_file_path, os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
+        except StopIteration:
+            # File doesn't contain data
+            message = 'Source file "{}" does not contain data.'.format(self.input_file_path)
+            self._complete(CompletionStatus.FAIL, message)
+            warning_logger.warning(message)
             return
 
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
@@ -234,9 +231,9 @@ class WorkerThread(threading.Thread):
         for item in self._abort_list:
             item.abort()
 
-    def _complete(self, status):
+    def _complete(self, status, message=''):
         for handler in warning_logger.handlers:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
         status_notifier.update({'progress': (int(not status), 1), 'sub_progress': (int(not status), 1)})
-        self._completion_callback(status)
+        self._completion_callback(status, message)
