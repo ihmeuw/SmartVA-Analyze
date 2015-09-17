@@ -3,7 +3,6 @@ import logging
 import os
 import threading
 
-from smartva import headers
 from smartva import vaprep
 from smartva import adultpresymptom
 from smartva import adultsymptom
@@ -19,10 +18,14 @@ from smartva import csmfgrapher
 from smartva.loggers import warning_logger
 from smartva.utils import status_notifier
 
+SHORT_FORM_HEADER = 'adult_7_11'
+CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'
+
 
 class CompletionStatus(object):
     DONE = 0
     ABORT = 1
+    FAIL = 2
 
 
 # Thread class that executes processing
@@ -70,9 +73,23 @@ class WorkerThread(threading.Thread):
         self.start()
 
     @staticmethod
+    def format_headers(source_path, dest_path):
+        try:
+            with open(source_path, 'Ub') as in_f:
+                with open(dest_path, 'wb') as out_f:
+                    reader = csv.reader(in_f)
+                    writer = csv.writer(out_f)
+                    writer.writerow([col.split('-')[-1] for col in next(reader)])
+                    writer.writerows(reader)
+        except StopIteration:
+            # Empty file
+            return False
+        return True
+
+    @staticmethod
     def short_form_test(file_path):
         with open(file_path, 'Ub') as f:
-            return 'adult_7_11' not in next(csv.reader(f))
+            return SHORT_FORM_HEADER in next(csv.reader(f))
 
     def run(self):
         status_notifier.update({'progress': (0, 15), 'sub_progress': (0, 1)})
@@ -85,12 +102,13 @@ class WorkerThread(threading.Thread):
         if not os.path.exists(figures_dir):
             os.mkdir(figures_dir)
 
-        self.short_form = self.short_form_test(self.input_file_path)
+        if not self.format_headers(self.input_file_path, os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME)):
+            self._complete(CompletionStatus.FAIL)
+            return
+
+        self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
-        # TODO should only pass the file to these methods. you can figure out self.output_dir from the file
-        # set up the function calls
-        self.cleanheaders = headers.Headers(self.input_file_path, intermediate_dir)
         self.prep = vaprep.VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
         self.adultpresym = adultpresymptom.PreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
         self.adultsym = adultsymptom.AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
@@ -103,12 +121,6 @@ class WorkerThread(threading.Thread):
         self.neonateresults = neonatetariff.Tariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.country, self.short_form)
         self.causegrapher = causegrapher.CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
         self.csmfgrapher = csmfgrapher.CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
-
-        # makes cleanheaders.csv
-        hasdata = self.cleanheaders.run()
-        if hasdata == 0 or self._want_abort == 1:
-            self._complete(CompletionStatus.ABORT)
-            return
 
         # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         # we have data at this point, so all of these files should have been created
@@ -198,7 +210,6 @@ class WorkerThread(threading.Thread):
         """abort worker thread."""
         # Method for use by main thread to signal an abort
         self._want_abort = 1
-        self.cleanheaders.abort()
         self.prep.abort()
         self.adultpresym.abort()
         self.adultsym.abort()
