@@ -1,4 +1,5 @@
 import csv
+import re
 import string
 import os
 
@@ -578,21 +579,17 @@ class VaPrep(object):
             index = headers.index(question)
             for row in matrix:
                 answer = row[index]
+                new_answer = re.sub('[^a-z ]', '', answer.lower())
 
-                # lowercase
-                lower = answer.lower()
-                # remove numbers and punctuation
-                nonum = self.stripNumbers(lower)
-
-                newanswer = nonum
+                # TODO - Fix this. It replaces partial words (e.g. bit and bite) and can cause errors.
                 # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
                 for key in WORD_SUBS.keys():
-                    if key in newanswer:
+                    if key in new_answer:
                         # if it exists, replace it with the word(s) from the dictionary
-                        newanswer = string.replace(newanswer, key, WORD_SUBS[key])
+                        new_answer = string.replace(new_answer, key, WORD_SUBS[key])
 
                 # now make sure we get rid of all extra whitespace
-                newanswerarray = newanswer.split(' ')
+                newanswerarray = new_answer.split(' ')
                 for i, word in enumerate(newanswerarray):
                     newanswerarray[i] = word.strip()
                 row[index] = ' '.join(newanswerarray)
@@ -647,12 +644,3 @@ class VaPrep(object):
 
     def abort(self):
         self.want_abort = 1
-
-    # this also gets rid of punctuation    
-    def stripNumbers(self, answer):
-        newString = ''
-        validLetters = 'abcdefghijklmnopqrstuvwxyz '
-        for char in answer:
-            if char in validLetters:
-                newString += char
-        return newString
