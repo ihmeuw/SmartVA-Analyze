@@ -89,16 +89,20 @@ class WorkerThread(threading.Thread):
         with open(file_path, 'Ub') as f:
             return SHORT_FORM_HEADER in next(csv.reader(f))
 
+    @staticmethod
+    def make_dir(*args):
+        path = os.path.join(*args)
+        if not os.path.exists(path):
+            os.mkdir(path)
+
     def run(self):
         status_notifier.update({'progress': (0, 15), 'sub_progress': (0, 1)})
 
         intermediate_dir = os.path.join(self.output_dir, 'intermediate-files')
         figures_dir = os.path.join(self.output_dir, 'figures')
 
-        if not os.path.exists(intermediate_dir):
-            os.mkdir(intermediate_dir)
-        if not os.path.exists(figures_dir):
-            os.mkdir(figures_dir)
+        self.make_dir(intermediate_dir)
+        self.make_dir(figures_dir)
 
         try:
             self.format_headers(self.input_file_path, os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
