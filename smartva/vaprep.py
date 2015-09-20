@@ -155,42 +155,23 @@ class VaPrep(object):
     def run(self):
         status_notifier.update({'progress': (1,)})
 
-        reader = csv.reader(open(self.input_file_path, 'rU'))
-
         status_logger.debug('Initial data prep')
-
-        first = 1
 
         # matrix is a list of lists containing all of our data
         matrix = list()
 
-        # column headers
-        headers = list()
+        with open(self.input_file_path, 'rU') as f:
+            reader = csv.reader(f)
 
-        adult_free_text = False
-        child_free_text = False
+            # Read headers and check for free text columns
+            headers = next(reader)
+            adult_free_text = ADULT_FREE_TEXT_COL in headers
+            child_free_text = CHILD_FREE_TEXT_COL in headers
 
-        for row in reader:
-            if first == 1:
-                # if reading the first row, add to the column headers
-                for col in row:
-                    headers.append(col)
-                    if col == ADULT_FREE_TEXT_COL:
-                        adult_free_text = True
-                    if col == CHILD_FREE_TEXT_COL:
-                        child_free_text = True
-                first = 0
+            # Extend the headers with additional headers and read the remaining data into the matrix
+            headers.extend(ADDITIONAL_HEADERS)
 
-                # now add the headers that we create from additionalHeaders
-                for head in ADDITIONAL_HEADERS:
-                    headers.append(head)
-
-            else:
-                # if it's not the first row, create spaces in the current row to match additionalHeaders,
-                # then add the row to our matrix
-                for _ in ADDITIONAL_HEADERS:
-                    row.append('0')
-                matrix.append(row)
+            matrix.extend([row + ['0'] * len(ADDITIONAL_HEADERS) for row in reader])
 
         if self.short_form:
             headers.extend(SHORT_FORM_ADDITIONAL_HEADERS)
