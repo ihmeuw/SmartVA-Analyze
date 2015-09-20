@@ -157,10 +157,6 @@ class VaPrep(object):
 
         reader = csv.reader(open(self.input_file_path, 'rU'))
 
-        adult_writer = csv.writer(open(os.path.join(self.output_dir, ADULT_PREPPED_FILENAME), 'wb', buffering=0))
-        child_writer = csv.writer(open(os.path.join(self.output_dir, CHILD_PREPPED_FILENAME), 'wb', buffering=0))
-        neonate_writer = csv.writer(open(os.path.join(self.output_dir, NEONATE_PREPPED_FILENAME), 'wb', buffering=0))
-
         status_logger.debug('Initial data prep')
 
         first = 1
@@ -599,6 +595,14 @@ class VaPrep(object):
 
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
+        adult_file = open(os.path.join(self.output_dir, ADULT_PREPPED_FILENAME), 'wb', buffering=0)
+        child_file = open(os.path.join(self.output_dir, CHILD_PREPPED_FILENAME), 'wb', buffering=0)
+        neonate_file = open(os.path.join(self.output_dir, NEONATE_PREPPED_FILENAME), 'wb', buffering=0)
+
+        adult_writer = csv.writer(adult_file)
+        child_writer = csv.writer(child_file)
+        neonate_writer = csv.writer(neonate_file)
+
         # write out header files
         adult_writer.writerow(headers)
         child_writer.writerow(headers)
@@ -639,6 +643,10 @@ class VaPrep(object):
                     else:
                         # print 'child because nothing else'
                         child_writer.writerow(a)
+
+        adult_file.close()
+        child_file.close()
+        neonate_file.close()
 
         return 1
 
