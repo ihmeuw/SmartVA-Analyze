@@ -11,9 +11,6 @@ NEONATE_PREPPED_FILENAME = 'neonate-prepped.csv'
 CHILD_PREPPED_FILENAME = 'child-prepped.csv'
 ADULT_PREPPED_FILENAME = 'adult-prepped.csv'
 
-ADULT_FREE_TEXT_COL = 'adult_7_c'
-CHILD_FREE_TEXT_COL = 'child_6_c'
-
 WORD_SUBS = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'accident',
              'accidental': 'accident', 'accidently': 'accident', 'acute myocardial infarction': 'ami',
              'aids': 'hiv', 'anaemia': 'anemia', 'anemic': 'anemia', 'baby\'s': 'babi', 'babies': 'babi',
@@ -82,8 +79,6 @@ class VaPrep(object):
 
             # Read headers and check for free text columns
             headers = next(reader)
-            adult_free_text = ADULT_FREE_TEXT_COL in headers
-            child_free_text = CHILD_FREE_TEXT_COL in headers
 
             # Extend the headers with additional headers and read the remaining data into the matrix
             additional_headers, additional_values = self.additional_headers_and_values(headers)
@@ -91,16 +86,6 @@ class VaPrep(object):
 
             for row in reader:
                 matrix.extend([row + additional_values])
-
-        if adult_free_text is False:
-            for row in matrix:
-                row.append('')
-            headers.append(ADULT_FREE_TEXT_COL)
-
-        if child_free_text is False:
-            for row in matrix:
-                row.append('')
-            headers.append(CHILD_FREE_TEXT_COL)
 
         # column header renaming
         # rename adult_2_87 adult287
