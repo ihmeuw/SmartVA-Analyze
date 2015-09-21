@@ -477,6 +477,11 @@ class VaPrep(object):
         # going forward, now all of the answers are lowercase, without numbers or punctuation,
         # and whitespace has been eliminated, so it's just a list of words separated by spaces
 
+        self.write_data(headers, matrix)
+
+        return 1
+
+    def write_data(self, headers, matrix):
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
         adult_file = open(os.path.join(self.output_dir, ADULT_PREPPED_FILENAME), 'wb', buffering=0)
@@ -531,8 +536,6 @@ class VaPrep(object):
         adult_file.close()
         child_file.close()
         neonate_file.close()
-
-        return 1
 
     def abort(self):
         self.want_abort = 1
