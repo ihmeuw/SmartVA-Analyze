@@ -270,7 +270,7 @@ child_conversionVars = {
     'childabnorm2': 'c1_19_2',
     'childabnorm3': 'c1_19_3',
     'childabnorm4': 'c1_19_4a',
-    'child119a': 'c1_19_4b',
+    'child_1_19a': 'c1_19_4b',  # child119a from vaprep
     'childabnorm5': 'c1_19_5',
     'child_1_20': 'c1_20a',
     'child_1_21': 'c1_21a',
@@ -543,7 +543,7 @@ neonate_conversionVars = {
     'childabnorm2': 'c1_19_2',
     'childabnorm3': 'c1_19_3',
     'childabnorm4': 'c1_19_4a',
-    'child119a': 'c1_19_4b',
+    'child_1_19a': 'c1_19_4b',  # child119a from vaprep
     'childabnorm5': 'c1_19_5',
     'child_1_20': 'c1_20a',
     'child_1_21': 'c1_21a',
