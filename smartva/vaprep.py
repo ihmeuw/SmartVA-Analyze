@@ -128,29 +128,19 @@ class VaPrep(object):
                             pass
 
             # set adultrash variables based on multiple choice question
-            index = headers.index('adult_2_9')
-            val = row[index].split(' ')
-            adultrash1index = headers.index('adultrash1')
-            adultrash2index = headers.index('adultrash2')
-            adultrash3index = headers.index('adultrash3')
-
-            # if 1, 2, and 3 are selected, then change the value to 4 (all)
-            if '1' in val and '2' in val and '3' in val:
-                # first see if anything else is selected
-                row[index] = 4
-                row[adultrash1index] = 4
+            index = headers.index(ADULT_RASH_HEADER)
+            try:
+                rash_values = list(map(int, row[index].split(' ')))
+            except ValueError:
+                # No rash data. Skip.
+                pass
             else:
-                # otherwise set adultrash to the other selected values
-                words = row[index].split(' ')
-                if len(words) == 1:
-                    row[adultrash1index] = words[0]
-                if len(words) == 2:
-                    row[adultrash1index] = words[0]
-                    row[adultrash2index] = words[1]
-                if len(words) == 3:
-                    row[adultrash1index] = words[0]
-                    row[adultrash2index] = words[1]
-                    row[adultrash3index] = words[2]
+                if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
+                    # if 1, 2, and 3 are selected, then change the value to 4 (all)
+                    rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
+                # set adultrash to the other selected values
+                for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
+                    row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
 
             # weights
             index = headers.index('child_1_8')
