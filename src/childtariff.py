@@ -474,7 +474,7 @@ class Tariff():
                     va.ranklist["cause"+str(i)] = lowest
                 elif float(va.ranklist["cause"+str(i)]) > float(len(uniformlist) * .17):
                     va.ranklist["cause"+str(i)] = lowest
-                elif float(va.causescores["cause"+str(i)]) < 5.0:
+                elif float(va.causescores["cause"+str(i)]) <= 6.0:  # EXPERIMENT: reject tariff scores less than a fixed amount as well
                     va.ranklist["cause"+str(i)] = lowest
                     
         
