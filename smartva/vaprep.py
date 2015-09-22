@@ -142,30 +142,19 @@ class VaPrep(object):
                 for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
                     row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
 
-            # weights
-            index = headers.index('child_1_8')
-            val = row[index]
-            index18a = headers.index('child_1_8a')
-            index18b = headers.index('child_1_8b')
-            if val == '2':
-                row[index18a] = float(row[index18b]) * 1000
-                row[index] = 1
-
-            index = headers.index('child_5_6e')
-            val = row[index]
-            if val == '2':
-                index56f = headers.index('child_5_6f')
-                index56g = headers.index('child_5_6g')
-                row[index56f] = float(row[index56g]) * 1000
-                row[index] = 1
-
-            index = headers.index('child_5_7e')
-            val = row[index]
-            if val == '2':
-                index57f = headers.index('child_5_7f')
-                index57g = headers.index('child_5_7g')
-                row[index57f] = float(row[index57g]) * 1000
-                row[index] = 1
+            # Convert weights from kg to g
+            for header in CHILD_WEIGHT_CONVERSION_DATA:
+                mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
+                try:
+                    units = int(row[headers.index(header)])
+                except ValueError:
+                    # No weight data. Skip.
+                    pass
+                else:
+                    if units == 2:
+                        weight = float(row[headers.index(mapping[units])]) * 1000
+                        row[headers.index(header)] = 1
+                        row[headers.index(mapping[1])] = weight
 
         status_logger.debug('Text substitution')
 
