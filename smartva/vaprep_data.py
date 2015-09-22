@@ -542,3 +542,25 @@ BINARY_CONVERSION_MAP = {
         99: 'provider14',
     },
 }
+
+AGE_HEADERS = ['gen_5_4a', 'gen_5_4b', 'gen_5_4c']
+
+ADULT_RASH_HEADER = 'adult_2_9'
+ADULT_RASH_CONVERSION_HEADERS = ['adultrash1', 'adultrash2', 'adultrash3']
+ADULT_RASH_EVERYWHERE_LIST = [1, 2, 3]
+ADULT_RASH_EVERYWHERE_VALUE = 4
+
+CHILD_WEIGHT_CONVERSION_DATA = {
+    'child_1_8': {
+        1: 'child_1_8a',
+        2: 'child_1_8b'
+    },
+    'child_5_6e': {
+        1: 'child_5_6f',
+        2: 'child_5_6g'
+    },
+    'child_5_7e': {
+        1: 'child_5_7f',
+        2: 'child_5_7g'
+    }
+}

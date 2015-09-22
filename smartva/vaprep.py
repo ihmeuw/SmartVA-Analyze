@@ -5,7 +5,17 @@ import os
 
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from vaprep_data import ADDITIONAL_HEADERS, SHORT_FORM_ADDITIONAL_HEADERS_DATA, BINARY_CONVERSION_MAP
+from vaprep_data import (
+    ADDITIONAL_HEADERS,
+    SHORT_FORM_ADDITIONAL_HEADERS_DATA,
+    BINARY_CONVERSION_MAP,
+    AGE_HEADERS,
+    ADULT_RASH_HEADER,
+    ADULT_RASH_CONVERSION_HEADERS,
+    ADULT_RASH_EVERYWHERE_LIST,
+    ADULT_RASH_EVERYWHERE_VALUE,
+    CHILD_WEIGHT_CONVERSION_DATA
+)
 
 NEONATE_PREPPED_FILENAME = 'neonate-prepped.csv'
 CHILD_PREPPED_FILENAME = 'child-prepped.csv'
@@ -42,6 +52,13 @@ WORD_SUBS = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'acci
 FREE_TEXT = ['adult_5_2a', 'adult_6_8', 'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15',
              'adult_7_c', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16',
              'child_6_c']
+
+
+def int_value(x):
+    try:
+        return int(x)
+    except ValueError:
+        return 0
 
 
 class VaPrep(object):
@@ -89,16 +106,10 @@ class VaPrep(object):
 
         # loop through each row, updating values (mostly additionalHeaders), based on user's answers
         for row in matrix:
-            # fill in blank values for age
-            index = headers.index('gen_5_4a')
-            if row[index] == '':
-                row[index] = 0
-            index = headers.index('gen_5_4b')
-            if row[index] == '':
-                row[index] = 0
-            index = headers.index('gen_5_4c')
-            if row[index] == '':
-                row[index] = 0
+            # Fill in blank values for age.
+            # TODO: Eliminate this step.
+            for header in AGE_HEADERS:
+                row[headers.index(header)] = int_value(row[headers.index(header)])
 
             for header in BINARY_CONVERSION_MAP:
                 mapping = BINARY_CONVERSION_MAP[header]
@@ -217,39 +228,38 @@ class VaPrep(object):
 
         # write out data by row into appropriate age range (adult, child, neonate)
         # blank values have already been replaced with 0 (int) here
-        for a in matrix:
-            age = int(a[headers.index('gen_5_4a')])
-            days = int(a[headers.index('gen_5_4c')])
-            months = int(a[headers.index('gen_5_4b')])
-            # print 'for SID :: %s ' % (aaa)
+        for row in matrix:
+            years = int(row[headers.index(AGE_HEADERS[0])])
+            months = int(row[headers.index(AGE_HEADERS[1])])
+            days = int(row[headers.index(AGE_HEADERS[2])])
 
-            if age == 0 and days == 0 and months == 0:
-                module = a[headers.index('gen_5_4d')]
+            if years == 0 and days == 0 and months == 0:
+                module = row[headers.index('gen_5_4d')]
                 if module == '1':
                     # print 'neonate because gen_5_4d == 1'
-                    neonate_writer.writerow(a)
+                    neonate_writer.writerow(row)
                 elif module == '2':
                     # print 'child because gen_5_4d == 2'
-                    child_writer.writerow(a)
+                    child_writer.writerow(row)
                 elif module == '3':
                     # print 'adult because gen_5_4d == 3'
-                    adult_writer.writerow(a)
+                    adult_writer.writerow(row)
                 else:
                     # print 'neonate because no value for age'
-                    updatestr = 'SID: %s has no values for age, defaulting to neonate' % a[headers.index('sid')]
+                    updatestr = 'SID: %s has no values for age, defaulting to neonate' % row[headers.index('sid')]
                     warning_logger.warning(updatestr)
-                    neonate_writer.writerow(a)
+                    neonate_writer.writerow(row)
             else:
-                if age >= 12:
+                if years >= 12:
                     # print 'adult because age >= 12'
-                    adult_writer.writerow(a)
+                    adult_writer.writerow(row)
                 else:
-                    if days <= 28 and months == 0 and age == 0:
+                    if days <= 28 and months == 0 and years == 0:
                         # print 'neonage because age <= 28'
-                        neonate_writer.writerow(a)
+                        neonate_writer.writerow(row)
                     else:
                         # print 'child because nothing else'
-                        child_writer.writerow(a)
+                        child_writer.writerow(row)
 
         adult_file.close()
         child_file.close()
