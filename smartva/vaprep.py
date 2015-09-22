@@ -156,34 +156,22 @@ class VaPrep(object):
                         row[headers.index(header)] = 1
                         row[headers.index(mapping[1])] = weight
 
-        status_logger.debug('Text substitution')
-
-        # this just does a substitution of words in the above list (mostly misspellings, etc..)
-        for question in FREE_TEXT_HEADERS:
-            try:
-                index = headers.index(question)
-            except ValueError:
-                warning_logger.debug('Free text column "{}" does not exist.'.format(question))
-            else:
-                for row in matrix:
-                    answer = row[index]
-                    new_answer = re.sub('[^a-z ]', '', answer.lower())
-
-                    # TODO - Fix this. It replaces partial words (e.g. bit and bite) and can cause errors.
+            # this just does a substitution of words in the above list (mostly misspellings, etc..)
+            for question in FREE_TEXT_HEADERS:
+                try:
+                    index = headers.index(question)
+                except ValueError:
+                    warning_logger.debug('Free text column "{}" does not exist.'.format(question))
+                else:
                     # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
-                    for key in WORD_SUBS.keys():
-                        if key in new_answer:
-                            # if it exists, replace it with the word(s) from the dictionary
-                            new_answer = string.replace(new_answer, key, WORD_SUBS[key])
+                    new_answer_array = []
+                    for word in re.sub('[^a-z ]', '', row[index].lower()).split(' '):
+                        if word in WORD_SUBS:
+                            new_answer_array.append(WORD_SUBS[word])
+                        elif word:
+                            new_answer_array.append(word)
 
-                    # now make sure we get rid of all extra whitespace
-                    newanswerarray = new_answer.split(' ')
-                    for i, word in enumerate(newanswerarray):
-                        newanswerarray[i] = word.strip()
-                    row[index] = ' '.join(newanswerarray)
-
-        # going forward, now all of the answers are lowercase, without numbers or punctuation,
-        # and whitespace has been eliminated, so it's just a list of words separated by spaces
+                    row[index] = ' '.join(new_answer_array)
 
         self.write_data(headers, matrix)
 
