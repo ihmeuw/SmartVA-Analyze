@@ -49,9 +49,9 @@ WORD_SUBS = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'acci
              'tuberculosis': 'tb', 'urinary': 'urine', 'venomous': 'venom', 'violent': 'violence',
              'vomits': 'vomit', 'vomitting': 'vomit', 'yellowish': 'yellow'}
 
-FREE_TEXT = ['adult_5_2a', 'adult_6_8', 'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15',
-             'adult_7_c', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16',
-             'child_6_c']
+FREE_TEXT_HEADERS = ['adult_5_2a', 'adult_6_8', 'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15',
+                     'adult_7_c', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16',
+                     'child_6_c']
 
 
 def int_value(x):
@@ -170,7 +170,7 @@ class VaPrep(object):
         status_logger.debug('Text substitution')
 
         # this just does a substitution of words in the above list (mostly misspellings, etc..)
-        for question in FREE_TEXT:
+        for question in FREE_TEXT_HEADERS:
             try:
                 index = headers.index(question)
             except ValueError:
