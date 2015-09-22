@@ -1,6 +1,5 @@
 import csv
 import re
-import string
 import os
 
 from smartva.loggers import status_logger, warning_logger
@@ -14,44 +13,14 @@ from vaprep_data import (
     ADULT_RASH_CONVERSION_HEADERS,
     ADULT_RASH_EVERYWHERE_LIST,
     ADULT_RASH_EVERYWHERE_VALUE,
-    CHILD_WEIGHT_CONVERSION_DATA
+    CHILD_WEIGHT_CONVERSION_DATA,
+    FREE_TEXT_HEADERS,
+    WORD_SUBS
 )
 
 NEONATE_PREPPED_FILENAME = 'neonate-prepped.csv'
 CHILD_PREPPED_FILENAME = 'child-prepped.csv'
 ADULT_PREPPED_FILENAME = 'adult-prepped.csv'
-
-WORD_SUBS = {'abdomin': 'abdomen', 'abdominal': 'abdomen', 'accidentally': 'accident',
-             'accidental': 'accident', 'accidently': 'accident', 'acute myocardial infarction': 'ami',
-             'aids': 'hiv', 'anaemia': 'anemia', 'anemic': 'anemia', 'baby\'s': 'babi', 'babies': 'babi',
-             'baby': 'babi', 'bit': 'bite', 'bitten': 'bite', 'bleed': 'blood', 'bleeding': 'blood',
-             'blood pressure': 'hypertension', 'burn': 'fire', 'burns': 'fire', 'burnt': 'fire',
-             'burned': 'fire', 'burning': 'fire', 'burnings': 'fire', 'c section': 'csection',
-             'caesarean': 'cesarean', 'caesarian': 'cesarean', 'cancerous': 'cancer', 'carcinoma': 'cancer',
-             'cardiac': 'cardio', 'cardiogenic': 'cardio', 'cerebrovascular': 'cerebral', 'cervical': 'cervix',
-             'cesarian': 'cesarean', 'comatose': 'coma', 'convulsions': 'convulsion', 'death': 'dead',
-             'dehydrated': 'dehydrate', 'dehydration': 'dehydrate', 'delivered': 'deliver',
-             'deliveries': 'deliver', 'delivery': 'deliver', 'diarrheal': 'diarrhea',
-             'difficult breath': 'dyspnea', 'difficult breathing': 'dyspnea', 'difficulty ': 'difficult',
-             'digestion': 'digest', 'digestive': 'digest', 'dog bite': 'dogbite', 'drank': 'drink',
-             'drawn': 'drown', 'drowned': 'drown', 'drowning': 'drown', 'drunk': 'drink',
-             'dysentary': 'diarrhea', 'dyspneic': 'dyspnea', 'eclaupsia': 'eclampsia', 'edemata': 'edema',
-             'edematous': 'edema', 'edoema': 'edema', 'ekg': 'ecg', 'esophageal': 'esophag',
-             'esophagus': 'esophag', 'fallen': 'fall', 'falling': 'fall', 'feet': 'foot', 'fell': 'fall',
-             'heart attack': 'ami', 'herniation': 'hernia', 'hypertensive': 'hypertension',
-             'incubator': 'incubate', 'infected': 'infect', 'infectious': 'infect', 'injured': 'injury',
-             'injures': 'injury', 'injuries': 'injury', 'ischemic': 'ischemia', 'labour': 'labor',
-             'maternity': 'maternal', 'msb': 'stillbirth', 'oxygenated': 'oxygen', 'paralysis': 'paralyze',
-             'poisoning': 'poison', 'poisonous': 'poison', 'pregnant': 'pregnancy', 'premature': 'preterm',
-             'prematurity': 'preterm', 'septic': 'sepsis', 'septicaemia': 'sepsis',
-             'septicemia': 'sepsis', 'smoker': 'smoke', 'stroked': 'stroke', 'swollen': 'swell', 'tb': 'tb',
-             't.b': 'tb', 't.b.': 'tb', 'transfussed': 'transfuse', 'transfussion': 'transfuse',
-             'tuberculosis': 'tb', 'urinary': 'urine', 'venomous': 'venom', 'violent': 'violence',
-             'vomits': 'vomit', 'vomitting': 'vomit', 'yellowish': 'yellow'}
-
-FREE_TEXT_HEADERS = ['adult_5_2a', 'adult_6_8', 'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15',
-                     'adult_7_c', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16',
-                     'child_6_c']
 
 
 def int_value(x):
