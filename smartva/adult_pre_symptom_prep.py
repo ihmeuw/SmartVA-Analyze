@@ -19,7 +19,7 @@ generatedHeaders = ['g4_03b', 'a2_01b', 'a2_22b', 'a2_24b', 'a2_26b', 'a2_28b', 
                     'a6_02_11', 'a6_02_12a', 'a6_02_13', 'a6_02_14', 'a6_02_15']
 
 
-class PreSymptomPrep(object):
+class AdultPreSymptomPrep(object):
     def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
