@@ -20,6 +20,8 @@ generatedHeaders = ['g4_03b', 'a2_01b', 'a2_22b', 'a2_24b', 'a2_26b', 'a2_28b', 
 
 
 class AdultPreSymptomPrep(object):
+    AGE_GROUP = 'adult'
+
     def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir
@@ -28,7 +30,7 @@ class AdultPreSymptomPrep(object):
         self.warnings = False
 
     def run(self):
-        status_notifier.update({'progress': (4,)})
+        status_notifier.update({'progress': (2,)})
 
         if self.shortform:
             adult_defaultFill = defaultfill.adult_short
@@ -40,7 +42,7 @@ class AdultPreSymptomPrep(object):
         matrix = list()
         headers = list()
 
-        status_logger.info('Adult :: Processing presymptom data')
+        status_logger.info('Adult :: Processing pre-symptom data')
 
         first = 1
         # read in new .csv for processing
@@ -56,7 +58,7 @@ class AdultPreSymptomPrep(object):
 
         # make sure we have data, else just stop this module        
         if len(matrix) < 1:
-            warning_logger.debug('Adult :: No Adult data, skipping module')
+            warning_logger.debug('Adult :: No data, skipping module')
             return 0
 
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-presymptom.csv', 'wb', buffering=0))
