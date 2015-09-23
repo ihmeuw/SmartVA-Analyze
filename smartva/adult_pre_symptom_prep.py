@@ -14,34 +14,35 @@ from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS,
 )
 
-
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+
 
 class AdultPreSymptomPrep(object):
     AGE_GROUP = 'adult'
 
-    def __init__(self, input_file, output_dir, shortform):
-        self.inputFilePath = input_file
+    def __init__(self, input_file, output_dir, short_form):
+        self.input_file_path = input_file
         self.output_dir = output_dir
-        self.want_abort = 0
-        self.shortform = shortform
+        self.want_abort = False
+        self.short_form = short_form
         self.warnings = False
 
     def run(self):
         status_notifier.update({'progress': (2,)})
 
-        if self.shortform:
+        if self.short_form:
             default_fill = ADULT_DEFAULT_FILL_SHORT
         else:
             default_fill = ADULT_DEFAULT_FILL
 
+        reader = csv.reader(open(self.input_file_path, 'rb'))
 
         matrix = []
         headers = []
 
         status_logger.info('Adult :: Processing pre-symptom data')
 
-        with open(self.inputFilePath, 'rb') as f:
+        with open(self.input_file_path, 'rb') as f:
             reader = csv.reader(f)
             first = 1
             # read in new .csv for processing
@@ -310,7 +311,7 @@ class AdultPreSymptomPrep(object):
                 row[headers.index('a6_02_15')] = '1'
 
             # added for shortform
-            if self.shortform:
+            if self.short_form:
                 index = headers.index('a2_08b')
                 if row[headers.index('a2_08a')] == '4':
                     row[index] = row[headers_old.index('adult_2_8a')]
@@ -993,7 +994,7 @@ class AdultPreSymptomPrep(object):
 
         status_logger.debug('Adult :: Analyzing free text')
 
-        if self.shortform:
+        if self.short_form:
             for row in matrix:
                 if row[headers_old.index('adult_7_1')] == '1':
                     self.processFreeText('kidney', row, headers)
@@ -1040,7 +1041,7 @@ class AdultPreSymptomPrep(object):
                 row.append("")
 
         for var in durationVars:
-            if var == 'a3_16' and self.shortform:
+            if var == 'a3_16' and self.short_form:
                 continue
             a = var + 'a'
             b = var + 'b'
