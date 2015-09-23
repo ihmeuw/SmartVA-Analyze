@@ -30,37 +30,28 @@ class AdultPreSymptomPrep(object):
     def run(self):
         status_notifier.update({'progress': (2,)})
 
+        status_logger.info('Adult :: Processing pre-symptom data')
+
         if self.short_form:
             default_fill = ADULT_DEFAULT_FILL_SHORT
         else:
             default_fill = ADULT_DEFAULT_FILL
 
         matrix = []
-        headers = []
-
-        status_logger.info('Adult :: Processing pre-symptom data')
 
         with open(self.input_file_path, 'rb') as f:
             reader = csv.reader(f)
-            first = 1
-            # read in new .csv for processing
-            # we add the generated headers later this time
+
+            headers = next(reader)
             for row in reader:
-                if first == 1:
-                    for col in row:
-                        headers.append(col)
-                    first = 0
+                matrix.append(row)
 
-                else:
-                    matrix.append(row)
-
-        # make sure we have data, else just stop this module        
-        if len(matrix) < 1:
+        # Make sure we have data, else just stop this module
+        if not matrix:
             warning_logger.debug('Adult :: No data, skipping module')
-            return 0
+            return False
 
         # drop all child variables
-        # must iterate over a copy because we can't change values in a list we're iterating over
         headers_copy = copy.deepcopy(headers)
         for col in headers_copy:
             if col.startswith('c') or col.startswith('p'):
@@ -1103,10 +1094,10 @@ class AdultPreSymptomPrep(object):
             adultwriter.writerow(headers)
             adultwriter.writerows(matrix)
 
-        return 1
+        return True
 
     def abort(self):
-        self.want_abort = 1
+        self.want_abort = True
 
     @staticmethod
     def process_free_text(answer, row, headers):
