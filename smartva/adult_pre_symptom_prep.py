@@ -11,7 +11,7 @@ from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.adult_pre_symptom_data import (
-    GENERATED_HEADERS,
+    GENERATED_HEADERS_DATA,
 )
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -26,6 +26,23 @@ class AdultPreSymptomPrep(object):
         self.want_abort = False
         self.short_form = short_form
         self.warnings = False
+
+    @staticmethod
+    def additional_headers_and_values(headers, additional_headers_data):
+        """
+        Calculate necessary additional headers and values based on comparing existing headers to additional header data.
+
+        :param headers:
+        :return:
+        """
+        additional_headers = []
+        additional_values = []
+        for k, v in additional_headers_data:
+            if k not in headers:
+                additional_headers.append(k)
+                additional_values.append(v)
+
+        return additional_headers, additional_values
 
     def run(self):
         status_notifier.update({'progress': (2,)})
@@ -43,8 +60,12 @@ class AdultPreSymptomPrep(object):
             reader = csv.reader(f)
 
             headers = next(reader)
+
+            additional_headers, additional_values = self.additional_headers_and_values(headers, GENERATED_HEADERS_DATA)
+            headers.extend(additional_headers)
+
             for row in reader:
-                matrix.append(row)
+                matrix.append(row + additional_values)
 
         # Make sure we have data, else just stop this module
         if not matrix:
@@ -71,19 +92,6 @@ class AdultPreSymptomPrep(object):
                 headers[i] = swap
             except KeyError:
                 pass  # noop
-
-        # add new headers:
-        for newheader in GENERATED_HEADERS:
-            headers.append(newheader)
-
-        # create the placeholders in our matrix for new headers
-        for row in matrix:
-            for h in GENERATED_HEADERS:
-                # special case for injuries
-                if h == 'a5_04b':
-                    row.append('')
-                else:
-                    row.append('0')
 
         status_logger.debug('Adult :: Verifying answers fall within legal bounds')
         for j, row in enumerate(matrix):
