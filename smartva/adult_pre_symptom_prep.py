@@ -29,9 +29,9 @@ class AdultPreSymptomPrep(object):
         status_notifier.update({'progress': (2,)})
 
         if self.shortform:
-            adult_defaultFill = default_fill_data.adult_short
+            adult_defaultFill = default_fill_data.ADULT_DEFAULT_FILL_SHORT
         else:
-            adult_defaultFill = default_fill_data.adult_defaultFill
+            adult_defaultFill = default_fill_data.ADULT_DEFAULT_FILL
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
 

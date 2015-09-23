@@ -35,9 +35,9 @@ class PreSymptomPrep(object):
         status_notifier.update({'progress': (7,)})
 
         if self.shortform:
-            child_defaultFill = default_fill_data.child_short
+            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL_SHORT
         else:
-            child_defaultFill = default_fill_data.child_defaultFill
+            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
 
