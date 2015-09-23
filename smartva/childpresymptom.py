@@ -6,7 +6,7 @@ import os
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 
-from smartva import defaultfill
+from smartva import default_fill_data
 from smartva.answer_ranges import child_rangelist
 from smartva.presymptom_conversions import child_conversionVars
 from smartva.word_conversions import child_wordsToVars
@@ -35,9 +35,9 @@ class PreSymptomPrep(object):
         status_notifier.update({'progress': (7,)})
 
         if self.shortform:
-            child_defaultFill = defaultfill.child_short
+            child_defaultFill = default_fill_data.child_short
         else:
-            child_defaultFill = defaultfill.child_defaultFill
+            child_defaultFill = default_fill_data.child_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
 

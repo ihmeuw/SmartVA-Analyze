@@ -4,7 +4,7 @@ import os
 
 from stemming.porter2 import stem
 
-from smartva import defaultfill
+from smartva import default_fill_data
 from smartva.answer_ranges import adult_rangelist
 from smartva.presymptom_conversions import adult_conversionVars
 from smartva.word_conversions import adult_wordsToVars
@@ -29,9 +29,9 @@ class AdultPreSymptomPrep(object):
         status_notifier.update({'progress': (2,)})
 
         if self.shortform:
-            adult_defaultFill = defaultfill.adult_short
+            adult_defaultFill = default_fill_data.adult_short
         else:
-            adult_defaultFill = defaultfill.adult_defaultFill
+            adult_defaultFill = default_fill_data.adult_defaultFill
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
 
