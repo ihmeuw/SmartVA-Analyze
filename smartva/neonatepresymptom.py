@@ -9,7 +9,7 @@ from stemming.porter2 import stem
 from smartva import default_fill_data
 from smartva.answer_ranges import neonate_rangelist
 from smartva.presymptom_conversions import neonate_conversionVars
-from smartva.word_conversions import neonate_wordsToVars
+from smartva.word_conversions import NEONATE_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 
@@ -1209,7 +1209,7 @@ class PreSymptomPrep(object):
 
         freeText = ['c5_09', 'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
 
-        keyWords = neonate_wordsToVars.keys()
+        keyWords = NEONATE_WORDS_TO_VARS.keys()
 
         # we've already lowercased and removed numbers at this point
         for question in freeText:
@@ -1432,13 +1432,13 @@ class PreSymptomPrep(object):
         self.want_abort = 1
 
     def processFreeText(self, answer, row, headers):
-        keyWords = neonate_wordsToVars.keys()
+        keyWords = NEONATE_WORDS_TO_VARS.keys()
         answerArray = answer.split(' ')
         for word in answerArray:
             for keyword in keyWords:
                 stemmed = stem(word)
                 if stemmed == keyword:
-                    svar = neonate_wordsToVars[keyword]
+                    svar = NEONATE_WORDS_TO_VARS[keyword]
                     sindex = headers.index(svar)
                     row[sindex] = '1'
 
