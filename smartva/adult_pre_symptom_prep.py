@@ -35,24 +35,25 @@ class AdultPreSymptomPrep(object):
         else:
             default_fill = ADULT_DEFAULT_FILL
 
-        reader = csv.reader(open(self.inputFilePath, 'rb'))
 
-        matrix = list()
-        headers = list()
+        matrix = []
+        headers = []
 
         status_logger.info('Adult :: Processing pre-symptom data')
 
-        first = 1
-        # read in new .csv for processing
-        # we add the generated headers later this time
-        for row in reader:
-            if first == 1:
-                for col in row:
-                    headers.append(col)
-                first = 0
+        with open(self.inputFilePath, 'rb') as f:
+            reader = csv.reader(f)
+            first = 1
+            # read in new .csv for processing
+            # we add the generated headers later this time
+            for row in reader:
+                if first == 1:
+                    for col in row:
+                        headers.append(col)
+                    first = 0
 
-            else:
-                matrix.append(row)
+                else:
+                    matrix.append(row)
 
         # make sure we have data, else just stop this module        
         if len(matrix) < 1:
