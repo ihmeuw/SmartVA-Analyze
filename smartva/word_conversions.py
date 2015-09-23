@@ -1,4 +1,4 @@
-adult_wordsToVars = {
+ADULT_WORDS_TO_VARS = {
     'abdomen': 's99991',
     'arteri': 's999910',
     'kill': 's9999100',
