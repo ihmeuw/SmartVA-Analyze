@@ -48,6 +48,13 @@ class VaPrep(object):
 
     @staticmethod
     def additional_headers_and_values(headers):
+        """
+        Calculate necessary additional headers and values based on comparing existing headers to additional short
+        form headers.
+
+        :param headers:
+        :return:
+        """
         additional_headers = ADDITIONAL_HEADERS
         additional_values = [0] * len(ADDITIONAL_HEADERS)
         for k, v in SHORT_FORM_ADDITIONAL_HEADERS_DATA:
@@ -92,7 +99,7 @@ class VaPrep(object):
 
         self.write_data(headers, self._matrix_data, self.output_dir)
 
-        return 1
+        return True
 
     @staticmethod
     def convert_age_data(row, headers, age_headers):
