@@ -47,17 +47,16 @@ class VaPrep(object):
         }
 
     @staticmethod
-    def additional_headers_and_values(headers):
+    def additional_headers_and_values(headers, additional_headers_data):
         """
-        Calculate necessary additional headers and values based on comparing existing headers to additional short
-        form headers.
+        Calculate necessary additional headers and values based on comparing existing headers to additional header data.
 
         :param headers:
         :return:
         """
-        additional_headers = ADDITIONAL_HEADERS
-        additional_values = [0] * len(ADDITIONAL_HEADERS)
-        for k, v in SHORT_FORM_ADDITIONAL_HEADERS_DATA:
+        additional_headers = []
+        additional_values = []
+        for k, v in additional_headers_data:
             if k not in headers:
                 additional_headers.append(k)
                 additional_values.append(v)
@@ -79,7 +78,8 @@ class VaPrep(object):
             headers = next(reader)
 
             # Extend the headers with additional headers and read the remaining data into the matrix
-            additional_headers, additional_values = self.additional_headers_and_values(headers)
+            additional_headers, additional_values = self.additional_headers_and_values(
+                headers, [(k, 0) for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA)
             headers.extend(additional_headers)
 
             for row in reader:
