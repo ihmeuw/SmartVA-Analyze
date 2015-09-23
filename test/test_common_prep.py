@@ -1,10 +1,10 @@
 import pytest
 
-from smartva import vaprep
-from smartva import vaprep_data
+from smartva import common_prep
+from smartva import common_data
 
 
-class TestVaprep(object):
+class TestCommonPrep(object):
     def test_additional_headers_and_values(self):
         headers = ['SubmissionDate', 'interviewstarttime', 'interviewdate', 'gen_1_1', 'Intid', 'sid', 'ID']
         additional_headers_data = [
@@ -13,7 +13,7 @@ class TestVaprep(object):
             ('test3', 0)
         ]
 
-        additional_headers, additional_values = vaprep.VaPrep.additional_headers_and_values(
+        additional_headers, additional_values = common_prep.CommonPrep.additional_headers_and_values(
             headers, additional_headers_data)
 
         assert additional_headers == [k for k, v in additional_headers_data]
@@ -27,7 +27,7 @@ class TestVaprep(object):
             ('test3', 0)
         ]
 
-        additional_headers, additional_values = vaprep.VaPrep.additional_headers_and_values(
+        additional_headers, additional_values = common_prep.CommonPrep.additional_headers_and_values(
             headers, additional_headers_data)
 
         assert additional_headers == [k for k, v in additional_headers_data if k not in headers]
@@ -37,7 +37,7 @@ class TestVaprep(object):
         headers = ['test1', 'test2', 'test3']
         row = ['0', '1', '']
 
-        vaprep.VaPrep.convert_cell_to_int(headers, row, headers)
+        common_prep.CommonPrep.convert_cell_to_int(headers, row, headers)
 
         assert row == [0, 1, 0]
 
@@ -53,7 +53,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_binary_variables(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_binary_variables(headers, row, conversion_data)
 
         assert row == ['1 3', 1, 0, 1]
 
@@ -69,7 +69,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_binary_variables(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_binary_variables(headers, row, conversion_data)
 
         assert row == ['', 0, 0, 0]
 
@@ -85,7 +85,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_rash_data(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_rash_data(headers, row, conversion_data)
 
         assert row == ['1 2 3', 4, 0, 0]
 
@@ -101,7 +101,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_rash_data(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_rash_data(headers, row, conversion_data)
 
         assert row == ['1 3', 1, 3, 0]
 
@@ -117,7 +117,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_rash_data(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_rash_data(headers, row, conversion_data)
 
         assert row == ['', 0, 0, 0]
 
@@ -132,7 +132,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_weight_data(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_weight_data(headers, row, conversion_data)
 
         assert row == [1, '1000', '0']
 
@@ -147,7 +147,7 @@ class TestVaprep(object):
             }
         }
 
-        vaprep.VaPrep.convert_weight_data(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_weight_data(headers, row, conversion_data)
 
         assert row == [1, 1500.0, '1.5']
 
@@ -157,6 +157,6 @@ class TestVaprep(object):
 
         free_text_headers = headers
 
-        vaprep.VaPrep.convert_free_text(headers, row, free_text_headers, vaprep_data.WORD_SUBS)
+        common_prep.CommonPrep.convert_free_text(headers, row, free_text_headers, common_data.WORD_SUBS)
 
         assert row == ['pencil bite', 'eraser fire']

@@ -3,7 +3,7 @@ import logging
 import os
 import threading
 
-from smartva.vaprep import VaPrep
+from smartva.common_prep import CommonPrep
 from smartva.adultpresymptom import PreSymptomPrep as AdultPreSymptomPrep
 from smartva.adultsymptom import AdultSymptomPrep
 from smartva.adulttariff import Tariff as AdultTariff
@@ -116,7 +116,7 @@ class WorkerThread(threading.Thread):
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
-        va_prep = VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
+        va_prep = CommonPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
         adult_symptom = AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
         adult_results = AdultTariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)

@@ -4,7 +4,7 @@ import os
 
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from vaprep_data import (
+from common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
@@ -29,7 +29,7 @@ def int_value(x):
         return 0
 
 
-class VaPrep(object):
+class CommonPrep(object):
     """
     This file cleans up input and converts from ODK collected data to VA variables.
     """
