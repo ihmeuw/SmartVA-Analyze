@@ -18,9 +18,11 @@ from vaprep_data import (
     WORD_SUBS
 )
 
-NEONATE_PREPPED_FILENAME = 'neonate-prepped.csv'
-CHILD_PREPPED_FILENAME = 'child-prepped.csv'
-ADULT_PREPPED_FILENAME = 'adult-prepped.csv'
+ADULT = 'adult'
+CHILD = 'child'
+NEONATE = 'neonate'
+
+PREPPED_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 
 
 def int_value(x):
@@ -38,8 +40,14 @@ class VaPrep(object):
     def __init__(self, input_file, output_dir, short_form):
         self.input_file_path = input_file
         self.output_dir = output_dir
-        self.want_abort = 0
         self.short_form = short_form
+        self.want_abort = False
+
+        self._matrix_data = {
+            ADULT: [],
+            CHILD: [],
+            NEONATE: []
+        }
 
     @staticmethod
     def additional_headers_and_values(headers):
@@ -57,9 +65,6 @@ class VaPrep(object):
 
         status_logger.debug('Initial data prep')
 
-        # matrix is a list of lists containing all of our data
-        matrix = list()
-
         with open(self.input_file_path, 'rU') as f:
             reader = csv.reader(f)
 
@@ -71,135 +76,143 @@ class VaPrep(object):
             headers.extend(additional_headers)
 
             for row in reader:
-                matrix.extend([row + additional_values])
+                new_row = row + additional_values
 
-        # loop through each row, updating values (mostly additionalHeaders), based on user's answers
-        for row in matrix:
-            # Fill in blank values for age.
-            # TODO: Eliminate this step.
-            for header in AGE_HEADERS:
-                row[headers.index(header)] = int_value(row[headers.index(header)])
+                # Fill in blank values for age.
+                # TODO: Eliminate this step in favor more robust future cell processing.
+                for header in AGE_HEADERS.values():
+                    new_row[headers.index(header)] = int_value(new_row[headers.index(header)])
 
-            for header in BINARY_CONVERSION_MAP:
-                mapping = BINARY_CONVERSION_MAP[header]
+                for header in BINARY_CONVERSION_MAP:
+                    mapping = BINARY_CONVERSION_MAP[header]
+                    try:
+                        index = headers.index(header)
+                    except ValueError:
+                        # Header does not exist. Log a warning.
+                        warning_logger.debug('Skipping missing header "{}".'.format(header))
+                    else:
+                        for value in new_row[index].split(' '):
+                            try:
+                                if int(value) in mapping:
+                                    new_row[headers.index(mapping[int(value)])] |= 1
+                            except ValueError:
+                                # No values to process or not an integer value (invalid).
+                                pass
+
+                # set adultrash variables based on multiple choice question
+                index = headers.index(ADULT_RASH_HEADER)
                 try:
-                    index = headers.index(header)
+                    rash_values = list(map(int, new_row[index].split(' ')))
                 except ValueError:
-                    # Header does not exist. Log a warning.
-                    warning_logger.debug('Skipping missing header "{}".'.format(header))
-                else:
-                    for value in row[index].split(' '):
-                        try:
-                            if int(value) in mapping:
-                                row[headers.index(mapping[int(value)])] |= 1
-                        except ValueError:
-                            # No values to process or not an integer value (invalid).
-                            pass
-
-            # set adultrash variables based on multiple choice question
-            index = headers.index(ADULT_RASH_HEADER)
-            try:
-                rash_values = list(map(int, row[index].split(' ')))
-            except ValueError:
-                # No rash data. Skip.
-                pass
-            else:
-                if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
-                    # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                    rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
-                # set adultrash to the other selected values
-                for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
-                    row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
-
-            # Convert weights from kg to g
-            for header in CHILD_WEIGHT_CONVERSION_DATA:
-                mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
-                try:
-                    units = int(row[headers.index(header)])
-                except ValueError:
-                    # No weight data. Skip.
+                    # No rash data. Skip.
                     pass
                 else:
-                    if units == 2:
-                        weight = float(row[headers.index(mapping[units])]) * 1000
-                        row[headers.index(header)] = 1
-                        row[headers.index(mapping[1])] = weight
+                    if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
+                        # if 1, 2, and 3 are selected, then change the value to 4 (all)
+                        rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
+                    # set adultrash to the other selected values
+                    for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
+                        new_row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
 
-            # this just does a substitution of words in the above list (mostly misspellings, etc..)
-            for question in FREE_TEXT_HEADERS:
-                try:
-                    index = headers.index(question)
-                except ValueError:
-                    warning_logger.debug('Free text column "{}" does not exist.'.format(question))
-                else:
-                    # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
-                    new_answer_array = []
-                    for word in re.sub('[^a-z ]', '', row[index].lower()).split(' '):
-                        if word in WORD_SUBS:
-                            new_answer_array.append(WORD_SUBS[word])
-                        elif word:
-                            new_answer_array.append(word)
+                # Convert weights from kg to g
+                for header in CHILD_WEIGHT_CONVERSION_DATA:
+                    mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
+                    try:
+                        units = int(new_row[headers.index(header)])
+                    except ValueError:
+                        # No weight data. Skip.
+                        pass
+                    else:
+                        if units == 2:
+                            weight = float(new_row[headers.index(mapping[units])]) * 1000
+                            new_row[headers.index(header)] = 1
+                            new_row[headers.index(mapping[1])] = weight
 
-                    row[index] = ' '.join(new_answer_array)
+                # this just does a substitution of words in the above list (mostly misspellings, etc..)
+                for question in FREE_TEXT_HEADERS:
+                    try:
+                        index = headers.index(question)
+                    except ValueError:
+                        warning_logger.debug('Free text column "{}" does not exist.'.format(question))
+                    else:
+                        # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
+                        new_answer_array = []
+                        for word in re.sub('[^a-z ]', '', new_row[index].lower()).split(' '):
+                            if word in WORD_SUBS:
+                                new_answer_array.append(WORD_SUBS[word])
+                            elif word:
+                                new_answer_array.append(word)
 
-        self.write_data(headers, matrix)
+                        new_row[index] = ' '.join(new_answer_array)
+
+                self.save_row(headers, new_row)
+
+        self.write_data(headers, self._matrix_data, self.output_dir)
 
         return 1
 
-    def write_data(self, headers, matrix):
+    @staticmethod
+    def get_age_data(headers, row):
+        """
+        Return age data in years, months, days, and module type.
+
+        :param headers:
+        :param row:
+        :return: Age data in years, months, days, and module type.
+        """
+        age_data = {}
+        for age, header in AGE_HEADERS.items():
+            age_data[age] = int(row[headers.index(header)])
+
+        return age_data
+
+    @staticmethod
+    def get_matrix(matrix_data, years=0, months=0, days=0, module=0):
+        """
+        Returns the appropriate age range matrix for extending.
+
+        Adult = 12 years or older
+        Child = 29 days to 12 years
+        Neonate = 28 days or younger
+        Module is used if age data are not used.
+
+        :param matrix_data: Dictionary of age range matricies.
+        :param years: Age in years
+        :param months: Age in months
+        :param days: Age in days
+        :param module: Module, if specified
+        :return: Specific age range matrix.
+        :rtype : list
+        """
+        if years >= 12 or (not years and not months and not days and module == 3):
+            return matrix_data[ADULT]
+        if years or months or days >= 29 or (not years and not months and not days and module == 2):
+            return matrix_data[CHILD]
+        return matrix_data[NEONATE]
+
+    def save_row(self, headers, row):
+        """
+        Save row of data in appropriate age matrix.
+
+        :param headers:
+        :param row:
+        """
+        self.get_matrix(self._matrix_data, **self.get_age_data(headers, row)).extend([row])
+
+    @staticmethod
+    def write_data(headers, matrix_data, output_dir):
+        """
+        Write intermediate prepped csv files.
+
+        :param headers:
+        """
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
-        adult_file = open(os.path.join(self.output_dir, ADULT_PREPPED_FILENAME), 'wb', buffering=0)
-        child_file = open(os.path.join(self.output_dir, CHILD_PREPPED_FILENAME), 'wb', buffering=0)
-        neonate_file = open(os.path.join(self.output_dir, NEONATE_PREPPED_FILENAME), 'wb', buffering=0)
-
-        adult_writer = csv.writer(adult_file)
-        child_writer = csv.writer(child_file)
-        neonate_writer = csv.writer(neonate_file)
-
-        # write out header files
-        adult_writer.writerow(headers)
-        child_writer.writerow(headers)
-        neonate_writer.writerow(headers)
-
-        # write out data by row into appropriate age range (adult, child, neonate)
-        # blank values have already been replaced with 0 (int) here
-        for row in matrix:
-            years = int(row[headers.index(AGE_HEADERS[0])])
-            months = int(row[headers.index(AGE_HEADERS[1])])
-            days = int(row[headers.index(AGE_HEADERS[2])])
-
-            if years == 0 and days == 0 and months == 0:
-                module = row[headers.index('gen_5_4d')]
-                if module == '1':
-                    # print 'neonate because gen_5_4d == 1'
-                    neonate_writer.writerow(row)
-                elif module == '2':
-                    # print 'child because gen_5_4d == 2'
-                    child_writer.writerow(row)
-                elif module == '3':
-                    # print 'adult because gen_5_4d == 3'
-                    adult_writer.writerow(row)
-                else:
-                    # print 'neonate because no value for age'
-                    updatestr = 'SID: %s has no values for age, defaulting to neonate' % row[headers.index('sid')]
-                    warning_logger.warning(updatestr)
-                    neonate_writer.writerow(row)
-            else:
-                if years >= 12:
-                    # print 'adult because age >= 12'
-                    adult_writer.writerow(row)
-                else:
-                    if days <= 28 and months == 0 and years == 0:
-                        # print 'neonage because age <= 28'
-                        neonate_writer.writerow(row)
-                    else:
-                        # print 'child because nothing else'
-                        child_writer.writerow(row)
-
-        adult_file.close()
-        child_file.close()
-        neonate_file.close()
+        for age, matrix in matrix_data.items():
+            with open(os.path.join(output_dir, PREPPED_FILENAME_TEMPLATE.format(age)), 'wb', buffering=0) as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                writer.writerows(matrix)
 
     def abort(self):
-        self.want_abort = 1
+        self.want_abort = True

@@ -543,7 +543,12 @@ BINARY_CONVERSION_MAP = {
     },
 }
 
-AGE_HEADERS = ['gen_5_4a', 'gen_5_4b', 'gen_5_4c']
+AGE_HEADERS = {
+    'years': 'gen_5_4a',
+    'months': 'gen_5_4b',
+    'days': 'gen_5_4c',
+    'module': 'gen_5_4d'
+}
 
 ADULT_RASH_HEADER = 'adult_2_9'
 ADULT_RASH_CONVERSION_HEADERS = ['adultrash1', 'adultrash2', 'adultrash3']
