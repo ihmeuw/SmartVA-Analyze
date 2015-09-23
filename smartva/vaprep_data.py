@@ -550,10 +550,13 @@ AGE_HEADERS = {
     'module': 'gen_5_4d'
 }
 
-ADULT_RASH_HEADER = 'adult_2_9'
-ADULT_RASH_CONVERSION_HEADERS = ['adultrash1', 'adultrash2', 'adultrash3']
-ADULT_RASH_EVERYWHERE_LIST = [1, 2, 3]
-ADULT_RASH_EVERYWHERE_VALUE = 4
+ADULT_RASH_DATA = {
+    'adult_2_9': {
+        'headers': ['adultrash1', 'adultrash2', 'adultrash3'],
+        'list': [1, 2, 3],
+        'value': 4
+    }
+}
 
 CHILD_WEIGHT_CONVERSION_DATA = {
     'child_1_8': {

@@ -9,10 +9,7 @@ from vaprep_data import (
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
     AGE_HEADERS,
-    ADULT_RASH_HEADER,
-    ADULT_RASH_CONVERSION_HEADERS,
-    ADULT_RASH_EVERYWHERE_LIST,
-    ADULT_RASH_EVERYWHERE_VALUE,
+    ADULT_RASH_DATA,
     CHILD_WEIGHT_CONVERSION_DATA,
     FREE_TEXT_HEADERS,
     WORD_SUBS
@@ -66,6 +63,9 @@ class VaPrep(object):
         status_logger.debug('Initial data prep')
 
         with open(self.input_file_path, 'rU') as f:
+            if self.want_abort:
+                return False
+
             reader = csv.reader(f)
 
             # Read headers and check for free text columns
@@ -78,15 +78,15 @@ class VaPrep(object):
             for row in reader:
                 new_row = row + additional_values
 
-                self.convert_age_data(headers, new_row)
+                self.convert_age_data(new_row, headers, AGE_HEADERS)
 
-                self.convert_binary_variables(headers, new_row)
+                self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP)
 
-                self.convert_rash_data(headers, new_row)
+                self.convert_rash_data(headers, new_row, ADULT_RASH_DATA)
 
-                self.convert_weight_data(headers, new_row)
+                self.convert_weight_data(headers, new_row, CHILD_WEIGHT_CONVERSION_DATA)
 
-                self.convert_free_text(headers, new_row)
+                self.convert_free_text(headers, new_row, FREE_TEXT_HEADERS, WORD_SUBS)
 
                 self.save_row(headers, new_row)
 
@@ -95,16 +95,29 @@ class VaPrep(object):
         return 1
 
     @staticmethod
-    def convert_age_data(headers, row):
-        # Fill in blank values for age.
+    def convert_age_data(row, headers, age_headers):
+        """
+        Convert specified cells to int value or 0 if cell is empty.
+
+        :param row:
+        :param headers:
+        :param age_headers:
+        """
         # TODO: Eliminate this step in favor more robust future cell processing.
-        for header in AGE_HEADERS.values():
+        for header in age_headers.values():
             row[headers.index(header)] = int_value(row[headers.index(header)])
 
     @staticmethod
-    def convert_binary_variables(headers, row):
-        for header in BINARY_CONVERSION_MAP:
-            mapping = BINARY_CONVERSION_MAP[header]
+    def convert_binary_variables(headers, row, conversion_data):
+        """
+        Convert multiple value answers into binary cells.
+
+        :param headers:
+        :param row:
+        :param conversion_data:
+        """
+        for header in conversion_data:
+            mapping = conversion_data[header]
             try:
                 index = headers.index(header)
             except ValueError:
@@ -120,27 +133,47 @@ class VaPrep(object):
                         pass
 
     @staticmethod
-    def convert_rash_data(headers, row):
-        # set adultrash variables based on multiple choice question
-        index = headers.index(ADULT_RASH_HEADER)
-        try:
-            rash_values = list(map(int, row[index].split(' ')))
-        except ValueError:
-            # No rash data. Skip.
-            pass
-        else:
-            if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
-                # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
-            # set adultrash to the other selected values
-            for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
-                row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
+    def convert_rash_data(headers, row, conversion_data):
+        """
+        Convert rash data into variables based on multiple choice questions.
+
+        :param headers:
+        :param row:
+        :return:
+        """
+        for header in conversion_data:
+            mapping = conversion_data[header]
+            try:
+                index = headers.index(header)
+            except ValueError:
+                # Header does not exist. Log a warning.
+                warning_logger.debug('Skipping missing header "{}".'.format(header))
+            else:
+                try:
+                    rash_values = map(int, row[index].split(' '))
+                except ValueError:
+                    # No rash data. Skip.
+                    pass
+                else:
+                    if set(mapping['list']).issubset(set(rash_values)):
+                        # if 1, 2, and 3 are selected, then change the value to 4 (all)
+                        rash_values = [mapping['value']]
+                    # set adultrash to the other selected values
+                    for rash_index in range(min(len(rash_values), len(mapping['headers']))):
+                        row[headers.index(mapping['headers'][rash_index])] = rash_values[rash_index]
 
     @staticmethod
-    def convert_weight_data(headers, row):
-        # Convert weights from kg to g
-        for header in CHILD_WEIGHT_CONVERSION_DATA:
-            mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
+    def convert_weight_data(headers, row, conversion_data):
+        """
+        Convert weights from kg to g.
+
+        :param headers:
+        :param row:
+        :param conversion_data:
+        :return:
+        """
+        for header in conversion_data:
+            mapping = conversion_data[header]
             try:
                 units = int(row[headers.index(header)])
             except ValueError:
@@ -153,9 +186,16 @@ class VaPrep(object):
                     row[headers.index(mapping[1])] = weight
 
     @staticmethod
-    def convert_free_text(headers, row):
-        # this just does a substitution of words in the above list (mostly misspellings, etc..)
-        for question in FREE_TEXT_HEADERS:
+    def convert_free_text(headers, row, free_text_headers, word_subs):
+        """
+        Substitute words in the word subs list (mostly misspellings, etc..)
+
+        :param headers:
+        :param row:
+        :param free_text_headers: Headers to process.
+        :param word_subs: Dictionary of substution words.
+        """
+        for question in free_text_headers:
             try:
                 index = headers.index(question)
             except ValueError:
@@ -164,7 +204,7 @@ class VaPrep(object):
                 # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
                 new_answer_array = []
                 for word in re.sub('[^a-z ]', '', row[index].lower()).split(' '):
-                    if word in WORD_SUBS:
+                    if word in word_subs:
                         new_answer_array.append(WORD_SUBS[word])
                     elif word:
                         new_answer_array.append(word)
