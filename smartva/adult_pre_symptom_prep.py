@@ -15,6 +15,8 @@ from smartva.adult_pre_symptom_data import (
 )
 
 
+FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+
 class AdultPreSymptomPrep(object):
     AGE_GROUP = 'adult'
 
@@ -57,7 +59,6 @@ class AdultPreSymptomPrep(object):
             warning_logger.debug('Adult :: No data, skipping module')
             return 0
 
-        adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-presymptom.csv', 'wb', buffering=0))
 
         # drop all child variables
         # must iterate over a copy because we can't change values in a list we're iterating over
@@ -1099,9 +1100,11 @@ class AdultPreSymptomPrep(object):
                     del row[index]
                 headers.remove(col)
 
-        adultwriter.writerow(headers)
-        for row in matrix:
-            adultwriter.writerow(row)
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
+            adultwriter = csv.writer(f)
+
+            adultwriter.writerow(headers)
+            adultwriter.writerows(matrix)
 
         return 1
 
