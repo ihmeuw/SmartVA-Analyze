@@ -85,7 +85,7 @@ class VaPrep(object):
             for row in reader:
                 new_row = row + additional_values
 
-                self.convert_age_data(new_row, headers, AGE_HEADERS)
+                self.convert_cell_to_int(headers, new_row, AGE_HEADERS.values())
 
                 self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP)
 
@@ -102,16 +102,16 @@ class VaPrep(object):
         return True
 
     @staticmethod
-    def convert_age_data(row, headers, age_headers):
+    def convert_cell_to_int(headers, row, conversion_data):
         """
         Convert specified cells to int value or 0 if cell is empty.
 
         :param row:
         :param headers:
-        :param age_headers:
+        :param conversion_data: Headers of cells to convert.
         """
         # TODO: Eliminate this step in favor more robust future cell processing.
-        for header in age_headers.values():
+        for header in conversion_data:
             row[headers.index(header)] = int_value(row[headers.index(header)])
 
     @staticmethod
