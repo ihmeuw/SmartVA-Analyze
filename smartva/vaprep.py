@@ -78,78 +78,98 @@ class VaPrep(object):
             for row in reader:
                 new_row = row + additional_values
 
-                # Fill in blank values for age.
-                # TODO: Eliminate this step in favor more robust future cell processing.
-                for header in AGE_HEADERS.values():
-                    new_row[headers.index(header)] = int_value(new_row[headers.index(header)])
+                self.convert_age_data(headers, new_row)
 
-                for header in BINARY_CONVERSION_MAP:
-                    mapping = BINARY_CONVERSION_MAP[header]
-                    try:
-                        index = headers.index(header)
-                    except ValueError:
-                        # Header does not exist. Log a warning.
-                        warning_logger.debug('Skipping missing header "{}".'.format(header))
-                    else:
-                        for value in new_row[index].split(' '):
-                            try:
-                                if int(value) in mapping:
-                                    new_row[headers.index(mapping[int(value)])] |= 1
-                            except ValueError:
-                                # No values to process or not an integer value (invalid).
-                                pass
+                self.convert_binary_variables(headers, new_row)
 
-                # set adultrash variables based on multiple choice question
-                index = headers.index(ADULT_RASH_HEADER)
-                try:
-                    rash_values = list(map(int, new_row[index].split(' ')))
-                except ValueError:
-                    # No rash data. Skip.
-                    pass
-                else:
-                    if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
-                        # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                        rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
-                    # set adultrash to the other selected values
-                    for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
-                        new_row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
+                self.convert_rash_data(headers, new_row)
 
-                # Convert weights from kg to g
-                for header in CHILD_WEIGHT_CONVERSION_DATA:
-                    mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
-                    try:
-                        units = int(new_row[headers.index(header)])
-                    except ValueError:
-                        # No weight data. Skip.
-                        pass
-                    else:
-                        if units == 2:
-                            weight = float(new_row[headers.index(mapping[units])]) * 1000
-                            new_row[headers.index(header)] = 1
-                            new_row[headers.index(mapping[1])] = weight
+                self.convert_weight_data(headers, new_row)
 
-                # this just does a substitution of words in the above list (mostly misspellings, etc..)
-                for question in FREE_TEXT_HEADERS:
-                    try:
-                        index = headers.index(question)
-                    except ValueError:
-                        warning_logger.debug('Free text column "{}" does not exist.'.format(question))
-                    else:
-                        # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
-                        new_answer_array = []
-                        for word in re.sub('[^a-z ]', '', new_row[index].lower()).split(' '):
-                            if word in WORD_SUBS:
-                                new_answer_array.append(WORD_SUBS[word])
-                            elif word:
-                                new_answer_array.append(word)
-
-                        new_row[index] = ' '.join(new_answer_array)
+                self.convert_free_text(headers, new_row)
 
                 self.save_row(headers, new_row)
 
         self.write_data(headers, self._matrix_data, self.output_dir)
 
         return 1
+
+    @staticmethod
+    def convert_age_data(headers, row):
+        # Fill in blank values for age.
+        # TODO: Eliminate this step in favor more robust future cell processing.
+        for header in AGE_HEADERS.values():
+            row[headers.index(header)] = int_value(row[headers.index(header)])
+
+    @staticmethod
+    def convert_binary_variables(headers, row):
+        for header in BINARY_CONVERSION_MAP:
+            mapping = BINARY_CONVERSION_MAP[header]
+            try:
+                index = headers.index(header)
+            except ValueError:
+                # Header does not exist. Log a warning.
+                warning_logger.debug('Skipping missing header "{}".'.format(header))
+            else:
+                for value in row[index].split(' '):
+                    try:
+                        if int(value) in mapping:
+                            row[headers.index(mapping[int(value)])] |= 1
+                    except ValueError:
+                        # No values to process or not an integer value (invalid).
+                        pass
+
+    @staticmethod
+    def convert_rash_data(headers, row):
+        # set adultrash variables based on multiple choice question
+        index = headers.index(ADULT_RASH_HEADER)
+        try:
+            rash_values = list(map(int, row[index].split(' ')))
+        except ValueError:
+            # No rash data. Skip.
+            pass
+        else:
+            if set(ADULT_RASH_EVERYWHERE_LIST).issubset(set(rash_values)):
+                # if 1, 2, and 3 are selected, then change the value to 4 (all)
+                rash_values = [ADULT_RASH_EVERYWHERE_VALUE]
+            # set adultrash to the other selected values
+            for rash_index in range(min(len(rash_values), len(ADULT_RASH_CONVERSION_HEADERS))):
+                row[headers.index(ADULT_RASH_CONVERSION_HEADERS[rash_index])] = rash_values[rash_index]
+
+    @staticmethod
+    def convert_weight_data(headers, row):
+        # Convert weights from kg to g
+        for header in CHILD_WEIGHT_CONVERSION_DATA:
+            mapping = CHILD_WEIGHT_CONVERSION_DATA[header]
+            try:
+                units = int(row[headers.index(header)])
+            except ValueError:
+                # No weight data. Skip.
+                pass
+            else:
+                if units == 2:
+                    weight = float(row[headers.index(mapping[units])]) * 1000
+                    row[headers.index(header)] = 1
+                    row[headers.index(mapping[1])] = weight
+
+    @staticmethod
+    def convert_free_text(headers, row):
+        # this just does a substitution of words in the above list (mostly misspellings, etc..)
+        for question in FREE_TEXT_HEADERS:
+            try:
+                index = headers.index(question)
+            except ValueError:
+                warning_logger.debug('Free text column "{}" does not exist.'.format(question))
+            else:
+                # check to see if any of the keys exist in the freetext (keys can be multiple words like 'dog bite')
+                new_answer_array = []
+                for word in re.sub('[^a-z ]', '', row[index].lower()).split(' '):
+                    if word in WORD_SUBS:
+                        new_answer_array.append(WORD_SUBS[word])
+                    elif word:
+                        new_answer_array.append(word)
+
+                row[index] = ' '.join(new_answer_array)
 
     @staticmethod
     def get_age_data(headers, row):
