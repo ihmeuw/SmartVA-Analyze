@@ -49,10 +49,12 @@ class CommonPrep(object):
     @staticmethod
     def additional_headers_and_values(headers, additional_headers_data):
         """
-        Calculate necessary additional headers and values based on comparing existing headers to additional header data.
+        Calculate additional headers and values based on comparing existing headers to additional header data.
 
-        :param headers:
-        :return:
+        :param headers: Initial header list.
+        :param additional_headers_data: Additional headers and default values.
+        :return: Additional headers (list) and values (list) necessary to complete processing.
+        :rtype : tuple
         """
         additional_headers = []
         additional_values = []
@@ -64,6 +66,12 @@ class CommonPrep(object):
         return additional_headers, additional_values
 
     def run(self):
+        """
+        Perform initial processing step for preparing input data.
+
+        :return: True if processing was successful, False if aborted.
+        :rtype : bool
+        """
         status_notifier.update({'progress': (1,)})
 
         status_logger.debug('Initial data prep')
@@ -106,8 +114,8 @@ class CommonPrep(object):
         """
         Convert specified cells to int value or 0 if cell is empty.
 
-        :param row:
-        :param headers:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
         :param conversion_data: Headers of cells to convert.
         """
         # TODO: Eliminate this step in favor more robust future cell processing.
@@ -119,9 +127,9 @@ class CommonPrep(object):
         """
         Convert multiple value answers into binary cells.
 
-        :param headers:
-        :param row:
-        :param conversion_data:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
+        :param conversion_data: Data structure with header and binary variable mapping.
         """
         for header in conversion_data:
             mapping = conversion_data[header]
@@ -144,9 +152,9 @@ class CommonPrep(object):
         """
         Convert rash data into variables based on multiple choice questions.
 
-        :param headers:
-        :param row:
-        :return:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
+        :param conversion_data: Data structure with header and rash specific variable mapping.
         """
         for header in conversion_data:
             mapping = conversion_data[header]
@@ -174,10 +182,9 @@ class CommonPrep(object):
         """
         Convert weights from kg to g.
 
-        :param headers:
-        :param row:
-        :param conversion_data:
-        :return:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
+        :param conversion_data: Data structure with header and weight variable mapping.
         """
         for header in conversion_data:
             mapping = conversion_data[header]
@@ -197,10 +204,10 @@ class CommonPrep(object):
         """
         Substitute words in the word subs list (mostly misspellings, etc..)
 
-        :param headers:
-        :param row:
-        :param free_text_headers: Headers to process.
-        :param word_subs: Dictionary of substution words.
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
+        :param free_text_headers: List of headers to process.
+        :param word_subs: Dictionary of substitution words.
         """
         for question in free_text_headers:
             try:
@@ -223,9 +230,10 @@ class CommonPrep(object):
         """
         Return age data in years, months, days, and module type.
 
-        :param headers:
-        :param row:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
         :return: Age data in years, months, days, and module type.
+        :rtype : dict
         """
         age_data = {}
         for age, header in AGE_HEADERS.items():
@@ -261,8 +269,8 @@ class CommonPrep(object):
         """
         Save row of data in appropriate age matrix.
 
-        :param headers:
-        :param row:
+        :param headers: List of headers to provide cell index.
+        :param row: Data from a single report.
         """
         self.get_matrix(self._matrix_data, **self.get_age_data(headers, row)).extend([row])
 
@@ -271,7 +279,9 @@ class CommonPrep(object):
         """
         Write intermediate prepped csv files.
 
-        :param headers:
+        :param headers: List of headers to provide cell index.
+        :param matrix_data: Data from a all reports.
+        :param output_dir: Directory to write results.
         """
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
