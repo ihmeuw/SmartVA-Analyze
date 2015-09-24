@@ -60,19 +60,19 @@ def main(*args, **kwargs):
     global worker
     worker = workerthread.WorkerThread(kwargs['input'], kwargs['hce'], kwargs['output'],
                                        kwargs['freetext'], kwargs['malaria'], kwargs['country'],
-                                       completion_callback=completion)
+                                       completion_callback=_completion_handler)
 
 
-def completion(event):
+def _completion_handler(status, message=''):
     """
     Completion event handler. Prints the result.
-    :type event: int
+    :type status: int
     """
-    if event == workerthread.CompletionStatus.ABORT:
+    if status == workerthread.CompletionStatus.ABORT:
         click.echo('Computation successfully aborted')
-    elif event == workerthread.CompletionStatus.DONE:
+    elif status == workerthread.CompletionStatus.DONE:
         click.echo('Process complete')
-    sys.exit(event)
+    sys.exit(status)
 
 
 def _init_handle_shutdown():
