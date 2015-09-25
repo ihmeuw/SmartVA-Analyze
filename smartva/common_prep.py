@@ -131,8 +131,7 @@ class CommonPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and binary variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for header, mapping in conversion_data.items():
             try:
                 index = headers.index(header)
             except ValueError:
@@ -156,8 +155,7 @@ class CommonPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and rash specific variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for header, mapping in conversion_data.items():
             try:
                 index = headers.index(header)
             except ValueError:
@@ -186,8 +184,7 @@ class CommonPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and weight variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for header, mapping in conversion_data.items():
             try:
                 units = int(row[headers.index(header)])
             except ValueError:
