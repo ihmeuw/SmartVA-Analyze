@@ -4,7 +4,7 @@ import os
 
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from common_data import (
+from smartva.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
@@ -13,6 +13,10 @@ from common_data import (
     CHILD_WEIGHT_CONVERSION_DATA,
     FREE_TEXT_HEADERS,
     WORD_SUBS
+)
+from smartva.conversion_utils import (
+    ConversionError,
+    convert_binary_variable
 )
 
 ADULT = 'adult'
@@ -131,20 +135,11 @@ class CommonPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and binary variable mapping.
         """
-        for header, mapping in conversion_data.items():
+        for data_header, data_map in conversion_data.items():
             try:
-                index = headers.index(header)
-            except ValueError:
-                # Header does not exist. Log a warning.
-                warning_logger.debug('Skipping missing header "{}".'.format(header))
-            else:
-                for value in row[index].split(' '):
-                    try:
-                        if int(value) in mapping:
-                            row[headers.index(mapping[int(value)])] |= 1
-                    except ValueError:
-                        # No values to process or not an integer value (invalid).
-                        pass
+                convert_binary_variable(headers, row, data_header, data_map)
+            except ConversionError as e:
+                warning_logger.debug(e.message)
 
     @staticmethod
     def convert_rash_data(headers, row, conversion_data):
