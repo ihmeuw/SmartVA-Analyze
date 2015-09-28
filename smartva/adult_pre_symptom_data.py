@@ -44,3 +44,104 @@ GENERATED_HEADERS_DATA = [
     ('a6_02_14', '0'),
     ('a6_02_15', '0'),
 ]
+
+"""
+Consolidation maps use the format:
+    (read_header, write_header): {
+        VAL: data_header
+    }
+"""
+CONSOLIDATION_MAP = {
+    ('g4_03a', 'g4_03b'): {
+        11: 'gen_4_3a',
+        12: 'gen_4_3b',
+        13: 'gen_4_3c',
+    },
+    ('a2_01a', 'a2_01b'): {
+        1: 'adult_2_1a',
+        2: 'adult_2_1b',
+        4: 'adult_2_1c',
+        5: 'adult_2_1d',
+    },
+    ('a2_22a', 'a2_22b'): {
+        4: 'adult_2_22a',
+        2: 'adult_2_22b',
+    },
+    ('a2_24a', 'a2_24b'): {
+        4: 'adult_2_24a',
+        2: 'adult_2_24b',
+    },
+    ('a2_26a', 'a2_26b'): {
+        4: 'adult_2_26a',
+        2: 'adult_2_26b',
+    },
+    ('a2_28a', 'a2_28b'): {
+        4: 'adult_2_28a',
+        2: 'adult_2_28b',
+    },
+    ('a2_33a', 'a2_33b'): {
+        4: 'adult_2_33a',
+        2: 'adult_2_33b',
+    },
+    ('a2_37a', 'a2_37b'): {
+        4: 'adult_2_37a',
+        2: 'adult_2_37b',
+    },
+    ('a2_41a', 'a2_41b'): {
+        4: 'adult_2_41a',
+        2: 'adult_2_41b',
+    },
+    ('a2_54a', 'a2_54b'): {
+        5: 'adult_2_54a',
+        4: 'adult_2_54b',
+    },
+    ('a2_58a', 'a2_58b'): {
+        4: 'adult_2_58a',
+        2: 'adult_2_58b',
+    },
+    ('a2_62a', 'a2_62b'): {
+        5: 'adult_2_62a',
+        4: 'adult_2_62b',
+        2: 'adult_2_62c',
+    },
+    ('a2_65a', 'a2_65b'): {
+        4: 'adult_2_65a',
+        2: 'adult_2_65b',
+    },
+    ('a2_68a', 'a2_68b'): {
+        4: 'adult_2_68a',
+        2: 'adult_2_68b',
+    },
+    ('a2_70a', 'a2_70b'): {
+        5: 'adult_2_70a',
+        4: 'adult_2_70b',
+    },
+    ('a2_73a', 'a2_73b'): {
+        4: 'adult_2_73a',
+        2: 'adult_2_73b',
+    },
+    ('a2_76a', 'a2_76b'): {
+        4: 'adult_2_76a',
+        2: 'adult_2_76b',
+    },
+    ('a2_79a', 'a2_79b'): {
+        4: 'adult_2_79a',
+        2: 'adult_2_79b',
+    },
+    ('a2_83a', 'a2_83b'): {
+        6: 'adult_2_83a',
+        5: 'adult_2_83b',
+    },
+    ('a2_86a', 'a2_86b'): {
+        4: 'adult_2_86a',
+        2: 'adult_2_86b',
+        1: 'adult_2_86c',
+    },
+    ('a5_04a', 'a5_04b'): {
+        5: 'adult_5_5a',
+        4: 'adult_5_5b',
+        2: 'adult_5_5c',
+        1: 'adult_5_5d',
+    },
+}
+

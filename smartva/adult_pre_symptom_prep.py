@@ -12,6 +12,7 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
+    CONSOLIDATION_MAP
 )
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -112,135 +113,17 @@ class AdultPreSymptomPrep(object):
         # i.e. recode
         # do this before skip patterns so generated variables aren't 0
         for row in matrix:
-            index = headers.index('g4_03b')
-            if row[headers.index('g4_03a')] == '11':
-                row[index] = row[headers_old.index('gen_4_3a')]
-            elif row[headers.index('g4_03a')] == '12':
-                row[index] = row[headers_old.index('gen_4_3b')]
-            elif row[headers.index('g4_03a')] == '13':
-                row[index] = row[headers_old.index('gen_4_3c')]
 
-            index = headers.index('a2_01b')
-            if row[headers.index('a2_01a')] == '1':
-                row[index] = row[headers_old.index('adult_2_1a')]
-            if row[headers.index('a2_01a')] == '2':
-                row[index] = row[headers_old.index('adult_2_1b')]
-            if row[headers.index('a2_01a')] == '4':
-                row[index] = row[headers_old.index('adult_2_1c')]
-            if row[headers.index('a2_01a')] == '5':
-                row[index] = row[headers_old.index('adult_2_1d')]
-
-            index = headers.index('a2_22b')
-            if row[headers.index('a2_22a')] == '4':
-                row[index] = row[headers_old.index('adult_2_22a')]
-            if row[headers.index('a2_22a')] == '2':
-                row[index] = row[headers_old.index('adult_2_22b')]
-
-            index = headers.index('a2_24b')
-            if row[headers.index('a2_24a')] == '4':
-                row[index] = row[headers_old.index('adult_2_24a')]
-            if row[headers.index('a2_24a')] == '2':
-                row[index] = row[headers_old.index('adult_2_24b')]
-
-            index = headers.index('a2_26b')
-            if row[headers.index('a2_26a')] == '4':
-                row[index] = row[headers_old.index('adult_2_26a')]
-            if row[headers.index('a2_26a')] == '2':
-                row[index] = row[headers_old.index('adult_2_26b')]
-
-            index = headers.index('a2_28b')
-            if row[headers.index('a2_28a')] == '4':
-                row[index] = row[headers_old.index('adult_2_28a')]
-            if row[headers.index('a2_28a')] == '2':
-                row[index] = row[headers_old.index('adult_2_28b')]
-
-            index = headers.index('a2_33b')
-            if row[headers.index('a2_33a')] == '4':
-                row[index] = row[headers_old.index('adult_2_33a')]
-            if row[headers.index('a2_33a')] == '2':
-                row[index] = row[headers_old.index('adult_2_33b')]
-
-            index = headers.index('a2_37b')
-            if row[headers.index('a2_37a')] == '4':
-                row[index] = row[headers_old.index('adult_2_37a')]
-            if row[headers.index('a2_37a')] == '2':
-                row[index] = row[headers_old.index('adult_2_37b')]
-
-            index = headers.index('a2_41b')
-            if row[headers.index('a2_41a')] == '4':
-                row[index] = row[headers_old.index('adult_2_41a')]
-            if row[headers.index('a2_41a')] == '2':
-                row[index] = row[headers_old.index('adult_2_41b')]
-
-            index = headers.index('a2_54b')
-            if row[headers.index('a2_54a')] == '5':
-                row[index] = row[headers_old.index('adult_2_54a')]
-            if row[headers.index('a2_54a')] == '4':
-                row[index] = row[headers_old.index('adult_2_54b')]
-
-            index = headers.index('a2_58b')
-            if row[headers.index('a2_58a')] == '4':
-                row[index] = row[headers_old.index('adult_2_58a')]
-            if row[headers.index('a2_58a')] == '2':
-                row[index] = row[headers_old.index('adult_2_58b')]
-
-            index = headers.index('a2_62b')
-            if row[headers.index('a2_62a')] == '5':
-                row[index] = row[headers_old.index('adult_2_62a')]
-            if row[headers.index('a2_62a')] == '4':
-                row[index] = row[headers_old.index('adult_2_62b')]
-            if row[headers.index('a2_62a')] == '2':
-                row[index] = row[headers_old.index('adult_2_62c')]
-
-            index = headers.index('a2_65b')
-            if row[headers.index('a2_65a')] == '4':
-                row[index] = row[headers_old.index('adult_2_65a')]
-            if row[headers.index('a2_65a')] == '2':
-                row[index] = row[headers_old.index('adult_2_65b')]
-
-            index = headers.index('a2_68b')
-            if row[headers.index('a2_68a')] == '4':
-                row[index] = row[headers_old.index('adult_2_68a')]
-            if row[headers.index('a2_68a')] == '2':
-                row[index] = row[headers_old.index('adult_2_68b')]
-
-            index = headers.index('a2_70b')
-            if row[headers.index('a2_70a')] == '5':
-                row[index] = row[headers_old.index('adult_2_70a')]
-            if row[headers.index('a2_70a')] == '4':
-                row[index] = row[headers_old.index('adult_2_70b')]
-
-            index = headers.index('a2_73b')
-            if row[headers.index('a2_73a')] == '4':
-                row[index] = row[headers_old.index('adult_2_73a')]
-            if row[headers.index('a2_73a')] == '2':
-                row[index] = row[headers_old.index('adult_2_73b')]
-
-            index = headers.index('a2_76b')
-            if row[headers.index('a2_76a')] == '4':
-                row[index] = row[headers_old.index('adult_2_76a')]
-            if row[headers.index('a2_76a')] == '2':
-                row[index] = row[headers_old.index('adult_2_76b')]
-
-            index = headers.index('a2_79b')
-            if row[headers.index('a2_79a')] == '4':
-                row[index] = row[headers_old.index('adult_2_79a')]
-            if row[headers.index('a2_79a')] == '2':
-                row[index] = row[headers_old.index('adult_2_79b')]
-
-            index = headers.index('a2_83b')
-            if row[headers.index('a2_83a')] == '6':
-                row[index] = row[headers_old.index('adult_2_83a')]
-            if row[headers.index('a2_83a')] == '5':
-                row[index] = row[headers_old.index('adult_2_83b')]
-
-            index = headers.index('a2_86b')
-            if row[headers.index('a2_86a')] == '4':
-                row[index] = row[headers_old.index('adult_2_86a')]
-            if row[headers.index('a2_86a')] == '2':
-                row[index] = row[headers_old.index('adult_2_86b')]
-            if row[headers.index('a2_86a')] == '1':
-                row[index] = row[headers_old.index('adult_2_86c')]
+            # Consolidate answers
+            for new_headers, conversion_data in CONSOLIDATION_MAP.items():
+                read_header, write_header = new_headers
+                try:
+                    value = int(row[headers.index(read_header)])
+                except ValueError:
+                    pass
+                else:
+                    if value in conversion_data:
+                        row[headers.index(write_header)] = row[headers_old.index(conversion_data[value])]
 
             # adult_4_2 can have multiple answers
             adult42list = row[headers_old.index('adult_4_2')].split(' ')
@@ -262,16 +145,6 @@ class AdultPreSymptomPrep(object):
             index = headers.index('a5_01_8')
             if row[headers.index('adult_5_1')] == '0':
                 row[index] = '1'
-
-            index = headers.index('a5_04b')
-            if row[headers.index('a5_04a')] == '5':
-                row[index] = row[headers_old.index('adult_5_5a')]
-            if row[headers.index('a5_04a')] == '4':
-                row[index] = row[headers_old.index('adult_5_5b')]
-            if row[headers.index('a5_04a')] == '2':
-                row[index] = row[headers_old.index('adult_5_5c')]
-            if row[headers.index('a5_04a')] == '1':
-                row[index] = row[headers_old.index('adult_5_5d')]
 
             # adult_6_2 can have multiple answers
             adult62list = row[headers_old.index('adult_6_2')].split(' ')
