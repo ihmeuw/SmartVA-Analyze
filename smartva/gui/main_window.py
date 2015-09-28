@@ -33,7 +33,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 440
+WINDOW_HEIGHT = 474
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -49,15 +49,19 @@ if platform.system().lower() != 'darwin':
     COMBO_BOX_STYLE |= wx.CB_SORT
 
 
-class TextEntryStream(io.TextIOBase):
-    def __init__(self, text_entry_widget):
+class TextEntryStreamWriter(io.TextIOBase):
+    def __init__(self, widget):
         """
-        The TextEntryStream will write to any widget that extends the `TextEntryBase` class or implements the
-        `AppendText(str)` method.
-        :type text_entry_widget: wx.TextCtrl
+        The TextEntryStream will write to any widget that extends the `TextEntry` class.
+
+        :type widget: wx.TextEntry
         """
         io.TextIOBase.__init__(self)
-        self._text_entry = text_entry_widget
+        self._widget = widget
+        if wx.TE_MULTILINE & self._widget.WindowStyle:
+            self._write_fn = self._write_multi
+        else:
+            self._write_fn = self._write_single
 
     def readable(self):
         return False
@@ -66,21 +70,24 @@ class TextEntryStream(io.TextIOBase):
         return False
 
     def write(self, msg):
-        wx.CallAfter(self._write, msg)
+        wx.CallAfter(self._write_fn, msg)
 
-    def _write(self, msg):
+    def _write_multi(self, msg):
         # If processing, overwrite previous line.
         # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
         if re.match(r'(Adult|Child|Neonate) :: Processing \d+', msg):
-            last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 2))
+            last_line = self._widget.GetLineText(long(self._widget.GetNumberOfLines() - 2))
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
-                position = self._text_entry.GetLastPosition()
-                self._text_entry.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
+                position = self._widget.GetLastPosition()
+                self._widget.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
             else:
-                self._text_entry.AppendText(msg)
+                self._widget.AppendText(msg)
         else:
-            self._text_entry.AppendText(msg)
+            self._widget.AppendText(msg)
+
+    def _write_single(self, msg):
+        self._widget.SetValue(msg)
 
     def flush(self):
         pass
@@ -265,13 +272,12 @@ class vaUI(wx.Frame):
         start_analysis_box_sizer = wx.StaticBoxSizer(start_analysis_box, wx.VERTICAL)
 
         # Define the status text control widget.
-        status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
+        status_text_ctrl = wx.TextCtrl(parent_panel, style=wx.TE_LEFT)
         status_text_ctrl.SetEditable(False)
         status_text_ctrl.SetValue('')
-        status_text_ctrl.Hide()
 
         # Send INFO level log messages to the status text control widget
-        gui_log_handler = logging.StreamHandler(TextEntryStream(status_text_ctrl))
+        gui_log_handler = logging.StreamHandler(TextEntryStreamWriter(status_text_ctrl))
         gui_log_handler.setLevel(logging.INFO)
         status_logger.addHandler(gui_log_handler)
 
