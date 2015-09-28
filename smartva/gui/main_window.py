@@ -162,18 +162,6 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_MENU, handler=self.on_quit, id=quit_menu_item.GetId())
         file_menu.AppendItem(quit_menu_item)
 
-        # Help Menu
-        help_menu = wx.Menu()
-        menu_bar.Append(help_menu, title='&About')
-
-        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
-        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
-        help_menu.AppendItem(about_menu_item)
-
-        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
-        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
-        help_menu.AppendItem(docs_menu_item)
-
         # Options Menu
         options_menu = wx.Menu()
         menu_bar.Append(options_menu, title='&Options')
@@ -190,6 +178,19 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_MENU, self.toggle_free_text, id=free_text_menu_item.GetId())
         options_menu.AppendItem(free_text_menu_item)
         free_text_menu_item.Check(self.free_text)
+
+        # Help Menu
+        help_menu = wx.Menu()
+        menu_bar.Append(help_menu, title='&About')
+
+        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
+        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
+        help_menu.AppendItem(about_menu_item)
+
+        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
+        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
+        help_menu.AppendItem(docs_menu_item)
+
         self.enabled_widgets.append(free_text_menu_item)
 
     def _init_ui(self):
