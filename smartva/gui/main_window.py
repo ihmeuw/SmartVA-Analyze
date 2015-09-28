@@ -33,7 +33,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 440
+WINDOW_HEIGHT = 474
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -49,15 +49,19 @@ if platform.system().lower() != 'darwin':
     COMBO_BOX_STYLE |= wx.CB_SORT
 
 
-class TextEntryStream(io.TextIOBase):
-    def __init__(self, text_entry_widget):
+class TextEntryStreamWriter(io.TextIOBase):
+    def __init__(self, widget):
         """
-        The TextEntryStream will write to any widget that extends the `TextEntryBase` class or implements the
-        `AppendText(str)` method.
-        :type text_entry_widget: wx.TextCtrl
+        The TextEntryStream will write to any widget that extends the `TextEntry` class.
+
+        :type widget: wx.TextEntry
         """
         io.TextIOBase.__init__(self)
-        self._text_entry = text_entry_widget
+        self._widget = widget
+        if wx.TE_MULTILINE & self._widget.WindowStyle:
+            self._write_fn = self._write_multi
+        else:
+            self._write_fn = self._write_single
 
     def readable(self):
         return False
@@ -66,21 +70,24 @@ class TextEntryStream(io.TextIOBase):
         return False
 
     def write(self, msg):
-        wx.CallAfter(self._write, msg)
+        wx.CallAfter(self._write_fn, msg)
 
-    def _write(self, msg):
+    def _write_multi(self, msg):
         # If processing, overwrite previous line.
         # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
         if re.match(r'(Adult|Child|Neonate) :: Processing \d+', msg):
-            last_line = self._text_entry.GetLineText(long(self._text_entry.GetNumberOfLines() - 2))
+            last_line = self._widget.GetLineText(long(self._widget.GetNumberOfLines() - 2))
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
-                position = self._text_entry.GetLastPosition()
-                self._text_entry.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
+                position = self._widget.GetLastPosition()
+                self._widget.Replace(position - len(last_line) - LINE_DELIM_LEN, position, msg)
             else:
-                self._text_entry.AppendText(msg)
+                self._widget.AppendText(msg)
         else:
-            self._text_entry.AppendText(msg)
+            self._widget.AppendText(msg)
+
+    def _write_single(self, msg):
+        self._widget.SetValue(msg)
 
     def flush(self):
         pass
@@ -155,18 +162,6 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_MENU, handler=self.on_quit, id=quit_menu_item.GetId())
         file_menu.AppendItem(quit_menu_item)
 
-        # Help Menu
-        help_menu = wx.Menu()
-        menu_bar.Append(help_menu, title='&About')
-
-        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
-        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
-        help_menu.AppendItem(about_menu_item)
-
-        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
-        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
-        help_menu.AppendItem(docs_menu_item)
-
         # Options Menu
         options_menu = wx.Menu()
         menu_bar.Append(options_menu, title='&Options')
@@ -183,6 +178,19 @@ class vaUI(wx.Frame):
         self.Bind(wx.EVT_MENU, self.toggle_free_text, id=free_text_menu_item.GetId())
         options_menu.AppendItem(free_text_menu_item)
         free_text_menu_item.Check(self.free_text)
+
+        # Help Menu
+        help_menu = wx.Menu()
+        menu_bar.Append(help_menu, title='&About')
+
+        about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
+        self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
+        help_menu.AppendItem(about_menu_item)
+
+        docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
+        self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
+        help_menu.AppendItem(docs_menu_item)
+
         self.enabled_widgets.append(free_text_menu_item)
 
     def _init_ui(self):
@@ -265,13 +273,12 @@ class vaUI(wx.Frame):
         start_analysis_box_sizer = wx.StaticBoxSizer(start_analysis_box, wx.VERTICAL)
 
         # Define the status text control widget.
-        status_text_ctrl = wx.TextCtrl(parent_panel, size=(-1, 200), style=wx.TE_MULTILINE | wx.TE_LEFT)
+        status_text_ctrl = wx.TextCtrl(parent_panel, style=wx.TE_LEFT)
         status_text_ctrl.SetEditable(False)
         status_text_ctrl.SetValue('')
-        status_text_ctrl.Hide()
 
         # Send INFO level log messages to the status text control widget
-        gui_log_handler = logging.StreamHandler(TextEntryStream(status_text_ctrl))
+        gui_log_handler = logging.StreamHandler(TextEntryStreamWriter(status_text_ctrl))
         gui_log_handler.setLevel(logging.INFO)
         status_logger.addHandler(gui_log_handler)
 
