@@ -118,11 +118,12 @@ class AdultPreSymptomPrep(object):
                                 self.warnings = True
 
             # Consolidate answers
-            for new_headers, conversion_data in CONSOLIDATION_MAP.items():
-                read_header, write_header = new_headers
+            for data_headers, data_map in CONSOLIDATION_MAP.items():
+                read_header, write_header = data_headers
                 try:
                     value = int(row[headers.index(read_header)])
                 except ValueError:
+                    # TODO - This covers both the header index and the int operations.
                     pass
                 else:
                     if value in conversion_data:
