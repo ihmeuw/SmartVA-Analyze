@@ -88,9 +88,6 @@ class AdultPreSymptomPrep(object):
                     del row[index]
                 headers.remove(col)
 
-        # make a copy of the new list
-        headers_old = copy.deepcopy(headers)
-
         # switch to new variables:
         for i, col in enumerate(headers):
             # only swap headers with values to swap
@@ -141,7 +138,7 @@ class AdultPreSymptomPrep(object):
                     pass
                 else:
                     if value in data_map:
-                        row[headers.index(write_header)] = row[headers_old.index(data_map[value])]
+                        row[headers.index(write_header)] = row[headers.index(data_map[value])]
 
             # Convert binary variables
             for data_header, data_map in BINARY_CONVERSION_MAP.items():
