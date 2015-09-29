@@ -19,11 +19,10 @@ def convert_binary_variable(headers, row, data_header, data_map):
     :param data_map: Map of the values to binary value headers
     """
     index = get_header_index(headers, data_header)
-    for value in row[index].split(' '):
+    for value in str(row[index]).split(' '):
         try:
             if int(value) in data_map:
-                row[headers.index(data_map[int(value)])] |= 1
+                row[headers.index(data_map[int(value)])] = 1
         except ValueError:
             # No values to process or not an integer value (invalid).
             pass
-
