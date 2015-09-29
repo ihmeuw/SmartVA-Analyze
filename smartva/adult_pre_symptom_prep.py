@@ -15,6 +15,7 @@ from smartva.adult_pre_symptom_data import (
     CONSOLIDATION_MAP,
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
+    FREE_TEXT_HEADERS
 )
 from smartva.conversion_utils import ConversionError, convert_binary_variable
 
@@ -122,6 +123,13 @@ class AdultPreSymptomPrep(object):
                                 # ERROR
                                 warning_logger.warning('Adult :: Value {} is not legal for variable {}, please see Codebook for legal values'.format(col, header))
                                 self.warnings = True
+
+            self.convert_free_text_headers(headers, row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
+
+            if self.short_form:
+                word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if row[headers.index(k)] in [1, '1']]
+                if word_list:
+                    self.convert_free_text_words(headers, row, ADULT_WORDS_TO_VARS, word_list)
 
             # Consolidate answers
             for data_headers, data_map in CONSOLIDATION_MAP.items():
@@ -743,25 +751,6 @@ class AdultPreSymptomPrep(object):
                 if default is not None and col == '':
                     row[i] = default_fill[header]
 
-        status_logger.debug('Adult :: Analyzing free text')
-
-        if self.short_form:
-            for row in matrix:
-                # Generate and process a binary conversion map from the short form free text conversion data.
-                conversion_map = {k: {1: ADULT_WORDS_TO_VARS[stem(v)]} for k, v in
-                                  SHORT_FORM_FREE_TEXT_CONVERSION.items()}
-                for data_header, data_map in conversion_map.items():
-                    convert_binary_variable(headers, row, data_header, data_map)
-
-        free_text = ['a5_01_9b', 'a6_08', 'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
-
-        # we've already lowercased and removed numbers at this point
-        for question in free_text:
-            index = headers.index(question)
-            for row in matrix:
-                answer = row[index]
-                self.process_free_text(answer, row, headers)
-
         status_logger.debug('Adult :: Processing duration variables')
         # fix duration variables
         duration_vars = ['a2_01', 'a2_03', 'a2_08', 'a2_15', 'a2_22', 'a2_24', 'a2_26', 'a2_28', 'a2_33', 'a2_37',
@@ -847,19 +836,25 @@ class AdultPreSymptomPrep(object):
     def abort(self):
         self.want_abort = True
 
-    @staticmethod
-    def process_free_text(answer, row, headers):
-        key_words = ADULT_WORDS_TO_VARS.keys()
-        answer_array = answer.split(' ')
-        for word in answer_array:
-            for keyword in key_words:
-                stemmed = stem(word)
-                if stemmed == keyword:
-                    s_var = ADULT_WORDS_TO_VARS[keyword]
-                    s_index = headers.index(s_var)
-                    row[s_index] = '1'
-
     def print_warning(self, var, row_num, row, headers, default_fill):
         warning_logger.warning('Adult :: Value at row {} col {} for variable {} should be blank, setting to default and continuing'.format(row_num + 2, headers.index(var), var))
         row[headers.index(var)] = str(default_fill.get(var))
         self.warnings = True
+
+    # def convert_short_form_free_text_headers(self):
+
+    @staticmethod
+    def convert_free_text_headers(headers, row, data_headers, data_map):
+        for data_header in data_headers:
+            if row[headers.index(data_header)]:
+                word_list = row[headers.index(data_header)].split(' ')
+                AdultPreSymptomPrep.convert_free_text_words(headers, row, data_map, word_list)
+
+    @staticmethod
+    def convert_free_text_words(headers, row, data_map, word_list):
+        for word in word_list:
+            try:
+                row[headers.index(data_map[stem(word)])] = 1
+            except KeyError:
+                # Word is not in the data map.
+                pass

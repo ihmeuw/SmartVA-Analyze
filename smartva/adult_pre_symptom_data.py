@@ -189,3 +189,14 @@ SHORT_FORM_FREE_TEXT_CONVERSION = {
     'a_7_10': 'renal',
     'a_7_11': 'suicide',
 }
+
+FREE_TEXT_HEADERS = [
+    'a5_01_9b',
+    'a6_08',
+    'a6_11',
+    'a6_12',
+    'a6_13',
+    'a6_14',
+    'a6_15',
+    'a7_01',
+]
