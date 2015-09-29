@@ -137,29 +137,6 @@ class AdultPreSymptomPrep(object):
                 except ConversionError as e:
                     warning_logger.debug(e.message)
 
-            # added for short form
-            if self.short_form:
-                index = headers.index('a2_08b')
-                if row[headers.index('a2_08a')] == '4':
-                    row[index] = row[headers_old.index('adult_2_8a')]
-                index = headers.index('a2_15b')
-                if row[headers.index('a2_15a')] == '4':
-                    row[index] = row[headers_old.index('adult_2_15a')]
-                index = headers.index('a3_08b')
-                if row[headers.index('a3_08a')] == '3':
-                    row[index] = row[headers_old.index('adult_3_8a')]
-                index = headers.index('a3_11b')
-                if row[headers.index('a3_11a')] == '2':
-                    row[index] = row[headers_old.index('adult_3_11a')]
-                index = headers.index('a3_16b')
-                if row[headers.index('a3_16a')] == '5':
-                    row[index] = row[headers_old.index('adult_3_16a')]
-                index = headers.index('a4_04')
-                if row[headers.index('adult_4_4')] == '1':
-                    row[index] = row[headers_old.index('adult_4_4a')]
-                else:
-                    row[index] = '0'
-
         # check skip patterns
         for i, row in enumerate(matrix):
             # i starts at 0, header row is 1 in excel, so do i+2 for the actual data row
