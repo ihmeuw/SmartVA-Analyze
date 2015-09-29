@@ -12,8 +12,10 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
-    CONSOLIDATION_MAP
+    CONSOLIDATION_MAP,
+    BINARY_CONVERSION_MAP
 )
+from smartva.conversion_utils import ConversionError, convert_binary_variable
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
@@ -126,60 +128,14 @@ class AdultPreSymptomPrep(object):
                     # TODO - This covers both the header index and the int operations.
                     pass
                 else:
-                    if value in conversion_data:
-                        row[headers.index(write_header)] = row[headers_old.index(conversion_data[value])]
+                    if value in data_map:
+                        row[headers.index(write_header)] = row[headers_old.index(data_map[value])]
 
-            # adult_4_2 can have multiple answers
-            adult42list = row[headers_old.index('adult_4_2')].split(' ')
-            if '1' in adult42list:
-                row[headers.index('a4_02_1')] = '1'
-            if '2' in adult42list:
-                row[headers.index('a4_02_2')] = '1'
-            if '3' in adult42list:
-                row[headers.index('a4_02_3')] = '1'
-            if '4' in adult42list:
-                row[headers.index('a4_02_4')] = '1'
-            if '11' in adult42list:
-                row[headers.index('a4_02_5a')] = '1'
-            if '8' in adult42list:
-                row[headers.index('a4_02_6')] = '1'
-            if '9' in adult42list:
-                row[headers.index('a4_02_7')] = '1'
-
-            index = headers.index('a5_01_8')
-            if row[headers.index('adult_5_1')] == '0':
-                row[index] = '1'
-
-            # adult_6_2 can have multiple answers
-            adult62list = row[headers_old.index('adult_6_2')].split(' ')
-            if '1' in adult62list:
-                row[headers.index('a6_02_1')] = '1'
-            if '2' in adult62list:
-                row[headers.index('a6_02_2')] = '1'
-            if '3' in adult62list:
-                row[headers.index('a6_02_3')] = '1'
-            if '4' in adult62list:
-                row[headers.index('a6_02_4')] = '1'
-            if '5' in adult62list:
-                row[headers.index('a6_02_5')] = '1'
-            if '6' in adult62list:
-                row[headers.index('a6_02_6')] = '1'
-            if '7' in adult62list:
-                row[headers.index('a6_02_8')] = '1'
-            if '8' in adult62list:
-                row[headers.index('a6_02_9')] = '1'
-            if '9' in adult62list:
-                row[headers.index('a6_02_10')] = '1'
-            if '10' in adult62list:
-                row[headers.index('a6_02_11')] = '1'
-            if '11' in adult62list:
-                row[headers.index('a6_02_12a')] = '1'
-            if '12' in adult62list:
-                row[headers.index('a6_02_13')] = '1'
-            if '88' in adult62list:
-                row[headers.index('a6_02_14')] = '1'
-            if '99' in adult62list:
-                row[headers.index('a6_02_15')] = '1'
+            for data_header, data_map in BINARY_CONVERSION_MAP.items():
+                try:
+                    convert_binary_variable(headers, row, data_header, data_map)
+                except ConversionError as e:
+                    warning_logger.debug(e.message)
 
             # added for short form
             if self.short_form:
