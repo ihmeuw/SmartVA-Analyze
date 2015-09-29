@@ -95,24 +95,27 @@ class AdultPreSymptomPrep(object):
                 pass  # noop
 
         status_logger.debug('Adult :: Verifying answers fall within legal bounds')
-        for j, row in enumerate(matrix):
+
+        # calculations for the generated variables:
+        # i.e. recode
+        # do this before skip patterns so generated variables aren't 0
+        for row in matrix:
+
             for i, col in enumerate(row):
                 header = headers[i]
                 if col != '':
                     # if it's empty, we just skip it.  not sure there's a "required"
                     range_test = adult_rangelist.get(header)
                     if not (range_test is None or range_test == ''):
-                        answer_array = col.split(' ')
+                        try:
+                            answer_array = col.split(' ')
+                        except AttributeError:
+                            answer_array = [col]
                         for answer in answer_array:
                             if int(answer) not in range_test:
                                 # ERROR
-                                warning_logger.warning('Adult :: Value {} in row {} for col {} is not legal for variable {}, please see Codebook for legal values'.format(col, j + 2, i + 1, header))
+                                warning_logger.warning('Adult :: Value {} is not legal for variable {}, please see Codebook for legal values'.format(col, header))
                                 self.warnings = True
-
-        # calculations for the generated variables:
-        # i.e. recode
-        # do this before skip patterns so generated variables aren't 0
-        for row in matrix:
 
             # Consolidate answers
             for new_headers, conversion_data in CONSOLIDATION_MAP.items():
