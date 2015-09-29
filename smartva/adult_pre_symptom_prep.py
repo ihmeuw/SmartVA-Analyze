@@ -75,6 +75,7 @@ class AdultPreSymptomPrep(object):
             warning_logger.debug('Adult :: No data, skipping module')
             return False
 
+        # TODO - Move this into 'common-prep' module. Also, this is a bit too magical. Do something about that.
         # drop all child variables
         headers_copy = copy.deepcopy(headers)
         for col in headers_copy:
