@@ -16,6 +16,7 @@ from smartva.common_data import (
 )
 from smartva.conversion_utils import (
     ConversionError,
+    additional_headers_and_values,
     convert_binary_variable
 )
 
@@ -50,25 +51,6 @@ class CommonPrep(object):
             NEONATE: []
         }
 
-    @staticmethod
-    def additional_headers_and_values(headers, additional_headers_data):
-        """
-        Calculate additional headers and values based on comparing existing headers to additional header data.
-
-        :param headers: Initial header list.
-        :param additional_headers_data: Additional headers and default values.
-        :return: Additional headers (list) and values (list) necessary to complete processing.
-        :rtype : tuple
-        """
-        additional_headers = []
-        additional_values = []
-        for k, v in additional_headers_data:
-            if k not in headers:
-                additional_headers.append(k)
-                additional_values.append(v)
-
-        return additional_headers, additional_values
-
     def run(self):
         """
         Perform initial processing step for preparing input data.
@@ -90,7 +72,7 @@ class CommonPrep(object):
             headers = next(reader)
 
             # Extend the headers with additional headers and read the remaining data into the matrix
-            additional_headers, additional_values = self.additional_headers_and_values(
+            additional_headers, additional_values = additional_headers_and_values(
                 headers, [(k, 0) for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA)
             headers.extend(additional_headers)
 

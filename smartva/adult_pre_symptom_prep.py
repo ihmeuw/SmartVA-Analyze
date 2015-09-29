@@ -17,7 +17,11 @@ from smartva.adult_pre_symptom_data import (
     SHORT_FORM_FREE_TEXT_CONVERSION,
     FREE_TEXT_HEADERS
 )
-from smartva.conversion_utils import ConversionError, convert_binary_variable
+from smartva.conversion_utils import (
+    ConversionError,
+    additional_headers_and_values,
+    convert_binary_variable
+)
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
@@ -32,23 +36,6 @@ class AdultPreSymptomPrep(object):
 
         self.want_abort = False
         self.warnings = False
-
-    @staticmethod
-    def additional_headers_and_values(headers, additional_headers_data):
-        """
-        Calculate necessary additional headers and values based on comparing existing headers to additional header data.
-
-        :param headers:
-        :return:
-        """
-        additional_headers = []
-        additional_values = []
-        for k, v in additional_headers_data:
-            if k not in headers:
-                additional_headers.append(k)
-                additional_values.append(v)
-
-        return additional_headers, additional_values
 
     def run(self):
         status_notifier.update({'progress': (2,)})
@@ -67,7 +54,7 @@ class AdultPreSymptomPrep(object):
 
             headers = next(reader)
 
-            additional_headers, additional_values = self.additional_headers_and_values(headers, GENERATED_HEADERS_DATA)
+            additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_HEADERS_DATA)
             headers.extend(additional_headers)
 
             for row in reader:

@@ -2,6 +2,23 @@ class ConversionError(Exception):
     pass
 
 
+def additional_headers_and_values(headers, additional_headers_data):
+    """
+    Calculate necessary additional headers and values based on comparing existing headers to additional header data.
+
+    :param headers:
+    :return:
+    """
+    additional_headers = []
+    additional_values = []
+    for k, v in additional_headers_data:
+        if k not in headers:
+            additional_headers.append(k)
+            additional_values.append(v)
+
+    return additional_headers, additional_values
+
+
 def get_header_index(headers, header):
     try:
         return headers.index(header)
