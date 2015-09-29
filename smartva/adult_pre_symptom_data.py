@@ -175,3 +175,17 @@ BINARY_CONVERSION_MAP = {
         99: 'a6_02_15',
     }
 }
+
+SHORT_FORM_FREE_TEXT_CONVERSION = {
+    'a_7_1': 'kidney',
+    'a_7_2': 'dialysis',
+    'a_7_3': 'fever',
+    'a_7_4': 'ami',
+    'a_7_5': 'heart',
+    'a_7_6': 'jaundice',
+    'a_7_7': 'liver',
+    'a_7_8': 'malaria',
+    'a_7_9': 'pneumonia',
+    'a_7_10': 'renal',
+    'a_7_11': 'suicide',
+}

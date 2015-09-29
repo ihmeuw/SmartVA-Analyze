@@ -13,7 +13,8 @@ from smartva.utils import status_notifier
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
     CONSOLIDATION_MAP,
-    BINARY_CONVERSION_MAP
+    BINARY_CONVERSION_MAP,
+    SHORT_FORM_FREE_TEXT_CONVERSION,
 )
 from smartva.conversion_utils import ConversionError, convert_binary_variable
 
@@ -746,28 +747,11 @@ class AdultPreSymptomPrep(object):
 
         if self.short_form:
             for row in matrix:
-                if row[headers_old.index('adult_7_1')] == '1':
-                    self.process_free_text('kidney', row, headers)
-                if row[headers_old.index('adult_7_2')] == '1':
-                    self.process_free_text('dialysis', row, headers)
-                if row[headers_old.index('adult_7_3')] == '1':
-                    self.process_free_text('fever', row, headers)
-                if row[headers_old.index('adult_7_4')] == '1':
-                    self.process_free_text('ami', row, headers)
-                if row[headers_old.index('adult_7_5')] == '1':
-                    self.process_free_text('heart', row, headers)
-                if row[headers_old.index('adult_7_6')] == '1':
-                    self.process_free_text('jaundice', row, headers)
-                if row[headers_old.index('adult_7_7')] == '1':
-                    self.process_free_text('liver', row, headers)
-                if row[headers_old.index('adult_7_8')] == '1':
-                    self.process_free_text('malaria', row, headers)
-                if row[headers_old.index('adult_7_9')] == '1':
-                    self.process_free_text('pneumonia', row, headers)
-                if row[headers_old.index('adult_7_10')] == '1':
-                    self.process_free_text('renal', row, headers)
-                if row[headers_old.index('adult_7_11')] == '1':
-                    self.process_free_text('suicide', row, headers)
+                # Generate and process a binary conversion map from the short form free text conversion data.
+                conversion_map = {k: {1: ADULT_WORDS_TO_VARS[stem(v)]} for k, v in
+                                  SHORT_FORM_FREE_TEXT_CONVERSION.items()}
+                for data_header, data_map in conversion_map.items():
+                    convert_binary_variable(headers, row, data_header, data_map)
 
         free_text = ['a5_01_9b', 'a6_08', 'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
 
