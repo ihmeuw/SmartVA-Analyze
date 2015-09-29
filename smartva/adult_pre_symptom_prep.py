@@ -95,7 +95,7 @@ class AdultPreSymptomPrep(object):
                 swap = adult_conversionVars[col]
                 headers[i] = swap
             except KeyError:
-                pass  # noop
+                pass  # noooooooop
 
         status_logger.debug('Adult :: Verifying answers fall within legal bounds')
 
@@ -104,6 +104,7 @@ class AdultPreSymptomPrep(object):
         # do this before skip patterns so generated variables aren't 0
         for row in matrix:
 
+            # Verify answers
             for i, col in enumerate(row):
                 header = headers[i]
                 if col != '':
@@ -132,6 +133,7 @@ class AdultPreSymptomPrep(object):
                     if value in data_map:
                         row[headers.index(write_header)] = row[headers_old.index(data_map[value])]
 
+            # Convert binary variables
             for data_header, data_map in BINARY_CONVERSION_MAP.items():
                 try:
                     convert_binary_variable(headers, row, data_header, data_map)
@@ -175,14 +177,6 @@ class AdultPreSymptomPrep(object):
                 a2_09_2a = row[headers.index('a2_09_2a')]
                 if not (a2_09_2a is None or a2_09_2a == '' or a2_09_2a == '0'):
                     self.print_warning('a2_09_2a', i, row, headers, default_fill)
-
-                # TODO - Verify this code.
-                # doesn't exist in electronic version
-                # a2_09_2b = row[headers.index('a2_09_2b')]
-                # if not (a2_09_2b is None or a2_09_2b == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing' % (i + 2, headers.index('a2_09_2b'))
-                #     warning_logger.warning(updatestr)
-                #     a2_09_2b')] = str(default_fill.get(''))
 
             a2_10 = row[headers.index('a2_10')]
             if a2_10 != '1':
@@ -268,14 +262,6 @@ class AdultPreSymptomPrep(object):
                 if not (a2_39_1 is None or a2_39_1 == ''):
                     self.print_warning('a2_39_1', i, row, headers, default_fill)
 
-                # TODO - Verify this code.
-                # doesn't exist in electronic version
-                # a2_39_2 = row[headers.index('a2_39_2')]
-                # if not (a2_39_2 is None or a2_39_2 == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing' % (i+2, headers.index('a2_39_2'))
-                #     warning_logger.warning(updatestr)
-                #     a2_39_2')] = str(default_fill.get(''))
-
             a2_40 = row[headers.index('a2_40')]
             if a2_40 != '1':
                 a2_41a = row[headers.index('a2_41a')]
@@ -347,14 +333,6 @@ class AdultPreSymptomPrep(object):
                 a2_63_1 = row[headers.index('a2_63_1')]
                 if not (a2_63_1 is None or a2_63_1 == ''):
                     self.print_warning('a2_63_1', i, row, headers, default_fill)
-
-                # TODO - Verify this code
-                # not in electronic version
-                # a2_63_2 = row[headers.index('a2_63_2')]
-                # if not (a2_63_2 is None or a2_63_2 == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing' % (i+2, headers.index('a2_63_2'))
-                #     warning_logger.warning(updatestr)
-                #     a2_63_2')] = str(default_fill.get(''))
 
             a2_64 = row[headers.index('a2_64')]
             if a2_64 != '1':
@@ -545,14 +523,6 @@ class AdultPreSymptomPrep(object):
                 if not (a6_02_6 is None or a6_02_6 == '' or a6_02_6 == '0'):
                     self.print_warning('a6_02_6', i, row, headers, default_fill)
 
-                # TODO - Verify this code.
-                # not in electronic version
-                # a6_02_7 = row[headers.index('a6_02_7')]
-                # if not (a6_02_7 is None or a6_02_7 == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing' % (i+2, headers.index('a6_02_7'))
-                #     warning_logger.warning(updatestr)
-                #     a6_02_7')] = str(default_fill.get(''))
-
                 a6_02_8 = row[headers.index('a6_02_8')]
                 if not (a6_02_8 is None or a6_02_8 == '' or a6_02_8 == '0'):
                     self.print_warning('a6_02_8', i, row, headers, default_fill)
@@ -568,14 +538,6 @@ class AdultPreSymptomPrep(object):
                 a6_02_12a = row[headers.index('a6_02_12a')]
                 if not (a6_02_12a is None or a6_02_12a == '' or a6_02_12a == '0'):
                     self.print_warning('a6_02_12a', i, row, headers, default_fill)
-
-                # TODO - Verify this code.
-                # not in electronic version
-                # a6_02_12b = row[headers.index('a6_02_12b')]
-                # if not (a6_02_12b is None or a6_02_12b == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable should be blank, setting to default and continuing' % (i+2, headers.index('a6_02_12b'))
-                #     warning_logger.warning(updatestr)
-                #     a6_02_12b')] = str(default_fill.get(''))
 
                 a6_02_13 = row[headers.index('a6_02_13')]
                 if not (a6_02_13 is None or a6_02_13 == '' or a6_02_13 == '0'):
@@ -741,16 +703,6 @@ class AdultPreSymptomPrep(object):
 
             # general vars
 
-            # TODO - Verify this code.
-            # not in electronic version
-            # g1_07a = row[headers.index('g1_07a')]
-            # if g1_07a < '12' or g1_07a == '999':
-            #     g1_08 = row[headers.index('g1_08')]
-            # if not (g1_08 is None or g1_08 == ''):
-            #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable g1_08 should be blank, setting to default and continuing' % (i+2, headers.index('g1_08'))
-            #     warning_logger.warning(updatestr)
-            #     g1_08 = str(default_fill.get(''))
-
             g5_04a = row[headers.index('g5_04a')]
             if g5_04a is not None and g5_04a != '':
                 g5_04a = int(g5_04a)
@@ -764,14 +716,6 @@ class AdultPreSymptomPrep(object):
                 g5_06a = row[headers.index('g5_06a')]
                 if not (g5_06a is None or g5_06a == ''):
                     self.print_warning('g5_06a', i, row, headers, default_fill)
-
-                # TODO - Verify this code.
-                # not in electronic version
-                # g5_06b = row[headers.index('g5_06b')]
-                # if not (g5_06b is None or g5_06b == ''):
-                #     updatestr = 'Adult :: WARNING: value at row %s col %s for variable g5_06b should be blank, setting to default and continuing' % (i+2, headers.index('g5_06b'))
-                #     warning_logger.warning(updatestr)
-                #     g5_06b')] = str(default_fill.get(''))
 
             # added for short form
             a4_02_2 = row[headers.index('a4_02_2')]
