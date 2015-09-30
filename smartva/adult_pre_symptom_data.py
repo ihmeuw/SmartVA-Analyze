@@ -146,19 +146,22 @@ CONSOLIDATION_MAP = {
 }
 
 BINARY_CONVERSION_MAP = {
-    'adult_4_2': {  # old header
+    'a4_02': {
+        # old header: adult_4_2
         1: 'a4_02_1',
         2: 'a4_02_2',
         3: 'a4_02_3',
         4: 'a4_02_4',
         11: 'a4_02_5a',
         8: 'a4_02_6',
-        9: 'a4_02_1',
+        9: 'a4_02_7',
     },
-    'adult_5_1': {  # tricky
+    'adult_5_1': {
+        # tricky
         0: 'a5_01_8',
     },
-    'adult_6_2': {  # old header
+    'adult_6_2': {
+        # old header: converted
         1: 'a6_02_1',
         2: 'a6_02_2',
         3: 'a6_02_3',
