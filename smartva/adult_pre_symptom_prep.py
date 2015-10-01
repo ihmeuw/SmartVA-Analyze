@@ -5,7 +5,7 @@ import os
 from stemming.porter2 import stem
 
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
-from smartva.answer_ranges import adult_rangelist
+from smartva.answer_ranges import ADULT_RANGE_LIST
 from smartva.presymptom_conversions import adult_conversionVars
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
@@ -92,22 +92,7 @@ class AdultPreSymptomPrep(object):
         # do this before skip patterns so generated variables aren't 0
         for row in matrix:
 
-            # Verify answers
-            for i, col in enumerate(row):
-                header = headers[i]
-                if col != '':
-                    # if it's empty, we just skip it.  not sure there's a "required"
-                    range_test = adult_rangelist.get(header)
-                    if not (range_test is None or range_test == ''):
-                        try:
-                            answer_array = col.split(' ')
-                        except AttributeError:
-                            answer_array = [col]
-                        for answer in answer_array:
-                            if int(answer) not in range_test:
-                                # ERROR
-                                warning_logger.warning('Adult :: Value {} is not legal for variable {}, please see Codebook for legal values'.format(col, header))
-                                self.warnings = True
+            self.warnings = self.verify_answers_for_row(headers, row, ADULT_RANGE_LIST)
 
             self.convert_free_text_headers(headers, row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
 
@@ -287,6 +272,29 @@ class AdultPreSymptomPrep(object):
             adultwriter.writerows(matrix)
 
         return True
+
+    @staticmethod
+    def verify_answers_for_row(headers, row, valid_range_data):
+        # Verify answers
+        warnings = False
+        for header, range_list in valid_range_data.items():
+            try:
+                value = row[headers.index(header)]
+            except ValueError:
+                pass  # Header not in data set.
+            else:
+                if value != '' and range_list:
+                    try:
+                        answer_array = value.split()
+                    except AttributeError:
+                        answer_array = [value]
+                    for answer in answer_array:
+                        if int(answer) not in range_list:
+                            warning_logger.warning('Adult :: SID: {} variable {} has an illegal value {}. '
+                                                   'Please see Codebook for legal values.'
+                                                   .format(row[headers.index('sid')], header, value))
+                            warnings = True
+        return warnings
 
     def abort(self):
         self.want_abort = True
