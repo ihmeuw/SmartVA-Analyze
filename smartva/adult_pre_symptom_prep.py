@@ -1,12 +1,13 @@
 import copy
 import csv
 import os
+import re
 
 from stemming.porter2 import stem
 
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import ADULT_RANGE_LIST
-from smartva.presymptom_conversions import adult_conversionVars
+from smartva.presymptom_conversions import ADULT_HEADER_CONVERSION_MAP
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
@@ -25,6 +26,7 @@ from smartva.conversion_utils import (
 )
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+DROP_PATTERN = '[cp]([_\d]|hild|rovider)'
 
 
 class AdultPreSymptomPrep(object):
@@ -58,32 +60,20 @@ class AdultPreSymptomPrep(object):
             additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_HEADERS_DATA)
             headers.extend(additional_headers)
 
+            self.rename_odk_headers(headers, ADULT_HEADER_CONVERSION_MAP)
+
+            drop_index_list = self.get_drop_index_list(headers)
+
+            headers = self.drop_from_list(headers, drop_index_list)
+
             for row in reader:
-                matrix.append(row + additional_values)
+                new_row = self.drop_from_list(row + additional_values, drop_index_list)
+                matrix.append(new_row)
 
         # Make sure we have data, else just stop this module
         if not matrix:
             warning_logger.debug('Adult :: No data, skipping module')
             return False
-
-        # TODO - Move this into 'common-prep' module. Also, this is a bit too magical. Do something about that.
-        # drop all child variables
-        headers_copy = copy.deepcopy(headers)
-        for col in headers_copy:
-            if col.startswith('c') or col.startswith('p'):
-                index = headers.index(col)
-                for row in matrix:
-                    del row[index]
-                headers.remove(col)
-
-        # switch to new variables:
-        for i, col in enumerate(headers):
-            # only swap headers with values to swap
-            try:
-                swap = adult_conversionVars[col]
-                headers[i] = swap
-            except KeyError:
-                pass  # noooooooop
 
         status_logger.debug('Adult :: Verifying answers fall within legal bounds')
 
@@ -272,6 +262,22 @@ class AdultPreSymptomPrep(object):
             adultwriter.writerows(matrix)
 
         return True
+
+    @staticmethod
+    def drop_from_list(item_list, drop_index_list):
+        return [item for index, item in enumerate(item_list) if index not in drop_index_list]
+
+    @staticmethod
+    def get_drop_index_list(headers):
+        return [headers.index(header) for header in headers if re.match(DROP_PATTERN, header)]
+
+    @staticmethod
+    def rename_odk_headers(headers, conversion_map):
+        for old_header, new_header in conversion_map.items():
+            try:
+                headers[headers.index(old_header)] = new_header
+            except (KeyError, ValueError):
+                pass  # Header did not exist.
 
     @staticmethod
     def verify_answers_for_row(headers, row, valid_range_data):
