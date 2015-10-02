@@ -1,4 +1,3 @@
-import copy
 import csv
 import os
 import re
@@ -18,10 +17,14 @@ from smartva.adult_pre_symptom_data import (
     SHORT_FORM_FREE_TEXT_CONVERSION,
     FREE_TEXT_HEADERS,
     SKIP_PATTERN_DATA,
-    DURATION_VARS
+    TIME_FACTORS,
+    DURATION_VARS,
+    DURATION_VARS_SHORT_FORM_DROP_LIST,
+    DURATION_VARS_SPECIAL_CASE
 )
 from smartva.conversion_utils import (
     ConversionError,
+    int_value_or_0,
     additional_headers_and_values,
     convert_binary_variable
 )
@@ -184,40 +187,14 @@ class AdultPreSymptomPrep(object):
                 if default is not None and col == '':
                     row[i] = default_fill[header]
 
-        status_logger.debug('Adult :: Processing duration variables')
-        # fix duration variables
+        duration_vars = DURATION_VARS
 
-        for var in DURATION_VARS:
-            if var == 'a3_16' and self.short_form:
-                continue
-            a = var + 'a'
-            b = var + 'b'
-            a_index = headers.index(a)
-            b_index = headers.index(b)
-            index = headers.index(var)
+        if self.short_form:
+            for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
+                duration_vars.remove(var)
 
-            for row in matrix:
-                value = row[b_index]
-                v2 = row[a_index]
-
-                if (value == '') and var == 'a5_04':
-                    # special case for injuries
-                    row[index] = '999'
-                else:
-                    if value == '':
-                        row[index] = '0'
-                    else:
-                        row[index] = float(value)
-                    if row[a_index] == '1':
-                        row[index] = float(row[index]) * 365.0
-                    if row[a_index] == '2':
-                        row[index] = float(row[index]) * 30.0
-                    if row[a_index] == '3':
-                        row[index] = float(row[index]) * 7.0
-                    if row[a_index] == '5':
-                        row[index] = float(row[index]) / 24.0
-                    if row[a_index] == '6':
-                        row[index] = float(row[index]) / 1440.0
+        for row in matrix:
+            self.calculate_duration_variables(headers, row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
         drop_index_list = self.get_drop_index_list(headers, 'adult')
         drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
@@ -235,6 +212,18 @@ class AdultPreSymptomPrep(object):
             adultwriter.writerows(matrix)
 
         return True
+
+    @staticmethod
+    def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
+        for var in duration_vars:
+            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
+            code_value = int_value_or_0(row[headers.index(code_var)])
+            length_value = int_value_or_0(row[headers.index(length_var)])
+
+            if var in special_case_vars and not length_value:
+                row[headers.index(var)] = special_case_vars[var]
+            else:
+                row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
 
     @staticmethod
     def drop_from_list(item_list, drop_index_list):

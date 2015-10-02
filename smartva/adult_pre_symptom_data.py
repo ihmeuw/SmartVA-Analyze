@@ -259,6 +259,15 @@ FREE_TEXT_HEADERS = [
     'a7_01',
 ]
 
+TIME_FACTORS = {
+    1: 356.0,
+    2: 30.0,
+    3: 7.0,
+    4: 1.0,
+    5: 1 / 24.0,
+    6: 1 / 1440.0
+}
+
 DURATION_VARS = [
     'a2_01',
     'a2_03',
@@ -288,3 +297,11 @@ DURATION_VARS = [
     'a3_16',
     'a5_04'
 ]
+
+DURATION_VARS_SHORT_FORM_DROP_LIST = [
+    'a3_16',
+]
+
+DURATION_VARS_SPECIAL_CASE = {
+    'a5_04': 999
+}
