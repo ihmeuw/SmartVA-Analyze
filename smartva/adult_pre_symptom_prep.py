@@ -210,10 +210,15 @@ class AdultPreSymptomPrep(object):
             matrix[i] = self.drop_from_list(row, drop_index_list)
 
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
-            adultwriter = csv.writer(f)
+            adult_writer = csv.writer(f)
 
-            adultwriter.writerow(headers)
-            adultwriter.writerows(matrix)
+            adult_writer.writerow(headers)
+            adult_writer.writerows(matrix)
+
+        if not self.warnings:
+            status_logger.debug('Adult :: Answers verified')
+        else:
+            status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
         return True
 
@@ -268,7 +273,7 @@ class AdultPreSymptomPrep(object):
                         answer_array = [value]
                     for answer in answer_array:
                         if int(answer) not in range_list:
-                            warning_logger.warning('Adult :: SID: {} variable {} has an illegal value {}. '
+                            warning_logger.warning('SID: {} variable {} has an illegal value {}. '
                                                    'Please see Codebook for legal values.'
                                                    .format(row[headers.index('sid')], header, value))
                             warnings = True
@@ -276,13 +281,6 @@ class AdultPreSymptomPrep(object):
 
     def abort(self):
         self.want_abort = True
-
-    def print_warning(self, var, row_num, row, headers, default_fill):
-        warning_logger.warning('Adult :: Value at row {} col {} for variable {} should be blank, setting to default and continuing'.format(row_num + 2, headers.index(var), var))
-        row[headers.index(var)] = str(default_fill.get(var))
-        self.warnings = True
-
-    # def convert_short_form_free_text_headers(self):
 
     @staticmethod
     def convert_free_text_headers(headers, row, data_headers, data_map):
