@@ -1,5 +1,16 @@
+from smartva.ldap_notation_parser import LdapNotationParser
+from smartva.loggers import warning_logger
+
+
 class ConversionError(Exception):
     pass
+
+
+def int_value_or_0(x):
+    try:
+        return int(x)
+    except ValueError:
+        return 0
 
 
 def additional_headers_and_values(headers, additional_headers_data):
@@ -43,3 +54,26 @@ def convert_binary_variable(headers, row, data_header, data_map):
         except ValueError:
             # No values to process or not an integer value (invalid).
             pass
+
+
+def check_skip_patterns(headers, row, skip_pattern_data):
+    def get_cell(header):
+        value = row[headers.index(header)]
+        try:
+            return int(value)
+        except ValueError:
+            return 0
+
+    warnings = False
+    for skip_pattern_item in skip_pattern_data:
+        skip_condition, skip_list = skip_pattern_item
+        if not LdapNotationParser(skip_condition, get_cell, int).parse():
+            for skip_list_item in skip_list:
+                skip_list_item_value = get_cell(skip_list_item)
+                if bool(skip_list_item_value):
+                    warnings = True
+                    warning_logger.info('SID: {} variable {} has value {}, but should be blank.'
+                                        .format(row[headers.index('sid')], skip_list_item, skip_list_item_value))
+                    row[headers.index(skip_list_item)] = ''
+
+    return warnings

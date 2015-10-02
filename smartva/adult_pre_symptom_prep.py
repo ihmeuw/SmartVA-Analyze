@@ -26,7 +26,8 @@ from smartva.conversion_utils import (
     ConversionError,
     int_value_or_0,
     additional_headers_and_values,
-    convert_binary_variable
+    convert_binary_variable,
+    check_skip_patterns
 )
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -116,77 +117,7 @@ class AdultPreSymptomPrep(object):
                 except ConversionError as e:
                     warning_logger.debug(e.message)
 
-            # Check skip patterns
-            i = 0
-            for skip_pattern_item in SKIP_PATTERN_DATA:
-                skip_header, skip_pattern_item_data = skip_pattern_item
-                skip_condition_data, skip_list = skip_pattern_item_data
-                skip_condition_answer, skip_condition_value = skip_condition_data
-                try:
-                    # Get cell value
-                    skip_header_answer = row[headers.index(skip_header)]
-                except ValueError:
-                    # Header is not in list
-                    pass
-                else:
-                    try:
-                        # Try to convert cell value to integer
-                        skip_header_answer = int(skip_header_answer)
-                    except ValueError:
-                        pass
-                    if (skip_header_answer == skip_condition_answer) is not skip_condition_value:
-                        for skip_list_item in skip_list:
-                            skip_list_item_value = row[headers.index(skip_list_item)]
-                            try:
-                                skip_list_item_value = int(skip_list_item_value)
-                            except ValueError:
-                                pass
-                            if bool(skip_list_item_value):
-                                print('check {} {} {} {}'.format(row[5], skip_header, skip_list_item, skip_list_item_value))
-                                row[headers.index(skip_list_item)] = default_fill[skip_list_item]
-
-
-            # general vars
-
-            g5_04a = row[headers.index('g5_04a')]
-            if g5_04a is not None and g5_04a != '':
-                g5_04a = int(g5_04a)
-            else:
-                g5_04a = 0
-            if g5_04a < 12 or g5_04a == 999:
-                g5_05 = row[headers.index('g5_05')]
-                if not (g5_05 is None or g5_05 == ''):
-                    self.print_warning('g5_05', i, row, headers, default_fill)
-            if g5_04a < 5 or g5_04a == 999:
-                g5_06a = row[headers.index('g5_06a')]
-                if not (g5_06a is None or g5_06a == ''):
-                    self.print_warning('g5_06a', i, row, headers, default_fill)
-
-            # added for short form
-            a4_01 = row[headers.index('a4_01')]
-            a4_02_2 = row[headers.index('a4_02_2')]
-            a4_02_3 = row[headers.index('a4_02_3')]
-            a4_02_4 = row[headers.index('a4_02_4')]
-            a4_02_5a = row[headers.index('a4_02_5a')]
-            if a4_01 != '1' or (a4_02_2 != '1' and a4_02_3 != '1' and a4_02_4 != '1' and a4_02_5a != '1'):
-                a4_03 = row[headers.index('a4_03')]
-                if not (a4_03 is None or a4_03 == ''):
-                    self.print_warning('a4_03', i, row, headers, default_fill)
-
-        if not self.warnings:
-            status_logger.debug('Adult :: Answers verified')
-        else:
-            status_logger.info('Adult :: Warnings found, please check warnings.txt')
-
-        status_logger.debug('Adult :: Filling in default values for empty columns')
-        # fill in missing default values:
-        for row in matrix:
-            for i, col in enumerate(row):
-                header = headers[i]
-                default = default_fill.get(header)
-                if default is not None and col == '':
-                    row[i] = default_fill[header]
-        """
+            self.warnings |= check_skip_patterns(headers, row, SKIP_PATTERN_DATA)
 
         for row in matrix:
             self.fill_missing_data(headers, row, default_fill)
