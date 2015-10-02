@@ -186,6 +186,10 @@ class AdultPreSymptomPrep(object):
                 default = default_fill.get(header)
                 if default is not None and col == '':
                     row[i] = default_fill[header]
+        """
+
+        for row in matrix:
+            self.fill_missing_data(headers, row, default_fill)
 
         duration_vars = DURATION_VARS
 
@@ -212,6 +216,12 @@ class AdultPreSymptomPrep(object):
             adultwriter.writerows(matrix)
 
         return True
+
+    @staticmethod
+    def fill_missing_data(headers, row, default_fill):
+        for header, value in default_fill.items():
+            if row[headers.index(header)] == '':
+                row[headers.index(header)] = value
 
     @staticmethod
     def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
