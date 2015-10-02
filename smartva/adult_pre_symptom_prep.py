@@ -17,7 +17,8 @@ from smartva.adult_pre_symptom_data import (
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
     FREE_TEXT_HEADERS,
-    SKIP_PATTERN_DATA
+    SKIP_PATTERN_DATA,
+    DURATION_VARS
 )
 from smartva.conversion_utils import (
     ConversionError,
@@ -57,12 +58,14 @@ class AdultPreSymptomPrep(object):
 
             headers = next(reader)
 
-            additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_HEADERS_DATA)
+            additional_headers_data = GENERATED_HEADERS_DATA + [(k, '') for k in DURATION_VARS]
+            additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
+
             headers.extend(additional_headers)
 
             self.rename_odk_headers(headers, ADULT_HEADER_CONVERSION_MAP)
 
-            drop_index_list = self.get_drop_index_list(headers)
+            drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
 
             headers = self.drop_from_list(headers, drop_index_list)
 
@@ -183,17 +186,8 @@ class AdultPreSymptomPrep(object):
 
         status_logger.debug('Adult :: Processing duration variables')
         # fix duration variables
-        duration_vars = ['a2_01', 'a2_03', 'a2_08', 'a2_15', 'a2_22', 'a2_24', 'a2_26', 'a2_28', 'a2_33', 'a2_37',
-                         'a2_41', 'a2_48', 'a2_54', 'a2_58', 'a2_62', 'a2_65', 'a2_68', 'a2_70', 'a2_73', 'a2_76',
-                         'a2_79', 'a2_83', 'a2_86', 'a3_08', 'a3_11', 'a3_16', 'a5_04']
 
-        # add duration variables
-        for var in duration_vars:
-            headers.append(var)
-            for row in matrix:
-                row.append('')
-
-        for var in duration_vars:
+        for var in DURATION_VARS:
             if var == 'a3_16' and self.short_form:
                 continue
             a = var + 'a'
@@ -225,26 +219,13 @@ class AdultPreSymptomPrep(object):
                     if row[a_index] == '6':
                         row[index] = float(row[index]) / 1440.0
 
-        # drop old a/b variables
-        # we do two loops to make sure we don't cross indexes, inefficient...
-        for var in duration_vars:
-            a = var + 'a'
-            b = var + 'b'
-            a_index = headers.index(a)
-            headers.remove(a)
+        drop_index_list = [headers.index('{}a'.format(header)) for header in DURATION_VARS]
+        drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
+        drop_index_list += ['a4_02']
 
-            for row in matrix:
-                del row[a_index]
-
-            b_index = headers.index(b)
-            headers.remove(b)
-            for row in matrix:
-                del row[b_index]
-
-        dropme = headers.index('a4_02')
-        headers.remove('a4_02')
-        for row in matrix:
-            del row[dropme]
+        headers = self.drop_from_list(headers, drop_index_list)
+        for i, row in enumerate(matrix):
+            matrix[i] = self.drop_from_list(row, drop_index_list)
 
         # get rid of all unused 'adult' headers
         headers_copy = copy.deepcopy(headers)
@@ -268,8 +249,8 @@ class AdultPreSymptomPrep(object):
         return [item for index, item in enumerate(item_list) if index not in drop_index_list]
 
     @staticmethod
-    def get_drop_index_list(headers):
-        return [headers.index(header) for header in headers if re.match(DROP_PATTERN, header)]
+    def get_drop_index_list(headers, drop_pattern):
+        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
 
     @staticmethod
     def rename_odk_headers(headers, conversion_map):
