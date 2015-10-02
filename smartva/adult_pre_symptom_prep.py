@@ -156,8 +156,11 @@ class AdultPreSymptomPrep(object):
     @staticmethod
     def fill_missing_data(headers, row, default_fill):
         for header, value in default_fill.items():
-            if row[headers.index(header)] == '':
-                row[headers.index(header)] = value
+            try:
+                if row[headers.index(header)] == '':
+                    row[headers.index(header)] = value
+            except ValueError:
+                pass  # Header does not exist.
 
     @staticmethod
     def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
