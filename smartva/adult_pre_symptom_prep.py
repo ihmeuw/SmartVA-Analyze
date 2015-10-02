@@ -27,7 +27,7 @@ from smartva.conversion_utils import (
 )
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
-DROP_PATTERN = '[cp]([_\d]|hild|rovider)'
+DROP_PATTERN = '[cpn]([_\d]|hild|omplications|rovider|eonate)'
 
 
 class AdultPreSymptomPrep(object):
@@ -219,22 +219,14 @@ class AdultPreSymptomPrep(object):
                     if row[a_index] == '6':
                         row[index] = float(row[index]) / 1440.0
 
-        drop_index_list = [headers.index('{}a'.format(header)) for header in DURATION_VARS]
+        drop_index_list = self.get_drop_index_list(headers, 'adult')
+        drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
         drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
         drop_index_list += ['a4_02']
 
         headers = self.drop_from_list(headers, drop_index_list)
         for i, row in enumerate(matrix):
             matrix[i] = self.drop_from_list(row, drop_index_list)
-
-        # get rid of all unused 'adult' headers
-        headers_copy = copy.deepcopy(headers)
-        for col in headers_copy:
-            if col.startswith('adult'):
-                index = headers.index(col)
-                for row in matrix:
-                    del row[index]
-                headers.remove(col)
 
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
             adultwriter = csv.writer(f)
