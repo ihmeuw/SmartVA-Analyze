@@ -47,13 +47,18 @@ class AdultPreSymptomPrep(object):
 
     def run(self):
         status_notifier.update({'progress': (2,)})
-
         status_logger.info('Adult :: Processing pre-symptom data')
 
         if self.short_form:
             default_fill = ADULT_DEFAULT_FILL_SHORT
         else:
             default_fill = ADULT_DEFAULT_FILL
+
+        duration_vars = DURATION_VARS
+
+        if self.short_form:
+            for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
+                duration_vars.remove(var)
 
         matrix = []
 
@@ -77,19 +82,9 @@ class AdultPreSymptomPrep(object):
                 new_row = self.drop_from_list(row + additional_values, drop_index_list)
                 matrix.append(new_row)
 
-        # Make sure we have data, else just stop this module
-        if not matrix:
-            warning_logger.debug('Adult :: No data, skipping module')
-            return False
-
-        status_logger.debug('Adult :: Verifying answers fall within legal bounds')
-
-        # calculations for the generated variables:
-        # i.e. recode
-        # do this before skip patterns so generated variables aren't 0
         for row in matrix:
 
-            self.warnings = self.verify_answers_for_row(headers, row, ADULT_RANGE_LIST)
+            self.warnings |= self.verify_answers_for_row(headers, row, ADULT_RANGE_LIST)
 
             self.convert_free_text_headers(headers, row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
 
@@ -98,37 +93,14 @@ class AdultPreSymptomPrep(object):
                 if word_list:
                     self.convert_free_text_words(headers, row, ADULT_WORDS_TO_VARS, word_list)
 
-            # Consolidate answers
-            for data_headers, data_map in CONSOLIDATION_MAP.items():
-                read_header, write_header = data_headers
-                try:
-                    value = int(row[headers.index(read_header)])
-                except ValueError:
-                    # TODO - This covers both the header index and the int operations.
-                    pass
-                else:
-                    if value in data_map:
-                        row[headers.index(write_header)] = row[headers.index(data_map[value])]
+            self.consolidate_answers(headers, row)
 
-            # Convert binary variables
-            for data_header, data_map in BINARY_CONVERSION_MAP.items():
-                try:
-                    convert_binary_variable(headers, row, data_header, data_map)
-                except ConversionError as e:
-                    warning_logger.debug(e.message)
+            self.convert_binary_variables(headers, row, BINARY_CONVERSION_MAP.items())
 
             self.warnings |= check_skip_patterns(headers, row, SKIP_PATTERN_DATA)
 
-        for row in matrix:
             self.fill_missing_data(headers, row, default_fill)
 
-        duration_vars = DURATION_VARS
-
-        if self.short_form:
-            for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
-                duration_vars.remove(var)
-
-        for row in matrix:
             self.calculate_duration_variables(headers, row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
         drop_index_list = self.get_drop_index_list(headers, 'adult')
@@ -152,6 +124,27 @@ class AdultPreSymptomPrep(object):
             status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
         return True
+
+    @staticmethod
+    def convert_binary_variables(headers, row, conversion_map):
+        for data_header, data_map in conversion_map:
+            try:
+                convert_binary_variable(headers, row, data_header, data_map)
+            except ConversionError as e:
+                warning_logger.debug(e.message)
+
+    @staticmethod
+    def consolidate_answers(headers, row):
+        for data_headers, data_map in CONSOLIDATION_MAP.items():
+            read_header, write_header = data_headers
+            try:
+                value = int(row[headers.index(read_header)])
+            except ValueError:
+                # FIXME - This covers both the header index and the int operations.
+                pass
+            else:
+                if value in data_map:
+                    row[headers.index(write_header)] = row[headers.index(data_map[value])]
 
     @staticmethod
     def fill_missing_data(headers, row, default_fill):
