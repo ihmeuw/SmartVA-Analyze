@@ -126,62 +126,20 @@ class AdultPreSymptomPrep(object):
         return True
 
     @staticmethod
-    def convert_binary_variables(headers, row, conversion_map):
-        for data_header, data_map in conversion_map:
-            try:
-                convert_binary_variable(headers, row, data_header, data_map)
-            except ConversionError as e:
-                warning_logger.debug(e.message)
-
-    @staticmethod
-    def consolidate_answers(headers, row):
-        for data_headers, data_map in CONSOLIDATION_MAP.items():
-            read_header, write_header = data_headers
-            try:
-                value = int(row[headers.index(read_header)])
-            except ValueError:
-                # FIXME - This covers both the header index and the int operations.
-                pass
-            else:
-                if value in data_map:
-                    row[headers.index(write_header)] = row[headers.index(data_map[value])]
-
-    @staticmethod
-    def fill_missing_data(headers, row, default_fill):
-        for header, value in default_fill.items():
-            try:
-                if row[headers.index(header)] == '':
-                    row[headers.index(header)] = value
-            except ValueError:
-                pass  # Header does not exist.
-
-    @staticmethod
-    def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
-        for var in duration_vars:
-            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
-            code_value = int_value_or_0(row[headers.index(code_var)])
-            length_value = int_value_or_0(row[headers.index(length_var)])
-
-            if var in special_case_vars and not length_value:
-                row[headers.index(var)] = special_case_vars[var]
-            else:
-                row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
-
-    @staticmethod
-    def drop_from_list(item_list, drop_index_list):
-        return [item for index, item in enumerate(item_list) if index not in drop_index_list]
-
-    @staticmethod
-    def get_drop_index_list(headers, drop_pattern):
-        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
-
-    @staticmethod
     def rename_odk_headers(headers, conversion_map):
         for old_header, new_header in conversion_map.items():
             try:
                 headers[headers.index(old_header)] = new_header
             except (KeyError, ValueError):
                 pass  # Header did not exist.
+
+    @staticmethod
+    def get_drop_index_list(headers, drop_pattern):
+        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
+
+    @staticmethod
+    def drop_from_list(item_list, drop_index_list):
+        return [item for index, item in enumerate(item_list) if index not in drop_index_list]
 
     @staticmethod
     def verify_answers_for_row(headers, row, valid_range_data):
@@ -206,8 +164,14 @@ class AdultPreSymptomPrep(object):
                             warnings = True
         return warnings
 
-    def abort(self):
-        self.want_abort = True
+    @staticmethod
+    def convert_free_text_words(headers, row, data_map, word_list):
+        for word in word_list:
+            try:
+                row[headers.index(data_map[stem(word)])] = 1
+            except KeyError:
+                # Word is not in the data map.
+                pass
 
     @staticmethod
     def convert_free_text_headers(headers, row, data_headers, data_map):
@@ -217,10 +181,46 @@ class AdultPreSymptomPrep(object):
                 AdultPreSymptomPrep.convert_free_text_words(headers, row, data_map, word_list)
 
     @staticmethod
-    def convert_free_text_words(headers, row, data_map, word_list):
-        for word in word_list:
+    def consolidate_answers(headers, row):
+        for data_headers, data_map in CONSOLIDATION_MAP.items():
+            read_header, write_header = data_headers
             try:
-                row[headers.index(data_map[stem(word)])] = 1
-            except KeyError:
-                # Word is not in the data map.
+                value = int(row[headers.index(read_header)])
+            except ValueError:
+                # FIXME - This covers both the header index and the int operations.
                 pass
+            else:
+                if value in data_map:
+                    row[headers.index(write_header)] = row[headers.index(data_map[value])]
+
+    @staticmethod
+    def convert_binary_variables(headers, row, conversion_map):
+        for data_header, data_map in conversion_map:
+            try:
+                convert_binary_variable(headers, row, data_header, data_map)
+            except ConversionError as e:
+                warning_logger.debug(e.message)
+
+    @staticmethod
+    def fill_missing_data(headers, row, default_fill):
+        for header, value in default_fill.items():
+            try:
+                if row[headers.index(header)] == '':
+                    row[headers.index(header)] = value
+            except ValueError:
+                pass  # Header does not exist.
+
+    @staticmethod
+    def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
+        for var in duration_vars:
+            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
+            code_value = int_value_or_0(row[headers.index(code_var)])
+            length_value = int_value_or_0(row[headers.index(length_var)])
+
+            if var in special_case_vars and not length_value:
+                row[headers.index(var)] = special_case_vars[var]
+            else:
+                row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
+
+    def abort(self):
+        self.want_abort = True
