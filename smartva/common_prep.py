@@ -3,7 +3,7 @@ import re
 import os
 
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier
+from smartva.utils import status_notifier, get_item_count
 from smartva.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
@@ -59,14 +59,12 @@ class CommonPrep(object):
         :rtype : bool
         """
         status_notifier.update({'progress': (1,)})
-
-        status_logger.debug('Initial data prep')
+        status_logger.info('Initial data prep')
 
         with open(self.input_file_path, 'rU') as f:
-            if self.want_abort:
-                return False
-
             reader = csv.reader(f)
+            records = get_item_count(reader, f) - 2  # Remove header and convert to 0 based.
+            status_notifier.update({'sub_progress': (0, records)})
 
             # Read headers and check for free text columns
             headers = next(reader)
@@ -77,7 +75,12 @@ class CommonPrep(object):
 
             headers.extend(additional_headers)
 
-            for row in reader:
+            for index, row in enumerate(reader):
+                if self.want_abort:
+                    return False
+
+                status_notifier.update({'sub_progress': (index,)})
+
                 new_row = row + additional_values
 
                 self.convert_cell_to_int(headers, new_row, AGE_HEADERS.values())
@@ -93,6 +96,8 @@ class CommonPrep(object):
                 self.save_row(headers, new_row)
 
         self.write_data(headers, self._matrix_data, self.output_dir)
+
+        status_notifier.update({'sub_progress': (0, 1)})
 
         return True
 
