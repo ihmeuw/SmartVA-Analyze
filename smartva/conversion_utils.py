@@ -26,6 +26,8 @@ def additional_headers_and_values(headers, additional_headers_data):
         if k not in headers:
             additional_headers.append(k)
             additional_values.append(v)
+        else:
+            warning_logger.warning('Header "{}" already exists in data set and was not added.')
 
     return additional_headers, additional_values
 
