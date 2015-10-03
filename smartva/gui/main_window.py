@@ -5,6 +5,7 @@ import logging
 import re
 import os
 import platform
+import threading
 
 import wx
 import wx.html
@@ -147,6 +148,9 @@ class vaUI(wx.Frame):
 
         status_notifier.register(self._handle_notification)
 
+        self._want_quit = False
+        self._completion_lock = threading.Condition()
+
         self.Center()
         self.Show()
 
@@ -278,9 +282,9 @@ class vaUI(wx.Frame):
         status_text_ctrl.SetValue('')
 
         # Send INFO level log messages to the status text control widget
-        gui_log_handler = logging.StreamHandler(TextEntryStreamWriter(status_text_ctrl))
-        gui_log_handler.setLevel(logging.INFO)
-        status_logger.addHandler(gui_log_handler)
+        self._gui_log_handler = logging.StreamHandler(TextEntryStreamWriter(status_text_ctrl))
+        self._gui_log_handler.setLevel(logging.INFO)
+        status_logger.addHandler(self._gui_log_handler)
 
         self.status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
         self.sub_status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
@@ -397,12 +401,24 @@ class vaUI(wx.Frame):
         Quit, without showing a quit dialog.
         :param event: Not used
         """
-        self.on_abort()
-        if self.about_window:
-            self.about_window.Close()
-        if self.docs_window:
-            self.docs_window.Close()
-        self.Destroy()
+        if not self.running or wx.MessageDialog(self, 'Are you sure you want to quit?', 'Quit ' + APP_TITLE,
+                                                (wx.YES_NO | wx.NO_DEFAULT)).ShowModal() == wx.ID_YES:
+            self._want_quit = True
+            self.on_abort()
+
+            if self.running:
+                with self._completion_lock:
+                    self._completion_lock.wait(15)
+
+            if self.about_window:
+                self.about_window.Close()
+            if self.docs_window:
+                self.docs_window.Close()
+
+            status_logger.removeHandler(self._gui_log_handler)
+            status_notifier.unregister(self._handle_notification)
+
+            self.Destroy()
 
     def on_docs(self, event):
         self.docs_window = vaDocs(None)
@@ -430,18 +446,24 @@ class vaUI(wx.Frame):
         elif status == workerthread.CompletionStatus.FAIL:
             status_message = 'Process failed. ' + message
             style = 'error'
-        status_logger.info(status_message)
-        status_notifier.update({'message': (status_message, style)})
         self.running = False
-        self.action_button.Enable(True)
-        self.action_button.SetLabel('Start')
-        self.enable_ui(True)
+
+        if not self._want_quit:
+            self.action_button.Enable(True)
+            self.action_button.SetLabel('Start')
+            self.enable_ui(True)
+            status_logger.info(status_message)
+            status_notifier.update({'message': (status_message, style)})
+
+        with self._completion_lock:
+            self._completion_lock.notifyAll()
 
     def on_abort(self):
         if self.worker:
             # if the thread is running, don't just stop
             status_logger.info('Attempting to cancel, please wait...')
             self.worker.abort()
+            # threading.Thread(target=self.worker.abort).start()
             self.action_button.Enable(False)
             # do we need an else?  doesn't seem like it
 
