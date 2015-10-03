@@ -54,7 +54,7 @@ class AdultPreSymptomPrep(object):
         else:
             default_fill = ADULT_DEFAULT_FILL
 
-        duration_vars = DURATION_VARS
+        duration_vars = DURATION_VARS[:]
 
         if self.short_form:
             for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
