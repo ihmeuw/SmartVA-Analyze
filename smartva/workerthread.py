@@ -15,7 +15,7 @@ from smartva.neonatesymptom import NeonateSymptomPrep
 from smartva.neonatetariff import Tariff as NeonateTariff
 from smartva.causegrapher import CauseGrapher
 from smartva.csmfgrapher import CSMFGrapher
-from smartva.loggers import warning_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 
 SHORT_FORM_HEADER = 'adult_7_11'
@@ -96,7 +96,8 @@ class WorkerThread(threading.Thread):
             os.mkdir(path)
 
     def run(self):
-        status_notifier.update({'progress': (0, 15), 'sub_progress': (0, 1)})
+        status_logger.info('Preparing variable headers.')
+        status_notifier.update({'progress': (0, 15), 'sub_progress': None})
 
         intermediate_dir = os.path.join(self.output_dir, 'intermediate-files')
         figures_dir = os.path.join(self.output_dir, 'figures')
@@ -239,5 +240,4 @@ class WorkerThread(threading.Thread):
         for handler in warning_logger.handlers:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
-        status_notifier.update({'progress': (int(not status), 1), 'sub_progress': (int(not status), 1)})
         self._completion_callback(status, message)

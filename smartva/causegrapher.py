@@ -159,7 +159,7 @@ class CauseGrapher(object):
             if module_errors[module_key] != 1:
                 make_graph(cause_key, self.output_dir)
 
-        status_notifier.update({'sub_progress': (0, 1)})
+        status_notifier.update({'sub_progress': None})
 
     def abort(self):
         self.want_abort = 1

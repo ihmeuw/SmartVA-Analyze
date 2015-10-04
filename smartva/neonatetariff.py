@@ -288,7 +288,7 @@ class Tariff(object):
             vavalidatedcauselist.append(va)
 
         status_logger.debug('Neonate :: Processing %s of %s' % (total, total))
-        status_notifier.update({'sub_progress': (0, 1)})
+        status_notifier.update({'sub_progress': None})
 
         status_logger.debug('Neonate :: Creating uniform training set')
         # creates the new "uniform train" data set from the validation data
@@ -386,7 +386,7 @@ class Tariff(object):
             va.ranklist = ranklist
 
         status_logger.debug('Neonate :: Processing %s of %s' % (total, total))
-        status_notifier.update({'sub_progress': (0, 1)})
+        status_notifier.update({'sub_progress': None})
 
         rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'neonate-external-ranks.csv', 'wb', buffering=0))
         headerrow = []
