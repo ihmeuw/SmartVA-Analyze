@@ -46,8 +46,8 @@ class AdultPreSymptomPrep(object):
         self.warnings = False
 
     def run(self):
-        status_notifier.update({'progress': (2,)})
         status_logger.info('Adult :: Processing pre-symptom data')
+        status_notifier.update({'progress': (2,)})
 
         if self.short_form:
             default_fill = ADULT_DEFAULT_FILL_SHORT
@@ -64,7 +64,7 @@ class AdultPreSymptomPrep(object):
 
         with open(self.input_file_path, 'rb') as f:
             reader = csv.reader(f)
-            records = get_item_count(reader, f) - 2  # Remove header and convert to 0 based.
+            records = get_item_count(reader, f) - 1
             status_notifier.update({'sub_progress': (0, records)})
 
             headers = next(reader)
@@ -85,46 +85,46 @@ class AdultPreSymptomPrep(object):
             for index, row in enumerate(reader):
                 if self.want_abort:
                     return False
-                
+
                 status_notifier.update({'sub_progress': (index,)})
 
                 new_row = row + additional_values
 
                 self.warnings |= self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
-    
+
                 self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
-    
+
                 if self.short_form:
                     word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if new_row[headers.index(k)] in [1, '1']]
                     if word_list:
                         self.convert_free_text_words(headers, new_row, ADULT_WORDS_TO_VARS, word_list)
-    
+
                 self.consolidate_answers(headers, new_row)
-    
+
                 self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
-    
+
                 self.warnings |= check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
-    
+
                 self.fill_missing_data(headers, new_row, default_fill)
-    
+
                 self.calculate_duration_variables(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
                 matrix.append(self.drop_from_list(new_row, drop_index_list))
 
         headers = self.drop_from_list(headers, drop_index_list)
 
+        if not self.warnings:
+            status_logger.debug('Adult :: Answers verified')
+        else:
+            status_logger.info('Adult :: Warnings found, please check warnings.txt')
+
+        status_notifier.update({'sub_progress': None})
+
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
             adult_writer = csv.writer(f)
 
             adult_writer.writerow(headers)
             adult_writer.writerows(matrix)
-
-        status_notifier.update({'sub_progress': (0, 1)})
-
-        if not self.warnings:
-            status_logger.debug('Adult :: Answers verified')
-        else:
-            status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
         return True
 
