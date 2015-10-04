@@ -3,7 +3,7 @@ import re
 import os
 
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier
+from smartva.utils import status_notifier, get_item_count
 from vaprep_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
@@ -72,15 +72,13 @@ class VaPrep(object):
         :return: True if processing was successful, False if aborted.
         :rtype : bool
         """
+        status_logger.info('Initial data prep.')
         status_notifier.update({'progress': (1,)})
 
-        status_logger.debug('Initial data prep')
-
         with open(self.input_file_path, 'rU') as f:
-            if self.want_abort:
-                return False
-
             reader = csv.reader(f)
+            max_items = get_item_count(reader, f)
+            status_notifier.update({'sub_progress': (0, max_items)})
 
             # Read headers and check for free text columns
             headers = next(reader)
@@ -90,7 +88,12 @@ class VaPrep(object):
                 headers, [(k, 0) for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA)
             headers.extend(additional_headers)
 
-            for row in reader:
+            for index, row in enumerate(reader):
+                if self.want_abort:
+                    return False
+
+                status_notifier.update({'sub_progress': (index,)})
+
                 new_row = row + additional_values
 
                 self.convert_cell_to_int(headers, new_row, AGE_HEADERS.values())
@@ -106,6 +109,8 @@ class VaPrep(object):
                 self.save_row(headers, new_row)
 
         self.write_data(headers, self._matrix_data, self.output_dir)
+
+        status_notifier.update({'sub_progress': None})
 
         return True
 
