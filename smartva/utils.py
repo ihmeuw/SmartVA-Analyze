@@ -70,6 +70,7 @@ status_notifier = StatusNotifier()
 def get_item_count(items, f=None):
     """
     Use this to get a count of items in a collection that doesn't support len(), like a file reader.
+    Due to the internal workings of readers, this must be done prior to any reader operations.
 
     :param items: Object containing the items.
     :param f: File to reset seek index.
