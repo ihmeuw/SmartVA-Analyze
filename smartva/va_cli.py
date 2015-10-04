@@ -138,3 +138,48 @@ class CommandLineNotificationHandler(object):
             self._update_gauge(data['sub_progress'], data.get('label', ''))
         if 'message' in data:
             self._show_message(data['message'])
+
+
+class CommandLineNotificationHandler(object):
+    def __init__(self):
+        self._progress_bar = None
+
+    def __call__(self, *args, **kwargs):
+        self._handle_notification(*args, **kwargs)
+
+    def _update_gauge(self, progress, label=''):
+        """
+        Update a gauge value and range.
+        :param progress: List, set, or tuple with the first pos as the value, and second pos as the range.
+        :type progress: (list, set, tuple)
+        """
+        if not progress:
+            if self._progress_bar:
+                self._progress_bar.finish()
+        elif isinstance(progress, (list, set, tuple)):
+            if len(progress) > 1:
+                if progress[1]:
+                    self._progress_bar = ProgressBar(widgets=[label, Bar(), ETA()], maxval=progress[1])
+                    self._progress_bar.start()
+            else:
+                self._progress_bar.update(progress[0])
+
+    def _show_message(self, message_data):
+        """
+        Display a simple message dialog.
+        :param message_data: List, set, or tuple with the first pos as the message, and second pos as the style.
+        :type message_data: (list, set, tuple)
+        """
+        status_logger.info(message_data)
+
+    def _handle_notification(self, data):
+        """
+        Processes status notification updates into progress bar updates.
+
+        :type data: dict
+        :param data: Dictionary of status update metadata.
+        """
+        if 'sub_progress' in data:
+            self._update_gauge(data['sub_progress'], data.get('label', ''))
+        if 'message' in data:
+            self._show_message(data['message'])
