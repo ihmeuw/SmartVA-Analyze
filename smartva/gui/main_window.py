@@ -449,6 +449,7 @@ class vaUI(wx.Frame):
         self.running = False
 
         if not self._want_quit:
+            status_notifier.update({'progress': (int(not status), 1), 'sub_progress': (int(not status), 1)})
             self.action_button.Enable(True)
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
@@ -481,10 +482,14 @@ class vaUI(wx.Frame):
         :param progress: List, set, or tuple with the first pos as the value, and second pos as the range.
         :type progress: (list, set, tuple)
         """
-        if len(progress) > 1:
-            if progress[1]:
-                gauge.SetRange(progress[1])
-        gauge.SetValue(progress[0])
+        if not progress:
+            gauge.SetRange(1)
+            gauge.SetValue(0)
+        elif isinstance(progress, (list, set, tuple)):
+            if len(progress) > 1:
+                if progress[1]:
+                    gauge.SetRange(progress[1])
+            gauge.SetValue(progress[0])
 
     @staticmethod
     def _show_message(parent, message_data):
@@ -521,11 +526,11 @@ class vaUI(wx.Frame):
         :type data: dict
         :param data: Dictionary of status update metadata.
         """
-        if data.get('progress'):
+        if 'progress' in data:
             wx.CallAfter(self._update_gauge, self.status_gauge, data['progress'])
-        if data.get('sub_progress'):
+        if 'sub_progress' in data:
             wx.CallAfter(self._update_gauge, self.sub_status_gauge, data['sub_progress'])
-        if data.get('message'):
+        if 'message' in data:
             wx.CallAfter(self._show_message, self, data['message'])
 
 
