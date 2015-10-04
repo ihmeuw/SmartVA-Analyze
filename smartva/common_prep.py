@@ -58,13 +58,12 @@ class CommonPrep(object):
         :return: True if processing was successful, False if aborted.
         :rtype : bool
         """
-        status_logger.info('Initial data prep.')
-        status_notifier.update({'progress': (1,)})
         status_logger.info('Initial data prep')
+        status_notifier.update({'progress': (1,)})
 
         with open(self.input_file_path, 'rU') as f:
             reader = csv.reader(f)
-            max_items = get_item_count(reader, f)
+            max_items = get_item_count(reader, f) - 1
             status_notifier.update({'sub_progress': (0, max_items)})
 
             # Read headers and check for free text columns
@@ -96,11 +95,9 @@ class CommonPrep(object):
 
                 self.save_row(headers, new_row)
 
-        self.write_data(headers, self._matrix_data, self.output_dir)
-
         status_notifier.update({'sub_progress': None})
 
-        status_notifier.update({'sub_progress': (0, 1)})
+        self.write_data(headers, self._matrix_data, self.output_dir)
 
         return True
 
