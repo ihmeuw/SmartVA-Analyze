@@ -1,4 +1,4 @@
-from smartva.ldap_notation_parser import LdapNotationParser
+from smartva.utils import LdapNotationParser
 from smartva.loggers import warning_logger
 
 

@@ -14,7 +14,7 @@ from smartva.common_data import (
     FREE_TEXT_HEADERS,
     WORD_SUBS
 )
-from smartva.conversion_utils import (
+from smartva.utils.conversion_utils import (
     ConversionError,
     additional_headers_and_values,
     convert_binary_variable

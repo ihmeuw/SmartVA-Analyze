@@ -22,7 +22,7 @@ from smartva.adult_pre_symptom_data import (
     DURATION_VARS_SHORT_FORM_DROP_LIST,
     DURATION_VARS_SPECIAL_CASE
 )
-from smartva.conversion_utils import (
+from smartva.utils.conversion_utils import (
     ConversionError,
     int_value_or_0,
     additional_headers_and_values,
