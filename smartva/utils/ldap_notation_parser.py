@@ -134,9 +134,9 @@ def find_next_group(group_str, style='()'):
 
 def find_groups(group_str, style='()'):
     """
-    Return a list of group of data contained in a specified style pair from a string.
+    Return a list of group data contained in a specified style pair from a string.
     Example:
-    find_groups('(a=1)(b=2)') returns ['a=1', 'b=2']
+    find_groups('(a=1)((b=2)(c=3))') returns ['a=1', '(b=2)(c=3)']
 
     :param group_str: Any string to search for groups.
     :param style: Start and end characters of a group. Default='()'
