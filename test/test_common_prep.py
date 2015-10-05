@@ -1,38 +1,8 @@
-import pytest
-
 from smartva import common_prep
 from smartva import common_data
 
 
 class TestCommonPrep(object):
-    def test_additional_headers_and_values(self):
-        headers = ['SubmissionDate', 'interviewstarttime', 'interviewdate', 'gen_1_1', 'Intid', 'sid', 'ID']
-        additional_headers_data = [
-            ('test1', 0),
-            ('test2', 0),
-            ('test3', 0)
-        ]
-
-        additional_headers, additional_values = common_prep.CommonPrep.additional_headers_and_values(
-            headers, additional_headers_data)
-
-        assert additional_headers == [k for k, v in additional_headers_data]
-        assert additional_values == [v for k, v in additional_headers_data]
-
-    def test_additional_headers_and_values_existing(self):
-        headers = ['SubmissionDate', 'interviewstarttime', 'interviewdate', 'gen_1_1', 'Intid', 'sid', 'ID', 'test1']
-        additional_headers_data = [
-            ('test1', 0),
-            ('test2', 0),
-            ('test3', 0)
-        ]
-
-        additional_headers, additional_values = common_prep.CommonPrep.additional_headers_and_values(
-            headers, additional_headers_data)
-
-        assert additional_headers == [k for k, v in additional_headers_data if k not in headers]
-        assert additional_values == [v for k, v in additional_headers_data if k not in headers]
-
     def test_convert_cell_to_int(self):
         headers = ['test1', 'test2', 'test3']
         row = ['0', '1', '']
