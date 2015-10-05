@@ -38,7 +38,8 @@ class WorkerThread(threading.Thread):
         sub_progress: (value, [range]) - Update value of sub progress bar
         message: (text, [style]) - Display a message with an optional style (default: information)
             Defined styles: exclamation, error, question, warning, information
-    Note: If optional range is not present, the previous range should be used.
+    Note: If optional range is not present, the previous range will be used. Specify `None` to indicate progress
+          completion and to reset the progress bar..
     """
 
     def __init__(self, input_file, hce, output_dir, free_text, malaria, country, completion_callback):
