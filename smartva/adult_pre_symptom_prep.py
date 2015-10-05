@@ -95,11 +95,12 @@ class AdultPreSymptomPrep(object):
                 self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
 
                 if self.short_form:
-                    word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if new_row[headers.index(k)] in [1, '1']]
+                    word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
+                                 new_row[headers.index(k)] in [1, '1']]
                     if word_list:
-                        self.convert_free_text_words(headers, new_row, ADULT_WORDS_TO_VARS, word_list)
+                        self.convert_free_text_words(headers, new_row, word_list, ADULT_WORDS_TO_VARS)
 
-                self.consolidate_answers(headers, new_row)
+                self.consolidate_answers(headers, new_row, CONSOLIDATION_MAP)
 
                 self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
 
@@ -130,6 +131,12 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def rename_odk_headers(headers, conversion_map):
+        """
+        Rename headers to match the next processing step.
+
+        :param headers: List of headers.
+        :param conversion_map: Map of old to new headers.
+        """
         for old_header, new_header in conversion_map.items():
             try:
                 headers[headers.index(old_header)] = new_header
@@ -138,15 +145,38 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def get_drop_index_list(headers, drop_pattern):
+        """
+        Find and return a list of header indices that match a given pattern.
+
+        :param headers: List of headers.
+        :param drop_pattern: Regular expression of drop pattern.
+        :return: List of indices.
+        """
         return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
 
     @staticmethod
     def drop_from_list(item_list, drop_index_list):
+        """
+        Return a pruned list.
+
+        :param item_list: List of items to prune.
+        :param drop_index_list: Indices to prune.
+        :return: New list of items.
+        """
+        # Return a new list of headers containing all but the items in the drop list.
         return [item for index, item in enumerate(item_list) if index not in drop_index_list]
 
     @staticmethod
     def verify_answers_for_row(headers, row, valid_range_data):
         # Verify answers
+        """
+        Verify answers in a row of data are valid.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param valid_range_data: Dictionary of headers and valid ranges.
+        :return: True if any values fail validation.
+        """
         warnings = False
         for header, range_list in valid_range_data.items():
             try:
@@ -168,24 +198,52 @@ class AdultPreSymptomPrep(object):
         return warnings
 
     @staticmethod
-    def convert_free_text_words(headers, row, data_map, word_list):
-        for word in word_list:
+    def convert_free_text_words(headers, row, input_word_list, word_map):
+        """
+        Process free text word lists into binary variables.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param input_word_list: List of free text words to process.
+        :param word_map: Dictionary of words and variables.
+        """
+        for word in input_word_list:
             try:
-                row[headers.index(data_map[stem(word)])] = 1
+                row[headers.index(word_map[stem(word)])] = 1
             except KeyError:
                 # Word is not in the data map.
                 pass
 
     @staticmethod
-    def convert_free_text_headers(headers, row, data_headers, data_map):
+    def convert_free_text_headers(headers, row, data_headers, word_map):
+        """
+        Process all free text data from a list of data headers into binary variables.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param data_headers: List of headers to process.
+        :param word_map: Dictionary of words and variables.
+        """
         for data_header in data_headers:
             if row[headers.index(data_header)]:
                 word_list = row[headers.index(data_header)].split(' ')
-                AdultPreSymptomPrep.convert_free_text_words(headers, row, data_map, word_list)
+                AdultPreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
 
     @staticmethod
-    def consolidate_answers(headers, row):
-        for data_headers, data_map in CONSOLIDATION_MAP.items():
+    def consolidate_answers(headers, row, consolidation_map):
+        """
+        Consolidate answers from data answers into new variables.
+
+        Consolidation map dictionary format:
+            (read_header, write_header): {
+                VAL: data_header
+            }
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param consolidation_map: Dictionary of read/write variables and their data counterparts.
+        """
+        for data_headers, data_map in consolidation_map.items():
             read_header, write_header = data_headers
             try:
                 value = int(row[headers.index(read_header)])
@@ -198,6 +256,13 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def convert_binary_variables(headers, row, conversion_map):
+        """
+        Convert multiple value answers into binary cells.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param conversion_map: Data structure with header and binary variable mapping.
+        """
         for data_header, data_map in conversion_map:
             try:
                 convert_binary_variable(headers, row, data_header, data_map)
@@ -206,6 +271,13 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def fill_missing_data(headers, row, default_fill):
+        """
+        Fill missing data with default fill values.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param default_fill: Dictionary of headers and default values.
+        """
         for header, value in default_fill.items():
             try:
                 if row[headers.index(header)] == '':
@@ -215,6 +287,14 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
+        """
+        Calculate duration variables in days.
+
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param duration_vars: List of variables containing duration variables.
+        :param special_case_vars: Dictionary of special variables and their value if duration is blank.
+        """
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
             code_value = int_value_or_0(row[headers.index(code_var)])
