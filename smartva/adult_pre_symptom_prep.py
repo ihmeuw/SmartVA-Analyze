@@ -168,7 +168,6 @@ class AdultPreSymptomPrep(object):
 
     @staticmethod
     def verify_answers_for_row(headers, row, valid_range_data):
-        # Verify answers
         """
         Verify answers in a row of data are valid.
 
@@ -213,6 +212,9 @@ class AdultPreSymptomPrep(object):
             except KeyError:
                 # Word is not in the data map.
                 pass
+            except ValueError:
+                warning_logger.warning('SID: {} variable {} not found for valid word "{}".'
+                                       .format(row[headers.index('sid')], word_map[stem(word)], word))
 
     @staticmethod
     def convert_free_text_headers(headers, row, data_headers, word_map):
