@@ -3,18 +3,18 @@ import re
 
 
 class LdapNotationParser(object):
-    def __init__(self, parse_str, arg1_fn=None, arg2_fn=None):
+    def __init__(self, statement, arg1_fn=None, arg2_fn=None):
         """
         Parse and process LDAP search filter statement conditional arguments.
         Optional functions can be applied to either argument in the statement.
         Example usage:
         LdapNotationParser('(&(age>18)(sex=1))', lookup_fn, int)
 
-        :param parse_str: String in LDAP search statement.
+        :param statement: String in LDAP search statement.
         :param arg1_fn: Function to apply to argument 1.
         :param arg2_fn: Function to apply to argument 2.
         """
-        self.parse_str = parse_str
+        self.statement = statement
         self._arg1_fn = arg1_fn or LdapNotationParser.no_fn
         self._arg2_fn = arg2_fn or LdapNotationParser.no_fn
 
@@ -45,7 +45,7 @@ class LdapNotationParser(object):
 
         :return: Boolean representation of parsed statement.
         """
-        return self._parse(self.parse_str)
+        return self._parse(self.statement)
 
     @staticmethod
     def no_fn(arg):
