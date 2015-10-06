@@ -3,8 +3,8 @@ import logging
 import os
 import threading
 
-from smartva.vaprep import VaPrep
-from smartva.adultpresymptom import PreSymptomPrep as AdultPreSymptomPrep
+from smartva.common_prep import CommonPrep
+from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 from smartva.adultsymptom import AdultSymptomPrep
 from smartva.adulttariff import Tariff as AdultTariff
 from smartva.childpresymptom import PreSymptomPrep as ChildPreSymptomPrep
@@ -118,7 +118,7 @@ class WorkerThread(threading.Thread):
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
-        va_prep = VaPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
+        common_prep = CommonPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
         adult_symptom = AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
         adult_results = AdultTariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
@@ -132,7 +132,7 @@ class WorkerThread(threading.Thread):
         csmf_grapher = CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
 
         self._abort_list.extend([
-            va_prep,
+            common_prep,
             adult_pre_symptom,
             adult_symptom,
             adult_results,
@@ -148,7 +148,7 @@ class WorkerThread(threading.Thread):
 
         # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
         # we have data at this point, so all of these files should have been created
-        va_prep.run()
+        common_prep.run()
         if self._want_abort:
             self._complete(CompletionStatus.ABORT)
             return

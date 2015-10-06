@@ -1,4 +1,4 @@
-adult_conversionVars = {
+ADULT_HEADER_CONVERSION_MAP = {
     'sid': 'sid',
     'gen_2_1': 'g2_01',
     'gen_2_2a': 'g2_02',

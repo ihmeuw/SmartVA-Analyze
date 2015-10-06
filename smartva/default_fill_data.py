@@ -1,6 +1,6 @@
-# these are the default fill values from the mastercodebook
+# these are the default fill values from the master code book
 
-adult_defaultFill = {
+ADULT_DEFAULT_FILL = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -301,9 +301,10 @@ adult_defaultFill = {
     'a7_14': '',
     'a7_15': '',
     'a7_16': '',
-    'a7_17': ''}
+    'a7_17': ''
+}
 
-child_defaultFill = {
+CHILD_DEFAULT_FILL = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -632,9 +633,10 @@ child_defaultFill = {
     'c6_10': '',
     'c6_11': '',
     'c6_12': '',
-    'c6_13': ''}
+    'c6_13': ''
+}
 
-neonate_defaultFill = {
+NEONATE_DEFAULT_FILL = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -963,9 +965,10 @@ neonate_defaultFill = {
     'c6_10': '',
     'c6_11': '',
     'c6_12': '',
-    'c6_13': ''}
+    'c6_13': ''
+}
 
-adult_short = {
+ADULT_DEFAULT_FILL_SHORT = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -1214,7 +1217,7 @@ adult_short = {
     'a5_02': '0',
     'a5_03': '0',
     'a5_04a': '1',
-    'a5_04b': '.',
+    'a5_04b': '',
     'a6_01': '',
     'a6_02_1': '0',
     'a6_02_2': '0',
@@ -1268,9 +1271,10 @@ adult_short = {
     'a7_14': '',
     'a7_15': '',
     'a7_16': '',
-    'a7_17': ''}
+    'a7_17': ''
+}
 
-child_short = {
+CHILD_DEFAULT_FILL_SHORT = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -1603,9 +1607,10 @@ child_short = {
     'c6_13': '',
     'c6_14': '',
     'c6_15': '',
-    'c6_16': ''}
+    'c6_16': ''
+}
 
-neonate_short = {
+NEONATE_DEFAULT_FILL_SHORT = {
     'g1_01d': '',
     'g1_01m': '',
     'g1_01y': '',
@@ -1938,4 +1943,5 @@ neonate_short = {
     'c6_13': '',
     'c6_14': '',
     'c6_15': '',
-    'c6_16': ''}
+    'c6_16': ''
+}

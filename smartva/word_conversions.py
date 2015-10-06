@@ -1,4 +1,4 @@
-adult_wordsToVars = {
+ADULT_WORDS_TO_VARS = {
     'abdomen': 's99991',
     'arteri': 's999910',
     'kill': 's9999100',
@@ -172,7 +172,7 @@ adult_wordsToVars = {
     'kidney': 's999999'
 }
 
-child_wordsToVars = {
+CHILD_WORDS_TO_VARS = {
     'abdomen': 's99991',
     'chest': 's999910',
     'cold': 's999911',
@@ -224,7 +224,7 @@ child_wordsToVars = {
     'cancer': 's99999'
 }
 
-neonate_wordsToVars = {
+NEONATE_WORDS_TO_VARS = {
     'abdomen': 's99991',
     'cri': 's999910',
     'distress': 's999911',

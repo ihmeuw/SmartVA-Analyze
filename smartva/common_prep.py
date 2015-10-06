@@ -4,7 +4,7 @@ import os
 
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, get_item_count
-from vaprep_data import (
+from smartva.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
@@ -13,6 +13,11 @@ from vaprep_data import (
     CHILD_WEIGHT_CONVERSION_DATA,
     FREE_TEXT_HEADERS,
     WORD_SUBS
+)
+from smartva.utils.conversion_utils import (
+    ConversionError,
+    additional_headers_and_values,
+    convert_binary_variable
 )
 
 ADULT = 'adult'
@@ -29,7 +34,7 @@ def int_value(x):
         return 0
 
 
-class VaPrep(object):
+class CommonPrep(object):
     """
     This file cleans up input and converts from ODK collected data to VA variables.
     """
@@ -46,25 +51,6 @@ class VaPrep(object):
             NEONATE: []
         }
 
-    @staticmethod
-    def additional_headers_and_values(headers, additional_headers_data):
-        """
-        Calculate additional headers and values based on comparing existing headers to additional header data.
-
-        :param headers: Initial header list.
-        :param additional_headers_data: Additional headers and default values.
-        :return: Additional headers (list) and values (list) necessary to complete processing.
-        :rtype : tuple
-        """
-        additional_headers = []
-        additional_values = []
-        for k, v in additional_headers_data:
-            if k not in headers:
-                additional_headers.append(k)
-                additional_values.append(v)
-
-        return additional_headers, additional_values
-
     def run(self):
         """
         Perform initial processing step for preparing input data.
@@ -72,20 +58,21 @@ class VaPrep(object):
         :return: True if processing was successful, False if aborted.
         :rtype : bool
         """
-        status_logger.info('Initial data prep.')
+        status_logger.info('Initial data prep')
         status_notifier.update({'progress': (1,)})
 
         with open(self.input_file_path, 'rU') as f:
             reader = csv.reader(f)
-            max_items = get_item_count(reader, f)
+            max_items = get_item_count(reader, f) - 1
             status_notifier.update({'sub_progress': (0, max_items)})
 
             # Read headers and check for free text columns
             headers = next(reader)
 
             # Extend the headers with additional headers and read the remaining data into the matrix
-            additional_headers, additional_values = self.additional_headers_and_values(
-                headers, [(k, 0) for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA)
+            additional_headers_data = [(k, '') for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA
+            additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
+
             headers.extend(additional_headers)
 
             for index, row in enumerate(reader):
@@ -108,9 +95,9 @@ class VaPrep(object):
 
                 self.save_row(headers, new_row)
 
-        self.write_data(headers, self._matrix_data, self.output_dir)
-
         status_notifier.update({'sub_progress': None})
+
+        self.write_data(headers, self._matrix_data, self.output_dir)
 
         return True
 
@@ -136,21 +123,11 @@ class VaPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and binary variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for data_header, data_map in conversion_data.items():
             try:
-                index = headers.index(header)
-            except ValueError:
-                # Header does not exist. Log a warning.
-                warning_logger.debug('Skipping missing header "{}".'.format(header))
-            else:
-                for value in row[index].split(' '):
-                    try:
-                        if int(value) in mapping:
-                            row[headers.index(mapping[int(value)])] |= 1
-                    except ValueError:
-                        # No values to process or not an integer value (invalid).
-                        pass
+                convert_binary_variable(headers, row, data_header, data_map)
+            except ConversionError as e:
+                warning_logger.debug(e.message)
 
     @staticmethod
     def convert_rash_data(headers, row, conversion_data):
@@ -161,8 +138,7 @@ class VaPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and rash specific variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for header, mapping in conversion_data.items():
             try:
                 index = headers.index(header)
             except ValueError:
@@ -191,8 +167,7 @@ class VaPrep(object):
         :param row: Data from a single report.
         :param conversion_data: Data structure with header and weight variable mapping.
         """
-        for header in conversion_data:
-            mapping = conversion_data[header]
+        for header, mapping in conversion_data.items():
             try:
                 units = int(row[headers.index(header)])
             except ValueError:

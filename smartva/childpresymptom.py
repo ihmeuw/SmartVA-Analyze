@@ -6,10 +6,10 @@ import os
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 
-from smartva import defaultfill
+from smartva import default_fill_data
 from smartva.answer_ranges import child_rangelist
 from smartva.presymptom_conversions import child_conversionVars
-from smartva.word_conversions import child_wordsToVars
+from smartva.word_conversions import CHILD_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 
@@ -35,9 +35,9 @@ class PreSymptomPrep(object):
         status_notifier.update({'progress': (7,)})
 
         if self.shortform:
-            child_defaultFill = defaultfill.child_short
+            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL_SHORT
         else:
-            child_defaultFill = defaultfill.child_defaultFill
+            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
 
@@ -1240,7 +1240,7 @@ class PreSymptomPrep(object):
         freeText = ['c5_09', 'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
 
         # TODO - fix unused variable
-        keyWords = child_wordsToVars.keys()
+        keyWords = CHILD_WORDS_TO_VARS.keys()
 
         # we've already lowercased and removed numbers at this point
         for question in freeText:
@@ -1524,13 +1524,13 @@ class PreSymptomPrep(object):
         self.want_abort = 1
 
     def processFreeText(self, answer, row, headers):
-        keyWords = child_wordsToVars.keys()
+        keyWords = CHILD_WORDS_TO_VARS.keys()
         answerArray = answer.split(' ')
         for word in answerArray:
             for keyword in keyWords:
                 stemmed = stem(word)
                 if stemmed == keyword:
-                    svar = child_wordsToVars[keyword]
+                    svar = CHILD_WORDS_TO_VARS[keyword]
                     sindex = headers.index(svar)
                     row[sindex] = '1'
 
