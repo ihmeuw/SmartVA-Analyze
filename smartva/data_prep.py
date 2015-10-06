@@ -13,6 +13,20 @@ class DataPrep(object):
         pass
 
     @staticmethod
+    def rename_headers(headers, conversion_map):
+        """
+        Rename headers to match the next processing step.
+
+        :param headers: List of headers.
+        :param conversion_map: Map of old to new headers.
+        """
+        for old_header, new_header in conversion_map.items():
+            try:
+                headers[headers.index(old_header)] = new_header
+            except (KeyError, ValueError):
+                pass  # Header did not exist.
+
+    @staticmethod
     def get_drop_index_list(headers, drop_pattern):
         """
         Find and return a list of header indices that match a given pattern.

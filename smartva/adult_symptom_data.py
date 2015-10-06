@@ -380,7 +380,7 @@ ADULT_CONVERSION_VARIABLES = {
     'sid': 'sid'
 }
 
-FREE_TEXT_HEADERS = [
+FREE_TEXT_VARIABLES = [
     's99991',
     's999910',
     's9999100',

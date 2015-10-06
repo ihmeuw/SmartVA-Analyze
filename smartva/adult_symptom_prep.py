@@ -12,7 +12,7 @@ from smartva.adult_symptom_data import (
     DURATION_SYMPTOM_VARIABLES,
     GENERATED_HEADERS,
     INJURY_VARIABLES,
-    FREE_TEXT_HEADERS,
+    FREE_TEXT_VARIABLES,
     DROP_LIST
 )
 
@@ -39,7 +39,7 @@ class AdultSymptomPrep(DataPrep):
 
         # add s_vars for text
         keys = ADULT_CONVERSION_VARIABLES.keys()
-        keys.extend(FREE_TEXT_HEADERS)
+        keys.extend(FREE_TEXT_VARIABLES)
 
         headers_copy = copy.deepcopy(headers)
         for col in headers_copy:
@@ -49,12 +49,7 @@ class AdultSymptomPrep(DataPrep):
                     del row[index]
                 headers.remove(col)
 
-        # now convert variable names
-        for i, header in enumerate(headers):
-            try:
-                headers[i] = ADULT_CONVERSION_VARIABLES[header]
-            except KeyError:
-                pass
+        self.rename_headers(headers, ADULT_CONVERSION_VARIABLES)
 
         # add new variables and create space for them in the matrix
         for gen in GENERATED_HEADERS:
