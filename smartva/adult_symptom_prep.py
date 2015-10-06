@@ -22,12 +22,6 @@ FILENAME_TEMPLATE = '{:s}-symptom.csv'
 class AdultSymptomPrep(DataPrep):
     AGE_GROUP = 'adult'
 
-    def __init__(self, input_file, output_dir, short_form):
-        self.input_file_path = input_file
-        self.output_dir = output_dir
-        self.want_abort = False
-        self.short_form = short_form
-
     def run(self):
         status_logger.info('Adult :: Processing Adult symptom data')
         status_notifier.update({'progress': (3,)})
