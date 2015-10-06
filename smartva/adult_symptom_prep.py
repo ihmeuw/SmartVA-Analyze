@@ -2,6 +2,7 @@ import csv
 import copy
 import os
 
+from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 from smartva.adult_symptom_data import (
@@ -18,7 +19,7 @@ from smartva.adult_symptom_data import (
 FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
 
-class AdultSymptomPrep(object):
+class AdultSymptomPrep(DataPrep):
     AGE_GROUP = 'adult'
 
     def __init__(self, input_file, output_dir, short_form):
