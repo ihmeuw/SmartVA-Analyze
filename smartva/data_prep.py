@@ -2,6 +2,16 @@ import re
 
 
 class DataPrep(object):
+    def __init__(self, input_file, output_dir, short_form):
+        self.input_file_path = input_file
+        self.output_dir = output_dir
+        self.short_form = short_form
+
+        self.want_abort = False
+
+    def run(self):
+        pass
+
     @staticmethod
     def get_drop_index_list(headers, drop_pattern):
         """
