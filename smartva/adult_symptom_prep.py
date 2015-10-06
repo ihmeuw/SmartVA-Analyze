@@ -17,19 +17,18 @@ from smartva.adult_symptom_data import (
 
 
 class AdultSymptomPrep(object):
-    def __init__(self, input_file, output_dir, shortform):
-        self.inputFilePath = input_file
+    def __init__(self, input_file, output_dir, short_form):
+        self.input_file_path = input_file
         self.output_dir = output_dir
-        self.want_abort = 0
-        self.shortform = shortform
+        self.want_abort = False
+        self.short_form = short_form
 
     def run(self):
-        status_notifier.update({'progress': (5,)})
-
-        reader = csv.reader(open(self.inputFilePath, 'rb'))
-        adultwriter = csv.writer(open(self.output_dir + os.sep + 'adult-symptom.csv', 'wb', buffering=0))
-
         status_logger.info('Adult :: Processing Adult symptom data')
+        status_notifier.update({'progress': (3,)})
+
+        reader = csv.reader(open(self.input_file_path, 'rb'))
+        writer = csv.writer(open(self.output_dir + os.sep + 'adult-symptom.csv', 'wb', buffering=0))
 
         matrix = []
         headers = []
@@ -43,7 +42,7 @@ class AdultSymptomPrep(object):
             else:
                 matrix.append(row)
 
-        # add svars for text
+        # add s_vars for text
         keys = ADULT_CONVERSION_VARIABLES.keys()
         keys.extend(FREE_TEXT_HEADERS)
 
@@ -97,10 +96,10 @@ class AdultSymptomPrep(object):
 
             # make new variables to store the real age and gender, but do it after we've modified the sex vars
             # from 2, 1 to 1, 0
-            ageindex = headers.index('real_age')
-            genderindex = headers.index('real_gender')
-            row[ageindex] = row[headers.index('age')]
-            row[genderindex] = row[headers.index('sex')]
+            age_index = headers.index('real_age')
+            gender_index = headers.index('real_gender')
+            row[age_index] = row[headers.index('age')]
+            row[gender_index] = row[headers.index('sex')]
 
             for sym in DURATION_SYMPTOM_VARIABLES:
                 index = headers.index(sym)
@@ -115,13 +114,13 @@ class AdultSymptomPrep(object):
                 else:
                     row[index] = 0
 
-                # The "varlist" variables in the loop below are all indicators for different questions about
+                # The "var list" variables in the loop below are all indicators for different questions about
                 # injuries (road traffic, fall, fires) We only want to give a VA a "1"/yes response for that
                 # question if the injury occurred within 30 days of death (i.e. s163<=30) Otherwise, we could
                 # have people who responded that they were in a car accident 20 years prior to death be assigned
                 # to road traffic deaths
 
-                if not self.shortform:
+                if not self.short_form:
                     for injury in INJURY_VARIABLES:
                         index = headers.index(injury)
                     injury_cut_index = headers.index('s163')
@@ -347,11 +346,11 @@ class AdultSymptomPrep(object):
             for row in matrix:
                 del row[index]
 
-        adultwriter.writerow(headers)
+        writer.writerow(headers)
         for row in matrix:
-            adultwriter.writerow(row)
+            writer.writerow(row)
 
-        return 1
+        return True
 
     def abort(self):
-        self.want_abort = 1
+        self.want_abort = True
