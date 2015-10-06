@@ -15,8 +15,12 @@ from smartva.adult_symptom_data import (
     DROP_LIST
 )
 
+FILENAME_TEMPLATE = '{:s}-symptom.csv'
+
 
 class AdultSymptomPrep(object):
+    AGE_GROUP = 'adult'
+
     def __init__(self, input_file, output_dir, short_form):
         self.input_file_path = input_file
         self.output_dir = output_dir
@@ -28,7 +32,6 @@ class AdultSymptomPrep(object):
         status_notifier.update({'progress': (3,)})
 
         reader = csv.reader(open(self.input_file_path, 'rb'))
-        writer = csv.writer(open(self.output_dir + os.sep + 'adult-symptom.csv', 'wb', buffering=0))
 
         matrix = []
         headers = []
@@ -346,9 +349,8 @@ class AdultSymptomPrep(object):
             for row in matrix:
                 del row[index]
 
-        writer.writerow(headers)
-        for row in matrix:
-            writer.writerow(row)
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
+            csv.writer(f).writerows([headers] + matrix)
 
         return True
 

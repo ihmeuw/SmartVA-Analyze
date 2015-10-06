@@ -122,10 +122,7 @@ class AdultPreSymptomPrep(object):
         status_notifier.update({'sub_progress': None})
 
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
-            adult_writer = csv.writer(f)
-
-            adult_writer.writerow(headers)
-            adult_writer.writerows(matrix)
+            csv.writer(f).writerows([headers] + matrix)
 
         return True
 
