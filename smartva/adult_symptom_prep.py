@@ -31,18 +31,15 @@ class AdultSymptomPrep(object):
         status_logger.info('Adult :: Processing Adult symptom data')
         status_notifier.update({'progress': (3,)})
 
-        reader = csv.reader(open(self.input_file_path, 'rb'))
-
         matrix = []
         headers = []
 
-        # read in new .csv for processing
-        # we add the generated headers later this time
-        for count, row in enumerate(reader):
-            if count == 0:
-                headers.extend(row)
+        with open(self.input_file_path, 'rb') as f:
+            reader = csv.reader(f)
 
-            else:
+            headers = next(reader)
+
+            for row in reader:
                 matrix.append(row)
 
         # add s_vars for text
