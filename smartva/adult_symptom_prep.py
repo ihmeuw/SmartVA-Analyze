@@ -3,7 +3,7 @@ import os
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
-from smartva.utils import status_notifier
+from smartva.utils import status_notifier, get_item_count
 from smartva.adult_symptom_data import (
     GENERATED_HEADERS,
     ADULT_CONVERSION_VARIABLES,
@@ -34,6 +34,8 @@ class AdultSymptomPrep(DataPrep):
 
             with open(self.input_file_path, 'rb') as fi:
                 reader = csv.reader(fi)
+                records = get_item_count(reader, fi) - 1
+                status_notifier.update({'sub_progress': (0, records)})
 
                 headers = next(reader)
 
@@ -51,7 +53,12 @@ class AdultSymptomPrep(DataPrep):
 
                 writer.writerow(self.drop_from_list(headers, drop_index_list))
 
-                for row in reader:
+                for index, row in enumerate(reader):
+                    if self.want_abort:
+                        return False
+
+                    status_notifier.update({'sub_progress': (index,)})
+
                     new_row = row + additional_values
 
                     for read_header, write_header in COPY_VARIABLES.items():
@@ -99,7 +106,7 @@ class AdultSymptomPrep(DataPrep):
 
                     writer.writerow(self.drop_from_list(new_row, drop_index_list))
 
-            # writer.writerows([self.drop_from_list(row, drop_index_list) for row in matrix])
+        status_notifier.update({'sub_progress': None})
 
         return True
 
