@@ -68,36 +68,23 @@ class AdultSymptomPrep(DataPrep):
                     for read_header, conversion_data in GENDER_ASSIGNMENT_CONVERSION_VARIABLES.items():
                         new_row[headers.index(read_header)] = conversion_data.get(int(new_row[headers.index(read_header)]), 0)
 
-                    for sym, data in DURATION_CUTOFF_DATA.items():
-                        index = headers.index(sym)
-                        # replace the duration with 1000 if it is over 1000 and not missing
-                        if new_row[index] == '':
-                            new_row[index] = 0
-                        elif float(new_row[index]) > 1000:
-                            new_row[index] = 1000
-                        # use cutoffs to determine if they will be replaced with a 1 (were above or equal to the cutoff)
-                        if float(new_row[index]) >= DURATION_CUTOFF_DATA[sym] and new_row[index] != str(0):
-                            new_row[index] = 1
-                        else:
-                            new_row[index] = 0
-    
-                        # The "var list" variables in the loop below are all indicators for different questions about
-                        # injuries (road traffic, fall, fires) We only want to give a VA a "1"/yes response for that
-                        # question if the injury occurred within 30 days of death (i.e. s163<=30) Otherwise, we could
-                        # have people who responded that they were in a car accident 20 years prior to death be assigned
-                        # to road traffic deaths
-    
-                        if not self.short_form:
-                            for injury in INJURY_VARIABLES:
-                                index = headers.index(injury)
-                    if not self.short_form:
-                        for injury in INJURY_VARIABLES:
-                            index = headers.index(injury)
-                            injury_cut_index = headers.index('s163')
-                            # 30 is the injury cutoff
-                            if float(new_row[injury_cut_index]) > 30:
-                                new_row[index] = 0
-    
+                    for header, cutoff_data in DURATION_CUTOFF_DATA.items():
+                        try:
+                            new_row[headers.index(header)] = int(float(new_row[headers.index(header)]) >= cutoff_data)
+                        except ValueError:
+                            new_row[headers.index(header)] = 0
+
+                    # The "var list" variables in the loop below are all indicators for different questions about
+                    # injuries (road traffic, fall, fires) We only want to give a VA a "1"/yes response for that
+                    # question if the injury occurred within 30 days of death (i.e. s163<=30) Otherwise, we could
+                    # have people who responded that they were in a car accident 20 years prior to death be assigned
+                    # to road traffic deaths
+
+                    for header, injury_list in INJURY_VARIABLES.items():
+                        if float(new_row[headers.index(header)]) > 30:
+                            for injury in injury_list:
+                                new_row[headers.index(injury)] = 0
+
                     # dichotomize!
                     index1 = headers.index('s36991')
                     index2 = headers.index('s36992')

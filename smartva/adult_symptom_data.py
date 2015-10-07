@@ -259,6 +259,20 @@ INJURY_VARIABLES = [
     's161',
     's162'
 ]
+INJURY_VARIABLES = {
+    's163': [
+        's151',
+        's152',
+        's153',
+        's154',
+        's155',
+        's156',
+        's157',
+        's159',
+        's161',
+        's162'
+    ]
+}
 
 BINARY_VARIABLES = [
     's1',
