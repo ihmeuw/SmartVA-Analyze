@@ -60,59 +60,60 @@ class AdultPreSymptomPrep(object):
             for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
                 duration_vars.remove(var)
 
-        matrix = []
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
+            writer = csv.writer(fo)
 
-        with open(self.input_file_path, 'rb') as f:
-            reader = csv.reader(f)
-            records = get_item_count(reader, f) - 1
-            status_notifier.update({'sub_progress': (0, records)})
+            with open(self.input_file_path, 'rb') as fi:
+                reader = csv.reader(fi)
+                records = get_item_count(reader, fi) - 1
+                status_notifier.update({'sub_progress': (0, records)})
 
-            headers = next(reader)
+                headers = next(reader)
 
-            additional_headers_data = GENERATED_HEADERS_DATA + [(k, '') for k in DURATION_VARS]
-            additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
+                additional_headers_data = GENERATED_HEADERS_DATA + [(k, '') for k in DURATION_VARS]
+                additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
 
-            headers.extend(additional_headers)
+                headers.extend(additional_headers)
 
-            self.rename_odk_headers(headers, ADULT_HEADER_CONVERSION_MAP)
+                self.rename_odk_headers(headers, ADULT_HEADER_CONVERSION_MAP)
 
-            drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
-            drop_index_list += self.get_drop_index_list(headers, 'adult')
-            drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
-            drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
-            drop_index_list += [headers.index('a4_02')]
+                drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
+                drop_index_list += self.get_drop_index_list(headers, 'adult')
+                drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
+                drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
+                drop_index_list += [headers.index('a4_02')]
 
-            for index, row in enumerate(reader):
-                if self.want_abort:
-                    return False
+                writer.writerow(self.drop_from_list(headers, drop_index_list))
 
-                status_notifier.update({'sub_progress': (index,)})
+                for index, row in enumerate(reader):
+                    if self.want_abort:
+                        return False
 
-                new_row = row + additional_values
+                    status_notifier.update({'sub_progress': (index,)})
 
-                self.warnings |= self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
+                    new_row = row + additional_values
 
-                self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
+                    self.warnings |= self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
 
-                if self.short_form:
-                    word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
-                                 new_row[headers.index(k)] in [1, '1']]
-                    if word_list:
-                        self.convert_free_text_words(headers, new_row, word_list, ADULT_WORDS_TO_VARS)
+                    self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
 
-                self.consolidate_answers(headers, new_row, CONSOLIDATION_MAP)
+                    if self.short_form:
+                        word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
+                                     new_row[headers.index(k)] in [1, '1']]
+                        if word_list:
+                            self.convert_free_text_words(headers, new_row, word_list, ADULT_WORDS_TO_VARS)
 
-                self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
+                    self.consolidate_answers(headers, new_row, CONSOLIDATION_MAP)
 
-                self.warnings |= check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
+                    self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
 
-                self.fill_missing_data(headers, new_row, default_fill)
+                    self.warnings |= check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
 
-                self.calculate_duration_variables(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
+                    self.fill_missing_data(headers, new_row, default_fill)
 
-                matrix.append(self.drop_from_list(new_row, drop_index_list))
+                    self.calculate_duration_variables(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
-        headers = self.drop_from_list(headers, drop_index_list)
+                    writer.writerow(self.drop_from_list(new_row, drop_index_list))
 
         if not self.warnings:
             status_logger.debug('Adult :: Answers verified')
@@ -120,9 +121,6 @@ class AdultPreSymptomPrep(object):
             status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
         status_notifier.update({'sub_progress': None})
-
-        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb', buffering=0) as f:
-            csv.writer(f).writerows([headers] + matrix)
 
         return True
 
