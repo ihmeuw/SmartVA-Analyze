@@ -15,6 +15,7 @@ from smartva.adult_symptom_data import (
     BINARY_VARIABLES,
     FREE_TEXT_VARIABLES,
     DROP_LIST,
+    BINARY_CONVERSION_MAP
 )
 from smartva.utils.conversion_utils import additional_headers_and_values
 
@@ -86,216 +87,15 @@ class AdultSymptomPrep(DataPrep):
                                 new_row[headers.index(injury)] = 0
 
                     # dichotomize!
-                    index1 = headers.index('s36991')
-                    index2 = headers.index('s36992')
-                    val = new_row[headers.index('s36')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1:
-                        new_row[index1] = 1
-                    elif val == 2 or val == 3:
-                        new_row[index2] = 1
-    
-                    index1 = headers.index('s18991')
-                    index2 = headers.index('s18992')
-                    val = new_row[headers.index('s18')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1:
-                        new_row[index1] = 1
-                    elif val == 2 or val == 3:
-                        new_row[index2] = 1
-    
-                    index1 = headers.index('s19991')
-                    index2 = headers.index('s19992')
-                    val = new_row[headers.index('s19')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1:
-                        new_row[index1] = 1
-                    elif val == 2:
-                        new_row[index2] = 1
-    
-                    index1 = headers.index('s23991')
-                    index2 = headers.index('s23992')
-                    index3 = headers.index('s23993')
-                    index4 = headers.index('s23994')
-                    s23val = new_row[headers.index('s23')]
-                    s25val = new_row[headers.index('s25')]
-                    if s23val == '':
-                        s23val = 0
-                    else:
-                        s23val = int(s23val)
-                    if s25val == '':
-                        s25val = 0
-                    else:
-                        s25val = int(s25val)
-                    if s23val == 1 or s25val == 1:
-                        new_row[index1] = 1
-                    if s23val == 2 or s25val == 2:
-                        new_row[index2] = 1
-                    if s23val == 3 or s25val == 3:
-                        new_row[index3] = 1
-                    if s23val == 4 or s25val == 4:
-                        new_row[index4] = 1
-    
-                    # s56 can be multiple
-                    index1 = headers.index('s56991')
-                    index2 = headers.index('s56992')
-                    index3 = headers.index('s56993')
-                    index4 = headers.index('s56994')
-                    val = new_row[headers.index('s56')]
-                    if val == '':
-                        val = ['0']
-                    else:
-                        val = val.split(' ')
-    
-                    # this one doesn't exist?
-                    # val2 = new_row[headers.index('s57')]
-                    #            if val2 == '':
-                    #                val2 = 0
-                    #            else:
-                    #                val2 = int(val2)
-                    # if (val == 1 or val2 == 1):
-                    #                 new_row[index1] = 1
-                    #             elif (val == 2 or val2 == 2):
-                    #                 new_row[index2] = 1
-                    #             elif (val == 3 or val2 == 3):
-                    #                 new_row[index3] = 1
-                    #             elif (val == 4 or val2 == 4):
-                    #                 new_row[index4] = 1
-    
-                    if '1' in val:
-                        new_row[index1] = 1
-                    if '2' in val:
-                        new_row[index2] = 1
-                    if '3' in val:
-                        new_row[index3] = 1
-                    if '4' in val:
-                        new_row[index4] = 1
-    
-                    index1 = headers.index('s55991')
-                    index2 = headers.index('s55992')
-                    val = new_row[headers.index('s55')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1:
-                        new_row[index1] = 1
-                    elif val == 2:
-                        new_row[index2] = 1
-    
-                    val = new_row[headers.index('s62')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1 or val == 2 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s62')] = 0
-                    elif val == 3:
-                        new_row[headers.index('s62')] = 1
-    
-                    index1 = headers.index('s64991')
-                    index2 = headers.index('s64992')
-                    val = new_row[headers.index('s64')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1 or val == 2:
-                        new_row[index1] = 1
-                    elif val == 3:
-                        new_row[index2] = 1
-    
-                    val = new_row[headers.index('s78')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1 or val == 2 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s78')] = 0
-                    elif val == 3:
-                        new_row[headers.index('s78')] = 1
-    
-                    index1 = headers.index('s82991')
-                    val = new_row[headers.index('s82')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-    
-                    # not in electronic?
-                    # val2 = new_row[headers.index('s83')]
-                    #             if val2 == '':
-                    #                 val2 = 0
-                    #             else:
-                    #                 val2 = int(val2)
-                    #             if (val == 2 or val2 == 2):
-                    #                 new_row[index1] = 1
-                    if val == 2:
-                        new_row[index1] = 1
-    
-                    val = new_row[headers.index('s86')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s86')] = 0
-                    elif val == 2:
-                        new_row[headers.index('s86')] = 1
-    
-                    val = new_row[headers.index('s91')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 2 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s91')] = 0
-    
-                    val = new_row[headers.index('s95')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 2 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s95')] = 0
-    
-                    val = new_row[headers.index('s100')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 2 or val == 8 or val == 9 or val == 0:
-                        new_row[headers.index('s100')] = 0
-    
-                    index1 = headers.index('s150991')
-                    index2 = headers.index('s150992')
-                    val = new_row[headers.index('s150')]
-                    if val == '':
-                        val = 0
-                    else:
-                        val = int(val)
-                    if val == 1:
-                        new_row[index1] = 1
-                    elif val == 2 or val == 3:
-                        new_row[index2] = 1
-    
-                    if new_row[headers.index('s107')] == str(1) or new_row[headers.index('s108')] == str(1):
-                        new_row[headers.index('s107')] = 1
-    
+                    self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
+
                     # ensure all binary variables actually ARE 0 or 1:
-                    for var in BINARY_VARIABLES:
-                        val = new_row[headers.index(var)]
-                        if val == '' or int(val) != 1:
-                            new_row[headers.index(var)] = 0
+                    for header in BINARY_VARIABLES:
+                        try:
+                            value = int(new_row[headers.index(header)])
+                        except ValueError:
+                            value = 0
+                        new_row[headers.index(header)] = int(value == 1)
 
                     writer.writerow(self.drop_from_list(new_row, drop_index_list))
 
