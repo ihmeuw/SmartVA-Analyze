@@ -5,14 +5,16 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 from smartva.adult_symptom_data import (
-    ADULT_CONVERSION_VARIABLES,
-    BINARY_VARIABLES,
-    DURATION_CUTOFFS,
-    DURATION_SYMPTOM_VARIABLES,
     GENERATED_HEADERS,
+    ADULT_CONVERSION_VARIABLES,
+    COPY_VARIABLES,
+    AGE_QUARTILE_BINARY_VARIABLES,
+    GENDER_ASSIGNMENT_CONVERSION_VARIABLES,
+    DURATION_CUTOFF_DATA,
     INJURY_VARIABLES,
+    BINARY_VARIABLES,
     FREE_TEXT_VARIABLES,
-    DROP_LIST
+    DROP_LIST,
 )
 from smartva.utils.conversion_utils import additional_headers_and_values
 
@@ -51,40 +53,22 @@ class AdultSymptomPrep(DataPrep):
                 for row in reader:
                     new_row = row + additional_values
 
-                # age quartiles
-                    index = headers.index('age')
-                    s8881index = headers.index('s88881')
-                    s8882index = headers.index('s88882')
-                    s8883index = headers.index('s88883')
-                    s8884index = headers.index('s88884')
-                    if 32 >= int(new_row[index]) > 0:
-                        new_row[s8881index] = 1
-                    elif 32 < int(new_row[index]) <= 49:
-                        new_row[s8882index] = 1
-                    elif 49 < int(new_row[index]) <= 65:
-                        new_row[s8883index] = 1
-                    elif int(new_row[index]) > 65:
-                        new_row[s8884index] = 1
-    
-                    # change sex from female = 2, male = 1 to female = 1, male = 0
-                    # if unknown sex will default to 0 so it does not factor into analysis
-                    index = headers.index('sex')
-                    val = int(new_row[index])
-                    if val == 2:
-                        new_row[index] = 1
-                    elif val == 1:
-                        new_row[index] = 0
-                    elif val == 9:
-                        new_row[index] = 0
-    
-                    # make new variables to store the real age and gender, but do it after we've modified the sex vars
-                    # from 2, 1 to 1, 0
-                    age_index = headers.index('real_age')
-                    gender_index = headers.index('real_gender')
-                    new_row[age_index] = new_row[headers.index('age')]
-                    new_row[gender_index] = new_row[headers.index('sex')]
-    
-                    for sym in DURATION_SYMPTOM_VARIABLES:
+                    for read_header, write_header in COPY_VARIABLES.items():
+                        new_row[headers.index(write_header)] = new_row[headers.index(read_header)]
+
+                    # Compute age quartiles.
+                    for read_header, conversion_data in AGE_QUARTILE_BINARY_VARIABLES.items():
+                        for value, write_header in conversion_data:
+                            if int(new_row[headers.index(read_header)]) > value:
+                                new_row[headers.index(write_header)] = 1
+                                break
+
+                    # Change sex from female = 2, male = 1 to female = 1, male = 0
+                    # If unknown sex will default to 0 so it does not factor into analysis
+                    for read_header, conversion_data in GENDER_ASSIGNMENT_CONVERSION_VARIABLES.items():
+                        new_row[headers.index(read_header)] = conversion_data.get(int(new_row[headers.index(read_header)]), 0)
+
+                    for sym, data in DURATION_CUTOFF_DATA.items():
                         index = headers.index(sym)
                         # replace the duration with 1000 if it is over 1000 and not missing
                         if new_row[index] == '':
@@ -92,7 +76,7 @@ class AdultSymptomPrep(DataPrep):
                         elif float(new_row[index]) > 1000:
                             new_row[index] = 1000
                         # use cutoffs to determine if they will be replaced with a 1 (were above or equal to the cutoff)
-                        if float(new_row[index]) >= DURATION_CUTOFFS[sym] and new_row[index] != str(0):
+                        if float(new_row[index]) >= DURATION_CUTOFF_DATA[sym] and new_row[index] != str(0):
                             new_row[index] = 1
                         else:
                             new_row[index] = 0
