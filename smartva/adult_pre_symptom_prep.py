@@ -277,12 +277,9 @@ class AdultPreSymptomPrep(object):
         :param row: Row of data.
         :param default_fill: Dictionary of headers and default values.
         """
-        for header, value in default_fill.items():
-            try:
-                if row[headers.index(header)] == '':
-                    row[headers.index(header)] = value
-            except ValueError:
-                pass  # Header does not exist.
+        for header in headers:
+            if row[headers.index(header)] == '':
+                row[headers.index(header)] = default_fill.get(header, 0)
 
     @staticmethod
     def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
