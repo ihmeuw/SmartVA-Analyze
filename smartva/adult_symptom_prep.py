@@ -9,7 +9,6 @@ from smartva.adult_symptom_data import (
     ADULT_CONVERSION_VARIABLES,
     COPY_VARIABLES,
     AGE_QUARTILE_BINARY_VARIABLES,
-    GENDER_ASSIGNMENT_CONVERSION_VARIABLES,
     DURATION_CUTOFF_DATA,
     INJURY_VARIABLES,
     BINARY_VARIABLES,
@@ -71,10 +70,6 @@ class AdultSymptomPrep(DataPrep):
                                 new_row[headers.index(write_header)] = 1
                                 break
 
-                    # Change sex from female = 2, male = 1 to female = 1, male = 0
-                    # If unknown sex will default to 0 so it does not factor into analysis
-                    for read_header, conversion_data in GENDER_ASSIGNMENT_CONVERSION_VARIABLES.items():
-                        new_row[headers.index(read_header)] = conversion_data.get(int(new_row[headers.index(read_header)]), 0)
 
                     for header, cutoff_data in DURATION_CUTOFF_DATA.items():
                         try:

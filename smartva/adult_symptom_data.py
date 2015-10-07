@@ -207,14 +207,6 @@ AGE_QUARTILE_BINARY_VARIABLES = {
     ]
 }
 
-GENDER_ASSIGNMENT_CONVERSION_VARIABLES = {
-    'sex': {
-        1: 0,
-        2: 1,
-        9: 0
-    }
-}
-
 DURATION_CUTOFF_DATA = {
     'age': 49,
     's15': 30,
@@ -320,7 +312,8 @@ BINARY_CONVERSION_MAP = {
     's107': [1],
     's108': {
         1: 's107'
-    }
+    },
+    'sex': [2]
 }
 
 BINARY_VARIABLES = [
