@@ -6,7 +6,7 @@ import os
 
 from smartva import adultuniformtrain
 from smartva import config
-from smartva.freetext_vars import adult_freetext
+from smartva.freetext_vars import ADULT_FREE_TEXT
 from smartva.hce_variables import adult_hce
 from smartva.loggers import status_logger, warning_logger
 from smartva.short_form_remove import adult_remove
@@ -161,7 +161,7 @@ class Tariff(object):
             # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:
-                if col in adult_freetext:
+                if col in ADULT_FREE_TEXT:
                     index = headers.index(col)
                     for row in matrix:
                         del row[index]
@@ -169,7 +169,7 @@ class Tariff(object):
 
             tariffheaders_copy = copy.deepcopy(tariffheaders)
             for col in tariffheaders_copy:
-                if col in adult_freetext:
+                if col in ADULT_FREE_TEXT:
                     index = tariffheaders.index(col)
                     for row in tariffmatrix:
                         del row[index]
@@ -177,7 +177,7 @@ class Tariff(object):
 
             validatedheaders_copy = copy.deepcopy(validatedheaders)
             for col in validatedheaders_copy:
-                if col in adult_freetext:
+                if col in ADULT_FREE_TEXT:
                     index = validatedheaders.index(col)
                     for row in validatedmatrix:
                         del row[index]
