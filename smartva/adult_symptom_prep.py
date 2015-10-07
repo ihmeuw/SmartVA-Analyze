@@ -90,6 +90,9 @@ class AdultSymptomPrep(DataPrep):
                         if not self.short_form:
                             for injury in INJURY_VARIABLES:
                                 index = headers.index(injury)
+                    if not self.short_form:
+                        for injury in INJURY_VARIABLES:
+                            index = headers.index(injury)
                             injury_cut_index = headers.index('s163')
                             # 30 is the injury cutoff
                             if float(new_row[injury_cut_index]) > 30:
