@@ -55,7 +55,7 @@ def convert_binary_variable(headers, row, data_header, data_map):
                 if value in data_map:
                     row[headers.index(data_map[value])] = 1
             elif isinstance(data_map, list):
-                row[headers.index(index)] = int(value in data_map)
+                row[index] = int(value in data_map)
 
     except ValueError:
         # No values to process or not an integer value (invalid).
