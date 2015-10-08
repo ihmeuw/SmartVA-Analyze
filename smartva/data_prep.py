@@ -53,7 +53,7 @@ class DataPrep(object):
         return [item for index, item in enumerate(item_list) if index not in drop_index_list]
 
     @staticmethod
-    def convert_binary_variables(headers, row, conversion_map):
+    def process_binary_variables(headers, row, conversion_map):
         """
         Convert multiple value answers into binary cells.
 
