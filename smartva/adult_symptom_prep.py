@@ -176,10 +176,12 @@ class AdultSymptomPrep(DataPrep):
     def post_process_binary_variables(headers, row, binary_variables):
         """
         Ensure all binary variables are actually 1 or 0.
+        Format:
+            [list of binary variables]
 
-        :param headers:
-        :param row:
-        :param binary_variables:
+        :param headers: List of headers.
+        :param row: Row of data.
+        :param binary_variables: List in specified format.
         """
         for read_header in binary_variables:
             try:
