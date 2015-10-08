@@ -277,7 +277,7 @@ class AdultPreSymptomPrep(object):
         """
         for header in headers:
             if row[headers.index(header)] == '':
-                row[headers.index(header)] = default_fill.get(header, 0)
+                row[headers.index(header)] = default_fill.get(header, '')
 
     @staticmethod
     def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
@@ -294,7 +294,7 @@ class AdultPreSymptomPrep(object):
             code_value = int_value_or_0(row[headers.index(code_var)])
             length_value = int_value_or_0(row[headers.index(length_var)])
 
-            if var in special_case_vars and not length_value:
+            if var in special_case_vars and length_value == '':
                 row[headers.index(var)] = special_case_vars[var]
             else:
                 row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
