@@ -80,6 +80,6 @@ def check_skip_patterns(headers, row, skip_pattern_data):
                     warnings = True
                     warning_logger.info('SID: {} variable {} has value {}, but should be blank.'
                                         .format(row[headers.index('sid')], skip_list_item, skip_list_item_value))
-                    row[headers.index(skip_list_item)] = ''
+                    row[headers.index(skip_list_item)] = 0
 
     return warnings
