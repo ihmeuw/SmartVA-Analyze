@@ -6,12 +6,12 @@ from stemming.porter2 import stem
 
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import ADULT_RANGE_LIST
-from smartva.presymptom_conversions import ADULT_HEADER_CONVERSION_MAP
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
+    ADULT_HEADER_CONVERSION_MAP,
     CONSOLIDATION_MAP,
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
