@@ -299,8 +299,8 @@ class vaUI(wx.Frame):
         status_box_sizer.AddSizer(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         status_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
         parent_box_sizer.Add(logo_box_sizer, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
