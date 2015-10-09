@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['app.py'],
+a = Analysis(['smartva/va_cli.py'],
              hiddenimports=None,
              hookspath=['pkg/hooks'],
              runtime_hooks=None)
