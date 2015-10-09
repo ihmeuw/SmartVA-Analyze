@@ -68,7 +68,8 @@ class WorkerThread(threading.Thread):
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
 
-        warning_file_handler = logging.FileHandler(os.path.join(self.output_dir, 'warnings.txt'), mode='w', delay=True)
+        self._warnings_file = os.path.join(self.output_dir, 'warnings.txt')
+        warning_file_handler = logging.FileHandler(self._warnings_file, mode='w', delay=True)
         warning_logger.addHandler(warning_file_handler)
 
         self.short_form = False
@@ -237,4 +238,9 @@ class WorkerThread(threading.Thread):
         for handler in warning_logger.handlers:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
+
+        # The warnings file will be created on the first warning. If the file doesn't exist, no warnings.
+        if os.path.exists(self._warnings_file):
+            message += ('\nWarnings were generated during processings. '
+                        'Please review the file "{}" for further information.'.format(self._warnings_file))
         self._completion_callback(status, message)
