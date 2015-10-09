@@ -161,12 +161,13 @@ class WorkerThread(threading.Thread):
                 return
 
             # makes adult-symptom.csv
+            adult_symptom.run()
             if self._want_abort:
                 self._complete(CompletionStatus.ABORT)
                 return
 
-            #
             # creates adult output files
+            adult_results.run()
             if self._want_abort:
                 self._complete(CompletionStatus.ABORT)
                 return
