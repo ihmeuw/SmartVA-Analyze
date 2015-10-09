@@ -138,3 +138,7 @@ class CommandLineNotificationHandler(object):
             self._update_gauge(data['sub_progress'], data.get('label', ''))
         if 'message' in data:
             self._show_message(data['message'])
+
+
+if __name__ == '__main__':
+    main()
