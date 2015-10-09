@@ -15,11 +15,11 @@ from smartva.utils import status_notifier
 
 
 # data structure we use to keep track of an manipulate data
-class ScoredVA:
-    def __init__(self, causescores, cause, sid, age, gender):
-        self.causescores = causescores  # dict of {"cause1" : value, "cause2" :...}
+class ScoredVA(object):
+    def __init__(self, cause_scores, cause, sid, age, gender):
+        self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
         self.cause = cause  # int
-        self.ranklist = {}
+        self.rank_list = {}
         self.sid = sid
         self.age = age
         self.gender = gender
@@ -28,55 +28,56 @@ class ScoredVA:
 class Tariff(object):
     AGE_GROUP = 'adult'
 
-    def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, malaria, country, shortform):
+    def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         """
         :type input_file: str
         :type output_dir: str
         :type intermediate_dir: str
         :type hce: bool
-        :type freetext: bool
+        :type free_text: bool
         :type malaria: bool
         :type country: str
-        :type shortform: bool
+        :type short_form: bool
         """
-        self.inputFilePath = input_file
+        self.input_file_path = input_file
         self.output_dir = output_dir
+        self.intermediate_dir = intermediate_dir
         self.hce = hce
-        self.freetext = freetext
-        self.want_abort = 0
+        self.free_text = free_text
         self.malaria = malaria
         self.iso3 = country
-        self.intermediate_dir = intermediate_dir
-        self.shortform = shortform
+        self.short_form = short_form
+
+        self.want_abort = False
 
     def run(self):
-        status_notifier.update({'progress': (6,)})
-
-        reader = csv.reader(open(self.inputFilePath, 'rb'))
-        writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
-
         status_logger.info('Adult :: Processing Adult tariffs')
+        status_notifier.update({'progress': (4,)})
+
+        reader = csv.reader(open(self.input_file_path, 'rb'))
+        writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
 
         tariff_file = os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
         validated_file = os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP))
         # If hce is False, use hce0, else use hce1
-        undetermined_file = os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
+        undetermined_file = os.path.join(config.basedir,
+                                         '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
 
-        tariffreader = csv.reader(open(tariff_file, 'rU'))
-        validatedreader = csv.reader(open(validated_file, 'rU'))
-        undeterminedreader = csv.reader(open(undetermined_file, 'rU'))
+        tariff_reader = csv.reader(open(tariff_file, 'rU'))
+        validated_reader = csv.reader(open(validated_file, 'rU'))
+        undetermined_reader = csv.reader(open(undetermined_file, 'rU'))
 
-        matrix = []
         headers = []
+        matrix = []
 
-        tariffheaders = []
-        tariffmatrix = []
+        tariff_headers = []
+        tariff_matrix = []
 
-        validatedheaders = []
-        validatedmatrix = []
+        validated_headers = []
+        validated_matrix = []
 
-        undeterminedheaders = []
-        undeterminedmatrix = []
+        undetermined_headers = []
+        undetermined_matrix = []
 
         first = 1
         # read in new .csv for processing
@@ -93,28 +94,28 @@ class Tariff(object):
         first = 1
         # read in new tariffs.csv for processing
         # we add the generated headers later this time
-        for row in tariffreader:
+        for row in tariff_reader:
             if first == 1:
                 for col in row:
-                    tariffheaders.append(col)
+                    tariff_headers.append(col)
                 first = 0
 
             else:
-                tariffmatrix.append(row)
+                tariff_matrix.append(row)
 
-        # print tariffmatrix
+        # print tariff_matrix
 
         first = 1
         # read in new validated .csv for processing
         # we add the generated headers later this time
-        for row in validatedreader:
+        for row in validated_reader:
             if first == 1:
                 for col in row:
-                    validatedheaders.append(col)
+                    validated_headers.append(col)
                 first = 0
 
             else:
-                validatedmatrix.append(row)
+                validated_matrix.append(row)
 
         if len(matrix) == 0:
             # no entries, just return
@@ -122,14 +123,14 @@ class Tariff(object):
 
         first = 1
         # read in new undetermined .csv for processing
-        for row in undeterminedreader:
+        for row in undetermined_reader:
             if first == 1:
                 for col in row:
-                    undeterminedheaders.append(col)
+                    undetermined_headers.append(col)
                 first = 0
 
             else:
-                undeterminedmatrix.append(row)
+                undetermined_matrix.append(row)
 
         if not self.hce:
             # remove all hce variables
@@ -141,24 +142,24 @@ class Tariff(object):
                         del row[index]
                     headers.remove(col)
 
-            tariffheaders_copy = copy.deepcopy(tariffheaders)
-            for col in tariffheaders_copy:
+            tariff_headers_copy = copy.deepcopy(tariff_headers)
+            for col in tariff_headers_copy:
                 if col in adult_hce:
-                    index = tariffheaders.index(col)
-                    for row in tariffmatrix:
+                    index = tariff_headers.index(col)
+                    for row in tariff_matrix:
                         del row[index]
-                    tariffheaders.remove(col)
+                    tariff_headers.remove(col)
 
-            validatedheaders_copy = copy.deepcopy(validatedheaders)
-            for col in validatedheaders_copy:
+            validated_headers_copy = copy.deepcopy(validated_headers)
+            for col in validated_headers_copy:
                 if col in adult_hce:
-                    index = validatedheaders.index(col)
-                    for row in validatedmatrix:
+                    index = validated_headers.index(col)
+                    for row in validated_matrix:
                         del row[index]
-                    validatedheaders.remove(col)
+                    validated_headers.remove(col)
 
-        if not self.freetext and self.hce:
-            # only need to do this if 'hce' is on and freetext is off, otherwise hce removes all freetext
+        if not self.free_text and self.hce:
+            # only need to do this if 'hce' is on and free text is off, otherwise hce removes all free text
             headers_copy = copy.deepcopy(headers)
             for col in headers_copy:
                 if col in ADULT_FREE_TEXT:
@@ -167,23 +168,23 @@ class Tariff(object):
                         del row[index]
                     headers.remove(col)
 
-            tariffheaders_copy = copy.deepcopy(tariffheaders)
-            for col in tariffheaders_copy:
+            tariff_headers_copy = copy.deepcopy(tariff_headers)
+            for col in tariff_headers_copy:
                 if col in ADULT_FREE_TEXT:
-                    index = tariffheaders.index(col)
-                    for row in tariffmatrix:
+                    index = tariff_headers.index(col)
+                    for row in tariff_matrix:
                         del row[index]
-                    tariffheaders.remove(col)
+                    tariff_headers.remove(col)
 
-            validatedheaders_copy = copy.deepcopy(validatedheaders)
-            for col in validatedheaders_copy:
+            validated_headers_copy = copy.deepcopy(validated_headers)
+            for col in validated_headers_copy:
                 if col in ADULT_FREE_TEXT:
-                    index = validatedheaders.index(col)
-                    for row in validatedmatrix:
+                    index = validated_headers.index(col)
+                    for row in validated_matrix:
                         del row[index]
-                    validatedheaders.remove(col)
+                    validated_headers.remove(col)
 
-        if self.shortform:
+        if self.short_form:
             for d in adult_remove:
                 try:
                     index = headers.index(d)
@@ -192,40 +193,40 @@ class Tariff(object):
                         row[index] = 0
                         # del row[index]
 
-                    tariffindex = tariffheaders.index(d)
-                    # tariffheaders.remove(d)
-                    for row in tariffmatrix:
-                        # del row[tariffindex]
-                        row[tariffindex] = 0
+                    tariff_index = tariff_headers.index(d)
+                    # tariff_headers.remove(d)
+                    for row in tariff_matrix:
+                        # del row[tariff_index]
+                        row[tariff_index] = 0
 
-                    validatedindex = validatedheaders.index(d)
-                    # validatedheaders.remove(d)
-                    for row in validatedmatrix:
-                        # del row[validatedindex]
-                        row[validatedindex] = 0
+                    validated_index = validated_headers.index(d)
+                    # validated_headers.remove(d)
+                    for row in validated_matrix:
+                        # del row[validated_index]
+                        row[validated_index] = 0
                 except ValueError:
                     pass  # if the header doesn't exit, it was probably removed by hce
 
-        # list of cause1: s1, s2, s50, ... top 40 svars per cause
+        # list of cause1: s1, s2, s50, ... top 40 s_vars per cause
         cause40s = {}
         # for each cause, create a list with the top 40 's' variables     
-        for i, row in enumerate(tariffmatrix):
+        for i, row in enumerate(tariff_matrix):
             cause = row[0]
             # make a dictionary mapping 's' variables to values
-            sdict = {}
+            s_dict = {}
             for j, col in enumerate(row):
                 if j == 0:
                     continue  # noop, skip the first column
                 # save absval, relval
-                sdict[tariffheaders[j]] = math.fabs(float(row[j]))
-            # sort the list based on the values of the svars                
-            sorteddict = sorted(sdict.items(), key=lambda t: t[1], reverse=True)
+                s_dict[tariff_headers[j]] = math.fabs(float(row[j]))
+            # sort the list based on the values of the s_vars
+            sorted_dict = sorted(s_dict.items(), key=lambda t: t[1], reverse=True)
 
-            slist = []
-            for val in sorteddict[:40]:
-                slist.append(val[0])
-            cause40s[cause] = slist
-            # print "cause: %s :: %s" % (cause, slist)
+            s_list = []
+            for val in sorted_dict[:40]:
+                s_list.append(val[0])
+            cause40s[cause] = s_list
+            # print "cause: %s :: %s" % (cause, s_list)
 
         #        for cause in cause40s.keys():
         #            asdf = cause40s[cause]
@@ -233,65 +234,66 @@ class Tariff(object):
         #            print "cause: %s :: %s" % (cause, asdf)
 
         # creates a list of causes/scores for each va.
-        # va1 :: cause1/score, cause2/score...casue46/score
+        # va1 :: cause1/score, cause2/score...cause46/score
         # va2 :: cause1/score, cause2/score...
         # ...
-        vacauselist = []
+        va_cause_list = []
         for i, row in enumerate(matrix):
-            causedict = {}
-            for causenum in range(1, 47):
-                cause = "cause" + str(causenum)
-                slist = cause40s[cause]
-                # for each svar, if it's 1, find the number in the tariff matrix and add it to the total
-                causeval = 0.0
-                for svar in slist:
-                    index = headers.index(svar)
+            cause_dict = {}
+            for cause_num in range(1, 47):
+                cause = "cause" + str(cause_num)
+                s_list = cause40s[cause]
+                # for each s_var, if it's 1, find the number in the tariff matrix and add it to the total
+                cause_val = 0.0
+                for s_var in s_list:
+                    index = headers.index(s_var)
                     if row[index] == str(1):
-                        tariffindex = tariffheaders.index(svar)
-                        # row is causenum - 1 since causenum starts at 1 and index starts at 0
-                        tariff = self.round5(Decimal(tariffmatrix[causenum - 1][tariffindex]))
-                        causeval = causeval + float(tariff)
-                causedict[cause] = causeval
+                        tariff_index = tariff_headers.index(s_var)
+                        # row is cause_num - 1 since cause_num starts at 1 and index starts at 0
+                        tariff = self.round5(Decimal(tariff_matrix[cause_num - 1][tariff_index]))
+                        cause_val += float(tariff)
+                cause_dict[cause] = cause_val
             sid = row[headers.index('sid')]
-            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])
-            vacauselist.append(va)
+            va = ScoredVA(cause_dict, row[validated_headers.index('va46')], sid, row[headers.index('real_age')],
+                          row[headers.index('real_gender')])
+            va_cause_list.append(va)
 
         status_logger.debug('Adult :: Calculating scores for validated dataset.')
 
         # creates a list of causes/scores for each VALIDATED va.
-        # va1 :: cause1/score, cause2/score...casue46/score
+        # va1 :: cause1/score, cause2/score...cause46/score
         # ... 
 
-        vavalidatedcauselist = []
+        va_validated_cause_list = []
         max_cause = 46
 
-        total = len(validatedmatrix) * max_cause
+        total = len(validated_matrix) * max_cause
         div = min(10 ** len(str(abs(total))), 100)
         status_notifier.update({'sub_progress': (0, total)})
 
-        for i, row in enumerate(validatedmatrix):
-            causedict = {}
-            for causenum in range(1, max_cause + 1):
+        for i, row in enumerate(validated_matrix):
+            cause_dict = {}
+            for cause_num in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = (i * max_cause) + causenum
+                cnt = (i * max_cause) + cause_num
                 if cnt % max((total / div), 1) == 0:
                     status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
                     status_notifier.update({'sub_progress': (cnt,)})
-                cause = "cause" + str(causenum)
-                slist = cause40s[cause]
-                causeval = 0.0
-                for svar in slist:
-                    index = validatedheaders.index(svar)
+                cause = "cause" + str(cause_num)
+                s_list = cause40s[cause]
+                cause_val = 0.0
+                for s_var in s_list:
+                    index = validated_headers.index(s_var)
                     if row[index] == str(1):
-                        tariffindex = tariffheaders.index(svar)
-                        # in tariffmatrix, cause1 == row 0, so -1 from causenum
-                        tariff = self.round5(Decimal(tariffmatrix[causenum - 1][tariffindex]))
-                        causeval += float(tariff)
-                causedict[cause] = causeval
-            sid = row[validatedheaders.index('sid')]
-            va = ScoredVA(causedict, row[validatedheaders.index('va46')], sid, 0, 0)
-            vavalidatedcauselist.append(va)
+                        tariff_index = tariff_headers.index(s_var)
+                        # in tariff_matrix, cause1 == row 0, so -1 from cause_num
+                        tariff = self.round5(Decimal(tariff_matrix[cause_num - 1][tariff_index]))
+                        cause_val += float(tariff)
+                cause_dict[cause] = cause_val
+            sid = row[validated_headers.index('sid')]
+            va = ScoredVA(cause_dict, row[validated_headers.index('va46')], sid, 0, 0)
+            va_validated_cause_list.append(va)
 
         status_logger.debug('Adult :: Processing %s of %s' % (total, total))
         status_notifier.update({'sub_progress': None})
@@ -303,143 +305,141 @@ class Tariff(object):
         # also track row indexes of each cause
 
         # va46 is the validated cause of death
-        index = validatedheaders.index('va46')
+        index = validated_headers.index('va46')
         # count is a dictionary of {cause : count}
-        causecount = {}
-        # causeindexes is a list of indexes for a particular cause {cause : [1, 2, 3...], cause2:...}
-        causeindexes = {}
-        for i, row in enumerate(validatedmatrix):
+        cause_count = {}
+        # cause_indexes is a list of indexes for a particular cause {cause : [1, 2, 3...], cause2:...}
+        cause_indexes = {}
+        for i, row in enumerate(validated_matrix):
             cause = row[index]
-            if cause not in causecount.keys():
+            if cause not in cause_count.keys():
                 # if the key doesn't exist, create it
-                causecount[cause] = 1
-                causeindexes[cause] = [i]
+                cause_count[cause] = 1
+                cause_indexes[cause] = [i]
             else:
                 # if the key does exist, increment it by 1
-                causecount[cause] = causecount[cause] + 1
-                causeindexes[cause].append(i)
+                cause_count[cause] += 1
+                cause_indexes[cause].append(i)
 
         # now sort by size
-        sortedcausecount = sorted(causecount.items(), key=lambda t: t[1], reverse=True)
+        sorted_cause_count = sorted(cause_count.items(), key=lambda t: t[1], reverse=True)
         # sample size is the first (0th) element of the list, and the second (1th) item of that element
-        samplesize = sortedcausecount[0][1]
+        sample_size = sorted_cause_count[0][1]
 
         # create new uniform training set using the frequencies file
-        uniformtrain = {}
+        uniform_train = {}
         for cause in range(1, 47):
-            uniformtrain[str(cause)] = []
+            uniform_train[str(cause)] = []
             # indexes of all VAs of a certain cause
-            for causeindex in causeindexes[str(cause)]:
-                va = validatedmatrix[causeindex]
-                sid = va[validatedheaders.index('sid')]
+            for cause_index in cause_indexes[str(cause)]:
+                va = validated_matrix[cause_index]
+                sid = va[validated_headers.index('sid')]
                 count = int(adultuniformtrain.frequencies[sid])
                 for i in range(0, count):
-                    uniformtrain[str(cause)].append(vavalidatedcauselist[causeindex])
+                    uniform_train[str(cause)].append(va_validated_cause_list[cause_index])
 
         # create a list of ALL the VAs in our uniform set
-        uniformlist = []
-        for key in uniformtrain.keys():
+        uniform_list = []
+        for key in uniform_train.keys():
             # vas this should be 600ish long
-            vas = uniformtrain[key]
+            vas = uniform_train[key]
             for va in vas:
-                uniformlist.append(va)
+                uniform_list.append(va)
 
         status_logger.debug('Adult :: Generating cause rankings.')
 
-        total = len(vacauselist) * max_cause
+        total = len(va_cause_list) * max_cause
         div = min(10 ** len(str(abs(total))), 100)
         status_notifier.update({'sub_progress': (0, total)})
 
-        for i, va in enumerate(vacauselist):
-            sortedtariffs = []
-            ranklist = {}
-            for causenum in range(1, max_cause + 1):
+        for i, va in enumerate(va_cause_list):
+            sorted_tariffs = []
+            rank_list = {}
+            for cause_num in range(1, max_cause + 1):
                 if self.want_abort == 1:
                     return
-                cnt = (i * max_cause) + causenum
+                cnt = (i * max_cause) + cause_num
                 if cnt % max((total / div), 1) == 0:
                     status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
                     status_notifier.update({'sub_progress': (cnt,)})
-                cause = "cause" + str(causenum)
+                cause = "cause" + str(cause_num)
                 # get the tariff score for this cause for this external VA
-                deathscore = va.causescores[cause]
+                death_score = va.cause_scores[cause]
                 # make a list of tariffs of ALL validated VAs for this cause
                 tariffs = []
-                for validatedva in uniformlist:
-                    tariffs.append(validatedva.causescores[cause])
+                for validated_va in uniform_list:
+                    tariffs.append(validated_va.cause_scores[cause])
 
-                # sort them and calculate absolute value of tariff-deathscore
-                sortedtariffs = sorted(tariffs, reverse=True)
+                # sort them and calculate absolute value of tariff-death_score
+                sorted_tariffs = sorted(tariffs, reverse=True)
 
-                for idx, val in enumerate(sortedtariffs):
-                    sortedtariffs[idx] = math.fabs(val - deathscore)
+                for idx, val in enumerate(sorted_tariffs):
+                    sorted_tariffs[idx] = math.fabs(val - death_score)
 
-                minlist = []
-                minval = None
+                min_list = []
+                min_val = None
 
                 # loop through all the new scores, find the minimum value, store that index
                 # if there are multiple minimum values that are the same, take the mean of the indexes
-                for index, val in enumerate(sortedtariffs):
-                    if val < minval or minval is None:
-                        minval = val
-                        minlist = [index]
-                    elif val == minval:
-                        minlist.append(index)
+                for index, val in enumerate(sorted_tariffs):
+                    if val < min_val or min_val is None:
+                        min_val = val
+                        min_list = [index]
+                    elif val == min_val:
+                        min_list.append(index)
 
-                index = sum(minlist) / float(len(minlist))
+                index = sum(min_list) / float(len(min_list))
                 # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
-                ranklist[cause] = index + 1
-            va.ranklist = ranklist
+                rank_list[cause] = index + 1
+            va.rank_list = rank_list
 
         status_logger.debug('Adult :: Processing %s of %s' % (total, total))
         status_notifier.update({'sub_progress': None})
 
-        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
-        headerrow = []
-        headerrow.append("sid")
-        for cause in vacauselist[0].ranklist.keys():
-            headerrow.append(cause)
-        rankwriter.writerow(headerrow)
-        for va in vacauselist:
-            newrow = []
-            newrow.append(va.sid)
-            for cause in va.ranklist.keys():
-                newrow.append(va.ranklist[cause])
-            rankwriter.writerow(newrow)
+        rank_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
+        header_row = ["sid"]
+        for cause in va_cause_list[0].rank_list.keys():
+            header_row.append(cause)
+        rank_writer.writerow(header_row)
+        for va in va_cause_list:
+            new_row = [va.sid]
+            for cause in va.rank_list.keys():
+                new_row.append(va.rank_list[cause])
+            rank_writer.writerow(new_row)
 
         for i in range(1, 47):
             cause = "cause" + str(i)
-            causelist = []
-            for va in uniformlist:
-                causelist.append([va.sid, va.causescores[cause], va])
-            sortedcauselist = sorted(causelist, key=lambda t: t[1], reverse=True)
-            # now have a sorted list of sid, causescore for a specific cause
-            for j, item in enumerate(sortedcauselist):
-                item[2].ranklist[cause] = j
+            cause_list = []
+            for va in uniform_list:
+                cause_list.append([va.sid, va.cause_scores[cause], va])
+            sorted_cause_list = sorted(cause_list, key=lambda t: t[1], reverse=True)
+            # now have a sorted list of sid, cause_score for a specific cause
+            for j, item in enumerate(sorted_cause_list):
+                item[2].rank_list[cause] = j
 
         status_logger.debug('Adult :: Generating cutoffs')
 
         cutoffs = []
         for i in range(1, 47):
-            causelist = []
-            for va in uniformlist:
-                causelist.append([va.cause, va.causescores["cause" + str(i)], va.sid, va])
+            cause_list = []
+            for va in uniform_list:
+                cause_list.append([va.cause, va.cause_scores["cause" + str(i)], va.sid, va])
 
-            causelist.sort(key=lambda t: t[2])
-            causelist.sort(key=lambda t: t[1], reverse=True)
-            sortedlist = causelist
+            cause_list.sort(key=lambda t: t[2])
+            cause_list.sort(key=lambda t: t[1], reverse=True)
+            sorted_list = cause_list
 
-            locallist = []
-            for j, va in enumerate(sortedlist):
+            local_list = []
+            for j, va in enumerate(sorted_list):
                 if va[0] == str(i):
                     # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
                     # numbers as the original stata tool
-                    locallist.append(j + 1)
+                    local_list.append(j + 1)
 
             # make it an int, don't round
-            index = int(len(locallist) * .89)
-            cutoffs.append(locallist[index])
+            index = int(len(local_list) * .89)
+            cutoffs.append(local_list[index])
 
         f = open(self.intermediate_dir + os.sep + 'adult-cutoffs.txt', 'w')
         for i, cutoff in enumerate(cutoffs):
@@ -449,89 +449,90 @@ class Tariff(object):
         # lowest rank is actually the biggest number
         lowest = 0
         # find the lowest rank and then add 1 to it
-        for va in vacauselist:
-            for cause in va.ranklist.keys():
-                if float(va.ranklist[cause]) > 0 and float(va.ranklist[cause]) > lowest:
-                    lowest = float(va.ranklist[cause])
-        lowest = lowest + 1
+        for va in va_cause_list:
+            for cause in va.rank_list.keys():
+                if float(va.rank_list[cause]) > 0 and float(va.rank_list[cause]) > lowest:
+                    lowest = float(va.rank_list[cause])
+        lowest += 1
 
         # if a VA has a tariff score less than 0 for a certain cause,
         # replace the rank for that cause with the lowest possible rank
-        for va in vacauselist:
-            for cause in va.causescores.keys():
-                if float(va.causescores[cause]) < 0:
-                    va.ranklist[cause] = lowest
+        for va in va_cause_list:
+            for cause in va.cause_scores.keys():
+                if float(va.cause_scores[cause]) < 0:
+                    va.rank_list[cause] = lowest
 
         for i, row in enumerate(matrix):
             age = int(row[headers.index('real_age')])
             sex = int(row[headers.index('real_gender')])
 
-            # only females ages 15-49 can have anaemia, haemorrhage, hypertensive disease, other pregnancy-related, or sepsis
+            # only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis
             maternal_causes = [3, 20, 22, 36, 42]
-            rankingsrow = vacauselist[i].ranklist
+            rankings_row = va_cause_list[i].rank_list
 
             if sex == 0 or age > 49 or age < 15:
                 for cause in maternal_causes:
-                    rankingsrow["cause" + str(cause)] = lowest
+                    rankings_row["cause" + str(cause)] = lowest
 
             female_causes = [6, 7]
             if sex == 0:
                 for cause in female_causes:
-                    rankingsrow["cause" + str(cause)] = lowest
+                    rankings_row["cause" + str(cause)] = lowest
 
             # female, can't have prostate cancer
             if sex == 1:
-                rankingsrow["cause39"] = lowest
+                rankings_row["cause39"] = lowest
 
             # can't have AIDS if over 75
             if age > 75:
-                rankingsrow["cause1"] = lowest
-                rankingsrow["cause2"] = lowest
+                rankings_row["cause1"] = lowest
+                rankings_row["cause2"] = lowest
 
             # can't have cancer if under 15
             cancers = [6, 7, 9, 17, 27, 30, 39, 43]
             if age < 15:
                 for cause in cancers:
-                    rankingsrow["cause" + str(cause)] = lowest
+                    rankings_row["cause" + str(cause)] = lowest
 
             if not self.malaria:
-                rankingsrow["cause29"] = lowest
+                rankings_row["cause29"] = lowest
 
-        for va in vacauselist:
+        for va in va_cause_list:
             for i in range(1, 47):
-                if float(va.ranklist["cause" + str(i)]) > float(cutoffs[i - 1]):
-                    va.ranklist["cause" + str(i)] = lowest
-                elif float(va.ranklist["cause" + str(i)]) > float(len(uniformlist) * .18):
-                    va.ranklist["cause" + str(i)] = lowest
-                elif float(va.causescores["cause" + str(i)]) <= 6.0:  # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                    va.ranklist["cause" + str(i)] = lowest
+                if float(va.rank_list["cause" + str(i)]) > float(cutoffs[i - 1]):
+                    va.rank_list["cause" + str(i)] = lowest
+                elif float(va.rank_list["cause" + str(i)]) > float(len(uniform_list) * .18):
+                    va.rank_list["cause" + str(i)] = lowest
+                elif float(va.cause_scores["cause" + str(
+                        i)]) <= 6.0:  # EXPERIMENT: reject tariff scores less than a fixed amount as well
+                    va.rank_list["cause" + str(i)] = lowest
 
         # changing 46 causes to 34 causes:
-        causereduction = {'cause1': '1', 'cause2': '1', 'cause3': '21', 'cause4': '2', 'cause5': '3', 'cause6': '4',
-                          'cause7': '5', 'cause8': '6', 'cause9': '7', 'cause10': '8', 'cause11': '9', 'cause12': '9',
-                          'cause13': '9', 'cause14': '10', 'cause15': '11', 'cause16': '12', 'cause17': '13',
-                          'cause18': '14', 'cause19': '15', 'cause20': '21', 'cause21': '16', 'cause22': '21',
-                          'cause23': '17', 'cause24': '22', 'cause25': '22', 'cause26': '18', 'cause27': '19',
-                          'cause28': '18', 'cause29': '20', 'cause30': '25', 'cause31': '22', 'cause32': '25',
-                          'cause33': '23', 'cause34': '24', 'cause35': '25', 'cause36': '21', 'cause37': '26',
-                          'cause38': '27', 'cause39': '28', 'cause40': '29', 'cause41': '30', 'cause42': '21',
-                          'cause43': '31', 'cause44': '32', 'cause45': '33', 'cause46': '34', 'Undetermined': ''}
+        cause_reduction = {'cause1': '1', 'cause2': '1', 'cause3': '21', 'cause4': '2', 'cause5': '3', 'cause6': '4',
+                           'cause7': '5', 'cause8': '6', 'cause9': '7', 'cause10': '8', 'cause11': '9', 'cause12': '9',
+                           'cause13': '9', 'cause14': '10', 'cause15': '11', 'cause16': '12', 'cause17': '13',
+                           'cause18': '14', 'cause19': '15', 'cause20': '21', 'cause21': '16', 'cause22': '21',
+                           'cause23': '17', 'cause24': '22', 'cause25': '22', 'cause26': '18', 'cause27': '19',
+                           'cause28': '18', 'cause29': '20', 'cause30': '25', 'cause31': '22', 'cause32': '25',
+                           'cause33': '23', 'cause34': '24', 'cause35': '25', 'cause36': '21', 'cause37': '26',
+                           'cause38': '27', 'cause39': '28', 'cause40': '29', 'cause41': '30', 'cause42': '21',
+                           'cause43': '31', 'cause44': '32', 'cause45': '33', 'cause46': '34', 'Undetermined': ''}
 
-        causecounts = {}
-        rankwriter = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
-        rankwriter.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
-        for va in vacauselist:
-            causescore = lowest
-            realcause = 'Undetermined'
+        cause_counts = {}
+        rank_writer = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
+        rank_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
+        for va in va_cause_list:
+            cause_score = lowest
+            real_cause = 'Undetermined'
             cause34 = ''
             multiple = {}
-            for cause in va.ranklist:
-                if float(va.ranklist[cause]) < causescore:
-                    causescore = float(va.ranklist[cause])
-                    realcause = cause
-                    cause34 = causereduction[cause]
+            for cause in va.rank_list:
+                if float(va.rank_list[cause]) < cause_score:
+                    cause_score = float(va.rank_list[cause])
+                    real_cause = cause
+                    cause34 = cause_reduction[cause]
                     multiple[va.sid] = [cause]
-                elif causescore == float(va.ranklist[cause]) and causescore != lowest:
+                elif cause_score == float(va.rank_list[cause]) and cause_score != lowest:
                     multiple[va.sid].append(cause)
 
             # Notify user if multiple causes have been determined.
@@ -544,75 +545,75 @@ class Tariff(object):
             if cause34 == '':
                 cause34 = 'Undetermined'
                 if self.iso3 is None:
-                    if cause34 in causecounts.keys():
-                        causecounts[cause34] = causecounts[cause34] + 1.0
+                    if cause34 in cause_counts.keys():
+                        cause_counts[cause34] += 1.0
                     else:
-                        causecounts[cause34] = 1.0
+                        cause_counts[cause34] = 1.0
                 else:
                     # for undetermined, look up the values for each cause using keys (age, sex, country) and
                     # add them to the 'count' for that cause
                     determined = 0
                     undetermined = 0
-                    for uRow in undeterminedmatrix:
-                        if uRow[undeterminedheaders.index('sex')] == va.gender and ((int(uRow[undeterminedheaders.index('age')]) >= int(va.age) and int(uRow[undeterminedheaders.index('age')]) < int(va.age) + 5) or (int(va.age) > 80 and int(uRow[undeterminedheaders.index('age')]) == 80)) and uRow[undeterminedheaders.index('iso3')] == self.iso3:
+                    for uRow in undetermined_matrix:
+                        if uRow[undetermined_headers.index('sex')] == va.gender and (
+                            (int(va.age) <= int(uRow[undetermined_headers.index('age')]) < int(va.age) + 5) or (
+                                int(va.age) > 80 and int(uRow[undetermined_headers.index('age')]) == 80)) and uRow[
+                            undetermined_headers.index('iso3')] == self.iso3:
                             # get the value and add it
-                            if uRow[undeterminedheaders.index('gs_text34')] in causecounts.keys():
-                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] += float(uRow[undeterminedheaders.index('weight')])
+                            if uRow[undetermined_headers.index('gs_text34')] in cause_counts.keys():
+                                cause_counts[uRow[undetermined_headers.index('gs_text34')]] += float(
+                                    uRow[undetermined_headers.index('weight')])
                             else:
-                                causecounts[uRow[undeterminedheaders.index('gs_text34')]] = float(uRow[undeterminedheaders.index('weight')])
+                                cause_counts[uRow[undetermined_headers.index('gs_text34')]] = float(
+                                    uRow[undetermined_headers.index('weight')])
             else:
                 cause34 = adultcauses[cause34]
-                if cause34 in causecounts.keys():
-                    causecounts[cause34] = causecounts[cause34] + 1.0
+                if cause34 in cause_counts.keys():
+                    cause_counts[cause34] += 1.0
                 else:
-                    causecounts[cause34] = 1.0
-            rankwriter.writerow([va.sid, causereduction[realcause], cause34, va.age, va.gender])
+                    cause_counts[cause34] = 1.0
+            rank_writer.writerow([va.sid, cause_reduction[real_cause], cause34, va.age, va.gender])
 
-        csmfwriter = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
-        csmfheaders = ["cause", "CSMF"]
-        csmfwriter.writerow(csmfheaders)
-        for causekey in causecounts.keys():
-            percent = float(causecounts[causekey]) / float(sum(causecounts.values()))
-            csmfwriter.writerow([causekey, percent])
+        csmf_writer = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
+        csmf_headers = ["cause", "CSMF"]
+        csmf_writer.writerow(csmf_headers)
+        for cause_key in cause_counts.keys():
+            percent = float(cause_counts[cause_key]) / float(sum(cause_counts.values()))
+            csmf_writer.writerow([cause_key, percent])
 
         # TODO: refactor this test so that it is exercised before
         # merging new pull requests
-        # assert int(sum(causecounts.values())) == len(matrix), \
+        # assert int(sum(cause_counts.values())) == len(matrix), \
         #              'CSMF must sum to one'
 
-        rankwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
-        headerrow = []
-        headerrow.append("sid")
-        for cause in vacauselist[0].ranklist.keys():
-            headerrow.append(cause)
-        rankwriter.writerow(headerrow)
-        for va in vacauselist:
-            newrow = []
-            newrow.append(va.sid)
-            for cause in va.ranklist.keys():
-                newrow.append(va.ranklist[cause])
-            rankwriter.writerow(newrow)
+        rank_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
+        header_row = ["sid"]
+        for cause in va_cause_list[0].rank_list.keys():
+            header_row.append(cause)
+        rank_writer.writerow(header_row)
+        for va in va_cause_list:
+            new_row = [va.sid]
+            for cause in va.rank_list.keys():
+                new_row.append(va.rank_list[cause])
+            rank_writer.writerow(new_row)
 
-        tariffwriter = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
-        headerrow = []
-        headerrow.append("sid")
-        for cause in vacauselist[0].causescores.keys():
-            headerrow.append(cause)
-        tariffwriter.writerow(headerrow)
-        for va in vacauselist:
-            newrow = []
-            newrow.append(va.sid)
-            for cause in va.causescores.keys():
-                newrow.append(va.causescores[cause])
-            tariffwriter.writerow(newrow)
+        tariff_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
+        header_row = ["sid"]
+        for cause in va_cause_list[0].cause_scores.keys():
+            header_row.append(cause)
+        tariff_writer.writerow(header_row)
+        for va in va_cause_list:
+            new_row = [va.sid]
+            for cause in va.cause_scores.keys():
+                new_row.append(va.cause_scores[cause])
+            tariff_writer.writerow(new_row)
 
         writer.writerow(headers)
         for row in matrix:
             writer.writerow(row)
 
-        return 1
-
-    def round5(self, value):
+    @staticmethod
+    def round5(value):
         return round(value / Decimal(.5)) * .5
 
     def abort(self):
