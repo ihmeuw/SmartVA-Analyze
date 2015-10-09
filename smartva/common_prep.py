@@ -99,7 +99,7 @@ class CommonPrep(object):
 
         self.write_data(headers, self._matrix_data, self.output_dir)
 
-        return True
+        return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
     @staticmethod
     def convert_cell_to_int(headers, row, conversion_data):
