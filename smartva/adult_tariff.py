@@ -54,83 +54,18 @@ class Tariff(object):
         status_logger.info('Adult :: Processing Adult tariffs')
         status_notifier.update({'progress': (4,)})
 
-        reader = csv.reader(open(self.input_file_path, 'rb'))
+        headers, matrix = get_headers_and_matrix_from_file(self.input_file_path, 'rb')
+
+        tariff_headers, tariff_matrix = get_headers_and_matrix_from_file(
+            os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)))
+
+        validated_headers, validated_matrix = get_headers_and_matrix_from_file(
+            os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP)))
+
+        undetermined_headers, undetermined_matrix = get_headers_and_matrix_from_file(
+            os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce))))
+
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
-
-        tariff_file = os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
-        validated_file = os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP))
-        # If hce is False, use hce0, else use hce1
-        undetermined_file = os.path.join(config.basedir,
-                                         '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
-
-        tariff_reader = csv.reader(open(tariff_file, 'rU'))
-        validated_reader = csv.reader(open(validated_file, 'rU'))
-        undetermined_reader = csv.reader(open(undetermined_file, 'rU'))
-
-        headers = []
-        matrix = []
-
-        tariff_headers = []
-        tariff_matrix = []
-
-        validated_headers = []
-        validated_matrix = []
-
-        undetermined_headers = []
-        undetermined_matrix = []
-
-        first = 1
-        # read in new .csv for processing
-        # we add the generated headers later this time
-        for row in reader:
-            if first == 1:
-                for col in row:
-                    headers.append(col)
-                first = 0
-
-            else:
-                matrix.append(row)
-
-        first = 1
-        # read in new tariffs.csv for processing
-        # we add the generated headers later this time
-        for row in tariff_reader:
-            if first == 1:
-                for col in row:
-                    tariff_headers.append(col)
-                first = 0
-
-            else:
-                tariff_matrix.append(row)
-
-        # print tariff_matrix
-
-        first = 1
-        # read in new validated .csv for processing
-        # we add the generated headers later this time
-        for row in validated_reader:
-            if first == 1:
-                for col in row:
-                    validated_headers.append(col)
-                first = 0
-
-            else:
-                validated_matrix.append(row)
-
-        if len(matrix) == 0:
-            # no entries, just return
-            return
-
-        first = 1
-        # read in new undetermined .csv for processing
-        for row in undetermined_reader:
-            if first == 1:
-                for col in row:
-                    undetermined_headers.append(col)
-                first = 0
-
-            else:
-                undetermined_matrix.append(row)
 
         if not self.hce:
             # remove all hce variables
@@ -618,3 +553,11 @@ class Tariff(object):
 
     def abort(self):
         self.want_abort = 1
+
+
+def get_headers_and_matrix_from_file(file_name, mode='rU'):
+    with open(file_name, 'rU') as f:
+        reader = csv.reader(f)
+        headers = next(reader)
+        matrix = [_ for _ in reader]
+    return headers, matrix
