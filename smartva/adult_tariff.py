@@ -4,14 +4,17 @@ from decimal import Decimal
 import math
 import os
 
-from smartva import adultuniformtrain
 from smartva import config
+from smartva.adultuniformtrain import FREQUENCIES
+from smartva.data_prep import DataPrep
 from smartva.freetext_vars import ADULT_FREE_TEXT
-from smartva.hce_variables import adult_hce
 from smartva.loggers import status_logger, warning_logger
-from smartva.short_form_remove import adult_remove
-from smartva.vacauses import adultcauses
 from smartva.utils import status_notifier
+from smartva.adult_tariff_data import (
+    ADULT_HCE_DROP_LIST,
+    ADULT_SHORT_FORM_DROP_LIST,
+    ADULT_CAUSES
+)
 
 
 # data structure we use to keep track of an manipulate data
@@ -25,7 +28,7 @@ class ScoredVA(object):
         self.gender = gender
 
 
-class Tariff(object):
+class Tariff(DataPrep):
     AGE_GROUP = 'adult'
 
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
@@ -39,14 +42,14 @@ class Tariff(object):
         :type country: str
         :type short_form: bool
         """
-        self.input_file_path = input_file
-        self.output_dir = output_dir
+        DataPrep.__init__(self, input_file, output_dir, short_form)
+
         self.intermediate_dir = intermediate_dir
+
         self.hce = hce
         self.free_text = free_text
         self.malaria = malaria
         self.iso3 = country
-        self.short_form = short_form
 
         self.want_abort = False
 
@@ -67,80 +70,25 @@ class Tariff(object):
 
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
 
+        drop_headers = set()
         if not self.hce:
-            # remove all hce variables
-            headers_copy = copy.deepcopy(headers)
-            for col in headers_copy:
-                if col in adult_hce:
-                    index = headers.index(col)
-                    for row in matrix:
-                        del row[index]
-                    headers.remove(col)
-
-            tariff_headers_copy = copy.deepcopy(tariff_headers)
-            for col in tariff_headers_copy:
-                if col in adult_hce:
-                    index = tariff_headers.index(col)
-                    for row in tariff_matrix:
-                        del row[index]
-                    tariff_headers.remove(col)
-
-            validated_headers_copy = copy.deepcopy(validated_headers)
-            for col in validated_headers_copy:
-                if col in adult_hce:
-                    index = validated_headers.index(col)
-                    for row in validated_matrix:
-                        del row[index]
-                    validated_headers.remove(col)
-
-        if not self.free_text and self.hce:
-            # only need to do this if 'hce' is on and free text is off, otherwise hce removes all free text
-            headers_copy = copy.deepcopy(headers)
-            for col in headers_copy:
-                if col in ADULT_FREE_TEXT:
-                    index = headers.index(col)
-                    for row in matrix:
-                        del row[index]
-                    headers.remove(col)
-
-            tariff_headers_copy = copy.deepcopy(tariff_headers)
-            for col in tariff_headers_copy:
-                if col in ADULT_FREE_TEXT:
-                    index = tariff_headers.index(col)
-                    for row in tariff_matrix:
-                        del row[index]
-                    tariff_headers.remove(col)
-
-            validated_headers_copy = copy.deepcopy(validated_headers)
-            for col in validated_headers_copy:
-                if col in ADULT_FREE_TEXT:
-                    index = validated_headers.index(col)
-                    for row in validated_matrix:
-                        del row[index]
-                    validated_headers.remove(col)
-
+            drop_headers.update(ADULT_HCE_DROP_LIST)
+        if not self.free_text:
+            drop_headers.update(ADULT_FREE_TEXT)
         if self.short_form:
-            for d in adult_remove:
-                try:
-                    index = headers.index(d)
-                    # headers.remove(d)
-                    for row in matrix:
-                        row[index] = 0
-                        # del row[index]
+            drop_headers.update(ADULT_SHORT_FORM_DROP_LIST)
 
-                    tariff_index = tariff_headers.index(d)
-                    # tariff_headers.remove(d)
-                    for row in tariff_matrix:
-                        # del row[tariff_index]
-                        row[tariff_index] = 0
+        drop_index_list = set([i for i, header in enumerate(tariff_headers) if header in drop_headers])
+        tariff_headers = self.drop_from_list(tariff_headers, drop_index_list)
+        tariff_matrix = [self.drop_from_list(_, drop_index_list) for _ in tariff_matrix]
 
-                    validated_index = validated_headers.index(d)
-                    # validated_headers.remove(d)
-                    for row in validated_matrix:
-                        # del row[validated_index]
-                        row[validated_index] = 0
-                except ValueError:
-                    pass  # if the header doesn't exit, it was probably removed by hce
+        drop_index_list = set([i for i, header in enumerate(validated_headers) if header in drop_headers])
+        validated_headers = self.drop_from_list(validated_headers, drop_index_list)
+        validated_matrix = [self.drop_from_list(_, drop_index_list) for _ in validated_matrix]
+
+        drop_index_list = set([i for i, header in enumerate(headers) if header in drop_headers])
+        headers = self.drop_from_list(headers, drop_index_list)
+        matrix = [self.drop_from_list(_, drop_index_list) for _ in matrix]
 
         # list of cause1: s1, s2, s50, ... top 40 s_vars per cause
         cause40s = {}
@@ -269,7 +217,7 @@ class Tariff(object):
             for cause_index in cause_indexes[str(cause)]:
                 va = validated_matrix[cause_index]
                 sid = va[validated_headers.index('sid')]
-                count = int(adultuniformtrain.frequencies[sid])
+                count = int(FREQUENCIES[sid])
                 for i in range(0, count):
                     uniform_train[str(cause)].append(va_validated_cause_list[cause_index])
 
@@ -490,10 +438,7 @@ class Tariff(object):
                     determined = 0
                     undetermined = 0
                     for uRow in undetermined_matrix:
-                        if uRow[undetermined_headers.index('sex')] == va.gender and (
-                            (int(va.age) <= int(uRow[undetermined_headers.index('age')]) < int(va.age) + 5) or (
-                                int(va.age) > 80 and int(uRow[undetermined_headers.index('age')]) == 80)) and uRow[
-                            undetermined_headers.index('iso3')] == self.iso3:
+                        if uRow[undetermined_headers.index('sex')] == va.gender and ((int(va.age) <= int(uRow[undetermined_headers.index('age')]) < int(va.age) + 5) or (int(va.age) > 80 and int(uRow[undetermined_headers.index('age')]) == 80)) and uRow[undetermined_headers.index('iso3')] == self.iso3:
                             # get the value and add it
                             if uRow[undetermined_headers.index('gs_text34')] in cause_counts.keys():
                                 cause_counts[uRow[undetermined_headers.index('gs_text34')]] += float(
@@ -502,7 +447,7 @@ class Tariff(object):
                                 cause_counts[uRow[undetermined_headers.index('gs_text34')]] = float(
                                     uRow[undetermined_headers.index('weight')])
             else:
-                cause34 = adultcauses[cause34]
+                cause34 = ADULT_CAUSES[cause34]
                 if cause34 in cause_counts.keys():
                     cause_counts[cause34] += 1.0
                 else:
@@ -556,7 +501,7 @@ class Tariff(object):
 
 
 def get_headers_and_matrix_from_file(file_name, mode='rU'):
-    with open(file_name, 'rU') as f:
+    with open(file_name, mode) as f:
         reader = csv.reader(f)
         headers = next(reader)
         matrix = [_ for _ in reader]
