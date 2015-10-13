@@ -29,7 +29,6 @@ class PreSymptomPrep(object):
         self.output_dir = output_dir
         self.want_abort = 0
         self.shortform = shortform
-        self.warnings = False
 
     def run(self):
         status_notifier.update({'progress': (10,)})
@@ -109,7 +108,6 @@ class PreSymptomPrep(object):
                                 # ERROR
                                 updatestr = 'Neonate :: Value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
                                 warning_logger.warning(updatestr)
-                                self.warnings = True
 
         # do the calculations for the generated variables:
         # i.e. recode
@@ -1176,11 +1174,6 @@ class PreSymptomPrep(object):
                 if not (c5_07_2b is None or c5_07_2b == ''):
                     self.printWarning('c5_07_2b', i, row, headers, neonate_defaultFill)
 
-        if not self.warnings:
-            status_logger.debug('Neonate :: Answers verified')
-        else:
-            status_logger.info('Neonate :: Warnings found, please check warnings.txt')
-
         # fill in missing values:
         status_logger.debug('Neonate :: Filling in default values for empty columns')
         for row in matrix:
@@ -1446,4 +1439,3 @@ class PreSymptomPrep(object):
         updatestr = 'Neonate :: Value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
         warning_logger.warning(updatestr)
         row[headers.index(var)] = str(neonate_defaultFill.get(var))
-        self.warnings = True

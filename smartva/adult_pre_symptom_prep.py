@@ -43,7 +43,6 @@ class AdultPreSymptomPrep(object):
         self.short_form = short_form
 
         self.want_abort = False
-        self.warnings = False
 
     def run(self):
         status_logger.info('Adult :: Processing pre-symptom data')
@@ -90,7 +89,7 @@ class AdultPreSymptomPrep(object):
 
                 new_row = row + additional_values
 
-                self.warnings |= self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
+                self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
 
                 self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
 
@@ -104,7 +103,7 @@ class AdultPreSymptomPrep(object):
 
                 self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
 
-                self.warnings |= check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
+                check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
 
                 self.fill_missing_data(headers, new_row, default_fill)
 
@@ -113,11 +112,6 @@ class AdultPreSymptomPrep(object):
                 matrix.append(self.drop_from_list(new_row, drop_index_list))
 
         headers = self.drop_from_list(headers, drop_index_list)
-
-        if not self.warnings:
-            status_logger.debug('Adult :: Answers verified')
-        else:
-            status_logger.info('Adult :: Warnings found, please check warnings.txt')
 
         status_notifier.update({'sub_progress': None})
 
