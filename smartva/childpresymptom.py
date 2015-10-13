@@ -29,7 +29,6 @@ class PreSymptomPrep(object):
         self.output_dir = output_dir
         self.want_abort = 0
         self.shortform = shortform
-        self.warnings = False
 
     def run(self):
         status_notifier.update({'progress': (7,)})
@@ -111,7 +110,6 @@ class PreSymptomPrep(object):
                                 # ERROR
                                 updatestr = 'Child :: Value %s in row %s for col %s is not legal for variable %s, please see Codebook for legal values' % (col, j + 2, i + 1, header)
                                 warning_logger.warning(updatestr)
-                                self.warnings = True
 
         # TODO: this wasn't here prior to short form edits, but I think it should have been all along...?
         # do the calculations for the generated variables:
@@ -1196,11 +1194,6 @@ class PreSymptomPrep(object):
             if row[headers.index('child_4_50b')] == '' or row[headers.index('child_4_50b')] is None:
                 row[headers.index('child_4_50b')] = 1000
 
-        if not self.warnings:
-            status_logger.debug('Child :: Answers verified')
-        else:
-            status_logger.info('Child :: Warnings found, please check warnings.txt')
-
         # fill in missing values:
         status_logger.debug('Child :: Filling in default values for empty columns')
         for row in matrix:
@@ -1538,4 +1531,3 @@ class PreSymptomPrep(object):
         updatestr = 'Child :: Value at row %s col %s for variable %s should be blank, setting to default and continuing' % (row_num + 2, headers.index(var), var)
         warning_logger.warning(updatestr)
         row[headers.index(var)] = str(child_defaultFill.get(var))
-        self.warnings = True

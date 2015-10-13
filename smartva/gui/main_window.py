@@ -299,8 +299,8 @@ class vaUI(wx.Frame):
         status_box_sizer.AddSizer(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         status_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
-        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
         start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        start_analysis_box_sizer.Add(status_box_sizer, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
 
         # build ui
         parent_box_sizer.Add(logo_box_sizer, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=5)
@@ -437,24 +437,25 @@ class vaUI(wx.Frame):
         :param status:
         :return:
         """
-        style = ''
-        status_message = ''
-        if status == workerthread.CompletionStatus.ABORT:
-            status_message = 'Computation successfully aborted. ' + message
-        elif status == workerthread.CompletionStatus.DONE:
-            status_message = 'Process complete. ' + message
-        elif status == workerthread.CompletionStatus.FAIL:
-            status_message = 'Process failed. ' + message
-            style = 'error'
         self.running = False
 
         if not self._want_quit:
+            style = ''
+            status_message = ''
+            if status == workerthread.CompletionStatus.ABORT:
+                status_message = 'Computation successfully aborted. '
+            elif status == workerthread.CompletionStatus.DONE:
+                status_message = 'Processing complete. '
+            elif status == workerthread.CompletionStatus.FAIL:
+                status_message = 'Processing failed. '
+                style = 'error'
+
             status_notifier.update({'progress': (int(not status), 1), 'sub_progress': (int(not status), 1)})
             self.action_button.Enable(True)
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
             status_logger.info(status_message)
-            status_notifier.update({'message': (status_message, style)})
+            status_notifier.update({'message': (status_message + message, style)})
 
         with self._completion_lock:
             self._completion_lock.notifyAll()
