@@ -267,9 +267,7 @@ class CommonPrep(object):
 
         for age, matrix in matrix_data.items():
             with open(os.path.join(output_dir, PREPPED_FILENAME_TEMPLATE.format(age)), 'wb', buffering=0) as f:
-                writer = csv.writer(f)
-                writer.writerow(headers)
-                writer.writerows(matrix)
+                csv.writer(f).writerows([headers] + matrix)
 
     def abort(self):
         self.want_abort = True

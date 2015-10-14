@@ -27,7 +27,7 @@ def additional_headers_and_values(headers, additional_headers_data):
             additional_headers.append(k)
             additional_values.append(v)
         else:
-            warning_logger.warning('Header "{}" already exists in data set and was not added.')
+            warning_logger.warning('Header "{}" already exists in data set and was not added.'.format(k))
 
     return additional_headers, additional_values
 
@@ -49,13 +49,17 @@ def convert_binary_variable(headers, row, data_header, data_map):
     :param data_map: Map of the values to binary value headers
     """
     index = get_header_index(headers, data_header)
-    for value in str(row[index]).split(' '):
-        try:
-            if int(value) in data_map:
-                row[headers.index(data_map[int(value)])] = 1
-        except ValueError:
-            # No values to process or not an integer value (invalid).
-            pass
+    try:
+        for value in map(int, str(row[index]).split(' ')):
+            if isinstance(data_map, dict):
+                if value in data_map:
+                    row[headers.index(data_map[value])] = 1
+            elif isinstance(data_map, list):
+                row[index] = int(value in data_map)
+
+    except ValueError:
+        # No values to process or not an integer value (invalid).
+        pass
 
 
 def check_skip_patterns(headers, row, skip_pattern_data):
