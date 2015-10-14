@@ -1,20 +1,26 @@
+from __future__ import print_function
 import csv
-import copy
 from decimal import Decimal
 import math
 import os
+import pickle
+import numpy as np
 
 from smartva import config
 from smartva.adultuniformtrain import FREQUENCIES
 from smartva.data_prep import DataPrep
 from smartva.freetext_vars import ADULT_FREE_TEXT
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier
+from smartva.utils import status_notifier, get_item_count_for_file
 from smartva.adult_tariff_data import (
     ADULT_HCE_DROP_LIST,
     ADULT_SHORT_FORM_DROP_LIST,
     ADULT_CAUSES
 )
+
+VALIDATED_CAUSE_NUMBER = 'va46'
+MAX_CAUSE_SYMPTOMS = 40
+MAX_CAUSE = 46
 
 
 # data structure we use to keep track of an manipulate data
@@ -26,6 +32,12 @@ class ScoredVA(object):
         self.sid = sid
         self.age = age
         self.gender = gender
+
+    def __repr__(self):
+        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Tariff(DataPrep):
@@ -57,17 +69,6 @@ class Tariff(DataPrep):
         status_logger.info('Adult :: Processing Adult tariffs')
         status_notifier.update({'progress': (4,)})
 
-        headers, matrix = get_headers_and_matrix_from_file(self.input_file_path, 'rb')
-
-        tariff_headers, tariff_matrix = get_headers_and_matrix_from_file(
-            os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)))
-
-        validated_headers, validated_matrix = get_headers_and_matrix_from_file(
-            os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP)))
-
-        undetermined_headers, undetermined_matrix = get_headers_and_matrix_from_file(
-            os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce))))
-
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
 
         drop_headers = set()
@@ -78,206 +79,103 @@ class Tariff(DataPrep):
         if self.short_form:
             drop_headers.update(ADULT_SHORT_FORM_DROP_LIST)
 
-        drop_index_list = set([i for i, header in enumerate(tariff_headers) if header in drop_headers])
-        tariff_headers = self.drop_from_list(tariff_headers, drop_index_list)
-        tariff_matrix = [self.drop_from_list(_, drop_index_list) for _ in tariff_matrix]
-
-        drop_index_list = set([i for i, header in enumerate(validated_headers) if header in drop_headers])
-        validated_headers = self.drop_from_list(validated_headers, drop_index_list)
-        validated_matrix = [self.drop_from_list(_, drop_index_list) for _ in validated_matrix]
-
-        drop_index_list = set([i for i, header in enumerate(headers) if header in drop_headers])
-        headers = self.drop_from_list(headers, drop_index_list)
-        matrix = [self.drop_from_list(_, drop_index_list) for _ in matrix]
-
-        # list of cause1: s1, s2, s50, ... top 40 s_vars per cause
         cause40s = {}
-        # for each cause, create a list with the top 40 's' variables     
-        for i, row in enumerate(tariff_matrix):
-            cause = row[0]
-            # make a dictionary mapping 's' variables to values
-            s_dict = {}
-            for j, col in enumerate(row):
-                if j == 0:
-                    continue  # noop, skip the first column
-                # save absval, relval
-                s_dict[tariff_headers[j]] = math.fabs(float(row[j]))
-            # sort the list based on the values of the s_vars
-            sorted_dict = sorted(s_dict.items(), key=lambda t: t[1], reverse=True)
 
-            s_list = []
-            for val in sorted_dict[:40]:
-                s_list.append(val[0])
-            cause40s[cause] = s_list
-            # print "cause: %s :: %s" % (cause, s_list)
+        with open(os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
+            reader = csv.DictReader(f)
 
-        #        for cause in cause40s.keys():
-        #            asdf = cause40s[cause]
-        #            asdf.sort()
-        #            print "cause: %s :: %s" % (cause, asdf)
+            drop_headers.add('xs_name')
 
-        # creates a list of causes/scores for each va.
-        # va1 :: cause1/score, cause2/score...cause46/score
-        # va2 :: cause1/score, cause2/score...
-        # ...
+            for row in reader:
+                items = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}.items()
+                cause40s[row['xs_name']] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
+                                           :MAX_CAUSE_SYMPTOMS]
+
         va_cause_list = []
-        for i, row in enumerate(matrix):
-            cause_dict = {}
-            for cause_num in range(1, 47):
-                cause = "cause" + str(cause_num)
-                s_list = cause40s[cause]
-                # for each s_var, if it's 1, find the number in the tariff matrix and add it to the total
-                cause_val = 0.0
-                for s_var in s_list:
-                    index = headers.index(s_var)
-                    if row[index] == str(1):
-                        tariff_index = tariff_headers.index(s_var)
-                        # row is cause_num - 1 since cause_num starts at 1 and index starts at 0
-                        tariff = self.round5(Decimal(tariff_matrix[cause_num - 1][tariff_index]))
-                        cause_val += float(tariff)
-                cause_dict[cause] = cause_val
-            sid = row[headers.index('sid')]
-            va = ScoredVA(cause_dict, row[validated_headers.index('va46')], sid, row[headers.index('real_age')],
-                          row[headers.index('real_gender')])
-            va_cause_list.append(va)
 
-        status_logger.debug('Adult :: Calculating scores for validated dataset.')
+        with open(self.input_file_path, 'rb') as f:
+            records = get_item_count_for_file(f)
+            reader = csv.DictReader(f)
+            status_notifier.update({'sub_progress': (0, records)})
 
-        # creates a list of causes/scores for each VALIDATED va.
-        # va1 :: cause1/score, cause2/score...cause46/score
-        # ... 
+            for index, row in enumerate(reader):
+                if self.want_abort:
+                    return False
 
-        va_validated_cause_list = []
-        max_cause = 46
+                status_notifier.update({'sub_progress': (index,)})
 
-        total = len(validated_matrix) * max_cause
-        div = min(10 ** len(str(abs(total))), 100)
-        status_notifier.update({'sub_progress': (0, total)})
+                cause_dict = {}
 
-        for i, row in enumerate(validated_matrix):
-            cause_dict = {}
-            for cause_num in range(1, max_cause + 1):
-                if self.want_abort == 1:
-                    return
-                cnt = (i * max_cause) + cause_num
-                if cnt % max((total / div), 1) == 0:
-                    status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
-                    status_notifier.update({'sub_progress': (cnt,)})
-                cause = "cause" + str(cause_num)
-                s_list = cause40s[cause]
-                cause_val = 0.0
-                for s_var in s_list:
-                    index = validated_headers.index(s_var)
-                    if row[index] == str(1):
-                        tariff_index = tariff_headers.index(s_var)
-                        # in tariff_matrix, cause1 == row 0, so -1 from cause_num
-                        tariff = self.round5(Decimal(tariff_matrix[cause_num - 1][tariff_index]))
-                        cause_val += float(tariff)
-                cause_dict[cause] = cause_val
-            sid = row[validated_headers.index('sid')]
-            va = ScoredVA(cause_dict, row[validated_headers.index('va46')], sid, 0, 0)
-            va_validated_cause_list.append(va)
+                for cause, symptoms in cause40s.items():
+                    cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
 
-        status_logger.debug('Adult :: Processing %s of %s' % (total, total))
+                va_cause_list.append(ScoredVA(cause_dict, 0, row['sid'], row['real_age'], row['real_gender']))
+
         status_notifier.update({'sub_progress': None})
 
-        status_logger.debug('Adult :: Creating uniform training set')
-        # creates the new "uniform train" data set from the validation data
-        # find the cause of death with the most deaths, and use that number
-        # as the sample size
-        # also track row indexes of each cause
+        va_validated_cause_list = []
 
-        # va46 is the validated cause of death
-        index = validated_headers.index('va46')
-        # count is a dictionary of {cause : count}
-        cause_count = {}
-        # cause_indexes is a list of indexes for a particular cause {cause : [1, 2, 3...], cause2:...}
-        cause_indexes = {}
-        for i, row in enumerate(validated_matrix):
-            cause = row[index]
-            if cause not in cause_count.keys():
-                # if the key doesn't exist, create it
-                cause_count[cause] = 1
-                cause_indexes[cause] = [i]
-            else:
-                # if the key does exist, increment it by 1
-                cause_count[cause] += 1
-                cause_indexes[cause].append(i)
+        with open(os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
+            records = get_item_count_for_file(f)
+            reader = csv.DictReader(f)
+            status_notifier.update({'sub_progress': (0, records)})
 
-        # now sort by size
-        sorted_cause_count = sorted(cause_count.items(), key=lambda t: t[1], reverse=True)
-        # sample size is the first (0th) element of the list, and the second (1th) item of that element
-        sample_size = sorted_cause_count[0][1]
+            for index, row in enumerate(reader):
+                if self.want_abort:
+                    return False
 
-        # create new uniform training set using the frequencies file
-        uniform_train = {}
-        for cause in range(1, 47):
-            uniform_train[str(cause)] = []
-            # indexes of all VAs of a certain cause
-            for cause_index in cause_indexes[str(cause)]:
-                va = validated_matrix[cause_index]
-                sid = va[validated_headers.index('sid')]
-                count = int(FREQUENCIES[sid])
-                for i in range(0, count):
-                    uniform_train[str(cause)].append(va_validated_cause_list[cause_index])
+                status_notifier.update({'sub_progress': (index,)})
 
-        # create a list of ALL the VAs in our uniform set
+                cause_dict = {}
+
+                for cause, symptoms in cause40s.items():
+                    cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
+
+                va_validated_cause_list.append(ScoredVA(cause_dict, row['va46'], row['sid'], 0, 0))
+
+        status_notifier.update({'sub_progress': None})
+
+        """
+
+        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+            p = pickle.Unpickler(f)
+            va_validated_cause_list = p.load()
+
+        """
+
         uniform_list = []
-        for key in uniform_train.keys():
-            # vas this should be 600ish long
-            vas = uniform_train[key]
-            for va in vas:
-                uniform_list.append(va)
+
+        for va in va_validated_cause_list:
+            uniform_list.extend([va] * FREQUENCIES[va.sid])
 
         status_logger.debug('Adult :: Generating cause rankings.')
 
-        total = len(va_cause_list) * max_cause
-        div = min(10 ** len(str(abs(total))), 100)
-        status_notifier.update({'sub_progress': (0, total)})
+        status_notifier.update({'sub_progress': (0, len(va_cause_list))})
 
-        for i, va in enumerate(va_cause_list):
-            sorted_tariffs = []
+        for index, va in enumerate(va_cause_list):
             rank_list = {}
-            for cause_num in range(1, max_cause + 1):
-                if self.want_abort == 1:
+            for cause in cause40s:
+                if self.want_abort:
                     return
-                cnt = (i * max_cause) + cause_num
-                if cnt % max((total / div), 1) == 0:
-                    status_logger.debug('Adult :: Processing %s of %s' % (cnt, total))
-                    status_notifier.update({'sub_progress': (cnt,)})
-                cause = "cause" + str(cause_num)
+
+                status_notifier.update({'sub_progress': (index,)})
+
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]
                 # make a list of tariffs of ALL validated VAs for this cause
-                tariffs = []
-                for validated_va in uniform_list:
-                    tariffs.append(validated_va.cause_scores[cause])
+                sorted_tariffs = sorted((x.cause_scores[cause] for x in (v_va for v_va in uniform_list)), reverse=True)
 
-                # sort them and calculate absolute value of tariff-death_score
-                sorted_tariffs = sorted(tariffs, reverse=True)
+                sorted_tariffs = [math.fabs(x - death_score) for x in sorted_tariffs]
 
-                for idx, val in enumerate(sorted_tariffs):
-                    sorted_tariffs[idx] = math.fabs(val - death_score)
+                rank = np.where(np.array(sorted_tariffs) == min(sorted_tariffs))[0].mean()
 
-                min_list = []
-                min_val = None
-
-                # loop through all the new scores, find the minimum value, store that index
-                # if there are multiple minimum values that are the same, take the mean of the indexes
-                for index, val in enumerate(sorted_tariffs):
-                    if val < min_val or min_val is None:
-                        min_val = val
-                        min_list = [index]
-                    elif val == min_val:
-                        min_list.append(index)
-
-                index = sum(min_list) / float(len(min_list))
                 # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
-                rank_list[cause] = index + 1
-            va.rank_list = rank_list
+                rank_list[cause] = rank + 1
 
-        status_logger.debug('Adult :: Processing %s of %s' % (total, total))
+            va.rank_list = rank_list
+            # print(va.sid, rank_list)
+
         status_notifier.update({'sub_progress': None})
 
         rank_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
@@ -492,12 +390,12 @@ class Tariff(DataPrep):
         for row in matrix:
             writer.writerow(row)
 
-    @staticmethod
-    def round5(value):
-        return round(value / Decimal(.5)) * .5
-
     def abort(self):
         self.want_abort = 1
+
+
+def round5(value):
+    return round(value / Decimal(.5)) * .5
 
 
 def get_headers_and_matrix_from_file(file_name, mode='rU'):

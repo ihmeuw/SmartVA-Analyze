@@ -85,3 +85,12 @@ def get_item_count(items, f=None):
         except AttributeError:
             pass
     return count
+
+
+def get_item_count_for_file(f):
+    reader = csv.reader(f)
+    count = 0
+    for count, _ in enumerate(reader):
+        pass
+    f.seek(0)
+    return count
