@@ -23,6 +23,21 @@ MAX_CAUSE_SYMPTOMS = 40
 MAX_CAUSE = 46
 
 
+def cmp_rank_keys(a, b):
+    """
+    Compare rank keys for sorting. Sorts non-causes first, then causes by cause number.
+
+    :param a: Tuple (is cause? (bool), value)
+    :param b: Tuple (is cause? (bool), value)
+    :return: cmp(a, b)
+    """
+    # If both values are causes, sort by the cause number.
+    if a[0] & b[0]:
+        cmp_a, cmp_b = int(a[1].strip("cause")), int(b[1].strip("cause"))
+        return cmp(cmp_a, cmp_b)
+    return cmp(a, b)
+
+
 # data structure we use to keep track of an manipulate data
 class ScoredVA(object):
     def __init__(self, cause_scores, cause, sid, age, gender):
@@ -162,10 +177,11 @@ class Tariff(DataPrep):
 
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]
-                # make a list of tariffs of ALL validated VAs for this cause
-                sorted_tariffs = sorted((x.cause_scores[cause] for x in (v_va for v_va in uniform_list)), reverse=True)
 
-                sorted_tariffs = [math.fabs(x - death_score) for x in sorted_tariffs]
+                # make a list of tariffs of ALL validated VAs for this cause
+                sorted_tariffs = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
+
+                sorted_tariffs = [math.fabs(_ - death_score) for _ in sorted_tariffs]
 
                 rank = np.where(np.array(sorted_tariffs) == min(sorted_tariffs))[0].mean()
 
@@ -178,16 +194,16 @@ class Tariff(DataPrep):
 
         status_notifier.update({'sub_progress': None})
 
-        rank_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0))
-        header_row = ["sid"]
-        for cause in va_cause_list[0].rank_list.keys():
-            header_row.append(cause)
-        rank_writer.writerow(header_row)
+        rank_list = []
         for va in va_cause_list:
-            new_row = [va.sid]
-            for cause in va.rank_list.keys():
-                new_row.append(va.rank_list[cause])
-            rank_writer.writerow(new_row)
+            rank_dict = {"sid": va.sid}
+            rank_dict.update(va.rank_list)
+            rank_list.append(rank_dict)
+
+        with open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0) as f:
+            rank_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), cmp=cmp_rank_keys, key=lambda x: (x.startswith('cause'), x)))
+            rank_writer.writeheader()
+            rank_writer.writerows(rank_list)
 
         for i in range(1, 47):
             cause = "cause" + str(i)
