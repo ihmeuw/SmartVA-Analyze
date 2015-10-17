@@ -226,40 +226,26 @@ class Tariff(DataPrep):
 
         status_logger.debug('Adult :: Generating cutoffs')
 
-        cutoffs = []
-        for i in range(1, 47):
-            cause_list = []
-            for va in uniform_list:
-                cause_list.append([va.cause, va.cause_scores["cause" + str(i)], va.sid, va])
+        with open(os.path.join(self.intermediate_dir, '{}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
+            cutoffs = {}
+            for cause in sorted(cause40s, cmp=cmp_rank_keys, key=lambda t: (True, t)):
+                cause_num = int(cause.strip('cause'))
+                # Get the uniform list sorted by (reversed) cause_score and sid.
+                sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause], va.sid))
 
-            cause_list.sort(key=lambda t: t[2])
-            cause_list.sort(key=lambda t: t[1], reverse=True)
-            sorted_list = cause_list
+                # Create a list of indexes from the sorted cause list for each cause.
+                # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
+                # numbers as the original stata tool
+                local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if int(va.cause) == cause_num]
 
-            local_list = []
-            for j, va in enumerate(sorted_list):
-                if va[0] == str(i):
-                    # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
-                    # numbers as the original stata tool
-                    local_list.append(j + 1)
+                # Find the index of the item at 89%.
+                cutoffs[cause_num] = local_list[int(len(local_list) * 0.89)]
 
-            # make it an int, don't round
-            index = int(len(local_list) * .89)
-            cutoffs.append(local_list[index])
+                f.write('{} : {}\n'.format(cause_num, cutoffs[cause_num]))
 
-        f = open(self.intermediate_dir + os.sep + 'adult-cutoffs.txt', 'w')
-        for i, cutoff in enumerate(cutoffs):
-            f.write(str(i + 1) + " : " + str(cutoff) + "\n")
-        f.close()
-
-        # lowest rank is actually the biggest number
-        lowest = 0
-        # find the lowest rank and then add 1 to it
-        for va in va_cause_list:
-            for cause in va.rank_list.keys():
-                if float(va.rank_list[cause]) > 0 and float(va.rank_list[cause]) > lowest:
-                    lowest = float(va.rank_list[cause])
-        lowest += 1
+        # The way it was written, the lowest rank is always the length of the uniform list.
+        # I am replacing the code to represent that.
+        lowest = len(uniform_list)
 
         # if a VA has a tariff score less than 0 for a certain cause,
         # replace the rank for that cause with the lowest possible rank
