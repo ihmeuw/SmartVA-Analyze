@@ -173,13 +173,10 @@ class Tariff(DataPrep):
         status_notifier.update({'sub_progress': None})
 
         with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
-            p = pickle.Pickler(f)
-            p.dump(va_validated_cause_list)
-
+            pickle.dump(va_validated_cause_list, f)
         """
         with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
-            p = pickle.Unpickler(f)
-            va_validated_cause_list = p.load()
+            va_validated_cause_list = pickle.load(f)
         # """
 
         uniform_list = []
@@ -216,13 +213,10 @@ class Tariff(DataPrep):
             va.rank_list = rank_list
 
         with open(os.path.join(self.intermediate_dir, 'rank_list-adult.pickle'), 'wb') as f:
-            p = pickle.Pickler(f)
-            p.dump(va_cause_list)
-
+            pickle.dump(va_cause_list, f)
         """
         with open(os.path.join(self.intermediate_dir, 'rank_list-adult.pickle'), 'rb') as f:
-            p = pickle.Unpickler(f)
-            va_cause_list = p.load()
+            va_cause_list = pickle.load(f)
         # """
 
         status_notifier.update({'sub_progress': None})
