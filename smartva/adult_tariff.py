@@ -250,54 +250,45 @@ class Tariff(DataPrep):
         # if a VA has a tariff score less than 0 for a certain cause,
         # replace the rank for that cause with the lowest possible rank
         for va in va_cause_list:
-            for cause in va.cause_scores.keys():
-                if float(va.cause_scores[cause]) < 0:
+            for cause in va.cause_scores:
+                if float(va.cause_scores[cause]) < 0.0:
                     va.rank_list[cause] = lowest
 
-        for i, row in enumerate(matrix):
-            age = int(row[headers.index('real_age')])
-            sex = int(row[headers.index('real_gender')])
+        for va in va_cause_list:
+            age = int(va.age)
+            sex = int(va.gender)
 
+            lowest_cause_list = set()
+            
             # only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis
-            maternal_causes = [3, 20, 22, 36, 42]
-            rankings_row = va_cause_list[i].rank_list
-
             if sex == 0 or age > 49 or age < 15:
-                for cause in maternal_causes:
-                    rankings_row["cause" + str(cause)] = lowest
+                lowest_cause_list.update(MATERNAL_CAUSES)
 
-            female_causes = [6, 7]
-            if sex == 0:
-                for cause in female_causes:
-                    rankings_row["cause" + str(cause)] = lowest
+            if sex == 1:
+                lowest_cause_list.update(FEMALE_CAUSES)
 
             # female, can't have prostate cancer
-            if sex == 1:
-                rankings_row["cause39"] = lowest
+            if sex == 2:
+                lowest_cause_list.update(MALE_CAUSES)
 
             # can't have AIDS if over 75
             if age > 75:
-                rankings_row["cause1"] = lowest
-                rankings_row["cause2"] = lowest
+                lowest_cause_list.update(AIDS_CAUSES)
 
             # can't have cancer if under 15
-            cancers = [6, 7, 9, 17, 27, 30, 39, 43]
             if age < 15:
-                for cause in cancers:
-                    rankings_row["cause" + str(cause)] = lowest
+                lowest_cause_list.update(CANCER_CAUSES)
 
             if not self.malaria:
-                rankings_row["cause29"] = lowest
-
-        for va in va_cause_list:
-            for i in range(1, 47):
-                if float(va.rank_list["cause" + str(i)]) > float(cutoffs[i - 1]):
-                    va.rank_list["cause" + str(i)] = lowest
-                elif float(va.rank_list["cause" + str(i)]) > float(len(uniform_list) * .18):
-                    va.rank_list["cause" + str(i)] = lowest
-                elif float(va.cause_scores["cause" + str(
-                        i)]) <= 6.0:  # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                    va.rank_list["cause" + str(i)] = lowest
+                lowest_cause_list.update(MALARIA_CAUSES)
+                
+            for cause in cause40s:
+                cause_num = int(cause.strip('cause'))
+                if ((float(va.rank_list[cause]) > float(cutoffs[cause_num])) or
+                        (float(va.rank_list[cause]) > float(len(uniform_list) * .18)) or
+                        # EXPERIMENT: reject tariff scores less than a fixed amount as well
+                        (float(va.cause_scores[cause]) <= 6.0)):
+                    lowest_cause_list.add(cause_num)
 
         # changing 46 causes to 34 causes:
         cause_reduction = {'cause1': '1', 'cause2': '1', 'cause3': '21', 'cause4': '2', 'cause5': '3', 'cause6': '4',
