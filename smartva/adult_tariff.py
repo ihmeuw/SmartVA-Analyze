@@ -93,8 +93,6 @@ class Tariff(DataPrep):
         status_logger.info('Adult :: Processing Adult tariffs')
         status_notifier.update({'progress': (4,)})
 
-        writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-results.csv', 'wb', buffering=0))
-
         drop_headers = set()
         if not self.hce:
             drop_headers.update(ADULT_HCE_DROP_LIST)
@@ -261,7 +259,7 @@ class Tariff(DataPrep):
 
             lowest_cause_list = set()
             
-            # only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis
+            # only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, pregnancy-related, or sepsis
             if sex == 0 or age > 49 or age < 15:
                 lowest_cause_list.update(MATERNAL_CAUSES)
 
@@ -299,39 +297,41 @@ class Tariff(DataPrep):
             undetermined_matrix = [row for row in reader]
 
         cause_counts = collections.Counter()
-        prediction_writer = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
-        prediction_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
-        for va in va_cause_list:
-            cause34 = ''
+        with open(os.path.join(self.output_dir, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
+            prediction_writer = csv.writer(f)
+            prediction_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
 
-            va_lowest_rank = min(va.rank_list.values())
-            if va_lowest_rank < lowest:
-                multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
-                cause34 = CAUSE_REDUCTION[multiple[0]]
-                if len(multiple) > 1:
-                    warning_logger.info(
-                        '{group:s} ::: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
-                            group=self.AGE_GROUP.capitalize(), sid=va.sid, causes=multiple))
+            for va in va_cause_list:
+                cause34 = ''
 
-            if not cause34:
-                cause34_name = 'Undetermined'
-                if self.iso3 is None:
-                    cause_counts.update(cause34_name)
+                va_lowest_rank = min(va.rank_list.values())
+                if va_lowest_rank < lowest:
+                    multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
+                    cause34 = CAUSE_REDUCTION[multiple[0]]
+                    if len(multiple) > 1:
+                        warning_logger.info(
+                            '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
+                                group=self.AGE_GROUP.capitalize(), sid=va.sid, causes=multiple))
+
+                if not cause34:
+                    cause34_name = 'Undetermined'
+                    if self.iso3 is None:
+                        cause_counts.update(cause34_name)
+                    else:
+                        # for undetermined, look up the values for each cause using keys (age, sex, country) and
+                        # add them to the 'count' for that cause
+                        for u_row in undetermined_matrix:
+                            if (u_row['sex'] == va.gender and
+                                    ((int(va.age) <= int(u_row['age']) < int(va.age) + 5) or
+                                        (int(va.age) > 80 and int(u_row['age']) == 80)) and
+                                    u_row['iso3'] == self.iso3):
+                                # get the value and add it
+                                cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
                 else:
-                    # for undetermined, look up the values for each cause using keys (age, sex, country) and
-                    # add them to the 'count' for that cause
-                    for u_row in undetermined_matrix:
-                        if (u_row['sex'] == va.gender and
-                                ((int(va.age) <= int(u_row['age']) < int(va.age) + 5) or
-                                    (int(va.age) > 80 and int(u_row['age']) == 80)) and
-                                u_row['iso3'] == self.iso3):
-                            # get the value and add it
-                            cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
-            else:
-                cause34_name = ADULT_CAUSES[cause34]
-                cause_counts.update(cause34_name)
+                    cause34_name = ADULT_CAUSES[cause34]
+                    cause_counts.update(cause34_name)
 
-            prediction_writer.writerow([va.sid, cause34, cause34_name, va.age, va.gender])
+                prediction_writer.writerow([va.sid, cause34, cause34_name, va.age, va.gender])
 
         csmf_writer = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
         csmf_headers = ["cause", "CSMF"]
