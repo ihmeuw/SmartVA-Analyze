@@ -52,7 +52,7 @@ def cmp_rank_keys(a, b):
     """
     # If both values are causes, sort by the cause number.
     if a[0] & b[0]:
-        cmp_a, cmp_b = int(a[1].strip("cause")), int(b[1].strip("cause"))
+        cmp_a, cmp_b = get_cause_num(a[1]), get_cause_num(b[1])
         return cmp(cmp_a, cmp_b)
     return cmp(a, b)
 
@@ -103,7 +103,9 @@ class Tariff(DataPrep):
         status_logger.info('Adult :: Processing Adult tariffs')
         status_notifier.update({'progress': (4,)})
 
-        drop_headers = set()
+        # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
+        # tariffs. It is unnecessary to drop headers from other matrices.
+        drop_headers = {TARIFF_CAUSE_NUM_KEY}
         if not self.hce:
             drop_headers.update(ADULT_HCE_DROP_LIST)
         if not self.free_text:
@@ -113,19 +115,18 @@ class Tariff(DataPrep):
 
         with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
             reader = csv.DictReader(f)
-            cause_names = {int(cause['va46']): cause['gs_text46'] for cause in reader}
+            cause_names = {int(cause[CAUSE_NUM_KEY]): cause[CAUSE_NAME_KEY] for cause in reader}
 
         cause40s = {}
 
         with open(os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
             reader = csv.DictReader(f)
 
-            drop_headers.add('xs_name')
-
             for row in reader:
+                cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
+
                 items = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}.items()
-                cause40s[row['xs_name']] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
-                                           :MAX_CAUSE_SYMPTOMS]
+                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:MAX_CAUSE_SYMPTOMS]
 
         va_cause_list = []
 
@@ -145,7 +146,7 @@ class Tariff(DataPrep):
                 for cause, symptoms in cause40s.items():
                     cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
 
-                va_cause_list.append(ScoredVA(cause_dict, 0, row['sid'], row['real_age'], row['real_gender']))
+                va_cause_list.append(ScoredVA(cause_dict, 0, row[SID_KEY], row[AGE_KEY], row[SEX_KEY]))
 
         status_notifier.update({'sub_progress': None})
 
@@ -170,8 +171,13 @@ class Tariff(DataPrep):
                 va_validated_cause_list.append(ScoredVA(cause_dict, row['va46'], row['sid'], 0, 0))
 
         status_notifier.update({'sub_progress': None})
+
+        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+            p = pickle.Pickler(f)
+            p.dump(va_validated_cause_list)
+
         """
-        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             p = pickle.Unpickler(f)
             va_validated_cause_list = p.load()
         # """
@@ -208,6 +214,11 @@ class Tariff(DataPrep):
                 rank_list[cause] = rank + 1
 
             va.rank_list = rank_list
+
+        with open(os.path.join(self.intermediate_dir, 'rank_list-adult.pickle'), 'wb') as f:
+            p = pickle.Pickler(f)
+            p.dump(va_cause_list)
+
         """
         with open(os.path.join(self.intermediate_dir, 'rank_list-adult.pickle'), 'rb') as f:
             p = pickle.Unpickler(f)
@@ -223,7 +234,7 @@ class Tariff(DataPrep):
             rank_list.append(rank_dict)
 
         with open(os.path.join(self.intermediate_dir, '{}-external-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            prediction_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), cmp=cmp_rank_keys, key=lambda x: (x.startswith('cause'), x)))
+            prediction_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), key=lambda x: (isinstance(x, int), x)))
             prediction_writer.writeheader()
             prediction_writer.writerows(rank_list)
 
@@ -237,10 +248,9 @@ class Tariff(DataPrep):
 
         with open(os.path.join(self.intermediate_dir, '{}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
             cutoffs = {}
-            for cause in sorted(cause40s, cmp=cmp_rank_keys, key=lambda t: (True, t)):
-                cause_num = int(cause.strip('cause'))
+            for cause_num in sorted(cause40s):
                 # Get the uniform list sorted by (reversed) cause_score and sid.
-                sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause], va.sid))
+                sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause_num], va.sid))
 
                 # Create a list of indexes from the sorted cause list for each cause.
                 # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
@@ -291,16 +301,15 @@ class Tariff(DataPrep):
             if not self.malaria:
                 lowest_cause_list.update(MALARIA_CAUSES)
                 
-            for cause in cause40s:
-                cause_num = int(cause.strip('cause'))
-                if ((float(va.rank_list[cause]) > float(cutoffs[cause_num])) or
-                        (float(va.rank_list[cause]) > float(len(uniform_list) * .18)) or
+            for cause_num in cause40s:
+                if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
+                        (float(va.rank_list[cause_num]) > float(len(uniform_list) * .18)) or
                         # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.cause_scores[cause]) <= 6.0)):
+                        (float(va.cause_scores[cause_num]) <= 6.0)):
                     lowest_cause_list.add(cause_num)
 
             for cause_num in lowest_cause_list:
-                va.rank_list['cause{}'.format(cause_num)] = lowest
+                va.rank_list[cause_num] = lowest
 
         with open(os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce))), 'rU') as f:
             reader = csv.DictReader(f)
@@ -309,7 +318,7 @@ class Tariff(DataPrep):
         cause_counts = collections.Counter()
         with open(os.path.join(self.output_dir, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
             prediction_writer = csv.writer(f)
-            prediction_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
+            prediction_writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
 
             for va in va_cause_list:
                 cause34 = ''
@@ -317,7 +326,7 @@ class Tariff(DataPrep):
                 va_lowest_rank = min(va.rank_list.values())
                 if va_lowest_rank < lowest:
                     multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
-                    cause34 = CAUSE_REDUCTION[multiple[0]]
+                    cause34 = CAUSE_REDUCTION[int(multiple[0])]
                     if len(multiple) > 1:
                         warning_logger.info(
                             '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
@@ -326,7 +335,7 @@ class Tariff(DataPrep):
                 if not cause34:
                     cause34_name = 'Undetermined'
                     if self.iso3 is None:
-                        cause_counts.update(cause34_name)
+                        cause_counts.update([cause34_name])
                     else:
                         # for undetermined, look up the values for each cause using keys (age, sex, country) and
                         # add them to the 'count' for that cause
@@ -339,7 +348,7 @@ class Tariff(DataPrep):
                                 cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
                 else:
                     cause34_name = ADULT_CAUSES[cause34]
-                    cause_counts.update(cause34_name)
+                    cause_counts.update([cause34_name])
 
                 prediction_writer.writerow([va.sid, cause34, cause34_name, va.age, va.gender])
 
@@ -376,10 +385,6 @@ class Tariff(DataPrep):
             for cause in va.cause_scores.keys():
                 new_row.append(va.cause_scores[cause])
             tariff_writer.writerow(new_row)
-
-        # writer.writerow(headers)
-        # for row in matrix:
-        #     writer.writerow(row)
 
     def abort(self):
         self.want_abort = 1
