@@ -31,9 +31,9 @@ graph_data = defaultdict(get_default_dict)
 # convert value from csv to key for dict
 def get_gender_key(gender_value):
     gender_key = 'unknown'
-    if gender_value == '1':
+    if gender_value == '2':
         gender_key = 'female'
-    elif gender_value == '0':
+    elif gender_value == '1':
         gender_key = 'male'
     return gender_key
 
@@ -155,9 +155,7 @@ class CauseGrapher(object):
         for cnt, cause_key in enumerate(graph_data.keys()):
             status_notifier.update({'sub_progress': (cnt,)})
 
-            # TODO - Fix this. Module key may not be the correct variable here.
-            if module_errors[module_key] != 1:
-                make_graph(cause_key, self.output_dir)
+            make_graph(cause_key, self.output_dir)
 
         status_notifier.update({'sub_progress': None})
 

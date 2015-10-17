@@ -27,9 +27,19 @@ from smartva.adult_tariff_data import (
     CAUSE_REDUCTION
 )
 
-VALIDATED_CAUSE_NUMBER = 'va46'
+CAUSE_NUM_KEY = 'va46'
+CAUSE_NAME_KEY = 'gs_text46'
+TARIFF_CAUSE_NUM_KEY = 'xs_name'
 MAX_CAUSE_SYMPTOMS = 40
 MAX_CAUSE = 46
+
+SID_KEY = 'sid'
+AGE_KEY = 'real_age'
+SEX_KEY = 'real_gender'
+
+
+def get_cause_num(cause):
+    return int(cause.lstrip('cause'))
 
 
 def cmp_rank_keys(a, b):
