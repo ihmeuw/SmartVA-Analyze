@@ -214,9 +214,9 @@ class Tariff(DataPrep):
             rank_list.append(rank_dict)
 
         with open(os.path.join(self.intermediate_dir, '{}-external-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            rank_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), cmp=cmp_rank_keys, key=lambda x: (x.startswith('cause'), x)))
-            rank_writer.writeheader()
-            rank_writer.writerows(rank_list)
+            prediction_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), cmp=cmp_rank_keys, key=lambda x: (x.startswith('cause'), x)))
+            prediction_writer.writeheader()
+            prediction_writer.writerows(rank_list)
 
         # IDEA - Create a ScoredVA container that does this and other related operations.
         for cause in cause40s:
@@ -290,69 +290,47 @@ class Tariff(DataPrep):
                         (float(va.cause_scores[cause]) <= 6.0)):
                     lowest_cause_list.add(cause_num)
 
-        # changing 46 causes to 34 causes:
-        cause_reduction = {'cause1': '1', 'cause2': '1', 'cause3': '21', 'cause4': '2', 'cause5': '3', 'cause6': '4',
-                           'cause7': '5', 'cause8': '6', 'cause9': '7', 'cause10': '8', 'cause11': '9', 'cause12': '9',
-                           'cause13': '9', 'cause14': '10', 'cause15': '11', 'cause16': '12', 'cause17': '13',
-                           'cause18': '14', 'cause19': '15', 'cause20': '21', 'cause21': '16', 'cause22': '21',
-                           'cause23': '17', 'cause24': '22', 'cause25': '22', 'cause26': '18', 'cause27': '19',
-                           'cause28': '18', 'cause29': '20', 'cause30': '25', 'cause31': '22', 'cause32': '25',
-                           'cause33': '23', 'cause34': '24', 'cause35': '25', 'cause36': '21', 'cause37': '26',
-                           'cause38': '27', 'cause39': '28', 'cause40': '29', 'cause41': '30', 'cause42': '21',
-                           'cause43': '31', 'cause44': '32', 'cause45': '33', 'cause46': '34', 'Undetermined': ''}
+            for cause_num in lowest_cause_list:
+                va.rank_list['cause{}'.format(cause_num)] = lowest
 
-        cause_counts = {}
-        rank_writer = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
-        rank_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
+        with open(os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce))), 'rU') as f:
+            reader = csv.DictReader(f)
+            undetermined_matrix = [row for row in reader]
+
+        cause_counts = collections.Counter()
+        prediction_writer = csv.writer(open(self.output_dir + os.sep + 'adult-predictions.csv', 'wb', buffering=0))
+        prediction_writer.writerow(['sid', 'cause', 'cause34', 'age', 'sex'])
         for va in va_cause_list:
-            cause_score = lowest
-            real_cause = 'Undetermined'
             cause34 = ''
-            multiple = {}
-            for cause in va.rank_list:
-                if float(va.rank_list[cause]) < cause_score:
-                    cause_score = float(va.rank_list[cause])
-                    real_cause = cause
-                    cause34 = cause_reduction[cause]
-                    multiple[va.sid] = [cause]
-                elif cause_score == float(va.rank_list[cause]) and cause_score != lowest:
-                    multiple[va.sid].append(cause)
 
-            # Notify user if multiple causes have been determined.
-            for sid_key, causes in multiple.items():
-                if len(causes) > 1:
+            va_lowest_rank = min(va.rank_list.values())
+            if va_lowest_rank < lowest:
+                multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
+                cause34 = CAUSE_REDUCTION[multiple[0]]
+                if len(multiple) > 1:
                     warning_logger.info(
-                        '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
-                            group=self.AGE_GROUP.capitalize(), sid=sid_key, causes=causes))
+                        '{group:s} ::: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
+                            group=self.AGE_GROUP.capitalize(), sid=va.sid, causes=multiple))
 
-            if cause34 == '':
-                cause34 = 'Undetermined'
+            if not cause34:
+                cause34_name = 'Undetermined'
                 if self.iso3 is None:
-                    if cause34 in cause_counts.keys():
-                        cause_counts[cause34] += 1.0
-                    else:
-                        cause_counts[cause34] = 1.0
+                    cause_counts.update(cause34_name)
                 else:
                     # for undetermined, look up the values for each cause using keys (age, sex, country) and
                     # add them to the 'count' for that cause
-                    determined = 0
-                    undetermined = 0
-                    for uRow in undetermined_matrix:
-                        if uRow[undetermined_headers.index('sex')] == va.gender and ((int(va.age) <= int(uRow[undetermined_headers.index('age')]) < int(va.age) + 5) or (int(va.age) > 80 and int(uRow[undetermined_headers.index('age')]) == 80)) and uRow[undetermined_headers.index('iso3')] == self.iso3:
+                    for u_row in undetermined_matrix:
+                        if (u_row['sex'] == va.gender and
+                                ((int(va.age) <= int(u_row['age']) < int(va.age) + 5) or
+                                    (int(va.age) > 80 and int(u_row['age']) == 80)) and
+                                u_row['iso3'] == self.iso3):
                             # get the value and add it
-                            if uRow[undetermined_headers.index('gs_text34')] in cause_counts.keys():
-                                cause_counts[uRow[undetermined_headers.index('gs_text34')]] += float(
-                                    uRow[undetermined_headers.index('weight')])
-                            else:
-                                cause_counts[uRow[undetermined_headers.index('gs_text34')]] = float(
-                                    uRow[undetermined_headers.index('weight')])
+                            cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
             else:
-                cause34 = ADULT_CAUSES[cause34]
-                if cause34 in cause_counts.keys():
-                    cause_counts[cause34] += 1.0
-                else:
-                    cause_counts[cause34] = 1.0
-            rank_writer.writerow([va.sid, cause_reduction[real_cause], cause34, va.age, va.gender])
+                cause34_name = ADULT_CAUSES[cause34]
+                cause_counts.update(cause34_name)
+
+            prediction_writer.writerow([va.sid, cause34, cause34_name, va.age, va.gender])
 
         csmf_writer = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
         csmf_headers = ["cause", "CSMF"]
@@ -366,16 +344,16 @@ class Tariff(DataPrep):
         # assert int(sum(cause_counts.values())) == len(matrix), \
         #              'CSMF must sum to one'
 
-        rank_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
+        prediction_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
         header_row = ["sid"]
         for cause in va_cause_list[0].rank_list.keys():
             header_row.append(cause)
-        rank_writer.writerow(header_row)
+        prediction_writer.writerow(header_row)
         for va in va_cause_list:
             new_row = [va.sid]
             for cause in va.rank_list.keys():
                 new_row.append(va.rank_list[cause])
-            rank_writer.writerow(new_row)
+            prediction_writer.writerow(new_row)
 
         tariff_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
         header_row = ["sid"]
