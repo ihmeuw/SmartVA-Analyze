@@ -1,10 +1,12 @@
 from __future__ import print_function
-import csv
 from decimal import Decimal
+
+import collections
+import csv
 import math
+import numpy as np
 import os
 import pickle
-import numpy as np
 
 from smartva import config
 from smartva.adultuniformtrain import FREQUENCIES
@@ -15,7 +17,14 @@ from smartva.utils import status_notifier, get_item_count_for_file
 from smartva.adult_tariff_data import (
     ADULT_HCE_DROP_LIST,
     ADULT_SHORT_FORM_DROP_LIST,
-    ADULT_CAUSES
+    ADULT_CAUSES,
+    MATERNAL_CAUSES,
+    FEMALE_CAUSES,
+    MALE_CAUSES,
+    AIDS_CAUSES,
+    CANCER_CAUSES,
+    MALARIA_CAUSES,
+    CAUSE_REDUCTION
 )
 
 VALIDATED_CAUSE_NUMBER = 'va46'
@@ -93,6 +102,10 @@ class Tariff(DataPrep):
             drop_headers.update(ADULT_FREE_TEXT)
         if self.short_form:
             drop_headers.update(ADULT_SHORT_FORM_DROP_LIST)
+
+        with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
+            reader = csv.DictReader(f)
+            cause_names = {int(cause['va46']): cause['gs_text46'] for cause in reader}
 
         cause40s = {}
 
@@ -200,20 +213,16 @@ class Tariff(DataPrep):
             rank_dict.update(va.rank_list)
             rank_list.append(rank_dict)
 
-        with open(self.intermediate_dir + os.sep + 'adult-external-ranks.csv', 'wb', buffering=0) as f:
+        with open(os.path.join(self.intermediate_dir, '{}-external-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
             rank_writer = csv.DictWriter(f, sorted(rank_list[0].keys(), cmp=cmp_rank_keys, key=lambda x: (x.startswith('cause'), x)))
             rank_writer.writeheader()
             rank_writer.writerows(rank_list)
 
-        for i in range(1, 47):
-            cause = "cause" + str(i)
-            cause_list = []
-            for va in uniform_list:
-                cause_list.append([va.sid, va.cause_scores[cause], va])
-            sorted_cause_list = sorted(cause_list, key=lambda t: t[1], reverse=True)
-            # now have a sorted list of sid, cause_score for a specific cause
-            for j, item in enumerate(sorted_cause_list):
-                item[2].rank_list[cause] = j
+        # IDEA - Create a ScoredVA container that does this and other related operations.
+        for cause in cause40s:
+            cause_list = sorted(uniform_list, key=lambda t: t.cause_scores[cause], reverse=True)
+            for i, va in enumerate(cause_list):
+                va.rank_list[cause] = i
 
         status_logger.debug('Adult :: Generating cutoffs')
 
@@ -412,11 +421,3 @@ class Tariff(DataPrep):
 
 def round5(value):
     return round(value / Decimal(.5)) * .5
-
-
-def get_headers_and_matrix_from_file(file_name, mode='rU'):
-    with open(file_name, mode) as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        matrix = [_ for _ in reader]
-    return headers, matrix

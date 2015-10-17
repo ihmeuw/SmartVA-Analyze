@@ -438,3 +438,91 @@ ADULT_CAUSES = {
     '33': 'Suicide',
     '34': 'TB'
 }
+
+MATERNAL_CAUSES = [
+    3,
+    20,
+    22,
+    36,
+    42
+]
+
+FEMALE_CAUSES = [
+    6,
+    7
+]
+
+MALE_CAUSES = [
+    39
+]
+
+AIDS_CAUSES = [
+    1,
+    2
+]
+
+CANCER_CAUSES = [
+    6,
+    7,
+    9,
+    17,
+    27,
+    30,
+    39,
+    43
+]
+
+MALARIA_CAUSES = [
+    29
+]
+
+# changing 46 causes to 34 causes:
+CAUSE_REDUCTION = {
+    'cause1': '1',
+    'cause2': '1',
+    'cause3': '21',
+    'cause4': '2',
+    'cause5': '3',
+    'cause6': '4',
+    'cause7': '5',
+    'cause8': '6',
+    'cause9': '7',
+    'cause10': '8',
+    'cause11': '9',
+    'cause12': '9',
+    'cause13': '9',
+    'cause14': '10',
+    'cause15': '11',
+    'cause16': '12',
+    'cause17': '13',
+    'cause18': '14',
+    'cause19': '15',
+    'cause20': '21',
+    'cause21': '16',
+    'cause22': '21',
+    'cause23': '17',
+    'cause24': '22',
+    'cause25': '22',
+    'cause26': '18',
+    'cause27': '19',
+    'cause28': '18',
+    'cause29': '20',
+    'cause30': '25',
+    'cause31': '22',
+    'cause32': '25',
+    'cause33': '23',
+    'cause34': '24',
+    'cause35': '25',
+    'cause36': '21',
+    'cause37': '26',
+    'cause38': '27',
+    'cause39': '28',
+    'cause40': '29',
+    'cause41': '30',
+    'cause42': '21',
+    'cause43': '31',
+    'cause44': '32',
+    'cause45': '33',
+    'cause46': '34',
+    'Undetermined': ''
+}
