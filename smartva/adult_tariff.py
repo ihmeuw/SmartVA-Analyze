@@ -366,9 +366,9 @@ class Tariff(DataPrep):
                 new_row.append(va.cause_scores[cause])
             tariff_writer.writerow(new_row)
 
-        writer.writerow(headers)
-        for row in matrix:
-            writer.writerow(row)
+        # writer.writerow(headers)
+        # for row in matrix:
+        #     writer.writerow(row)
 
     def abort(self):
         self.want_abort = 1
