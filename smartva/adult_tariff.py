@@ -162,14 +162,11 @@ class Tariff(DataPrep):
                 va_validated_cause_list.append(ScoredVA(cause_dict, row['va46'], row['sid'], 0, 0))
 
         status_notifier.update({'sub_progress': None})
-
         """
-
         with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             p = pickle.Unpickler(f)
             va_validated_cause_list = p.load()
-
-        """
+        # """
 
         uniform_list = []
 
@@ -203,7 +200,11 @@ class Tariff(DataPrep):
                 rank_list[cause] = rank + 1
 
             va.rank_list = rank_list
-            # print(va.sid, rank_list)
+        """
+        with open(os.path.join(self.intermediate_dir, 'rank_list-adult.pickle'), 'rb') as f:
+            p = pickle.Unpickler(f)
+            va_cause_list = p.load()
+        # """
 
         status_notifier.update({'sub_progress': None})
 
