@@ -115,7 +115,7 @@ class Tariff(DataPrep):
 
         with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
             reader = csv.DictReader(f)
-            cause_names = {int(cause[CAUSE_NUM_KEY]): cause[CAUSE_NAME_KEY] for cause in reader}
+            cause46_names = {int(cause[CAUSE_NUM_KEY]): cause[CAUSE_NAME_KEY] for cause in reader}
 
         cause40s = {}
 
@@ -322,9 +322,11 @@ class Tariff(DataPrep):
                     multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
                     cause34 = CAUSE_REDUCTION[int(multiple[0])]
                     if len(multiple) > 1:
+                        multiple_cause_list = [cause46_names[int(_)] for _ in multiple]
                         warning_logger.info(
-                            '{group:s} :: VA {sid:s} had multiple matching results {causes}, using {causes[0]}'.format(
-                                group=self.AGE_GROUP.capitalize(), sid=va.sid, causes=multiple))
+                            '{group:s} :: SID: {sid:s} had multiple causes {causes} predicted to be equally likely, '
+                            'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,
+                                                              causes=multiple_cause_list))
 
                 if not cause34:
                     cause34_name = 'Undetermined'
