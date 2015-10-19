@@ -70,7 +70,9 @@ class CommonPrep(object):
             headers = next(reader)
 
             # Extend the headers with additional headers and read the remaining data into the matrix
-            additional_headers_data = [(k, '') for k in ADDITIONAL_HEADERS] + SHORT_FORM_ADDITIONAL_HEADERS_DATA
+            additional_headers_data = [(k, '') for k in ADDITIONAL_HEADERS]
+            if self.short_form:
+                additional_headers_data += SHORT_FORM_ADDITIONAL_HEADERS_DATA
             additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
 
             headers.extend(additional_headers)
