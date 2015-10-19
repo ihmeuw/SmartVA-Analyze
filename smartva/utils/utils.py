@@ -77,8 +77,8 @@ def get_item_count(items, f=None):
     :return: Count of items.
     """
     count = 0
-    for count, _ in enumerate(items):
-        pass
+    for _ in items:
+        count += 1
     if f:
         try:
             f.seek(0)
@@ -90,7 +90,7 @@ def get_item_count(items, f=None):
 def get_item_count_for_file(f):
     reader = csv.reader(f)
     count = 0
-    for count, _ in enumerate(reader):
-        pass
+    for _ in reader:
+        count += 1
     f.seek(0)
     return count
