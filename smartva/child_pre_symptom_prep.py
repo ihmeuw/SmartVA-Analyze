@@ -6,7 +6,9 @@ import os
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 
-from smartva import default_fill_data
+from smartva.child_pre_symptom_data import DURATION_VARS
+from smartva.data_prep import DataPrep
+from smartva.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import child_rangelist
 from smartva.presymptom_conversions import child_conversionVars
 from smartva.word_conversions import CHILD_WORDS_TO_VARS
@@ -23,24 +25,19 @@ generatedHeaders = ['g4_03b', 'c1_05b', 'c1_20b', 'c1_21b', 'c2_05b', 'c4_37b', 
                     's181', 'c1_26', 'child_1_8num']
 
 
-class PreSymptomPrep(object):
-    def __init__(self, input_file, output_dir, shortform):
-        self.inputFilePath = input_file
-        self.output_dir = output_dir
-        self.want_abort = 0
-        self.shortform = shortform
+class ChildPreSymptomPrep(DataPrep):
+    AGE_GROUP = 'child'
 
     def run(self):
-        status_notifier.update({'progress': (7,)})
+        status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
+        status_notifier.update({'progress': (5,)})
 
-        if self.shortform:
-            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL_SHORT
+        if self.short_form:
+            default_fill = CHILD_DEFAULT_FILL_SHORT
         else:
-            child_defaultFill = default_fill_data.CHILD_DEFAULT_FILL
+            default_fill = CHILD_DEFAULT_FILL
 
-        reader = csv.reader(open(self.inputFilePath, 'rb'))
-
-        status_logger.info('Child :: Processing presymptom data')
+        reader = csv.reader(open(self.input_file_path, 'rb'))
 
         matrix = []
         headers = []
@@ -209,7 +206,7 @@ class PreSymptomPrep(object):
                 row[index] = '0'
 
             # added for shortform
-            if self.shortform:
+            if self.short_form:
                 index = headers.index('c1_22a')
                 temp = row[headers_old.index('child_1_22')]
                 if temp == '1':
@@ -314,51 +311,51 @@ class PreSymptomPrep(object):
             if c1_01 != '2':
                 c1_02 = row[headers.index('c1_02')]
                 if not (c1_02 is None or c1_02 == ''):
-                    self.printWarning('c1_02', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_02', i, row, headers, default_fill)
             c1_03 = row[headers.index('c1_03')]
             if c1_03 == '1':
                 c1_04 = row[headers.index('c1_04')]
                 if not (c1_04 is None or c1_04 == ''):
-                    self.printWarning('c1_04', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_04', i, row, headers, default_fill)
             c1_04 = row[headers.index('c1_04')]
             if c1_04 == '1' or c1_03 == '1':
                 c1_05a = row[headers.index('c1_05a')]
                 if not (c1_05a is None or c1_05a == ''):
-                    self.printWarning('c1_05a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_05a', i, row, headers, default_fill)
                 c1_05b = row[headers.index('c1_05b')]
                 if not (c1_05b is None or c1_05b == '' or c1_05b == '0'):
-                    self.printWarning('c1_05b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_05b', i, row, headers, default_fill)
             c1_15 = row[headers.index('c1_15')]
             if c1_15 == '0':
                 c1_16 = row[headers.index('c1_16')]
                 if not (c1_16 is None or c1_16 == ''):
-                    self.printWarning('c1_16', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_16', i, row, headers, default_fill)
                 c1_17 = row[headers.index('c1_17')]
                 if not (c1_17 is None or c1_17 == ''):
-                    self.printWarning('c1_17', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_17', i, row, headers, default_fill)
                 c1_18 = row[headers.index('c1_18')]
                 if not (c1_18 is None or c1_18 == ''):
-                    self.printWarning('c1_18', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_18', i, row, headers, default_fill)
             c1_18 = row[headers.index('c1_18')]
             if c1_15 == '0' or c1_18 != '1':
                 c1_19_1 = row[headers.index('c1_19_1')]
                 if not (c1_19_1 is None or c1_19_1 == '' or c1_19_1 == '0'):
-                    self.printWarning('c1_19_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_1', i, row, headers, default_fill)
                 c1_19_2 = row[headers.index('c1_19_2')]
                 if not (c1_19_2 is None or c1_19_2 == '' or c1_19_2 == '0'):
-                    self.printWarning('c1_19_2', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_2', i, row, headers, default_fill)
                 c1_19_3 = row[headers.index('c1_19_3')]
                 if not (c1_19_3 is None or c1_19_3 == '' or c1_19_3 == '0'):
-                    self.printWarning('c1_19_3', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_3', i, row, headers, default_fill)
                 c1_19_4a = row[headers.index('c1_19_4a')]
                 if not (c1_19_4a is None or c1_19_4a == '' or c1_19_4a == '0'):
-                    self.printWarning('c1_19_4a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_4a', i, row, headers, default_fill)
                 c1_19_4b = row[headers.index('c1_19_4b')]
                 if not (c1_19_4b is None or c1_19_4b == ''):
-                    self.printWarning('c1_19_4b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_4b', i, row, headers, default_fill)
                 c1_19_5 = row[headers.index('c1_19_5')]
                 if not (c1_19_5 is None or c1_19_5 == '' or c1_19_5 == '0'):
-                    self.printWarning('c1_19_5', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_19_5', i, row, headers, default_fill)
                 # not in electronic version
                 # c1_19_6 = row[headers.index('c1_19_6')]
                 #                 if not (c1_19_6 is None or c1_19_6 == ''):
@@ -369,25 +366,25 @@ class PreSymptomPrep(object):
             if c1_15 == '1':
                 c1_20a = row[headers.index('c1_20a')]
                 if not (c1_20a is None or c1_20a == ''):
-                    self.printWarning('c1_20a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_20a', i, row, headers, default_fill)
                 c1_20b = row[headers.index('c1_20b')]
                 if not (c1_20b is None or c1_20b == '' or c1_20b == '0'):
-                    self.printWarning('c1_20b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_20b', i, row, headers, default_fill)
                 c1_21a = row[headers.index('c1_21a')]
                 if not (c1_21a is None or c1_21a == ''):
-                    self.printWarning('c1_21a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_21a', i, row, headers, default_fill)
                 c1_21b = row[headers.index('c1_21b')]
                 if not (c1_21b is None or c1_21b == '' or c1_21b == '0'):
-                    self.printWarning('c1_21b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_21b', i, row, headers, default_fill)
                 c1_22a = row[headers.index('c1_22a')]
                 if not (c1_22a is None or c1_22a == ''):
-                    self.printWarning('c1_22a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_22a', i, row, headers, default_fill)
                 c1_22b = row[headers.index('c1_22b')]
                 if not (c1_22b is None or c1_22b == ''):
-                    self.printWarning('c1_22b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_22b', i, row, headers, default_fill)
                 c1_23 = row[headers.index('c1_23')]
                 if not (c1_23 is None or c1_23 == ''):
-                    self.printWarning('c1_23', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_23', i, row, headers, default_fill)
                 # not in electronic version
                 # c1_24 = row[headers.index('c1_24')]
                 #                 if not (c1_24 is None or c1_24 == ''):
@@ -415,215 +412,215 @@ class PreSymptomPrep(object):
                 #                     c1_24y')] = str(child_defaultFill.get(''))
                 c1_25a = row[headers.index('c1_25a')]
                 if not (c1_25a is None or c1_25a == '' or c1_25a == '0'):
-                    self.printWarning('c1_25a', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_25a', i, row, headers, default_fill)
                 c1_25b = row[headers.index('c1_25b')]
                 if not (c1_25b is None or c1_25b == ''):
-                    self.printWarning('c1_25b', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_25b', i, row, headers, default_fill)
                 c1_26 = row[headers.index('c1_26')]
                 if not (c1_26 is None or c1_26 == '' or c1_26 == '0'):
-                    self.printWarning('c1_26', i, row, headers, child_defaultFill)
+                    self.printWarning('c1_26', i, row, headers, default_fill)
             c1_26 = row[headers.index('c1_26')]
             if c1_15 == '1' or c1_26 == '1':
                 c4_01 = row[headers.index('c4_01')]
                 if not (c4_01 is None or c4_01 == ''):
-                    self.printWarning('c4_01', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_01', i, row, headers, default_fill)
                 c4_06 = row[headers.index('c4_06')]
                 if not (c4_06 is None or c4_06 == ''):
-                    self.printWarning('c4_06', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_06', i, row, headers, default_fill)
                 c4_12 = row[headers.index('c4_12')]
                 if not (c4_12 is None or c4_12 == ''):
-                    self.printWarning('c4_12', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_12', i, row, headers, default_fill)
                 c4_16 = row[headers.index('c4_16')]
                 if not (c4_16 is None or c4_16 == ''):
-                    self.printWarning('c4_16', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_16', i, row, headers, default_fill)
                 c4_18 = row[headers.index('c4_18')]
                 if not (c4_18 is None or c4_18 == ''):
-                    self.printWarning('c4_18', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_18', i, row, headers, default_fill)
                 c4_25 = row[headers.index('c4_25')]
                 if not (c4_25 is None or c4_25 == ''):
-                    self.printWarning('c4_25', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_25', i, row, headers, default_fill)
                 c4_26 = row[headers.index('c4_26')]
                 if not (c4_26 is None or c4_26 == ''):
-                    self.printWarning('c4_26', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_26', i, row, headers, default_fill)
                 c4_28 = row[headers.index('c4_28')]
                 if not (c4_28 is None or c4_28 == ''):
-                    self.printWarning('c4_28', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_28', i, row, headers, default_fill)
                 c4_29 = row[headers.index('c4_29')]
                 if not (c4_29 is None or c4_29 == ''):
-                    self.printWarning('c4_29', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_29', i, row, headers, default_fill)
                 c4_30 = row[headers.index('c4_30')]
                 if not (c4_30 is None or c4_30 == ''):
-                    self.printWarning('c4_30', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_30', i, row, headers, default_fill)
                 c4_35 = row[headers.index('c4_35')]
                 if not (c4_35 is None or c4_35 == ''):
-                    self.printWarning('c4_35', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_35', i, row, headers, default_fill)
                 c4_36 = row[headers.index('c4_36')]
                 if not (c4_36 is None or c4_36 == ''):
-                    self.printWarning('c4_36', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_36', i, row, headers, default_fill)
                 c4_38 = row[headers.index('c4_38')]
                 if not (c4_38 is None or c4_38 == ''):
-                    self.printWarning('c4_38', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_38', i, row, headers, default_fill)
                 c4_39 = row[headers.index('c4_39')]
                 if not (c4_39 is None or c4_39 == ''):
-                    self.printWarning('c4_39', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_39', i, row, headers, default_fill)
                 c4_40 = row[headers.index('c4_40')]
                 if not (c4_40 is None or c4_40 == ''):
-                    self.printWarning('c4_40', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_40', i, row, headers, default_fill)
                 c4_41 = row[headers.index('c4_41')]
                 if not (c4_41 is None or c4_41 == ''):
-                    self.printWarning('c4_41', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_41', i, row, headers, default_fill)
                 c4_42 = row[headers.index('c4_42')]
                 if not (c4_42 is None or c4_42 == ''):
-                    self.printWarning('c4_42', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_42', i, row, headers, default_fill)
                 c4_43 = row[headers.index('c4_43')]
                 if not (c4_43 is None or c4_43 == ''):
-                    self.printWarning('c4_43', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_43', i, row, headers, default_fill)
                 c4_44 = row[headers.index('c4_44')]
                 if not (c4_44 is None or c4_44 == ''):
-                    self.printWarning('c4_44', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_44', i, row, headers, default_fill)
                 c4_46 = row[headers.index('c4_46')]
                 if not (c4_46 is None or c4_46 == ''):
-                    self.printWarning('c4_46', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_46', i, row, headers, default_fill)
                 c4_47_1 = row[headers.index('c4_47_1')]
                 if not (c4_47_1 is None or c4_47_1 == '' or c4_47_1 == '0'):
-                    self.printWarning('c4_47_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_1', i, row, headers, default_fill)
                 c4_47_10 = row[headers.index('c4_47_10')]
                 if not (c4_47_10 is None or c4_47_10 == '' or c4_47_10 == '0'):
-                    self.printWarning('c4_47_10', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_10', i, row, headers, default_fill)
                 c4_47_11 = row[headers.index('c4_47_11')]
                 if not (c4_47_11 is None or c4_47_11 == '' or c4_47_11 == '0'):
-                    self.printWarning('c4_47_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_11', i, row, headers, default_fill)
                 c4_47_2 = row[headers.index('c4_47_2')]
                 if not (c4_47_2 is None or c4_47_2 == '' or c4_47_2 == '0'):
-                    self.printWarning('c4_47_2', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_2', i, row, headers, default_fill)
                 c4_47_3 = row[headers.index('c4_47_3')]
                 if not (c4_47_3 is None or c4_47_3 == '' or c4_47_3 == '0'):
-                    self.printWarning('c4_47_3', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_3', i, row, headers, default_fill)
                 c4_47_4 = row[headers.index('c4_47_4')]
                 if not (c4_47_4 is None or c4_47_4 == '' or c4_47_4 == '0'):
-                    self.printWarning('c4_47_4', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_4', i, row, headers, default_fill)
                 c4_47_5 = row[headers.index('c4_47_5')]
                 if not (c4_47_5 is None or c4_47_5 == '' or c4_47_5 == '0'):
-                    self.printWarning('c4_47_5', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_5', i, row, headers, default_fill)
                 c4_47_6 = row[headers.index('c4_47_6')]
                 if not (c4_47_6 is None or c4_47_6 == '' or c4_47_6 == '0'):
-                    self.printWarning('c4_47_6', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_6', i, row, headers, default_fill)
                 c4_47_7 = row[headers.index('c4_47_7')]
                 if not (c4_47_7 is None or c4_47_7 == '' or c4_47_7 == '0'):
-                    self.printWarning('c4_47_7', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_7', i, row, headers, default_fill)
                 c4_47_8a = row[headers.index('c4_47_8a')]
                 if not (c4_47_8a is None or c4_47_8a == '' or c4_47_8a == '0'):
-                    self.printWarning('c4_47_8a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_8a', i, row, headers, default_fill)
                 c4_47_8b = row[headers.index('c4_47_8b')]
                 if not (c4_47_8b is None or c4_47_8b == ''):
-                    self.printWarning('c4_47_8b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_8b', i, row, headers, default_fill)
                 c4_47_9 = row[headers.index('c4_47_9')]
                 if not (c4_47_9 is None or c4_47_9 == '' or c4_47_9 == '0'):
-                    self.printWarning('c4_47_9', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_47_9', i, row, headers, default_fill)
             c4_16 = row[headers.index('c4_16')]
             c4_18 = row[headers.index('c4_18')]
             if c1_15 == '1' or c1_26 == '1' or (c4_16 == '0' and c4_18 == '0'):
                 c4_20 = row[headers.index('c4_20')]
                 if not (c4_20 is None or c4_20 == ''):
-                    self.printWarning('c4_20', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_20', i, row, headers, default_fill)
                 c4_22 = row[headers.index('c4_22')]
                 if not (c4_22 is None or c4_22 == ''):
-                    self.printWarning('c4_22', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_22', i, row, headers, default_fill)
                 c4_23 = row[headers.index('c4_23')]
                 if not (c4_23 is None or c4_23 == ''):
-                    self.printWarning('c4_23', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_23', i, row, headers, default_fill)
                 c4_24 = row[headers.index('c4_24')]
                 if not (c4_24 is None or c4_24 == ''):
-                    self.printWarning('c4_24', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_24', i, row, headers, default_fill)
             c4_01 = row[headers.index('c4_01')]
             if c1_15 == '1' or c1_26 == '1' or c4_01 != '1':
                 c4_02a = row[headers.index('c4_02a')]
                 if not (c4_02a is None or c4_02a == ''):
-                    self.printWarning('c4_02a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_02a', i, row, headers, default_fill)
                 c4_02b = row[headers.index('c4_02b')]
                 if not (c4_02b is None or c4_02b == ''):
-                    self.printWarning('c4_02b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_02b', i, row, headers, default_fill)
                 c4_03 = row[headers.index('c4_03')]
                 if not (c4_03 is None or c4_03 == ''):
-                    self.printWarning('c4_03', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_03', i, row, headers, default_fill)
             c4_03 = row[headers.index('c4_03')]
             if c1_15 == '1' or c1_26 == '1' or c4_01 != '1' or c4_03 != '1':
                 c4_04 = row[headers.index('c4_04')]
                 if not (c4_04 is None or c4_04 == ''):
-                    self.printWarning('c4_20', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_20', i, row, headers, default_fill)
                 c4_05 = row[headers.index('c4_04')]
                 if not (c4_05 is None or c4_05 == ''):
-                    self.printWarning('c4_05', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_05', i, row, headers, default_fill)
             c4_06 = row[headers.index('c4_06')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1':
                 c4_07a = row[headers.index('c4_07a')]
                 if not (c4_07a is None or c4_07a == ''):
-                    self.printWarning('c4_07a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_07a', i, row, headers, default_fill)
                 c4_07b = row[headers.index('c4_07b')]
                 if not (c4_07b is None or c4_07b == ''):
-                    self.printWarning('c4_07b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_07b', i, row, headers, default_fill)
                 c4_08a = row[headers.index('c4_08a')]
                 if not (c4_08a is None or c4_08a == ''):
-                    self.printWarning('c4_08a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_08a', i, row, headers, default_fill)
                 c4_08b = row[headers.index('c4_08b')]
                 if not (c4_08b is None or c4_08b == ''):
-                    self.printWarning('c4_08b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_08b', i, row, headers, default_fill)
             c4_08a = row[headers.index('c4_08a')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1' or c4_08a == '5' or c4_08a == '6':
                 c4_09 = row[headers.index('c4_09')]
                 if not (c4_09 is None or c4_09 == ''):
-                    self.printWarning('c4_09', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_09', i, row, headers, default_fill)
                 c4_11 = row[headers.index('c4_11')]
                 if not (c4_11 is None or c4_11 == ''):
-                    self.printWarning('c4_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_11', i, row, headers, default_fill)
             c4_09 = row[headers.index('c4_09')]
             if c1_15 == '1' or c1_26 == '1' or c4_06 != '1' or c4_08a == '5' or c4_08a == '6' or c4_09 == '1':
                 c4_10a = row[headers.index('c4_10a')]
                 if not (c4_10a is None or c4_10a == ''):
-                    self.printWarning('c4_10a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_10a', i, row, headers, default_fill)
                 c4_10b = row[headers.index('c4_10b')]
                 if not (c4_10b is None or c4_10b == ''):
-                    self.printWarning('c4_10b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_10b', i, row, headers, default_fill)
             c4_12 = row[headers.index('c4_12')]
             if c1_15 == '1' or c1_26 == '1' or c4_12 != '1':
                 c4_13a = row[headers.index('c4_13a')]
                 if not (c4_13a is None or c4_13a == ''):
-                    self.printWarning('c4_13a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_13a', i, row, headers, default_fill)
                 c4_13b = row[headers.index('c4_13b')]
                 if not (c4_13b is None or c4_13b == ''):
-                    self.printWarning('c4_13b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_13b', i, row, headers, default_fill)
                 c4_14 = row[headers.index('c4_14')]
                 if not (c4_14 is None or c4_14 == ''):
-                    self.printWarning('c4_14', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_14', i, row, headers, default_fill)
                 c4_15 = row[headers.index('c4_15')]
                 if not (c4_15 is None or c4_15 == ''):
-                    self.printWarning('c4_15', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_15', i, row, headers, default_fill)
             c4_16 = row[headers.index('c4_16')]
             if c1_15 == '1' or c1_26 == '1' or c4_16 != '1':
                 c4_17a = row[headers.index('c4_17a')]
                 if not (c4_17a is None or c4_17a == ''):
-                    self.printWarning('c4_17a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_17a', i, row, headers, default_fill)
                 c4_17b = row[headers.index('c4_17b')]
                 if not (c4_17b is None or c4_17b == ''):
-                    self.printWarning('c4_17b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_17b', i, row, headers, default_fill)
             c4_18 = row[headers.index('c4_18')]
             if c1_15 == '1' or c1_26 == '1' or c4_18 != '1':
                 c4_19a = row[headers.index('c4_19a')]
                 if not (c4_19a is None or c4_19a == ''):
-                    self.printWarning('c4_19a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_19a', i, row, headers, default_fill)
                 c4_19b = row[headers.index('c4_19b')]
                 if not (c4_19b is None or c4_19b == ''):
-                    self.printWarning('c4_19b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_19b', i, row, headers, default_fill)
             c4_26 = row[headers.index('c4_26')]
             if c1_15 == '1' or c1_26 == '1' or c4_26 != '1':
                 c4_27 = row[headers.index('c4_27')]
                 if not (c4_27 is None or c4_27 == ''):
-                    self.printWarning('c4_27', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_27', i, row, headers, default_fill)
             c4_30 = row[headers.index('c4_30')]
             if c1_15 == '1' or c1_26 == '1' or c4_30 != '1':
                 c4_31_1 = row[headers.index('c4_31_1')]
                 if not (c4_31_1 is None or c4_31_1 == ''):
-                    self.printWarning('c4_31_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_31_1', i, row, headers, default_fill)
                 # not in electronic version
                 # c4_31_2 = row[headers.index('c4_31_2')]
                 #                 if not (c4_31_2 is None or c4_31_2 == ''):
@@ -633,145 +630,145 @@ class PreSymptomPrep(object):
                 #                     c4_31_2')] = str(child_defaultFill.get(''))
                 c4_32 = row[headers.index('c4_32')]
                 if not (c4_32 is None or c4_32 == ''):
-                    self.printWarning('c4_32', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_32', i, row, headers, default_fill)
                 c4_33a = row[headers.index('c4_33a')]
                 if not (c4_33a is None or c4_33a == ''):
-                    self.printWarning('c4_33a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_33a', i, row, headers, default_fill)
                 c4_33b = row[headers.index('c4_33b')]
                 if not (c4_33b is None or c4_33b == ''):
-                    self.printWarning('c4_33b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_33b', i, row, headers, default_fill)
                 c4_34 = row[headers.index('c4_34')]
                 if not (c4_34 is None or c4_34 == ''):
-                    self.printWarning('c4_34', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_34', i, row, headers, default_fill)
             c4_36 = row[headers.index('c4_36')]
             if c1_15 == '1' or c1_26 == '1' or c4_36 != '1':
                 c4_37a = row[headers.index('c4_37a')]
                 if not (c4_37a is None or c4_37a == ''):
-                    self.printWarning('c4_37a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_37a', i, row, headers, default_fill)
                 c4_37b = row[headers.index('c4_37b')]
                 if not (c4_37b is None or c4_37b == '' or c4_37b == '0'):
-                    self.printWarning('c4_37b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_37b', i, row, headers, default_fill)
             c4_44 = row[headers.index('c4_44')]
             if c1_15 == '1' or c1_26 == '1' or c4_44 != '1':
                 c4_45 = row[headers.index('c4_45')]
                 if not (c4_45 is None or c4_45 == ''):
-                    self.printWarning('c4_45', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_45', i, row, headers, default_fill)
             c4_47_11 = row[headers.index('c4_47_11')]
             if c1_15 == '1' or c1_26 == '1' or c4_47_11 == '1':
                 c4_48 = row[headers.index('c4_48')]
                 if not (c4_48 is None or c4_48 == ''):
-                    self.printWarning('c4_48', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_48', i, row, headers, default_fill)
                 c4_49a = row[headers.index('c4_49a')]
                 if not (c4_49a is None or c4_49a == ''):
-                    self.printWarning('c4_49a', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_49a', i, row, headers, default_fill)
                 c4_49b = row[headers.index('c4_49b')]
                 if not (c4_49b is None or c4_49b == '' or c4_49b == '0'):
-                    self.printWarning('c4_49b', i, row, headers, child_defaultFill)
+                    self.printWarning('c4_49b', i, row, headers, default_fill)
             if c1_15 == '1' or c1_26 == '2':
                 c3_01 = row[headers.index('c3_01')]
                 if not (c3_01 is None or c3_01 == ''):
-                    self.printWarning('c3_01', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_01', i, row, headers, default_fill)
                 c3_02 = row[headers.index('c3_02')]
                 if not (c3_02 is None or c3_02 == ''):
-                    self.printWarning('c3_02', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_02', i, row, headers, default_fill)
                 c3_04 = row[headers.index('c3_04')]
                 if not (c3_04 is None or c3_04 == ''):
-                    self.printWarning('c3_04', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_04', i, row, headers, default_fill)
                 c3_06 = row[headers.index('c3_06')]
                 if not (c3_06 is None or c3_06 == ''):
-                    self.printWarning('c3_06', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_06', i, row, headers, default_fill)
                 c3_07 = row[headers.index('c3_07')]
                 if not (c3_07 is None or c3_07 == ''):
-                    self.printWarning('c3_07', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_07', i, row, headers, default_fill)
                 c3_11 = row[headers.index('c3_11')]
                 if not (c3_11 is None or c3_11 == ''):
-                    self.printWarning('c3_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_11', i, row, headers, default_fill)
                 c3_17 = row[headers.index('c3_17')]
                 if not (c3_17 is None or c3_17 == ''):
-                    self.printWarning('c3_17', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_17', i, row, headers, default_fill)
                 c3_20 = row[headers.index('c3_20')]
                 if not (c3_20 is None or c3_20 == ''):
-                    self.printWarning('c3_20', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_20', i, row, headers, default_fill)
                 c3_23 = row[headers.index('c3_23')]
                 if not (c3_23 is None or c3_23 == ''):
-                    self.printWarning('c3_23', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_23', i, row, headers, default_fill)
                 c3_24 = row[headers.index('c3_24')]
                 if not (c3_24 is None or c3_24 == ''):
-                    self.printWarning('c3_24', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_24', i, row, headers, default_fill)
                 c3_25 = row[headers.index('c3_25')]
                 if not (c3_25 is None or c3_25 == ''):
-                    self.printWarning('c3_25', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_25', i, row, headers, default_fill)
                 c3_26 = row[headers.index('c3_26')]
                 if not (c3_26 is None or c3_26 == ''):
-                    self.printWarning('c3_26', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_26', i, row, headers, default_fill)
                 c3_29 = row[headers.index('c3_29')]
                 if not (c3_29 is None or c3_29 == ''):
-                    self.printWarning('c3_29', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_29', i, row, headers, default_fill)
                 c3_32 = row[headers.index('c3_32')]
                 if not (c3_32 is None or c3_32 == ''):
-                    self.printWarning('c3_32', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_32', i, row, headers, default_fill)
                 c3_33 = row[headers.index('c3_33')]
                 if not (c3_33 is None or c3_33 == ''):
-                    self.printWarning('c3_33', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_33', i, row, headers, default_fill)
                 c3_34 = row[headers.index('c3_34')]
                 if not (c3_34 is None or c3_34 == ''):
-                    self.printWarning('c3_34', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_34', i, row, headers, default_fill)
                 c3_35 = row[headers.index('c3_35')]
                 if not (c3_35 is None or c3_35 == ''):
-                    self.printWarning('c3_35', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_35', i, row, headers, default_fill)
                 c3_36 = row[headers.index('c3_36')]
                 if not (c3_36 is None or c3_36 == ''):
-                    self.printWarning('c3_36', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_36', i, row, headers, default_fill)
                 c3_38 = row[headers.index('c3_38')]
                 if not (c3_38 is None or c3_38 == ''):
-                    self.printWarning('c3_38', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_38', i, row, headers, default_fill)
                 c3_39 = row[headers.index('c3_39')]
                 if not (c3_39 is None or c3_39 == ''):
-                    self.printWarning('c3_39', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_39', i, row, headers, default_fill)
                 c3_40 = row[headers.index('c3_40')]
                 if not (c3_40 is None or c3_40 == ''):
-                    self.printWarning('c3_40', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_40', i, row, headers, default_fill)
                 c3_41 = row[headers.index('c3_41')]
                 if not (c3_41 is None or c3_41 == ''):
-                    self.printWarning('c3_41', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_41', i, row, headers, default_fill)
                 c3_42 = row[headers.index('c3_42')]
                 if not (c3_42 is None or c3_42 == ''):
-                    self.printWarning('c3_42', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_42', i, row, headers, default_fill)
                 c3_44 = row[headers.index('c3_44')]
                 if not (c3_44 is None or c3_44 == ''):
-                    self.printWarning('c3_44', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_44', i, row, headers, default_fill)
                 c3_46 = row[headers.index('c3_46')]
                 if not (c3_46 is None or c3_46 == ''):
-                    self.printWarning('c3_46', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_46', i, row, headers, default_fill)
                 c3_47 = row[headers.index('c3_47')]
                 if not (c3_47 is None or c3_47 == ''):
-                    self.printWarning('c3_47', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_47', i, row, headers, default_fill)
                 c3_48 = row[headers.index('c3_48')]
                 if not (c3_48 is None or c3_48 == ''):
-                    self.printWarning('c3_48', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_48', i, row, headers, default_fill)
                 c3_49 = row[headers.index('c3_49')]
                 if not (c3_49 is None or c3_49 == ''):
-                    self.printWarning('c3_49', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_49', i, row, headers, default_fill)
             c3_02 = row[headers.index('c3_02')]
             if c1_15 == '1' or c1_26 == '2' or c3_02 != '1':
                 c3_03_1 = row[headers.index('c3_03_1')]
                 if not (c3_03_1 is None or c3_03_1 == '' or c3_03_1 == '0'):
-                    self.printWarning('c3_03_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_1', i, row, headers, default_fill)
                 c3_03_2 = row[headers.index('c3_03_2')]
                 if not (c3_03_2 is None or c3_03_2 == '' or c3_03_2 == '0'):
-                    self.printWarning('c3_03_2', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_2', i, row, headers, default_fill)
                 c3_03_3 = row[headers.index('c3_03_3')]
                 if not (c3_03_3 is None or c3_03_3 == '' or c3_03_3 == '0'):
-                    self.printWarning('c3_03_3', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_3', i, row, headers, default_fill)
                 c3_03_4a = row[headers.index('c3_03_4a')]
                 if not (c3_03_4a is None or c3_03_4a == '' or c3_03_4a == '0'):
-                    self.printWarning('c3_03_4a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_4a', i, row, headers, default_fill)
                 c3_03_4b = row[headers.index('c3_03_4b')]
                 if not (c3_03_4b is None or c3_03_4b == ''):
-                    self.printWarning('c3_03_4b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_4b', i, row, headers, default_fill)
                 c3_03_5 = row[headers.index('c3_03_5')]
                 if not (c3_03_5 is None or c3_03_5 == '' or c3_03_5 == '0'):
-                    self.printWarning('c3_03_5', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_03_5', i, row, headers, default_fill)
                 # not in electronic version
                 # c3_03_6 = row[headers.index('c3_03_6')]
                 #                 if not (c3_03_6 is None or c3_03_6 == ''):
@@ -783,22 +780,22 @@ class PreSymptomPrep(object):
             if c1_15 == '1' or c1_26 == '2' or c3_04 == '0':
                 c3_05 = row[headers.index('c3_05')]
                 if not (c3_05 is None or c3_05 == ''):
-                    self.printWarning('c3_05', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_05', i, row, headers, default_fill)
             c3_07 = row[headers.index('c3_07')]
             if c1_15 == '1' or c1_26 == '2' or c3_07 == '1':
                 c3_08 = row[headers.index('c3_08')]
                 if not (c3_08 is None or c3_08 == ''):
-                    self.printWarning('c3_08', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_08', i, row, headers, default_fill)
             c3_08 = row[headers.index('c3_08')]
             if c1_15 == '1' or c1_26 == '2' or c3_08 == '4':
                 c3_09 = row[headers.index('c3_09')]
                 if not (c3_09 is None or c3_09 == ''):
-                    self.printWarning('c3_09', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_09', i, row, headers, default_fill)
             c3_09 = row[headers.index('c3_09')]
             if c1_15 == '1' or c1_26 == '2' or c3_08 == '4' or c3_09 != '1':
                 c3_10 = row[headers.index('c3_10')]
                 if not (c3_10 is None or c3_10 == ''):
-                    self.printWarning('c3_10', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_10', i, row, headers, default_fill)
             c3_11 = row[headers.index('c3_11')]
             # This is a unique case because c3_12 can have different 'default' values depending on other variables
             if c1_15 == '1':
@@ -817,219 +814,219 @@ class PreSymptomPrep(object):
             if c1_15 == '1' or c1_26 == '2' or c3_12 != '1':
                 c3_13 = row[headers.index('c3_13')]
                 if not (c3_13 is None or c3_13 == ''):
-                    self.printWarning('c3_13', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_13', i, row, headers, default_fill)
             c3_13 = row[headers.index('c3_13')]
             if c1_15 == '1' or c1_26 == '2' or c3_12 != '1' or c3_13 != '1':
                 c3_14a = row[headers.index('c3_14a')]
                 if not (c3_14a is None or c3_14a == ''):
-                    self.printWarning('c3_14a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_14a', i, row, headers, default_fill)
                 c3_14b = row[headers.index('c3_14b')]
                 if not (c3_14b is None or c3_14b == ''):
-                    self.printWarning('c3_14b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_14b', i, row, headers, default_fill)
                 c3_15 = row[headers.index('c3_15')]
                 if not (c3_15 is None or c3_15 == ''):
-                    self.printWarning('c3_15', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_15', i, row, headers, default_fill)
                 c3_16 = row[headers.index('c3_16')]
                 if not (c3_16 is None or c3_16 == ''):
-                    self.printWarning('c3_16', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_16', i, row, headers, default_fill)
             c3_17 = row[headers.index('c3_17')]
             if c1_15 == '1' or c1_26 == '2' or c3_17 != '1':
                 c3_18a = row[headers.index('c3_18a')]
                 if not (c3_18a is None or c3_18a == ''):
-                    self.printWarning('c3_18a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_18a', i, row, headers, default_fill)
                 c3_18b = row[headers.index('c3_18b')]
                 if not (c3_18b is None or c3_18b == ''):
-                    self.printWarning('c3_18b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_18b', i, row, headers, default_fill)
                 c3_19a = row[headers.index('c3_19a')]
                 if not (c3_19a is None or c3_19a == ''):
-                    self.printWarning('c3_19a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_19a', i, row, headers, default_fill)
                 c3_19b = row[headers.index('c3_19b')]
                 if not (c3_19b is None or c3_19b == ''):
-                    self.printWarning('c3_19b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_19b', i, row, headers, default_fill)
             c3_20 = row[headers.index('c3_20')]
             if c1_15 == '1' or c1_26 == '2' or c3_20 != '1':
                 c3_21a = row[headers.index('c3_21a')]
                 if not (c3_21a is None or c3_21a == ''):
-                    self.printWarning('c3_21a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_21a', i, row, headers, default_fill)
                 c3_21b = row[headers.index('c3_21b')]
                 if not (c3_21b is None or c3_21b == ''):
-                    self.printWarning('c3_21b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_21b', i, row, headers, default_fill)
                 c3_22a = row[headers.index('c3_22a')]
                 if not (c3_22a is None or c3_22a == ''):
-                    self.printWarning('c3_22a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_22a', i, row, headers, default_fill)
                 c3_22b = row[headers.index('c3_22b')]
                 if not (c3_22b is None or c3_22b == ''):
-                    self.printWarning('c3_22b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_22b', i, row, headers, default_fill)
             c3_26 = row[headers.index('c3_26')]
             if c1_15 == '1' or c1_26 == '2' or c3_26 != '1':
                 c3_27a = row[headers.index('c3_27a')]
                 if not (c3_27a is None or c3_27a == ''):
-                    self.printWarning('c3_27a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_27a', i, row, headers, default_fill)
                 c3_27b = row[headers.index('c3_27b')]
                 if not (c3_27b is None or c3_27b == ''):
-                    self.printWarning('c3_27b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_27b', i, row, headers, default_fill)
                 c3_28a = row[headers.index('c3_28a')]
                 if not (c3_28a is None or c3_28a == ''):
-                    self.printWarning('c3_28a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_28a', i, row, headers, default_fill)
                 c3_28b = row[headers.index('c3_28b')]
                 if not (c3_28b is None or c3_28b == ''):
-                    self.printWarning('c3_28b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_28b', i, row, headers, default_fill)
             c3_29 = row[headers.index('c3_29')]
             if c1_15 == '1' or c1_26 == '2' or c3_29 != '1':
                 c3_30a = row[headers.index('c3_30a')]
                 if not (c3_30a is None or c3_30a == ''):
-                    self.printWarning('c3_30a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_30a', i, row, headers, default_fill)
                 c3_30b = row[headers.index('c3_30b')]
                 if not (c3_30b is None or c3_30b == ''):
-                    self.printWarning('c3_30b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_30b', i, row, headers, default_fill)
                 c3_31a = row[headers.index('c3_31a')]
                 if not (c3_31a is None or c3_31a == ''):
-                    self.printWarning('c3_31a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_31a', i, row, headers, default_fill)
                 c3_31b = row[headers.index('c3_31b')]
                 if not (c3_31b is None or c3_31b == ''):
-                    self.printWarning('c3_31b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_31b', i, row, headers, default_fill)
             c3_36 = row[headers.index('c3_36')]
             if c1_15 == '1' or c1_26 == '2' or c3_36 != '1':
                 c3_37 = row[headers.index('c3_37')]
                 if not (c3_37 is None or c3_37 == ''):
-                    self.printWarning('c3_37', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_37', i, row, headers, default_fill)
             c3_42 = row[headers.index('c3_42')]
             if c1_15 == '1' or c1_26 == '2' or c3_42 != '1':
                 c3_43 = row[headers.index('c3_43')]
                 if not (c3_43 is None or c3_43 == ''):
-                    self.printWarning('c3_43', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_43', i, row, headers, default_fill)
             c3_44 = row[headers.index('c3_44')]
             if c1_15 == '1' or c1_26 == '2' or c3_44 != '1':
                 c3_45a = row[headers.index('c3_45a')]
                 if not (c3_45a is None or c3_45a == ''):
-                    self.printWarning('c3_45a', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_45a', i, row, headers, default_fill)
                 c3_45b = row[headers.index('c3_45b')]
                 if not (c3_45b is None or c3_45b == ''):
-                    self.printWarning('c3_45b', i, row, headers, child_defaultFill)
+                    self.printWarning('c3_45b', i, row, headers, default_fill)
             if c1_26 == '2':
                 c2_01_1 = row[headers.index('c2_01_1')]
                 if not (c2_01_1 is None or c2_01_1 == ''):
-                    self.printWarning('c2_01_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_1', i, row, headers, default_fill)
                 c2_01_10 = row[headers.index('c2_01_10')]
                 if not (c2_01_10 is None or c2_01_10 == ''):
-                    self.printWarning('c2_01_10', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_10', i, row, headers, default_fill)
                 c2_01_11 = row[headers.index('c2_01_11')]
                 if not (c2_01_11 is None or c2_01_11 == ''):
-                    self.printWarning('c2_01_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_11', i, row, headers, default_fill)
                 c2_01_12 = row[headers.index('c2_01_12')]
                 if not (c2_01_12 is None or c2_01_12 == ''):
-                    self.printWarning('c2_01_12', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_12', i, row, headers, default_fill)
                 c2_01_13 = row[headers.index('c2_01_13')]
                 if not (c2_01_13 is None or c2_01_13 == ''):
-                    self.printWarning('c2_01_13', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_13', i, row, headers, default_fill)
                 c2_01_14 = row[headers.index('c2_01_14')]
                 if not (c2_01_14 is None or c2_01_14 == ''):
-                    self.printWarning('c2_01_14', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_14', i, row, headers, default_fill)
                 c2_01_2 = row[headers.index('c2_01_2')]
                 if not (c2_01_2 is None or c2_01_2 == ''):
-                    self.printWarning('c2_01_2', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_2', i, row, headers, default_fill)
                 c2_01_3 = row[headers.index('c2_01_3')]
                 if not (c2_01_3 is None or c2_01_3 == ''):
-                    self.printWarning('c2_01_3', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_3', i, row, headers, default_fill)
                 c2_01_4 = row[headers.index('c2_01_4')]
                 if not (c2_01_4 is None or c2_01_4 == ''):
-                    self.printWarning('c2_01_4', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_4', i, row, headers, default_fill)
                 c2_01_5 = row[headers.index('c2_01_5')]
                 if not (c2_01_5 is None or c2_01_5 == ''):
-                    self.printWarning('c2_01_5', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_5', i, row, headers, default_fill)
                 c2_01_6 = row[headers.index('c2_01_6')]
                 if not (c2_01_6 is None or c2_01_6 == ''):
-                    self.printWarning('c2_01_6', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_6', i, row, headers, default_fill)
                 c2_01_7 = row[headers.index('c2_01_7')]
                 if not (c2_01_7 is None or c2_01_7 == ''):
-                    self.printWarning('c2_01_7', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_7', i, row, headers, default_fill)
                 c2_01_8 = row[headers.index('c2_01_8')]
                 if not (c2_01_8 is None or c2_01_8 == ''):
-                    self.printWarning('c2_01_8', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_8', i, row, headers, default_fill)
                 c2_01_9 = row[headers.index('c2_01_9')]
                 if not (c2_01_9 is None or c2_01_9 == ''):
-                    self.printWarning('c2_01_9', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_01_9', i, row, headers, default_fill)
                 c2_02a = row[headers.index('c2_02a')]
                 if not (c2_02a is None or c2_02a == ''):
-                    self.printWarning('c2_02a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_02a', i, row, headers, default_fill)
                 c2_02b = row[headers.index('c2_02b')]
                 if not (c2_02b is None or c2_02b == ''):
-                    self.printWarning('c2_02b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_02b', i, row, headers, default_fill)
                 c2_03 = row[headers.index('c2_03')]
                 if not (c2_03 is None or c2_03 == ''):
-                    self.printWarning('c2_03', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_03', i, row, headers, default_fill)
                 c2_04 = row[headers.index('c2_04')]
                 if not (c2_04 is None or c2_04 == ''):
-                    self.printWarning('c2_04', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_04', i, row, headers, default_fill)
                 c2_05a = row[headers.index('c2_05a')]
                 if not (c2_05a is None or c2_05a == ''):
-                    self.printWarning('c2_05a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_05a', i, row, headers, default_fill)
                 c2_05b = row[headers.index('c2_05b')]
                 if not (c2_05b is None or c2_05b == '' or c2_05b == '0'):
-                    self.printWarning('c2_05b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_05b', i, row, headers, default_fill)
                 c2_06 = row[headers.index('c2_06')]
                 if not (c2_06 is None or c2_06 == ''):
-                    self.printWarning('c2_06', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_06', i, row, headers, default_fill)
                 c2_08a = row[headers.index('c2_08a')]
                 if not (c2_08a is None or c2_08a == ''):
-                    self.printWarning('c2_08a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_08a', i, row, headers, default_fill)
                 c2_08b = row[headers.index('c2_08b')]
                 if not (c2_08b is None or c2_08b == ''):
-                    self.printWarning('c2_08b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_08b', i, row, headers, default_fill)
                 c2_09 = row[headers.index('c2_09')]
                 if not (c2_09 is None or c2_09 == ''):
-                    self.printWarning('c2_09', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_09', i, row, headers, default_fill)
                 c2_10a = row[headers.index('c2_10a')]
                 if not (c2_10a is None or c2_10a == ''):
-                    self.printWarning('c2_10a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_10a', i, row, headers, default_fill)
                 c2_10b = row[headers.index('c2_10b')]
                 if not (c2_10b is None or c2_10b == ''):
-                    self.printWarning('c2_10b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_10b', i, row, headers, default_fill)
                 c2_11 = row[headers.index('c2_11')]
                 if not (c2_11 is None or c2_11 == ''):
-                    self.printWarning('c2_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_11', i, row, headers, default_fill)
                 c2_13a = row[headers.index('c2_13a')]
                 if not (c2_13a is None or c2_13a == ''):
-                    self.printWarning('c2_13a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_13a', i, row, headers, default_fill)
                 c2_13b = row[headers.index('c2_13b')]
                 if not (c2_13b is None or c2_13b == ''):
-                    self.printWarning('c2_13b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_13b', i, row, headers, default_fill)
                 c2_14 = row[headers.index('c2_14')]
                 if not (c2_14 is None or c2_14 == ''):
-                    self.printWarning('c2_14', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_14', i, row, headers, default_fill)
                 c2_15a = row[headers.index('c2_15a')]
                 if not (c2_15a is None or c2_15a == ''):
-                    self.printWarning('c2_15a', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_15a', i, row, headers, default_fill)
                 c2_15b = row[headers.index('c2_15b')]
                 if not (c2_15b is None or c2_15b == ''):
-                    self.printWarning('c2_15b', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_15b', i, row, headers, default_fill)
                 c2_17 = row[headers.index('c2_17')]
                 if not (c2_17 is None or c2_17 == ''):
-                    self.printWarning('c2_017', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_017', i, row, headers, default_fill)
                 c2_18 = row[headers.index('c2_18')]
                 if not (c2_18 is None or c2_18 == ''):
-                    self.printWarning('c2_18', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_18', i, row, headers, default_fill)
             c2_06 = row[headers.index('c2_06')]
             if c1_26 == '2' or c2_06 == '2':
                 c2_07 = row[headers.index('c2_07')]
                 if not (c2_07 is None or c2_07 == ''):
-                    self.printWarning('c2_07', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_07', i, row, headers, default_fill)
             c2_11 = row[headers.index('c2_11')]
             if c1_26 == '2' or c2_11 != '1':
                 c2_12 = row[headers.index('c2_12')]
                 if not (c2_12 is None or c2_12 == ''):
-                    self.printWarning('c2_12', i, row, headers, child_defaultFill)
+                    self.printWarning('c2_12', i, row, headers, default_fill)
             c5_01 = row[headers.index('c5_01')]
             if c5_01 != '1':
                 c5_02_1 = row[headers.index('c5_02_1')]
                 if not (c5_02_1 is None or c5_02_1 == '' or c5_02_1 == '0'):
-                    self.printWarning('c5_02_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_1', i, row, headers, default_fill)
                 c5_02_10 = row[headers.index('c5_02_10')]
                 if not (c5_02_10 is None or c5_02_10 == '' or c5_02_10 == '0'):
-                    self.printWarning('c5_02_10', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_10', i, row, headers, default_fill)
                 c5_02_11a = row[headers.index('c5_02_11a')]
                 if not (c5_02_11a is None or c5_02_11a == '' or c5_02_11a == '0'):
-                    self.printWarning('c5_02_11a', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_11a', i, row, headers, default_fill)
                 # not in electronic version
                 # c5_02_11b = row[headers.index('c5_02_11b')]
                 #                 if not (c5_02_11b is None or c5_02_11b == ''):
@@ -1039,116 +1036,116 @@ class PreSymptomPrep(object):
                 #                     c5_02_11b')] = str(child_defaultFill.get(''))
                 c5_02_12 = row[headers.index('c5_02_12')]
                 if not (c5_02_12 is None or c5_02_12 == '' or c5_02_12 == '0'):
-                    self.printWarning('c5_02_12', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_12', i, row, headers, default_fill)
                 c5_02_13 = row[headers.index('c5_02_13')]
                 if not (c5_02_13 is None or c5_02_13 == '' or c5_02_13 == '0'):
-                    self.printWarning('c5_02_13', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_13', i, row, headers, default_fill)
                 c5_02_14 = row[headers.index('c5_02_14')]
                 if not (c5_02_14 is None or c5_02_14 == '' or c5_02_14 == '0'):
-                    self.printWarning('c5_02_14', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_14', i, row, headers, default_fill)
                 c5_02_2 = row[headers.index('c5_02_2')]
                 if not (c5_02_2 is None or c5_02_2 == '' or c5_02_2 == '0'):
-                    self.printWarning('c5_02_2', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_2', i, row, headers, default_fill)
                 c5_02_3 = row[headers.index('c5_02_3')]
                 if not (c5_02_3 is None or c5_02_3 == '' or c5_02_3 == '0'):
-                    self.printWarning('c5_02_3', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_3', i, row, headers, default_fill)
                 c5_02_4 = row[headers.index('c5_02_4')]
                 if not (c5_02_4 is None or c5_02_4 == '' or c5_02_4 == '0'):
-                    self.printWarning('c5_02_4', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_4', i, row, headers, default_fill)
                 c5_02_5 = row[headers.index('c5_02_5')]
                 if not (c5_02_5 is None or c5_02_5 == '' or c5_02_5 == '0'):
-                    self.printWarning('c5_02_5', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_5', i, row, headers, default_fill)
                 c5_02_6 = row[headers.index('c5_02_6')]
                 if not (c5_02_6 is None or c5_02_6 == '' or c5_02_6 == '0'):
-                    self.printWarning('c5_02_6', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_6', i, row, headers, default_fill)
                 c5_02_7 = row[headers.index('c5_02_7')]
                 if not (c5_02_7 is None or c5_02_7 == '' or c5_02_7 == '0'):
-                    self.printWarning('c5_02_1', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_1', i, row, headers, default_fill)
                 c5_02_8 = row[headers.index('c5_02_7')]
                 if not (c5_02_8 is None or c5_02_8 == '' or c5_02_8 == '0'):
-                    self.printWarning('c5_02_8', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_8', i, row, headers, default_fill)
                 c5_02_9 = row[headers.index('c5_02_9')]
                 if not (c5_02_9 is None or c5_02_9 == '' or c5_02_9 == '0'):
-                    self.printWarning('c5_02_9', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_02_9', i, row, headers, default_fill)
                 c5_03 = row[headers.index('c5_03')]
                 if not (c5_03 is None or c5_03 == ''):
-                    self.printWarning('c5_03', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_03', i, row, headers, default_fill)
             c5_04 = row[headers.index('c5_04')]
             if c5_04 != '1':
                 c5_05 = row[headers.index('c5_05')]
                 if not (c5_05 is None or c5_05 == ''):
-                    self.printWarning('c5_05', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_05', i, row, headers, default_fill)
             c5_05 = row[headers.index('c5_05')]
             if c5_05 != '1':
                 c5_06_1d = row[headers.index('c5_06_1d')]
                 if not (c5_06_1d is None or c5_06_1d == ''):
-                    self.printWarning('c5_06_1d', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_1d', i, row, headers, default_fill)
                 c5_06_1m = row[headers.index('c5_06_1m')]
                 if not (c5_06_1m is None or c5_06_1m == ''):
-                    self.printWarning('c5_06_1m', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_1m', i, row, headers, default_fill)
                 c5_06_1y = row[headers.index('c5_06_1y')]
                 if not (c5_06_1y is None or c5_06_1y == ''):
-                    self.printWarning('c5_06_1y', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_1y', i, row, headers, default_fill)
                 c5_06_2d = row[headers.index('c5_06_2d')]
                 if not (c5_06_2d is None or c5_06_2d == ''):
-                    self.printWarning('c5_06_2d', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_2d', i, row, headers, default_fill)
                 c5_06_2m = row[headers.index('c5_06_2m')]
                 if not (c5_06_2m is None or c5_06_2m == ''):
-                    self.printWarning('c5_06_2m', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_2m', i, row, headers, default_fill)
                 c5_06_2y = row[headers.index('c5_06_2y')]
                 if not (c5_06_2y is None or c5_06_2y == ''):
-                    self.printWarning('c5_06_2y', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_06_2y', i, row, headers, default_fill)
                 c5_07_1a = row[headers.index('c5_07_1a')]
                 if not (c5_07_1a is None or c5_07_1a == ''):
-                    self.printWarning('c5_07_1a', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_07_1a', i, row, headers, default_fill)
                 c5_07_2a = row[headers.index('c5_07_2a')]
                 if not (c5_07_2a is None or c5_07_2a == ''):
-                    self.printWarning('c5_07_2a', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_07_2a', i, row, headers, default_fill)
                 c5_08d = None
                 if 'c5_08d' in headers:
                     c5_08d = row[headers.index('c5_08d')]
                 if not (c5_08d is None or c5_08d == ''):
-                    self.printWarning('c5_08d', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_08d', i, row, headers, default_fill)
                 c5_08m = None
                 if 'c5_08m' in headers:
                     c5_08m = row[headers.index('c5_08m')]
                 if not (c5_08m is None or c5_08m == ''):
-                    self.printWarning('c5_08m', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_08m', i, row, headers, default_fill)
                 c5_08y = None
                 if 'c5_08y' in headers:
                     c5_08y = row[headers.index('c5_08y')]
                 if not (c5_08y is None or c5_08y == ''):
-                    self.printWarning('c5_08y', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_08y', i, row, headers, default_fill)
                 c5_09 = row[headers.index('c5_09')]
                 if not (c5_09 is None or c5_09 == ''):
-                    self.printWarning('c5_09', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_09', i, row, headers, default_fill)
             c5_10 = row[headers.index('c5_10')]
             if c5_10 != '1':
                 c5_11 = row[headers.index('c5_11')]
                 if not (c5_11 is None or c5_11 == ''):
-                    self.printWarning('c5_11', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_11', i, row, headers, default_fill)
             c5_11 = row[headers.index('c5_11')]
             if c5_10 != '1' or c5_11 != '1':
                 c5_12 = row[headers.index('c5_12')]
                 if not (c5_12 is None or c5_12 == ''):
-                    self.printWarning('c5_12', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_12', i, row, headers, default_fill)
                 c5_13 = row[headers.index('c5_13')]
                 if not (c5_13 is None or c5_13 == ''):
-                    self.printWarning('c5_13', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_13', i, row, headers, default_fill)
                 c5_14 = row[headers.index('c5_14')]
                 if not (c5_14 is None or c5_14 == ''):
-                    self.printWarning('c5_14', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_14', i, row, headers, default_fill)
                 c5_15 = row[headers.index('c5_15')]
                 if not (c5_15 is None or c5_15 == ''):
-                    self.printWarning('c5_15', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_15', i, row, headers, default_fill)
                 c5_16 = row[headers.index('c5_16')]
                 if not (c5_16 is None or c5_16 == ''):
-                    self.printWarning('c5_16', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_16', i, row, headers, default_fill)
             c5_17 = row[headers.index('c5_17')]
             if c5_17 != '1':
                 c5_18 = row[headers.index('c5_18')]
                 if not (c5_18 is None or c5_18 == ''):
-                    self.printWarning('c5_18', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_18', i, row, headers, default_fill)
             # general vars
             # not in electronic version
             # g1_07a = row[headers.index('g1_07a')]
@@ -1167,11 +1164,11 @@ class PreSymptomPrep(object):
             if g5_04a < 12 or g5_04a == 999:
                 g5_05 = row[headers.index('g5_05')]
                 if not (g5_05 is None or g5_05 == ''):
-                    self.printWarning('g5_05', i, row, headers, child_defaultFill)
+                    self.printWarning('g5_05', i, row, headers, default_fill)
             if g5_04a < 5 or g5_04a == 999:
                 g5_06a = row[headers.index('g5_06a')]
                 if not (g5_06a is None or g5_06a == ''):
-                    self.printWarning('g5_06a', i, row, headers, child_defaultFill)
+                    self.printWarning('g5_06a', i, row, headers, default_fill)
                 # not in electronic version
                 # g5_06b = row[headers.index('g5_06b')]
                 #                if not (g5_06b is None or g5_06b == ''):
@@ -1184,10 +1181,10 @@ class PreSymptomPrep(object):
             if c5_04 != '1' or c5_05 != 1:
                 c5_07_1b = row[headers.index('c5_07_1b')]
                 if not (c5_07_1b is None or c5_07_1b == ''):
-                    self.printWarning('c5_07_1b', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_07_1b', i, row, headers, default_fill)
                 c5_07_2b = row[headers.index('c5_07_2b')]
                 if not (c5_07_2b is None or c5_07_2b == ''):
-                    self.printWarning('c5_07_2b', i, row, headers, child_defaultFill)
+                    self.printWarning('c5_07_2b', i, row, headers, default_fill)
 
         # special case: 'child_4_50b' should be set to 1000 if it's missing
         for row in matrix:
@@ -1199,13 +1196,13 @@ class PreSymptomPrep(object):
         for row in matrix:
             for i, col in enumerate(row):
                 header = headers[i]
-                default = child_defaultFill.get(header)
+                default = default_fill.get(header)
                 if default is not None and col == '':
-                    row[i] = child_defaultFill[header]
+                    row[i] = default_fill[header]
 
         status_logger.debug('Child :: Analyzing free text')
 
-        if self.shortform:
+        if self.short_form:
             for row in matrix:
                 if row[headers_old.index('child_6_1')] == '1':
                     self.processFreeText('abdomen', row, headers)
@@ -1301,17 +1298,14 @@ class PreSymptomPrep(object):
 
         # fix duration variables
         status_logger.debug('Child :: Processing duration variables')
-        durationVars = ['c1_05', 'c1_20', 'c1_21', 'c1_25', 'c2_02', 'c2_05', 'c2_10', 'c3_14', 'c3_18', 'c3_19',
-                        'c3_21', 'c3_22', 'c3_27', 'c3_28', 'c3_30', 'c3_31', 'c4_02', 'c4_08', 'c4_10', 'c4_13',
-                        'c4_17', 'c4_19', 'c4_33', 'c4_37', 'c4_49']
 
         # add duration variables
-        for var in durationVars:
+        for var in DURATION_VARS:
             headers.append(var)
             for row in matrix:
                 row.append("")
 
-        for var in durationVars:
+        for var in DURATION_VARS:
             a = var + 'a'
             b = var + 'b'
             aindex = headers.index(a)
@@ -1339,7 +1333,7 @@ class PreSymptomPrep(object):
 
         # drop old a/b variables
         # we do two loops to make sure we don't cross indexes, inefficient...
-        for var in durationVars:
+        for var in DURATION_VARS:
             a = var + 'a'
             b = var + 'b'
             aindex = headers.index(a)
