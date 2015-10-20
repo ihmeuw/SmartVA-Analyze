@@ -36,7 +36,7 @@ class NeonateSymptomPrep(object):
         self.want_abort = 0
 
     def run(self):
-        status_notifier.update({'progress': (11,)})
+        status_notifier.update({'progress': 1})
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'neonate-symptom.csv', 'wb', buffering=0))

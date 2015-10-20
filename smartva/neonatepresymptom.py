@@ -31,7 +31,7 @@ class PreSymptomPrep(object):
         self.shortform = shortform
 
     def run(self):
-        status_notifier.update({'progress': (10,)})
+        status_notifier.update({'progress': 1})
 
         if self.shortform:
             neonate_defaultFill = default_fill_data.NEONATE_DEFAULT_FILL_SHORT

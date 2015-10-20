@@ -41,7 +41,7 @@ class AdultSymptomPrep(DataPrep):
 
     def run(self):
         status_logger.info('Adult :: Processing Adult symptom data')
-        status_notifier.update({'progress': (3,)})
+        status_notifier.update({'progress': 1})
 
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
             writer = csv.writer(fo)

@@ -117,7 +117,7 @@ class CauseGrapher(object):
 
     def run(self):
         status_logger.info('Making cause graphs')
-        status_notifier.update({'progress': (13,)})
+        status_notifier.update({'progress': 1})
 
         module_errors = {}
         status_notifier.update({'sub_progress': (0, len(module_labels))})

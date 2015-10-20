@@ -33,7 +33,7 @@ class ChildSymptomPrep(object):
         self.shortform = shortform
 
     def run(self):
-        status_notifier.update({'progress': (8,)})
+        status_notifier.update({'progress': 1})
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         adultwriter = csv.writer(open(self.output_dir + os.sep + 'child-symptom.csv', 'wb', buffering=0))

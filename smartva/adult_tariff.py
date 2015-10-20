@@ -101,7 +101,7 @@ class Tariff(DataPrep):
 
     def run(self):
         status_logger.info('Adult :: Processing Adult tariffs')
-        status_notifier.update({'progress': (4,)})
+        status_notifier.update({'progress': 1})
 
         # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
         # tariffs. It is unnecessary to drop headers from other matrices.
@@ -184,17 +184,18 @@ class Tariff(DataPrep):
         for va in va_validated_cause_list:
             uniform_list.extend([va] * FREQUENCIES[va.sid])
 
-        status_logger.debug('Adult :: Generating cause rankings.')
+        status_logger.info('Adult :: Generating cause rankings.')
 
         status_notifier.update({'sub_progress': (0, len(va_cause_list))})
 
         for index, va in enumerate(va_cause_list):
             rank_list = {}
+
+            status_notifier.update({'sub_progress': (index,)})
+
             for cause in cause40s:
                 if self.want_abort:
                     return
-
-                status_notifier.update({'sub_progress': (index,)})
 
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]

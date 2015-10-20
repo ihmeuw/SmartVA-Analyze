@@ -107,7 +107,7 @@ class CSMFGrapher(object):
 
     def run(self):
         status_logger.info('Making CSMF graphs')
-        status_notifier.update({'progress': (14,)})
+        status_notifier.update({'progress': 1})
 
         graph_data_unsorted = get_default_dict()
 

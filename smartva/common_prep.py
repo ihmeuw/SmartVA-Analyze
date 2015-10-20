@@ -59,7 +59,7 @@ class CommonPrep(object):
         :rtype : bool
         """
         status_logger.info('Initial data prep')
-        status_notifier.update({'progress': (1,)})
+        status_notifier.update({'progress': 1})
 
         with open(self.input_file_path, 'rU') as f:
             reader = csv.reader(f)

@@ -51,7 +51,7 @@ class Tariff(object):
         self.shortform = shortform
 
     def run(self):
-        status_notifier.update({'progress': (9,)})
+        status_notifier.update({'progress': 1})
 
         reader = csv.reader(open(self.inputFilePath, 'rb'))
         writer = csv.writer(open(self.intermediate_dir + os.sep + 'child-tariff-results.csv', 'wb', buffering=0))

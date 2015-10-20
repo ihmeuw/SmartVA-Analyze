@@ -40,7 +40,7 @@ class AdultPreSymptomPrep(DataPrep):
 
     def run(self):
         status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
-        status_notifier.update({'progress': (2,)})
+        status_notifier.update({'progress': 1})
 
         if self.short_form:
             default_fill = ADULT_DEFAULT_FILL_SHORT
