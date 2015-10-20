@@ -4,6 +4,7 @@ import re
 
 from stemming.porter2 import stem
 
+from smartva.data_prep import DataPrep
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import ADULT_RANGE_LIST
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
@@ -34,18 +35,11 @@ FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 DROP_PATTERN = '[cpn]([_\d]|hild|omplications|rovider|eonate)'
 
 
-class AdultPreSymptomPrep(object):
+class AdultPreSymptomPrep(DataPrep):
     AGE_GROUP = 'adult'
 
-    def __init__(self, input_file, output_dir, short_form):
-        self.input_file_path = input_file
-        self.output_dir = output_dir
-        self.short_form = short_form
-
-        self.want_abort = False
-
     def run(self):
-        status_logger.info('Adult :: Processing pre-symptom data')
+        status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': (2,)})
 
         if self.short_form:
