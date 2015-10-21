@@ -1,6 +1,7 @@
 import csv
 import re
 import os
+from smartva.data_prep import DataPrep
 
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, get_item_count
@@ -34,16 +35,13 @@ def int_value(x):
         return 0
 
 
-class CommonPrep(object):
+class CommonPrep(DataPrep):
     """
     This file cleans up input and converts from ODK collected data to VA variables.
     """
 
     def __init__(self, input_file, output_dir, short_form):
-        self.input_file_path = input_file
-        self.output_dir = output_dir
-        self.short_form = short_form
-        self.want_abort = False
+        DataPrep.__init__(self, input_file, output_dir, short_form)
 
         self._matrix_data = {
             ADULT: [],

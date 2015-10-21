@@ -4,15 +4,15 @@ import re
 
 from stemming.porter2 import stem
 
-from smartva.data_prep import DataPrep
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import ADULT_RANGE_LIST
+from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
-    ADULT_HEADER_CONVERSION_MAP,
+    HEADER_CONVERSION_MAP,
     CONSOLIDATION_MAP,
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
@@ -35,8 +35,10 @@ FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 DROP_PATTERN = '[cpn]([_\d]|hild|omplications|rovider|eonate)'
 
 
-class AdultPreSymptomPrep(DataPrep):
-    AGE_GROUP = 'adult'
+class AdultPreSymptomPrep(PreSymptomPrep):
+    def __init__(self, input_file, output_dir, short_form):
+        PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
+        self.AGE_GROUP = 'adult'
 
     def run(self):
         status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
@@ -68,7 +70,7 @@ class AdultPreSymptomPrep(DataPrep):
 
                 headers.extend(additional_headers)
 
-                self.rename_odk_headers(headers, ADULT_HEADER_CONVERSION_MAP)
+                self.rename_headers(headers, HEADER_CONVERSION_MAP)
 
                 drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
                 drop_index_list += self.get_drop_index_list(headers, 'adult')
@@ -113,20 +115,6 @@ class AdultPreSymptomPrep(DataPrep):
         return True
 
     @staticmethod
-    def rename_odk_headers(headers, conversion_map):
-        """
-        Rename headers to match the next processing step.
-
-        :param headers: List of headers.
-        :param conversion_map: Map of old to new headers.
-        """
-        for old_header, new_header in conversion_map.items():
-            try:
-                headers[headers.index(old_header)] = new_header
-            except (KeyError, ValueError):
-                pass  # Header did not exist.
-
-    @staticmethod
     def get_drop_index_list(headers, drop_pattern):
         """
         Find and return a list of header indices that match a given pattern.
@@ -148,36 +136,6 @@ class AdultPreSymptomPrep(DataPrep):
         """
         # Return a new list of headers containing all but the items in the drop list.
         return [item for index, item in enumerate(item_list) if index not in drop_index_list]
-
-    @staticmethod
-    def verify_answers_for_row(headers, row, valid_range_data):
-        """
-        Verify answers in a row of data are valid.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param valid_range_data: Dictionary of headers and valid ranges.
-        :return: True if any values fail validation.
-        """
-        warnings = False
-        for header, range_list in valid_range_data.items():
-            try:
-                value = row[headers.index(header)]
-            except ValueError:
-                pass  # Header not in data set.
-            else:
-                if value != '' and range_list:
-                    try:
-                        answer_array = value.split()
-                    except AttributeError:
-                        answer_array = [value]
-                    for answer in answer_array:
-                        if int(answer) not in range_list:
-                            warning_logger.warning('SID: {} variable {} has an illegal value {}. '
-                                                   'Please see Codebook for legal values.'
-                                                   .format(row[headers.index('sid')], header, value))
-                            warnings = True
-        return warnings
 
     @staticmethod
     def convert_free_text_words(headers, row, input_word_list, word_map):
@@ -213,31 +171,6 @@ class AdultPreSymptomPrep(DataPrep):
             if row[headers.index(data_header)]:
                 word_list = row[headers.index(data_header)].split(' ')
                 AdultPreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
-
-    @staticmethod
-    def consolidate_answers(headers, row, consolidation_map):
-        """
-        Consolidate answers from data answers into new variables.
-
-        Consolidation map dictionary format:
-            (read_header, write_header): {
-                VAL: data_header
-            }
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param consolidation_map: Dictionary of read/write variables and their data counterparts.
-        """
-        for data_headers, data_map in consolidation_map.items():
-            read_header, write_header = data_headers
-            try:
-                value = int(row[headers.index(read_header)])
-            except ValueError:
-                # FIXME - This covers both the header index and the int operations.
-                pass
-            else:
-                if value in data_map:
-                    row[headers.index(write_header)] = row[headers.index(data_map[value])]
 
     @staticmethod
     def convert_binary_variables(headers, row, conversion_map):

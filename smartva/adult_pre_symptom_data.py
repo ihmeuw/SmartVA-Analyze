@@ -45,7 +45,7 @@ GENERATED_HEADERS_DATA = [
     ('a6_02_15', 0),
 ]
 
-ADULT_HEADER_CONVERSION_MAP = {
+HEADER_CONVERSION_MAP = {
     'sid': 'sid',
     'gen_2_1': 'g2_01',
     'gen_2_2a': 'g2_02',

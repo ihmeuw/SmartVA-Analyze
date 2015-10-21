@@ -30,17 +30,6 @@ class DataPrep(object):
                 pass  # Header did not exist.
 
     @staticmethod
-    def get_drop_index_list(headers, drop_pattern):
-        """
-        Find and return a list of header indices that match a given pattern.
-
-        :param headers: List of headers.
-        :param drop_pattern: Regular expression of drop pattern.
-        :return: List of indices.
-        """
-        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
-
-    @staticmethod
     def drop_from_list(item_list, drop_index_list):
         """
         Return a pruned list.
