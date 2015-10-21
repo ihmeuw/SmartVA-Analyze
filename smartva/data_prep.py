@@ -55,3 +55,6 @@ class DataPrep(object):
                 convert_binary_variable(headers, row, data_header, data_map)
             except ConversionError as e:
                 warning_logger.debug(e.message)
+
+    def abort(self):
+        self.want_abort = True

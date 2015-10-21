@@ -96,7 +96,7 @@ class TestAdultPreSymptomPrep(object):
             }
         }
 
-        AdultPreSymptomPrep.consolidate_answers(headers, row, consolidation_map)
+        AdultPreSymptomPrep.recode_answers(headers, row, consolidation_map)
 
         assert row == ['0', 13, 3, 1, 2, 3]
 

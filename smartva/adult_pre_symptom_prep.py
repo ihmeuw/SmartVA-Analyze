@@ -1,33 +1,26 @@
 import csv
 import os
-import re
-
-from stemming.porter2 import stem
 
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
 from smartva.answer_ranges import ADULT_RANGE_LIST
 from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.word_conversions import ADULT_WORDS_TO_VARS
-from smartva.loggers import status_logger, warning_logger
+from smartva.loggers import status_logger
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_pre_symptom_data import (
     GENERATED_HEADERS_DATA,
     HEADER_CONVERSION_MAP,
-    CONSOLIDATION_MAP,
+    RECODE_MAP,
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
     FREE_TEXT_HEADERS,
     SKIP_PATTERN_DATA,
-    TIME_FACTORS,
     DURATION_VARS,
     DURATION_VARS_SHORT_FORM_DROP_LIST,
     DURATION_VARS_SPECIAL_CASE
 )
 from smartva.utils.conversion_utils import (
-    ConversionError,
-    int_value_or_0,
     additional_headers_and_values,
-    convert_binary_variable,
     check_skip_patterns
 )
 
@@ -98,7 +91,7 @@ class AdultPreSymptomPrep(PreSymptomPrep):
                         if word_list:
                             self.convert_free_text_words(headers, new_row, word_list, ADULT_WORDS_TO_VARS)
 
-                    self.consolidate_answers(headers, new_row, CONSOLIDATION_MAP)
+                    self.recode_answers(headers, new_row, RECODE_MAP)
 
                     self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
                 
@@ -113,112 +106,3 @@ class AdultPreSymptomPrep(PreSymptomPrep):
         status_notifier.update({'sub_progress': None})
 
         return True
-
-    @staticmethod
-    def get_drop_index_list(headers, drop_pattern):
-        """
-        Find and return a list of header indices that match a given pattern.
-
-        :param headers: List of headers.
-        :param drop_pattern: Regular expression of drop pattern.
-        :return: List of indices.
-        """
-        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
-
-    @staticmethod
-    def drop_from_list(item_list, drop_index_list):
-        """
-        Return a pruned list.
-
-        :param item_list: List of items to prune.
-        :param drop_index_list: Indices to prune.
-        :return: New list of items.
-        """
-        # Return a new list of headers containing all but the items in the drop list.
-        return [item for index, item in enumerate(item_list) if index not in drop_index_list]
-
-    @staticmethod
-    def convert_free_text_words(headers, row, input_word_list, word_map):
-        """
-        Process free text word lists into binary variables.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param input_word_list: List of free text words to process.
-        :param word_map: Dictionary of words and variables.
-        """
-        for word in input_word_list:
-            try:
-                row[headers.index(word_map[stem(word)])] = 1
-            except KeyError:
-                # Word is not in the data map.
-                pass
-            except ValueError:
-                warning_logger.warning('SID: {} variable {} not found for valid word "{}".'
-                                       .format(row[headers.index('sid')], word_map[stem(word)], word))
-
-    @staticmethod
-    def convert_free_text_headers(headers, row, data_headers, word_map):
-        """
-        Process all free text data from a list of data headers into binary variables.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param data_headers: List of headers to process.
-        :param word_map: Dictionary of words and variables.
-        """
-        for data_header in data_headers:
-            if row[headers.index(data_header)]:
-                word_list = row[headers.index(data_header)].split(' ')
-                AdultPreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
-
-    @staticmethod
-    def convert_binary_variables(headers, row, conversion_map):
-        """
-        Convert multiple value answers into binary cells.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param conversion_map: Data structure with header and binary variable mapping.
-        """
-        for data_header, data_map in conversion_map:
-            try:
-                convert_binary_variable(headers, row, data_header, data_map)
-            except ConversionError as e:
-                warning_logger.debug(e.message)
-
-    @staticmethod
-    def fill_missing_data(headers, row, default_fill):
-        """
-        Fill missing data with default fill values.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param default_fill: Dictionary of headers and default values.
-        """
-        for header in headers:
-            if row[headers.index(header)] == '':
-                row[headers.index(header)] = default_fill.get(header, '')
-
-    @staticmethod
-    def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
-        """
-        Calculate duration variables in days.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param duration_vars: List of variables containing duration variables.
-        :param special_case_vars: Dictionary of special variables and their value if duration is blank.
-        """
-        for var in duration_vars:
-            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
-            code_value = int_value_or_0(row[headers.index(code_var)])
-            length_value = int_value_or_0(row[headers.index(length_var)])
-
-            if var in special_case_vars and length_value == '':
-                row[headers.index(var)] = special_case_vars[var]
-            else:
-                row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
-
-    def abort(self):
-        self.want_abort = True

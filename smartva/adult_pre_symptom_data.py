@@ -270,12 +270,12 @@ HEADER_CONVERSION_MAP = {
 }
 
 """
-Consolidation maps use the format:
+Recode maps use the format:
     (read_header, write_header): {
         VAL: data_header
     }
 """
-CONSOLIDATION_MAP = {
+RECODE_MAP = {
     ('g4_03a', 'g4_03b'): {
         11: 'gen_4_3a',
         12: 'gen_4_3b',
@@ -466,8 +466,6 @@ SKIP_PATTERN_DATA = [
     ('(&(a4_01=1)(|(a4_02_2=1)(a4_02_3=1)(a4_02_4=1)(a4_02_5a=1)))', ['a4_03']),
 ]
 
-'(|(&(g5_02=2)(a3_03=0)(!(a3_15=1))(a3_18=1))(a3_17=1))'
-
 SHORT_FORM_FREE_TEXT_CONVERSION = {
     'a_7_1': 'kidney',
     'a_7_2': 'dialysis',
@@ -492,15 +490,6 @@ FREE_TEXT_HEADERS = [
     'a6_15',
     'a7_01',
 ]
-
-TIME_FACTORS = {
-    1: 356.0,
-    2: 30.0,
-    3: 7.0,
-    4: 1.0,
-    5: 1 / 24.0,
-    6: 1 / 1440.0
-}
 
 DURATION_VARS = [
     'a2_01',
