@@ -1,6 +1,5 @@
 import re
 from stemming.porter2 import stem
-from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
@@ -145,7 +144,7 @@ class PreSymptomPrep(DataPrep):
         for data_header in data_headers:
             if row[headers.index(data_header)]:
                 word_list = row[headers.index(data_header)].split(' ')
-                AdultPreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
+                PreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
 
     @staticmethod
     def convert_binary_variables(headers, row, conversion_map):

@@ -62,13 +62,15 @@ def convert_binary_variable(headers, row, data_header, data_map):
         pass
 
 
-def check_skip_patterns(headers, row, skip_pattern_data):
-    def get_cell(header):
-        value = row[headers.index(header)]
+def check_skip_patterns(headers, row, skip_pattern_data, default_values=None):
+    def get_cell(var):
+        value = row[headers.index(var)]
         try:
             return int(value)
         except ValueError:
             return 0
+
+    default_values = default_values or {}
 
     warnings = False
     for skip_pattern_item in skip_pattern_data:
@@ -80,6 +82,6 @@ def check_skip_patterns(headers, row, skip_pattern_data):
                     warnings = True
                     warning_logger.info('SID: {} variable {} has value {}, but should be blank.'
                                         .format(row[headers.index('sid')], skip_list_item, skip_list_item_value))
-                    row[headers.index(skip_list_item)] = 0
+                    row[headers.index(skip_list_item)] = default_values.get(skip_list_item, 0)
 
     return warnings
