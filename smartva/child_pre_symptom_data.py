@@ -519,3 +519,5 @@ WEIGHT_SD_DATA = {
         2: FEMALE_SD2,
     },
 }
+
+AGE_VARS = ['g5_04']

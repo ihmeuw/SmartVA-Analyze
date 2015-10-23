@@ -27,7 +27,8 @@ from smartva.child_pre_symptom_data import (
     DATE_VARS,
     EXAM_DATE_VARS,
     DOB_VAR, SEX_VAR,
-    WEIGHT_SD_DATA
+    WEIGHT_SD_DATA,
+    AGE_VARS
 )
 from smartva.word_conversions import CHILD_WORDS_TO_VARS
 
@@ -118,9 +119,19 @@ class ChildPreSymptomPrep(PreSymptomPrep):
 
                     self.process_weight_sd_vars(headers, new_row)
 
+                    self.process_age_vars(headers, new_row)
+
                     self.fill_missing_data(headers, new_row, default_fill)
 
                     writer.writerow(self.drop_from_list(new_row, drop_index_list))
+
+    @staticmethod
+    def process_age_vars(headers, row):
+        for age_var in AGE_VARS:
+            years = int(row[headers.index('{}a'.format(age_var))])
+            months = int(row[headers.index('{}b'.format(age_var))])
+            days = int(row[headers.index('{}c'.format(age_var))])
+            row[headers.index('{}a'.format(age_var))] = years + (months / 12.0) + (days / 356.0)
 
     @staticmethod
     def validate_weight_vars(headers, row):
