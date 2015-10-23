@@ -18,7 +18,6 @@ TIME_FACTORS = {
 
 
 class PreSymptomPrep(DataPrep):
-    AGE_GROUP = 'none'
     FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
     def run(self):
