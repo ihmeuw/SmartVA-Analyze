@@ -1,5 +1,3 @@
-import re
-
 from smartva.loggers import warning_logger
 from smartva.utils.conversion_utils import convert_binary_variable, ConversionError
 
@@ -42,7 +40,7 @@ class DataPrep(object):
         return [item for index, item in enumerate(item_list) if index not in drop_index_list]
 
     @staticmethod
-    def process_binary_variables(headers, row, conversion_map):
+    def process_binary_vars(headers, row, conversion_map):
         """
         Convert multiple value answers into binary cells.
 
@@ -58,18 +56,3 @@ class DataPrep(object):
 
     def abort(self):
         self.want_abort = True
-
-    @staticmethod
-    def convert_binary_vars(headers, row, conversion_map):
-        """
-        Convert multiple value answers into binary cells.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param conversion_map: Data structure with header and binary variable mapping.
-        """
-        for data_header, data_map in conversion_map:
-            try:
-                convert_binary_variable(headers, row, data_header, data_map)
-            except ConversionError as e:
-                warning_logger.debug(e.message)

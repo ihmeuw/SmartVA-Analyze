@@ -5,13 +5,13 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_symptom_data import (
-    GENERATED_HEADERS,
-    ADULT_CONVERSION_VARIABLES,
-    COPY_VARIABLES,
-    AGE_QUARTILE_BINARY_VARIABLES,
+    GENERATED_VARS_DATA,
+    VAR_CONVERSION_MAP,
+    COPY_VARS,
+    AGE_QUARTILE_BINARY_VARS,
     DURATION_CUTOFF_DATA,
-    INJURY_VARIABLES,
-    BINARY_VARIABLES,
+    INJURY_VARS,
+    BINARY_VARS,
     FREE_TEXT_VARIABLES,
     DROP_LIST,
     BINARY_CONVERSION_MAP
@@ -53,14 +53,14 @@ class AdultSymptomPrep(DataPrep):
 
                 headers = next(reader)
 
-                additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_HEADERS)
+                additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_VARS_DATA)
 
                 headers.extend(additional_headers)
 
-                self.rename_headers(headers, ADULT_CONVERSION_VARIABLES)
+                self.rename_headers(headers, VAR_CONVERSION_MAP)
 
                 # Identify unneeded variables for removal, and write the new headers to the output file.
-                not_drop_list = ADULT_CONVERSION_VARIABLES.values() + FREE_TEXT_VARIABLES + additional_headers
+                not_drop_list = VAR_CONVERSION_MAP.values() + FREE_TEXT_VARIABLES + additional_headers
 
                 drop_index_list = set([i for i, header in enumerate(headers) if header not in not_drop_list])
                 drop_index_list.update([headers.index(header) for header in DROP_LIST])
@@ -75,20 +75,20 @@ class AdultSymptomPrep(DataPrep):
 
                     new_row = row + additional_values
 
-                    self.copy_variables(headers, new_row, COPY_VARIABLES)
+                    self.copy_variables(headers, new_row, COPY_VARS)
 
                     # Compute age quartiles.
-                    self.process_quartile_data(headers, new_row, AGE_QUARTILE_BINARY_VARIABLES.items())
+                    self.process_quartile_data(headers, new_row, AGE_QUARTILE_BINARY_VARS.items())
 
                     self.process_cutoff_data(headers, new_row, DURATION_CUTOFF_DATA.items())
 
-                    self.process_injury_data(headers, new_row, INJURY_VARIABLES.items())
+                    self.process_injury_data(headers, new_row, INJURY_VARS.items())
 
                     # Dichotomize!
-                    self.process_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
+                    self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
 
                     # Ensure all binary variables actually ARE 0 or 1:
-                    self.post_process_binary_variables(headers, new_row, BINARY_VARIABLES)
+                    self.post_process_binary_variables(headers, new_row, BINARY_VARS)
 
                     writer.writerow(self.drop_from_list(new_row, drop_index_list))
 

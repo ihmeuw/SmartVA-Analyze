@@ -93,7 +93,7 @@ class AdultPreSymptomPrep(PreSymptomPrep):
 
                     self.recode_answers(headers, new_row, RECODE_MAP)
 
-                    self.convert_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
+                    self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
                 
                     check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
 

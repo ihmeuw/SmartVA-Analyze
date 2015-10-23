@@ -1,6 +1,6 @@
 from smartva.freetext_vars import ADULT_FREE_TEXT as FREE_TEXT_VARIABLES
 
-GENERATED_HEADERS = [
+GENERATED_VARS_DATA = [
     ('s88881', 0),
     ('s88882', 0),
     ('s88883', 0),
@@ -30,7 +30,7 @@ GENERATED_HEADERS = [
     ('sex', 0),
 ]
 
-ADULT_CONVERSION_VARIABLES = {
+VAR_CONVERSION_MAP = {
     'a1_01_1': 's1',
     'a1_01_2': 's2',
     'a1_01_3': 's3',
@@ -193,12 +193,12 @@ ADULT_CONVERSION_VARIABLES = {
     'sid': 'sid'
 }
 
-COPY_VARIABLES = {
+COPY_VARS = {
     'real_age': 'age',
     'real_gender': 'sex'
 }
 
-AGE_QUARTILE_BINARY_VARIABLES = {
+AGE_QUARTILE_BINARY_VARS = {
     'age': [
         (65, 's88884'),
         (49, 's88883'),
@@ -239,7 +239,7 @@ DURATION_CUTOFF_DATA = {
     's148': 10
 }
 
-INJURY_VARIABLES = {
+INJURY_VARS = {
     's163': [
         's151',
         's152',
@@ -316,7 +316,7 @@ BINARY_CONVERSION_MAP = {
     'sex': [2]
 }
 
-BINARY_VARIABLES = [
+BINARY_VARS = [
     's1',
     's2',
     's3',
