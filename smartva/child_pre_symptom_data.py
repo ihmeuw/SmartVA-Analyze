@@ -14,7 +14,7 @@ GENERATED_VARS_DATA = [
     ('s180', 0),
     ('s181', 0),
     ('c1_26', 0),
-    ('child_1_8num', 0),
+    ('c1_08num', 0),
 ]
 
 VAR_CONVERSION_MAP = {
@@ -459,7 +459,8 @@ DOB_VAR = 'g5_01'
 SEX_VAR = 'g5_02'
 
 EXAM_DATE_VARS = {
-    'c5_06': 'c5_07'
+    'c5_06_1': 'c5_07_1',
+    'c5_06_2': 'c5_07_2',
 }
 
 MALE_SD3 = {
@@ -500,4 +501,21 @@ FEMALE_SD2 = {
     40: 11.3, 41: 11.5, 42: 11.6, 43: 11.7, 44: 11.8, 45: 12, 46: 12.1, 47: 12.2, 48: 12.3, 49: 12.4,
     50: 12.6, 51: 12.7, 52: 12.8, 53: 12.9, 54: 13, 55: 13.2, 56: 13.3, 57: 13.4, 58: 13.5, 59: 13.6,
     60: 13.7
+}
+
+WEIGHT_SD_DATA = {
+    # Standard deviation 3
+    's180': {
+        # Male
+        1: MALE_SD3,
+        # Female
+        2: FEMALE_SD3,
+    },
+    # Standard deviation 2
+    's181': {
+        # Male
+        1: MALE_SD2,
+        # Female
+        2: FEMALE_SD2,
+    },
 }
