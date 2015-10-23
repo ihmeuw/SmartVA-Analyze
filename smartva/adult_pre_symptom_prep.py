@@ -8,12 +8,12 @@ from smartva.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_pre_symptom_data import (
-    GENERATED_HEADERS_DATA,
-    HEADER_CONVERSION_MAP,
+    GENERATED_VARS_DATA,
+    VAR_CONVERSION_MAP,
     RECODE_MAP,
     BINARY_CONVERSION_MAP,
     SHORT_FORM_FREE_TEXT_CONVERSION,
-    FREE_TEXT_HEADERS,
+    FREE_TEXT_VARS,
     SKIP_PATTERN_DATA,
     DURATION_VARS,
     DURATION_VARS_SHORT_FORM_DROP_LIST,
@@ -58,12 +58,12 @@ class AdultPreSymptomPrep(PreSymptomPrep):
 
                 headers = next(reader)
 
-                additional_headers_data = GENERATED_HEADERS_DATA + [(k, '') for k in DURATION_VARS]
+                additional_headers_data = GENERATED_VARS_DATA + [(k, '') for k in DURATION_VARS]
                 additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
 
                 headers.extend(additional_headers)
 
-                self.rename_headers(headers, HEADER_CONVERSION_MAP)
+                self.rename_headers(headers, VAR_CONVERSION_MAP)
 
                 drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
                 drop_index_list += self.get_drop_index_list(headers, 'adult')
@@ -83,7 +83,7 @@ class AdultPreSymptomPrep(PreSymptomPrep):
                     
                     self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
 
-                    self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
+                    self.convert_free_text_headers(headers, new_row, FREE_TEXT_VARS, ADULT_WORDS_TO_VARS)
 
                     if self.short_form:
                         word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
