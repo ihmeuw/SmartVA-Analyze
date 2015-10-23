@@ -1,8 +1,7 @@
 import csv
 import os
 
-from smartva.data_prep import DataPrep
-from smartva.loggers import status_logger
+from smartva.symptom_prep import SymptomPrep, FILENAME_TEMPLATE
 from smartva.utils import status_notifier, get_item_count
 from smartva.adult_symptom_data import (
     GENERATED_VARS_DATA,
@@ -18,10 +17,8 @@ from smartva.adult_symptom_data import (
 )
 from smartva.utils.conversion_utils import additional_headers_and_values
 
-FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
-
-class AdultSymptomPrep(DataPrep):
+class AdultSymptomPrep(SymptomPrep):
     """
     Prepare symptom data for tariff processing.
 
@@ -37,11 +34,12 @@ class AdultSymptomPrep(DataPrep):
     (i.e. s163<=30) Otherwise, we could have people who responded that they were in a car accident 20
     years prior to death be assigned to road traffic deaths.
     """
-    AGE_GROUP = 'adult'
+    def __init__(self, input_file, output_dir, short_form):
+        super(AdultSymptomPrep, self).__init__(input_file, output_dir, short_form)
+        self.AGE_GROUP = 'adult'
 
     def run(self):
-        status_logger.info('Adult :: Processing Adult symptom data')
-        status_notifier.update({'progress': 1})
+        super(AdultSymptomPrep, self).run()
 
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
             writer = csv.writer(fo)
@@ -95,100 +93,3 @@ class AdultSymptomPrep(DataPrep):
         status_notifier.update({'sub_progress': None})
 
         return True
-
-    @staticmethod
-    def copy_variables(headers, row, copy_variables_map):
-        """
-        Copy data from one variable to another.
-        {
-            'read variable': 'write variable'
-        }
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param copy_variables_map: Dict of read header and write header.
-        """
-        for read_header, write_header in copy_variables_map.items():
-            row[headers.index(write_header)] = row[headers.index(read_header)]
-
-    @staticmethod
-    def process_quartile_data(headers, row, quartile_data):
-        """
-        Populate quartile variables from input data.
-        Format:
-        {
-            'read variable': [
-                (upper, variable),
-                (median, variable),
-                (lower, variable),
-                (0, variable)
-            ]
-        }
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param quartile_data: Quartile ranges in specified format.
-        """
-        for read_header, conversion_data in quartile_data:
-            for value, write_header in conversion_data:
-                if int(row[headers.index(read_header)]) > value:
-                    row[headers.index(write_header)] = 1
-                    break
-
-    @staticmethod
-    def process_cutoff_data(headers, row, cutoff_data_map):
-        """
-        Change read variable to 1/0 if value is greater/less or equeal to cutoff, respectively.
-        Format:
-        {
-            variable: cutoff
-        }
-
-        :param headers:
-        :param row:
-        :param cutoff_data_map: Dict in specified format.
-        """
-        for read_header, cutoff_data in cutoff_data_map:
-            try:
-                row[headers.index(read_header)] = int(float(row[headers.index(read_header)]) >= cutoff_data)
-            except ValueError:
-                row[headers.index(read_header)] = 0
-
-    @staticmethod
-    def process_injury_data(headers, row, injury_variable_map):
-        """
-        If injury occurred more than 30 days from death, set variable to 0.
-        Format:
-        {
-            'read variable': [list of injury variables]
-        }
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param injury_variable_map: Dict in specified format.
-        """
-        for read_header, injury_list in injury_variable_map:
-            if float(row[headers.index(read_header)]) > 30:
-                for injury in injury_list:
-                    row[headers.index(injury)] = 0
-
-    @staticmethod
-    def post_process_binary_variables(headers, row, binary_variables):
-        """
-        Ensure all binary variables are actually 1 or 0.
-        Format:
-            [list of binary variables]
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param binary_variables: List in specified format.
-        """
-        for read_header in binary_variables:
-            try:
-                value = int(row[headers.index(read_header)])
-            except ValueError:
-                value = 0
-            row[headers.index(read_header)] = int(value == 1)
-
-    def abort(self):
-        self.want_abort = True
