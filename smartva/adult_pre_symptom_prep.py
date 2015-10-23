@@ -83,7 +83,7 @@ class AdultPreSymptomPrep(PreSymptomPrep):
                     
                     self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
 
-                    self.convert_free_text_headers(headers, new_row, FREE_TEXT_VARS, ADULT_WORDS_TO_VARS)
+                    self.convert_free_text_vars(headers, new_row, FREE_TEXT_VARS, ADULT_WORDS_TO_VARS)
 
                     if self.short_form:
                         word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
@@ -93,13 +93,13 @@ class AdultPreSymptomPrep(PreSymptomPrep):
 
                     self.recode_answers(headers, new_row, RECODE_MAP)
 
-                    self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
+                    self.convert_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
                 
                     check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
 
                     self.fill_missing_data(headers, new_row, default_fill)
 
-                    self.calculate_duration_variables(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
+                    self.calculate_duration_vars(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
                     writer.writerow(self.drop_from_list(new_row, drop_index_list))
 

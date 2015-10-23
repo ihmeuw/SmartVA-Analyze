@@ -23,7 +23,7 @@ class TestCommonPrep(object):
             }
         }
 
-        common_prep.CommonPrep.convert_binary_variables(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_binary_vars(headers, row, conversion_data)
 
         assert row == ['1 3', 1, 0, 1]
 
@@ -39,7 +39,7 @@ class TestCommonPrep(object):
             }
         }
 
-        common_prep.CommonPrep.convert_binary_variables(headers, row, conversion_data)
+        common_prep.CommonPrep.convert_binary_vars(headers, row, conversion_data)
 
         assert row == ['', 0, 0, 0]
 

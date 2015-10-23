@@ -1,29 +1,29 @@
 import csv
 import re
 import os
-from smartva.data_prep import DataPrep
 
-from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier, get_item_count
 from smartva.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
-    AGE_HEADERS,
+    AGE_VARS,
     ADULT_RASH_DATA,
     CHILD_WEIGHT_CONVERSION_DATA,
-    FREE_TEXT_HEADERS,
+    FREE_TEXT_VARS,
     WORD_SUBS
 )
-from smartva.utils.conversion_utils import (
-    ConversionError,
-    additional_headers_and_values,
-    convert_binary_variable
-)
+from smartva.data_prep import DataPrep
+from smartva.loggers import status_logger, warning_logger
+from smartva.utils import status_notifier, get_item_count
+from smartva.utils.conversion_utils import additional_headers_and_values
+
 
 ADULT = 'adult'
 CHILD = 'child'
 NEONATE = 'neonate'
+
+FEMALE = 1
+MALE = 2
 
 PREPPED_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 
@@ -83,15 +83,15 @@ class CommonPrep(DataPrep):
 
                 new_row = row + additional_values
 
-                self.convert_cell_to_int(headers, new_row, AGE_HEADERS.values())
+                self.convert_cell_to_int(headers, new_row, AGE_VARS.values())
 
-                self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP)
+                self.convert_binary_vars(headers, new_row, BINARY_CONVERSION_MAP)
 
                 self.convert_rash_data(headers, new_row, ADULT_RASH_DATA)
 
                 self.convert_weight_data(headers, new_row, CHILD_WEIGHT_CONVERSION_DATA)
 
-                self.convert_free_text(headers, new_row, FREE_TEXT_HEADERS, WORD_SUBS)
+                self.convert_free_text(headers, new_row, FREE_TEXT_VARS, WORD_SUBS)
 
                 self.save_row(headers, new_row)
 
@@ -113,21 +113,6 @@ class CommonPrep(DataPrep):
         # TODO: Eliminate this step in favor more robust future cell processing.
         for header in conversion_data:
             row[headers.index(header)] = int_value(row[headers.index(header)])
-
-    @staticmethod
-    def convert_binary_variables(headers, row, conversion_data):
-        """
-        Convert multiple value answers into binary cells.
-
-        :param headers: List of headers to provide cell index.
-        :param row: Data from a single report.
-        :param conversion_data: Data structure with header and binary variable mapping.
-        """
-        for data_header, data_map in conversion_data.items():
-            try:
-                convert_binary_variable(headers, row, data_header, data_map)
-            except ConversionError as e:
-                warning_logger.debug(e.message)
 
     @staticmethod
     def convert_rash_data(headers, row, conversion_data):
@@ -177,7 +162,7 @@ class CommonPrep(DataPrep):
                 if units == 2:
                     weight = float(row[headers.index(mapping[units])]) * 1000
                     row[headers.index(header)] = 1
-                    row[headers.index(mapping[1])] = weight
+                    row[headers.index(mapping[1])] = int(weight)
 
     @staticmethod
     def convert_free_text(headers, row, free_text_headers, word_subs):
@@ -216,7 +201,7 @@ class CommonPrep(DataPrep):
         :rtype : dict
         """
         age_data = {}
-        for age, header in AGE_HEADERS.items():
+        for age, header in AGE_VARS.items():
             age_data[age] = int(row[headers.index(header)])
 
         return age_data

@@ -543,7 +543,7 @@ BINARY_CONVERSION_MAP = {
     },
 }
 
-AGE_HEADERS = {
+AGE_VARS = {
     'years': 'gen_5_4a',
     'months': 'gen_5_4b',
     'days': 'gen_5_4c',
@@ -573,7 +573,7 @@ CHILD_WEIGHT_CONVERSION_DATA = {
     }
 }
 
-FREE_TEXT_HEADERS = [
+FREE_TEXT_VARS = [
     'adult_5_2a',
     'adult_6_8',
     'adult_6_11',

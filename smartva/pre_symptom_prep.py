@@ -1,10 +1,11 @@
 import re
+
 from stemming.porter2 import stem
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import int_value_or_0, convert_binary_variable, ConversionError
+from smartva.utils.conversion_utils import int_value_or_0
 
 TIME_FACTORS = {
     1: 356.0,
@@ -92,7 +93,7 @@ class PreSymptomPrep(DataPrep):
                     row[headers.index(write_header)] = row[headers.index(data_map[value])]
 
     @staticmethod
-    def calculate_duration_variables(headers, row, duration_vars, special_case_vars):
+    def calculate_duration_vars(headers, row, duration_vars, special_case_vars):
         """
         Calculate duration variables in days.
 
@@ -132,7 +133,7 @@ class PreSymptomPrep(DataPrep):
                                        .format(row[headers.index('sid')], word_map[stem(word)], word))
 
     @staticmethod
-    def convert_free_text_headers(headers, row, data_headers, word_map):
+    def convert_free_text_vars(headers, row, data_headers, word_map):
         """
         Process all free text data from a list of data headers into binary variables.
 
@@ -145,21 +146,6 @@ class PreSymptomPrep(DataPrep):
             if row[headers.index(data_header)]:
                 word_list = row[headers.index(data_header)].split(' ')
                 PreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
-
-    @staticmethod
-    def convert_binary_variables(headers, row, conversion_map):
-        """
-        Convert multiple value answers into binary cells.
-
-        :param headers: List of headers.
-        :param row: Row of data.
-        :param conversion_map: Data structure with header and binary variable mapping.
-        """
-        for data_header, data_map in conversion_map:
-            try:
-                convert_binary_variable(headers, row, data_header, data_map)
-            except ConversionError as e:
-                warning_logger.debug(e.message)
 
     @staticmethod
     def fill_missing_data(headers, row, default_fill):

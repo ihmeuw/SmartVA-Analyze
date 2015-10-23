@@ -80,7 +80,7 @@ class TestAdultPreSymptomPrep(object):
             'watermelon': 'test4'
         }
 
-        AdultPreSymptomPrep.convert_free_text_headers(headers, row, data_headers, word_map)
+        AdultPreSymptomPrep.convert_free_text_vars(headers, row, data_headers, word_map)
 
         assert row == ['0', 'pencil eraser watermelon', 1, 0, 1]
 
@@ -123,6 +123,6 @@ class TestAdultPreSymptomPrep(object):
             'test2': 999
         }
 
-        AdultPreSymptomPrep.calculate_duration_variables(headers, row, duration_vars, special_case_vars)
+        AdultPreSymptomPrep.calculate_duration_vars(headers, row, duration_vars, special_case_vars)
 
         assert row == ['0', 356.0, 1, 1, 999, 0, 0]
