@@ -85,7 +85,7 @@ class CommonPrep(DataPrep):
 
                 self.convert_cell_to_int(headers, new_row, AGE_VARS.values())
 
-                self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP)
+                self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
 
                 self.convert_rash_data(headers, new_row, ADULT_RASH_DATA)
 
