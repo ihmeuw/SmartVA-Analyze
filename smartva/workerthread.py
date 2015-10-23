@@ -8,7 +8,7 @@ from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 from smartva.adult_symptom_prep import AdultSymptomPrep
 from smartva.adult_tariff import Tariff as AdultTariff
 from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
-from smartva.childsymptom import ChildSymptomPrep
+from smartva.child_symptom_prep import ChildSymptomPrep
 from smartva.childtariff import Tariff as ChildTariff
 from smartva.neonatepresymptom import PreSymptomPrep as NeonatePreSymptomPrep
 from smartva.neonatesymptom import NeonateSymptomPrep
