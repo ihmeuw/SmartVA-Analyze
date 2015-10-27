@@ -72,7 +72,7 @@ class AdultSymptomPrep(SymptomPrep):
 
             status_notifier.update({'sub_progress': (index,)})
 
-            self.expand_row(row, GENERATED_VARS_DATA)
+            self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, VAR_CONVERSION_MAP)
 
             self.copy_variables(row, COPY_VARS)
