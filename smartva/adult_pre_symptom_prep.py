@@ -2,9 +2,9 @@ import csv
 import os
 
 from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
-from smartva.answer_ranges import ADULT_RANGE_LIST
+from smartva.answer_ranges import ADULT_RANGE_LIST as RANGE_LIST
 from smartva.pre_symptom_prep import PreSymptomPrep
-from smartva.word_conversions import ADULT_WORDS_TO_VARS
+from smartva.word_conversions import ADULT_WORDS_TO_VARS as WORDS_TO_VARS
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 from smartva.adult_pre_symptom_data import (
@@ -81,14 +81,14 @@ class AdultPreSymptomPrep(PreSymptomPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, VAR_CONVERSION_MAP)
 
-            self.verify_answers_for_row(row, ADULT_RANGE_LIST)
+            self.verify_answers_for_row(row, RANGE_LIST)
 
-            self.convert_free_text_vars(row, FREE_TEXT_VARS, ADULT_WORDS_TO_VARS)
+            self.convert_free_text_vars(row, FREE_TEXT_VARS, WORDS_TO_VARS)
 
             if self.short_form:
                 word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if row[k] in [1, '1']]
                 if word_list:
-                    self.convert_free_text_words(row, word_list, ADULT_WORDS_TO_VARS)
+                    self.convert_free_text_words(row, word_list, WORDS_TO_VARS)
 
             self.recode_answers(row, RECODE_MAP)
 
