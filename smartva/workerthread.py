@@ -6,18 +6,17 @@ import threading
 from smartva.common_prep import CommonPrep
 from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 from smartva.adult_symptom_prep import AdultSymptomPrep
-from smartva.adult_tariff import Tariff as AdultTariff
+from smartva.adult_tariff import AdultTariff
 from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
 from smartva.child_symptom_prep import ChildSymptomPrep
-from smartva.childtariff import Tariff as ChildTariff
+from smartva.child_tariff import Tariff as ChildTariff
 from smartva.neonatepresymptom import PreSymptomPrep as NeonatePreSymptomPrep
 from smartva.neonatesymptom import NeonateSymptomPrep
 from smartva.neonatetariff import Tariff as NeonateTariff
 from smartva.causegrapher import CauseGrapher
 from smartva.csmfgrapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier
-from smartva.utils.utils import find_dupes
+from smartva.utils import find_dupes, status_notifier
 
 SHORT_FORM_HEADER = 'adult_7_11'
 CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'

@@ -10,14 +10,14 @@ import pickle
 
 from smartva import config
 from smartva.adultuniformtrain import FREQUENCIES
-from smartva.data_prep import DataPrep
 from smartva.freetext_vars import ADULT_FREE_TEXT
 from smartva.loggers import status_logger, warning_logger
+from smartva.tariff_prep import TariffPrep, ScoredVA
 from smartva.utils import status_notifier, get_item_count_for_file
 from smartva.adult_tariff_data import (
-    ADULT_HCE_DROP_LIST,
-    ADULT_SHORT_FORM_DROP_LIST,
-    ADULT_CAUSES,
+    HCE_DROP_LIST,
+    SHORT_FORM_DROP_LIST,
+    CAUSES,
     MATERNAL_CAUSES,
     FEMALE_CAUSES,
     MALE_CAUSES,
@@ -57,26 +57,7 @@ def cmp_rank_keys(a, b):
     return cmp(a, b)
 
 
-# data structure we use to keep track of an manipulate data
-class ScoredVA(object):
-    def __init__(self, cause_scores, cause, sid, age, gender):
-        self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
-        self.cause = cause  # int
-        self.rank_list = {}
-        self.sid = sid
-        self.age = age
-        self.gender = gender
-
-    def __repr__(self):
-        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class Tariff(DataPrep):
-    AGE_GROUP = 'adult'
-
+class AdultTariff(TariffPrep):
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         """
         :type input_file: str
@@ -88,16 +69,9 @@ class Tariff(DataPrep):
         :type country: str
         :type short_form: bool
         """
-        DataPrep.__init__(self, input_file, output_dir, short_form)
+        super(AdultTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
 
-        self.intermediate_dir = intermediate_dir
-
-        self.hce = hce
-        self.free_text = free_text
-        self.malaria = malaria
-        self.iso3 = country
-
-        self.want_abort = False
+        self.AGE_GROUP = 'adult'
 
     def run(self):
         status_logger.info('Adult :: Processing Adult tariffs')
@@ -107,11 +81,11 @@ class Tariff(DataPrep):
         # tariffs. It is unnecessary to drop headers from other matrices.
         drop_headers = {TARIFF_CAUSE_NUM_KEY}
         if not self.hce:
-            drop_headers.update(ADULT_HCE_DROP_LIST)
+            drop_headers.update(HCE_DROP_LIST)
         if not self.free_text:
             drop_headers.update(ADULT_FREE_TEXT)
         if self.short_form:
-            drop_headers.update(ADULT_SHORT_FORM_DROP_LIST)
+            drop_headers.update(SHORT_FORM_DROP_LIST)
 
         with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
             reader = csv.DictReader(f)
@@ -126,7 +100,8 @@ class Tariff(DataPrep):
                 cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
 
                 items = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}.items()
-                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:MAX_CAUSE_SYMPTOMS]
+                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
+                                      :MAX_CAUSE_SYMPTOMS]
 
         va_cause_list = []
 
@@ -273,7 +248,7 @@ class Tariff(DataPrep):
             sex = int(va.gender)
 
             lowest_cause_list = set()
-            
+
             # only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, pregnancy-related, or sepsis
             if sex == 0 or age > 49 or age < 15:
                 lowest_cause_list.update(MATERNAL_CAUSES)
@@ -295,7 +270,7 @@ class Tariff(DataPrep):
 
             if not self.malaria:
                 lowest_cause_list.update(MALARIA_CAUSES)
-                
+
             for cause_num in cause40s:
                 if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
                         (float(va.rank_list[cause_num]) > float(len(uniform_list) * .18)) or
@@ -344,12 +319,12 @@ class Tariff(DataPrep):
                                 # get the value and add it
                                 cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
                 else:
-                    cause34_name = ADULT_CAUSES[cause34]
+                    cause34_name = CAUSES[cause34]
                     cause_counts.update([cause34_name])
 
                 prediction_writer.writerow([va.sid, cause34, cause34_name, va.age, va.gender])
 
-        csmf_writer = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb', buffering=0))
+        csmf_writer = csv.writer(open(self.output_dir + os.sep + 'adult-csmf.csv', 'wb'))
         csmf_headers = ["cause", "CSMF"]
         csmf_writer.writerow(csmf_headers)
         for cause_key in cause_counts.keys():
@@ -361,7 +336,7 @@ class Tariff(DataPrep):
         # assert int(sum(cause_counts.values())) == len(matrix), \
         #              'CSMF must sum to one'
 
-        prediction_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb', buffering=0))
+        prediction_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-ranks.csv', 'wb'))
         header_row = ["sid"]
         for cause in va_cause_list[0].rank_list.keys():
             header_row.append(cause)
@@ -372,7 +347,7 @@ class Tariff(DataPrep):
                 new_row.append(va.rank_list[cause])
             prediction_writer.writerow(new_row)
 
-        tariff_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb', buffering=0))
+        tariff_writer = csv.writer(open(self.intermediate_dir + os.sep + 'adult-tariff-scores.csv', 'wb'))
         header_row = ["sid"]
         for cause in va_cause_list[0].cause_scores.keys():
             header_row.append(cause)

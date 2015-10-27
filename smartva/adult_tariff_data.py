@@ -1,4 +1,4 @@
-ADULT_HCE_DROP_LIST = [
+HCE_DROP_LIST = [
     's1',
     's10',
     's11',
@@ -186,7 +186,7 @@ ADULT_HCE_DROP_LIST = [
     's999999'
 ]
 
-ADULT_SHORT_FORM_DROP_LIST = [
+SHORT_FORM_DROP_LIST = [
     's10',
     's100',
     's101',
@@ -402,7 +402,7 @@ ADULT_SHORT_FORM_DROP_LIST = [
     's999998'
 ]
 
-ADULT_CAUSES = {
+CAUSES = {
     1: 'AIDS',
     2: 'Asthma',
     3: 'Bite of Venomous Animal',
