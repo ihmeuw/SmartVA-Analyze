@@ -7,7 +7,8 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from smartva.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
-from smartva.answer_ranges import CHILD_RANGE_LIST
+from smartva.answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
+from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
 from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns, int_value_or_0
 from smartva.loggers import status_logger
@@ -30,8 +31,8 @@ from smartva.child_pre_symptom_data import (
     WEIGHT_SD_DATA,
     AGE_VARS
 )
-from smartva.word_conversions import CHILD_WORDS_TO_VARS
 
+FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 DROP_PATTERN = '[a]([_\d]|dult)'
 
 
@@ -56,91 +57,97 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         else:
             default_fill = CHILD_DEFAULT_FILL
 
+        # Create a list of duration variables, dropping specified variables if using the short form.
         duration_vars = DURATION_VARS[:]
-
         if self.short_form:
             for var in DURATION_VARS_SHORT_FORM_DROP_LIST:
                 duration_vars.remove(var)
 
-        with open(os.path.join(self.output_dir, self.FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
-            writer = csv.writer(fo)
+        with open(self.input_file_path, 'rb') as fi:
+            reader = csv.DictReader(fi)
+            matrix = [row for row in reader]
 
-            with open(self.input_file_path, 'rb') as fi:
-                reader = csv.reader(fi)
-                records = get_item_count(reader, fi) - 1
-                status_notifier.update({'sub_progress': (0, records)})
+        status_notifier.update({'sub_progress': (0, len(matrix))})
 
-                headers = next(reader)
+        headers = reader.fieldnames
 
-                additional_headers_data = GENERATED_VARS_DATA + [(k, '') for k in DURATION_VARS]
-                additional_headers, additional_values = additional_headers_and_values(headers, additional_headers_data)
+        additional_data = {k: '' for k in duration_vars}
+        additional_data.update(GENERATED_VARS_DATA)
+        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
 
-                headers.extend(additional_headers)
+        headers.extend(additional_headers)
+        self.rename_headers(headers, VAR_CONVERSION_MAP)
 
-                self.rename_headers(headers, VAR_CONVERSION_MAP)
+        # TODO - Review this and re-implement for DictWriter, if necessary.
+        """
+        drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
+        drop_index_list += self.get_drop_index_list(headers, 'child')
+        drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
+        drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
+        """
 
-                drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
-                drop_index_list += self.get_drop_index_list(headers, 'child')
-                drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
-                drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
+        for index, row in enumerate(matrix):
+            if self.want_abort:
+                return False
 
-                writer.writerow(self.drop_from_list(headers, drop_index_list))
+            status_notifier.update({'sub_progress': (index,)})
 
-                for index, row in enumerate(reader):
-                    if self.want_abort:
-                        return False
+            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.rename_vars(row, VAR_CONVERSION_MAP)
 
-                    status_notifier.update({'sub_progress': 1})
+            self.verify_answers_for_row(row, RANGE_LIST)
 
-                    new_row = row + additional_values
+            self.convert_free_text_vars(row, FREE_TEXT_VARS, WORDS_TO_VARS)
 
-                    self.verify_answers_for_row(headers, new_row, CHILD_RANGE_LIST)
+            if self.short_form:
+                word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if row[k] in [1, '1']]
+                if word_list:
+                    self.convert_free_text_words(row, word_list, WORDS_TO_VARS)
 
-                    self.convert_free_text_vars(headers, new_row, FREE_TEXT_VARS, CHILD_WORDS_TO_VARS)
+            self.recode_answers(row, RECODE_MAP)
 
-                    if self.short_form:
-                        word_list = [v for k, v in SHORT_FORM_FREE_TEXT_CONVERSION.items() if
-                                     new_row[headers.index(k)] in [1, '1']]
-                        if word_list:
-                            self.convert_free_text_words(headers, new_row, word_list, CHILD_WORDS_TO_VARS)
+            self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
-                    self.recode_answers(headers, new_row, RECODE_MAP)
+            check_skip_patterns(row, SKIP_PATTERN_DATA, default_fill)
+            # special case skip patterns
 
-                    self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
+            self.calculate_duration_vars(row, duration_vars, DURATION_VARS_SPECIAL_CASE)
 
-                    check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA, default_fill)
-                    # special case skip patterns
+            self.validate_weight_vars(row)
 
-                    self.calculate_duration_vars(headers, new_row, duration_vars, DURATION_VARS_SPECIAL_CASE)
+            self.process_date_vars(row)
 
-                    self.validate_weight_vars(headers, new_row)
+            self.process_weight_sd_vars(row)
 
-                    self.process_date_vars(headers, new_row)
+            self.process_age_vars(row)
 
-                    self.process_weight_sd_vars(headers, new_row)
+            self.fill_missing_data(row, default_fill)
 
-                    self.process_age_vars(headers, new_row)
+        status_notifier.update({'sub_progress': None})
 
-                    self.fill_missing_data(headers, new_row, default_fill)
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
+            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(matrix)
 
-                    writer.writerow(self.drop_from_list(new_row, drop_index_list))
+        return True
 
     @staticmethod
-    def process_age_vars(headers, row):
+    def process_age_vars(row):
         for age_var in AGE_VARS:
-            years = int(row[headers.index('{}a'.format(age_var))])
-            months = int(row[headers.index('{}b'.format(age_var))])
-            days = int(row[headers.index('{}c'.format(age_var))])
-            row[headers.index('{}a'.format(age_var))] = years + (months / 12.0) + (days / 356.0)
+            years = int(row['{}a'.format(age_var)])
+            months = int(row['{}b'.format(age_var)])
+            days = int(row['{}c'.format(age_var)])
+            row['{}a'.format(age_var)] = years + (months / 12.0) + (days / 356.0)
 
     @staticmethod
-    def validate_weight_vars(headers, row):
+    def validate_weight_vars(row):
         for var in WEIGHT_VARS:
-            if int_value_or_0(row[headers.index(var)]) in [0, 9999]:
-                row[headers.index(var)] = ''
+            if int_value_or_0(row[var]) in [0, 9999]:
+                row[var] = ''
 
     @staticmethod
-    def process_date_vars(headers, row):
+    def process_date_vars(row):
         # Get an approximate date.
         # Add 'd' (day) 'm' (month) 'y' (years) to each var and process.
         date_invalid = {
@@ -152,15 +159,15 @@ class ChildPreSymptomPrep(PreSymptomPrep):
             for val, val_data in date_invalid.items():
                 var_name = var + val
                 invalid_data, default = val_data
-                if row[headers.index(var_name)] in invalid_data:
-                    row[headers.index(var_name)] = default
+                if row[var_name] in invalid_data:
+                    row[var_name] = default
 
     @staticmethod
-    def process_weight_sd_vars(headers, row):
+    def process_weight_sd_vars(row):
         # Get most recent weight from medical records
-        if int(row[headers.index('{:s}y'.format(DOB_VAR))]):
+        if int(row['{:s}y'.format(DOB_VAR)]):
             try:
-                dob = make_date(headers, row, DOB_VAR)
+                dob = make_date(row, DOB_VAR)
             except ValueError:
                 pass
             else:
@@ -168,8 +175,8 @@ class ChildPreSymptomPrep(PreSymptomPrep):
                 exam_data = []
                 for date_var, weight_var in EXAM_DATE_VARS.items():
                     try:
-                        exam_date = make_date(headers, row, date_var)
-                        exam_weight = float(row[headers.index('{:s}b'.format(weight_var))])
+                        exam_date = make_date(row, date_var)
+                        exam_weight = float(row['{:s}b'.format(weight_var)])
                         exam_data.append((exam_date, exam_weight))
                     except ValueError:
                         # If the date is invalid or the weight isn't a number, skip this exam.
@@ -182,18 +189,18 @@ class ChildPreSymptomPrep(PreSymptomPrep):
                         age_at_exam_months = months_delta(latest_exam, dob)
 
                         if age_at_exam_months <= 60:
-                            sex = int(row[headers.index(SEX_VAR)])
+                            sex = int(row[SEX_VAR])
                             weight_kg = latest_weight / 1000
 
                             for sd_var, sd_data in WEIGHT_SD_DATA.items():
-                                row[headers.index(sd_var)] = int(
+                                row[sd_var] = int(
                                     weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 
 
-def make_date(headers, row, key):
-    return date(int(row[headers.index('{:s}y'.format(key))]),
-                int(row[headers.index('{:s}m'.format(key))]),
-                int(row[headers.index('{:s}d'.format(key))]))
+def make_date(row, key):
+    return date(int(row['{:s}y'.format(key)]),
+                int(row['{:s}m'.format(key)]),
+                int(row['{:s}d'.format(key)]))
 
 
 def months_delta(date1, date2):
