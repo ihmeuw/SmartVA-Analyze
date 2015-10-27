@@ -78,8 +78,9 @@ class SymptomPrep(DataPrep):
         :param row: Row of data.
         :param injury_variable_map: Dict in specified format.
         """
-        for read_header, injury_list in injury_variable_map:
-            if float(row[read_header]) > 30:
+        for read_data, injury_list in injury_variable_map:
+            read_header, cutoff = read_data
+            if float(row[read_header]) > cutoff:
                 for injury in injury_list:
                     row[injury] = 0
 

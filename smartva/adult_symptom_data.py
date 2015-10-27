@@ -31,6 +31,9 @@ GENERATED_VARS_DATA = {
 }
 
 VAR_CONVERSION_MAP = {
+    'sid': 'sid',
+    'g5_02': 'real_gender',
+    'g5_04a': 'real_age',
     'a1_01_1': 's1',
     'a1_01_2': 's2',
     'a1_01_3': 's3',
@@ -188,9 +191,6 @@ VAR_CONVERSION_MAP = {
     'a5_02': 's161',
     'a5_03': 's162',
     'a5_04': 's163',
-    'g5_02': 'real_gender',
-    'g5_04a': 'real_age',
-    'sid': 'sid'
 }
 
 COPY_VARS = {
@@ -240,7 +240,7 @@ DURATION_CUTOFF_DATA = {
 }
 
 INJURY_VARS = {
-    's163': [
+    ('s163', 30): [
         's151',
         's152',
         's153',
@@ -275,6 +275,7 @@ BINARY_CONVERSION_MAP = {
         3: 's23993',
         4: 's23994',
     },
+    # This is correct...
     's25': {
         1: 's23991',
         2: 's23992',
