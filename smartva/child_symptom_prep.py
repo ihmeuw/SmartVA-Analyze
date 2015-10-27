@@ -10,7 +10,7 @@ from smartva.child_symptom_data import (
     INJURY_VARS,
     BINARY_VARS,
     AGE_QUARTILE_BINARY_VARS,
-    BINARY_CONVERSION_MAP)
+    BINARY_CONVERSION_MAP, COPY_VARS)
 
 from smartva.symptom_prep import SymptomPrep, FILENAME_TEMPLATE
 from smartva.utils import status_notifier, get_item_count
@@ -52,7 +52,7 @@ class ChildSymptomPrep(SymptomPrep):
         drop_index_list.update([headers.index(header) for header in DROP_LIST])
         """
 
-        for index, row in enumerate(reader):
+        for index, row in enumerate(matrix):
             if self.want_abort:
                 return False
 
@@ -61,7 +61,7 @@ class ChildSymptomPrep(SymptomPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, VAR_CONVERSION_MAP)
 
-            # self.copy_variables(row, COPY_VARS)
+            self.copy_variables(row, COPY_VARS)
 
             # Compute age quartiles.
             self.process_quartile_data(row, AGE_QUARTILE_BINARY_VARS.items())
@@ -87,202 +87,26 @@ class ChildSymptomPrep(SymptomPrep):
 
 
 """
-        # new stuffs
-        for row in matrix:
-            s2 = row[headers.index('s2')]
-            if s2 == '' or s2 == str(999):
-                row[headers.index('s2')] = 0
-                s2 = 0
+##### TODO - child rash?
+# s139 can be multiple
+index = headers.index('s139991')
+val = row[headers.index('s139')]
+if val == '':
+    val = ['0']
+else:
+    val = val.split(' ')
+if '1' in val:
+    row[index] = '1'
 
-            s3 = row[headers.index('s3')]
-            if s3 == '' or s3 == str(99):
-                row[headers.index('s3')] = 0
-                s3 = 0
-            s4 = row[headers.index('s4')]
-            if s4 == '' or s4 == str(99):
-                row[headers.index('s4')] = 0
-                s4 = 0
 
-            # months
-            s3 = float(s3) / 12
-            # days
-            s4 = float(s4) / 365
-            # combine
-            s2 = float(s2) + s3 + s4
-            row[headers.index('s2')] = float(s2)
-
-            index = headers.index('s2')
-            s2991index = headers.index('s2991')
-            s2992index = headers.index('s2992')
-            s2993index = headers.index('s2993')
-            s2994index = headers.index('s2994')
-            s2995index = headers.index('s2995')
-
-            #            if row[headers.index('sid')] == '9':
-            #                print "s2 num %s" % float(row[index])
-
-            if float(row[index]) <= .4166667:
-                row[s2991index] = 1
-            elif float(row[index]) > .4166667 and float(row[index]) <= 1:
-                row[s2992index] = 1
-            elif float(row[index]) > 1 and float(row[index]) <= 3:
-                row[s2993index] = 1
-            elif float(row[index]) > 3 and float(row[index]) <= 7:
-                row[s2994index] = 1
-            elif float(row[index]) > 7:
-                row[s2995index] = 1
-
-            # change sex from female = 2, male = 1 to female = 1, male = 0
-            # if unkonwn sex will default to 0 so it does not factor into analysis
-            index = headers.index('sex')
-            val = int(row[index])
-            if val == 2:
-                row[index] = 1
-            elif val == 1:
-                row[index] = 0
-            elif val == 9:
-                row[index] = 0
-
-            # make new variables to store the real age and gender, but do it after we've modified the sex
-            # vars from 2, 1 to 1, 0
-            ageindex = headers.index('real_age')
-            genderindex = headers.index('real_gender')
-            row[ageindex] = row[headers.index('s2')]
-            row[genderindex] = row[headers.index('sex')]
-
-            for sym in durationSymptoms:
-                index = headers.index(sym)
-                # replace the duration with 1000 if it is over 1000 and not missing
-                if row[index] == '':
-                    row[index] = 0
-                elif float(row[index]) > 1000:
-                    row[index] = 1000
-                # use cutoffs to determine if they will be replaced with a 1 (were above or equal to the cutoff)
-                if float(row[index]) >= durCutoffs[sym]:
-                    row[index] = 1
-                else:
-                    row[index] = 0
-
-            # The "varlist" variables in the loop below are all indicators for different questions about injuries (road traffic, fall, fires)
-            # We only want to give a VA a "1"/yes response for that question if the injury occured within 10 days of death (i.e. s166<=10)
-            # Otherwise, we could have people who responded that they were in a car accident 20 years prior to death be assigned to road traffic deaths
-
-            if not self.shortform:
-                for injury in injuries:
-                    index = headers.index(injury)
-                    injury_cut_index = headers.index('s166')
-                    # 30 is the injury cutoff
-                    if float(row[injury_cut_index]) > 10:
-                        row[index] = 0
-
-            # dichotomize!
-            index = headers.index('s5991')
-            val = row[headers.index('s5')]
-            if val == '':
-                val = '0'
-            if val == '2':
-                row[index] = '1'
-
-            index = headers.index('s6991')
-            val = row[headers.index('s6')]
-            if val == '':
-                val = '0'
-            if val == '2' or val == '3':
-                row[index] = '1'
-
-            index1 = headers.index('s8991')
-            index2 = headers.index('s8992')
-            val = row[headers.index('s8')]
-            if val == '':
-                val = '0'
-            if val == '1':
-                row[index1] = '1'
-            elif val == '2':
-                row[index2] = '1'
-
-            index = headers.index('s11991')
-            val = row[headers.index('s11')]
-            if val == '':
-                val = '0'
-            if val == '4' or val == '5':
-                row[index] = '1'
-
-            index = headers.index('s13991')
-            val = row[headers.index('s13')]
-            if val == '':
-                val = '0'
-            if val == '1' or val == '2':
-                row[index] = '1'
-
-            index = headers.index('s16991')
-            val = row[headers.index('s16')]
-            if val == '':
-                val = '0'
-            if val == '2':
-                row[index] = '1'
-
-            index = headers.index('s30991')
-            val = row[headers.index('s30')]
-            if val == '':
-                val = '0'
-            if val == '3' or val == '4':
-                row[index] = '1'
-
-            index = headers.index('s113991')
-            val = row[headers.index('s113')]
-            if val == '':
-                val = '0'
-            if val == '3':
-                row[index] = '1'
-
-            index = headers.index('s114991')
-            val = row[headers.index('s114')]
-            if val == '':
-                val = '0'
-            if val == '3' or val == '2':
-                row[index] = '1'
-
-            index = headers.index('s116991')
-            val = row[headers.index('s116')]
-            if val == '':
-                val = '0'
-            if val > '2':
-                row[index] = '1'
-
-            index = headers.index('s135991')
-            val = row[headers.index('s135')]
-            if val == '':
-                val = '0'
-            if val == '3':
-                row[index] = '1'
-
-            # s139 can be multiple
-            index = headers.index('s139991')
-            val = row[headers.index('s139')]
-            if val == '':
-                val = ['0']
-            else:
-                val = val.split(' ')
-            if '1' in val:
-                row[index] = '1'
-
-            # s141 can me multiple, but we only care if 1 (and only 1) is selected
-            index = headers.index('s141991')
-            val = row[headers.index('s141')]
-            if val == '':
-                val = ['0']
-            else:
-                val = val.split(' ')
-            if '1' in val and len(val) == 1:
-                row[index] = '1'
-
-            # ensure all binary variables actually ARE 0 or 1:
-            for var in binaryVars:
-                val = row[headers.index(var)]
-                if val == '' or val != '1':
-                    row[headers.index(var)] = '0'
-
-        # rename s2 -> age
-        s2index = headers.index('s2')
-        headers[s2index] = 'age'
+##### TODO - child rash part 2?
+# s141 can me multiple, but we only care if 1 (and only 1) is selected
+index = headers.index('s141991')
+val = row[headers.index('s141')]
+if val == '':
+    val = ['0']
+else:
+    val = val.split(' ')
+if '1' in val and len(val) == 1:
+    row[index] = '1'
 """
