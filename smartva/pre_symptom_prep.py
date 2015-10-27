@@ -37,20 +37,19 @@ class PreSymptomPrep(DataPrep):
         return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
 
     @staticmethod
-    def verify_answers_for_row(headers, row, valid_range_data):
+    def verify_answers_for_row(row, valid_range_data):
         """
         Verify answers in a row of data are valid.
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param valid_range_data: Dictionary of headers and valid ranges.
         :return: True if any values fail validation.
         """
         warnings = False
-        for header, range_list in valid_range_data.items():
+        for variable, range_list in valid_range_data.items():
             try:
-                value = row[headers.index(header)]
-            except ValueError:
+                value = row[variable]
+            except KeyError:
                 pass  # Header not in data set.
             else:
                 if value != '' and range_list:
@@ -60,14 +59,14 @@ class PreSymptomPrep(DataPrep):
                         answer_array = [value]
                     for answer in answer_array:
                         if int(answer) not in range_list:
-                            warning_logger.warning('SID: {} variable {} has an illegal value {}. '
-                                                   'Please see Codebook for legal values.'
-                                                   .format(row[headers.index('sid')], header, value))
+                            warning_logger.warning(
+                                'SID: {} variable {} has an illegal value {}. Please see code book for legal values.'
+                                .format(row['sid'], variable, value))
                             warnings = True
         return warnings
 
     @staticmethod
-    def recode_answers(headers, row, consolidation_map):
+    def recode_answers(row, consolidation_map):
         """
         Consolidate answers from data answers into new variables.
 
@@ -76,85 +75,81 @@ class PreSymptomPrep(DataPrep):
                 VAL: data_header
             }
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param consolidation_map: Dictionary of read/write variables and their data counterparts.
         """
         for data_headers, data_map in consolidation_map.items():
             read_header, write_header = data_headers
             try:
-                value = int(row[headers.index(read_header)])
+                value = int(row[read_header])
             except ValueError:
                 # FIXME - This covers both the header index and the int operations.
                 pass
             else:
                 if value in data_map:
-                    row[headers.index(write_header)] = row[headers.index(data_map[value])]
+                    row[write_header] = row[data_map[value]]
 
     @staticmethod
-    def calculate_duration_vars(headers, row, duration_vars, special_case_vars):
+    def calculate_duration_vars(row, duration_vars, special_case_vars):
         """
         Calculate duration variables in days.
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param duration_vars: List of variables containing duration variables.
         :param special_case_vars: Dictionary of special variables and their value if duration is blank.
         """
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
-            code_value = int_value_or_0(row[headers.index(code_var)])
-            length_value = int_value_or_0(row[headers.index(length_var)])
+            code_value = int_value_or_0(row[code_var])
+            length_value = int_value_or_0(row[length_var])
 
             if var in special_case_vars and length_value == '':
-                row[headers.index(var)] = special_case_vars[var]
+                row[var] = special_case_vars[var]
             else:
-                row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
+                row[var] = TIME_FACTORS.get(code_value, 0) * length_value
 
     @staticmethod
-    def convert_free_text_words(headers, row, input_word_list, word_map):
+    def convert_free_text_words(row, input_word_list, word_map):
         """
         Process free text word lists into binary variables.
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param input_word_list: List of free text words to process.
         :param word_map: Dictionary of words and variables.
         """
         for word in input_word_list:
             try:
-                row[headers.index(word_map[stem(word)])] = 1
+                row[word_map[stem(word)]] = 1
+                warning_logger.warning('Word {} map {}'.format(stem(word), word_map[stem(word)]))
             except KeyError:
                 # Word is not in the data map.
                 pass
             except ValueError:
                 warning_logger.warning('SID: {} variable {} not found for valid word "{}".'
-                                       .format(row[headers.index('sid')], word_map[stem(word)], word))
+                                       .format(row['sid'], word_map[stem(word)], word))
 
     @staticmethod
-    def convert_free_text_vars(headers, row, data_headers, word_map):
+    def convert_free_text_vars(row, data_headers, word_map):
         """
         Process all free text data from a list of data headers into binary variables.
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param data_headers: List of headers to process.
         :param word_map: Dictionary of words and variables.
         """
         for data_header in data_headers:
-            if row[headers.index(data_header)]:
-                word_list = row[headers.index(data_header)].split(' ')
-                PreSymptomPrep.convert_free_text_words(headers, row, word_list, word_map)
+            if row[data_header]:
+                word_list = row[data_header].split(' ')
+                PreSymptomPrep.convert_free_text_words(row, word_list, word_map)
 
     @staticmethod
-    def fill_missing_data(headers, row, default_fill):
+    def fill_missing_data(row, default_fill):
         """
         Fill missing data with default fill values.
 
-        :param headers: List of headers.
         :param row: Row of data.
         :param default_fill: Dictionary of headers and default values.
         """
-        for header in headers:
-            if row[headers.index(header)] == '':
-                row[headers.index(header)] = default_fill.get(header, '')
+        for variable, value in row.items():
+            if value == '':
+                row[variable] = default_fill.get(variable, '')
