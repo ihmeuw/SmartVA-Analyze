@@ -17,6 +17,7 @@ from smartva.causegrapher import CauseGrapher
 from smartva.csmfgrapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
+from smartva.utils.utils import find_dupes
 
 SHORT_FORM_HEADER = 'adult_7_11'
 CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'
@@ -76,13 +77,24 @@ class WorkerThread(threading.Thread):
 
         self.start()
 
-    @staticmethod
-    def format_headers(source_path, dest_path):
+    @classmethod
+    def _format_header(cls, header):
+        return header.split('-')[-1]
+
+    @classmethod
+    def format_headers(cls, source_path, dest_path):
         with open(source_path, 'Ub') as in_f:
             with open(dest_path, 'wb') as out_f:
                 reader = csv.reader(in_f)
                 writer = csv.writer(out_f)
-                writer.writerow([col.split('-')[-1] for col in next(reader)])
+
+                headers = list(map(cls._format_header, next(reader)))
+                dupes = find_dupes(headers)
+                if dupes:
+                    warning_logger.warning(
+                        'Duplicate headers found: {}. Please review the input file for conflicts.'.format(dupes))
+
+                writer.writerow(headers)
                 writer.writerow(next(reader))
                 writer.writerows(reader)
 

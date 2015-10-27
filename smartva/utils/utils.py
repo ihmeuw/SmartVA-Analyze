@@ -67,6 +67,15 @@ class StatusNotifier(object):
 status_notifier = StatusNotifier()
 
 
+def find_dupes(items):
+    dupe_items = []
+    for item in items:
+        if item and item not in dupe_items:
+            if items.count(item) > 1:
+                dupe_items.append(item)
+    return dupe_items
+
+
 def get_item_count(items, f=None):
     """
     Use this to get a count of items in a collection that doesn't support len(), like a file reader.
