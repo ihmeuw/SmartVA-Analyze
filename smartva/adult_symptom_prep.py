@@ -2,7 +2,8 @@ import csv
 import os
 
 from smartva.symptom_prep import SymptomPrep, FILENAME_TEMPLATE
-from smartva.utils import status_notifier, get_item_count
+from smartva.utils import status_notifier
+from smartva.utils.conversion_utils import additional_headers_and_values
 from smartva.adult_symptom_data import (
     GENERATED_VARS_DATA,
     VAR_CONVERSION_MAP,
@@ -15,7 +16,6 @@ from smartva.adult_symptom_data import (
     DROP_LIST,
     BINARY_CONVERSION_MAP
 )
-from smartva.utils.conversion_utils import additional_headers_and_values
 
 
 class AdultSymptomPrep(SymptomPrep):
@@ -34,6 +34,7 @@ class AdultSymptomPrep(SymptomPrep):
     (i.e. s163<=30) Otherwise, we could have people who responded that they were in a car accident 20
     years prior to death be assigned to road traffic deaths.
     """
+
     def __init__(self, input_file, output_dir, short_form):
         super(AdultSymptomPrep, self).__init__(input_file, output_dir, short_form)
         self.AGE_GROUP = 'adult'
@@ -41,55 +42,59 @@ class AdultSymptomPrep(SymptomPrep):
     def run(self):
         super(AdultSymptomPrep, self).run()
 
-        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
-            writer = csv.writer(fo)
+        with open(self.input_file_path, 'rb') as fi:
+            reader = csv.DictReader(fi)
+            matrix = [row for row in reader]
 
-            with open(self.input_file_path, 'rb') as fi:
-                reader = csv.reader(fi)
-                records = get_item_count(reader, fi) - 1
-                status_notifier.update({'sub_progress': (0, records)})
+        status_notifier.update({'sub_progress': (0, len(matrix))})
 
-                headers = next(reader)
+        headers = reader.fieldnames
 
-                additional_headers, additional_values = additional_headers_and_values(headers, GENERATED_VARS_DATA)
+        additional_data = {}
+        additional_data.update(GENERATED_VARS_DATA)
+        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
 
-                headers.extend(additional_headers)
+        headers.extend(additional_headers)
+        self.rename_headers(headers, VAR_CONVERSION_MAP)
 
-                self.rename_headers(headers, VAR_CONVERSION_MAP)
+        # TODO - Review this and re-implement for DictWriter, if necessary.
+        # Identify unneeded variables for removal, and write the new headers to the output file.
+        """
+        not_drop_list = VAR_CONVERSION_MAP.values() + FREE_TEXT_VARIABLES + additional_headers
 
-                # Identify unneeded variables for removal, and write the new headers to the output file.
-                not_drop_list = VAR_CONVERSION_MAP.values() + FREE_TEXT_VARIABLES + additional_headers
+        drop_index_list = set([i for i, header in enumerate(headers) if header not in not_drop_list])
+        drop_index_list.update([headers.index(header) for header in DROP_LIST])
+        """
 
-                drop_index_list = set([i for i, header in enumerate(headers) if header not in not_drop_list])
-                drop_index_list.update([headers.index(header) for header in DROP_LIST])
+        for index, row in enumerate(matrix):
+            if self.want_abort:
+                return False
 
-                writer.writerow(self.drop_from_list(headers, drop_index_list))
+            status_notifier.update({'sub_progress': (index,)})
 
-                for index, row in enumerate(reader):
-                    if self.want_abort:
-                        return False
+            self.expand_row(row, GENERATED_VARS_DATA)
+            self.rename_vars(row, VAR_CONVERSION_MAP)
 
-                    status_notifier.update({'sub_progress': (index,)})
+            self.copy_variables(row, COPY_VARS)
 
-                    new_row = row + additional_values
+            # Compute age quartiles.
+            self.process_quartile_data(row, AGE_QUARTILE_BINARY_VARS.items())
 
-                    self.copy_variables(headers, new_row, COPY_VARS)
+            self.process_cutoff_data(row, DURATION_CUTOFF_DATA.items())
 
-                    # Compute age quartiles.
-                    self.process_quartile_data(headers, new_row, AGE_QUARTILE_BINARY_VARS.items())
+            self.process_injury_data(row, INJURY_VARS.items())
 
-                    self.process_cutoff_data(headers, new_row, DURATION_CUTOFF_DATA.items())
+            # Dichotomize!
+            self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
-                    self.process_injury_data(headers, new_row, INJURY_VARS.items())
-
-                    # Dichotomize!
-                    self.process_binary_vars(headers, new_row, BINARY_CONVERSION_MAP.items())
-
-                    # Ensure all binary variables actually ARE 0 or 1:
-                    self.post_process_binary_variables(headers, new_row, BINARY_VARS)
-
-                    writer.writerow(self.drop_from_list(new_row, drop_index_list))
+            # Ensure all binary variables actually ARE 0 or 1:
+            self.post_process_binary_variables(row, BINARY_VARS)
 
         status_notifier.update({'sub_progress': None})
+
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
+            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(matrix)
 
         return True
