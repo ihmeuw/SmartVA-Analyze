@@ -15,6 +15,9 @@ class DataPrep(object):
     def run(self):
         pass
 
+    def abort(self):
+        self.want_abort = True
+
     @staticmethod
     def rename_vars(row, conversion_map):
         for old_header, new_header in conversion_map.items():
@@ -63,9 +66,6 @@ class DataPrep(object):
                 convert_binary_variable(row, data_header, data_map)
             except ConversionError as e:
                 warning_logger.debug(e.message)
-
-    def abort(self):
-        self.want_abort = True
 
     @staticmethod
     def expand_row(row, data):

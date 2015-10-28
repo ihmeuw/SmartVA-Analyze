@@ -1,19 +1,22 @@
 from __future__ import print_function
-from decimal import Decimal
-
 import collections
 import csv
 import math
-import numpy as np
 import os
 import pickle
 
+import numpy as np
+
 from smartva import config
 from smartva.adultuniformtrain import FREQUENCIES
-from smartva.freetext_vars import ADULT_FREE_TEXT
+from smartva.freetext_vars import ADULT_FREE_TEXT as FREE_TEXT
 from smartva.loggers import status_logger, warning_logger
-from smartva.tariff_prep import TariffPrep, ScoredVA
-from smartva.utils import status_notifier, get_item_count_for_file
+from smartva.tariff_prep import (
+    TariffPrep,
+    TARIFF_CAUSE_NUM_KEY,
+    SID_KEY,
+)
+from smartva.utils import status_notifier
 from smartva.adult_tariff_data import (
     HCE_DROP_LIST,
     SHORT_FORM_DROP_LIST,
@@ -27,125 +30,33 @@ from smartva.adult_tariff_data import (
     CAUSE_REDUCTION
 )
 
-CAUSE_NUM_KEY = 'va46'
-CAUSE_NAME_KEY = 'gs_text46'
-TARIFF_CAUSE_NUM_KEY = 'xs_name'
-MAX_CAUSE_SYMPTOMS = 40
-MAX_CAUSE = 46
-
-SID_KEY = 'sid'
-AGE_KEY = 'real_age'
-SEX_KEY = 'real_gender'
-
-
-def get_cause_num(cause):
-    return int(cause.lstrip('cause'))
-
-
-def cmp_rank_keys(a, b):
-    """
-    Compare rank keys for sorting. Sorts non-causes first, then causes by cause number.
-
-    :param a: Tuple (is cause? (bool), value)
-    :param b: Tuple (is cause? (bool), value)
-    :return: cmp(a, b)
-    """
-    # If both values are causes, sort by the cause number.
-    if a[0] & b[0]:
-        cmp_a, cmp_b = get_cause_num(a[1]), get_cause_num(b[1])
-        return cmp(cmp_a, cmp_b)
-    return cmp(a, b)
-
 
 class AdultTariff(TariffPrep):
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
-        """
-        :type input_file: str
-        :type output_dir: str
-        :type intermediate_dir: str
-        :type hce: bool
-        :type free_text: bool
-        :type malaria: bool
-        :type country: str
-        :type short_form: bool
-        """
         super(AdultTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
 
         self.AGE_GROUP = 'adult'
 
     def run(self):
-        status_logger.info('Adult :: Processing Adult tariffs')
-        status_notifier.update({'progress': 1})
+        super(AdultTariff, self).run()
 
         # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
-        # tariffs. It is unnecessary to drop headers from other matrices.
+        # tariff data. It is unnecessary to drop headers from other matrices.
         drop_headers = {TARIFF_CAUSE_NUM_KEY}
         if not self.hce:
             drop_headers.update(HCE_DROP_LIST)
         if not self.free_text:
-            drop_headers.update(ADULT_FREE_TEXT)
+            drop_headers.update(FREE_TEXT)
         if self.short_form:
             drop_headers.update(SHORT_FORM_DROP_LIST)
 
-        with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            reader = csv.DictReader(f)
-            cause46_names = {int(cause[CAUSE_NUM_KEY]): cause[CAUSE_NAME_KEY] for cause in reader}
+        cause46_names = self.get_cause46_names()
 
-        cause40s = {}
+        cause40s = self.get_cause40s(drop_headers)
 
-        with open(os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            reader = csv.DictReader(f)
+        va_cause_list = self.get_va_cause_list(self.input_file_path, cause40s)
 
-            for row in reader:
-                cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
-
-                items = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}.items()
-                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
-                                      :MAX_CAUSE_SYMPTOMS]
-
-        va_cause_list = []
-
-        with open(self.input_file_path, 'rb') as f:
-            records = get_item_count_for_file(f)
-            reader = csv.DictReader(f)
-            status_notifier.update({'sub_progress': (0, records)})
-
-            for index, row in enumerate(reader):
-                if self.want_abort:
-                    return False
-
-                status_notifier.update({'sub_progress': (index,)})
-
-                cause_dict = {}
-
-                for cause, symptoms in cause40s.items():
-                    cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
-
-                va_cause_list.append(ScoredVA(cause_dict, 0, row[SID_KEY], row[AGE_KEY], row[SEX_KEY]))
-
-        status_notifier.update({'sub_progress': None})
-
-        va_validated_cause_list = []
-
-        with open(os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            records = get_item_count_for_file(f)
-            reader = csv.DictReader(f)
-            status_notifier.update({'sub_progress': (0, records)})
-
-            for index, row in enumerate(reader):
-                if self.want_abort:
-                    return False
-
-                status_notifier.update({'sub_progress': (index,)})
-
-                cause_dict = {}
-
-                for cause, symptoms in cause40s.items():
-                    cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
-
-                va_validated_cause_list.append(ScoredVA(cause_dict, row['va46'], row['sid'], 0, 0))
-
-        status_notifier.update({'sub_progress': None})
+        va_validated_cause_list = self.get_va_cause_list(os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP)), cause40s)
 
         with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_validated_cause_list, f)
@@ -155,7 +66,6 @@ class AdultTariff(TariffPrep):
         # """
 
         uniform_list = []
-
         for va in va_validated_cause_list:
             uniform_list.extend([va] * FREQUENCIES[va.sid])
 
@@ -357,10 +267,3 @@ class AdultTariff(TariffPrep):
             for cause in va.cause_scores.keys():
                 new_row.append(va.cause_scores[cause])
             tariff_writer.writerow(new_row)
-
-    def abort(self):
-        self.want_abort = 1
-
-
-def round5(value):
-    return round(value / Decimal(.5)) * .5
