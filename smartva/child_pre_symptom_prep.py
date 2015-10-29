@@ -49,9 +49,6 @@ class ChildPreSymptomPrep(PreSymptomPrep):
     def run(self):
         super(ChildPreSymptomPrep, self).run()
 
-        status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
-        status_notifier.update({'progress': 1})
-
         if self.short_form:
             default_fill = CHILD_DEFAULT_FILL_SHORT
         else:
