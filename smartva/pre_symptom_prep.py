@@ -1,11 +1,36 @@
+import csv
+import os
 import re
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 from stemming.porter2 import stem
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
+from smartva.neonate_pre_symptom_prep import FILENAME_TEMPLATE
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import int_value_or_0
+
+DOB_VAR = 'g5_01'
+SEX_VAR = 'g5_02'
+AGE_VARS = ['g5_04']
+
+EXAM_DATE_VARS = {
+    'c5_06_1': 'c5_07_1',
+    'c5_06_2': 'c5_07_2',
+}
+
+WEIGHT_VARS = [
+    'c5_07_1b',
+    'c5_07_2b',
+]
+
+DATE_VARS = [
+    'g5_01',
+    'c5_06_1',
+    'c5_06_2',
+]
 
 TIME_FACTORS = {
     1: 356.0,
@@ -15,6 +40,17 @@ TIME_FACTORS = {
     5: 1 / 24.0,
     6: 1 / 1440.0
 }
+
+
+def make_date(row, key):
+    return date(int(row['{:s}y'.format(key)]),
+                int(row['{:s}m'.format(key)]),
+                int(row['{:s}d'.format(key)]))
+
+
+def months_delta(date1, date2):
+    delta = relativedelta(date1, date2)
+    return abs(delta.years * 12 + delta.months)
 
 
 class PreSymptomPrep(DataPrep):
@@ -153,6 +189,70 @@ class PreSymptomPrep(DataPrep):
         for variable, value in row.items():
             if value == '':
                 row[variable] = default_fill.get(variable, '')
+
+    @staticmethod
+    def process_age_vars(row):
+        for age_var in AGE_VARS:
+            years = int(row['{}a'.format(age_var)])
+            months = int(row['{}b'.format(age_var)])
+            days = int(row['{}c'.format(age_var)])
+            row['{}a'.format(age_var)] = years + (months / 12.0) + (days / 356.0)
+
+    @staticmethod
+    def validate_weight_vars(row):
+        for var in WEIGHT_VARS:
+            if int_value_or_0(row[var]) in [0, 9999]:
+                row[var] = ''
+
+    @staticmethod
+    def process_date_vars(row):
+        # Get an approximate date.
+        # Add 'd' (day) 'm' (month) 'y' (years) to each var and process.
+        date_invalid = {
+            'd': (['', '99', 99], 1),
+            'm': (['', '99', 99], 1),
+            'y': (['', '999', 999, '9999', 9999], 0),
+        }
+        for var in DATE_VARS:
+            for val, val_data in date_invalid.items():
+                var_name = var + val
+                invalid_data, default = val_data
+                if row[var_name] in invalid_data:
+                    row[var_name] = default
+
+    @staticmethod
+    def process_weight_sd_vars(row, weight_sd_data):
+        # Get most recent weight from medical records
+        if int(row['{:s}y'.format(DOB_VAR)]):
+            try:
+                dob = make_date(row, DOB_VAR)
+            except ValueError:
+                pass
+            else:
+
+                exam_data = []
+                for date_var, weight_var in EXAM_DATE_VARS.items():
+                    try:
+                        exam_date = make_date(row, date_var)
+                        exam_weight = float(row['{:s}b'.format(weight_var)])
+                        exam_data.append((exam_date, exam_weight))
+                    except ValueError:
+                        # If the date is invalid or the weight isn't a number, skip this exam.
+                        continue
+
+                if exam_data:
+                    latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
+
+                    if latest_exam > dob:
+                        age_at_exam_months = months_delta(latest_exam, dob)
+
+                        if age_at_exam_months <= 60:
+                            sex = int(row[SEX_VAR])
+                            weight_kg = latest_weight / 1000
+
+                            for sd_var, sd_data in weight_sd_data.items():
+                                row[sd_var] = int(
+                                    weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 
     def write_output_file(self, headers, matrix):
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:

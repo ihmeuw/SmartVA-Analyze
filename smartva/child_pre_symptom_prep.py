@@ -3,16 +3,15 @@ from __future__ import print_function
 import csv
 import os
 
-from datetime import date
-from dateutil.relativedelta import relativedelta
-
-from smartva.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
+from smartva.default_fill_data import (
+    CHILD_DEFAULT_FILL as DEFAULT_FILL, 
+    CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
+)
 from smartva.answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
 from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
 from smartva.pre_symptom_prep import PreSymptomPrep
-from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns, int_value_or_0
-from smartva.loggers import status_logger
-from smartva.utils import status_notifier, get_item_count
+from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns
+from smartva.utils import status_notifier
 from smartva.child_pre_symptom_data import (
     DURATION_VARS,
     GENERATED_VARS_DATA,
@@ -24,21 +23,10 @@ from smartva.child_pre_symptom_data import (
     SKIP_PATTERN_DATA,
     DURATION_VARS_SPECIAL_CASE,
     DURATION_VARS_SHORT_FORM_DROP_LIST,
-    WEIGHT_VARS,
-    DATE_VARS,
-    EXAM_DATE_VARS,
-    DOB_VAR, SEX_VAR,
-    WEIGHT_SD_DATA,
-    AGE_VARS
-)
+    WEIGHT_SD_DATA)
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 DROP_PATTERN = '[a]([_\d]|dult)'
-
-
-# NOTES:
-# these variables don't exist in the electronic version of the form:
-# c1_09, c1_10, c1_10d, c1_10m, c1_10y, c1_19_6, c1_24, c1_24d, c1_24m, c1_24y, c1_26, c4_31_2, c5_02_11b
 
 
 class ChildPreSymptomPrep(PreSymptomPrep):
@@ -50,9 +38,9 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         super(ChildPreSymptomPrep, self).run()
 
         if self.short_form:
-            default_fill = CHILD_DEFAULT_FILL_SHORT
+            default_fill = DEFAULT_FILL_SHORT
         else:
-            default_fill = CHILD_DEFAULT_FILL
+            default_fill = DEFAULT_FILL
 
         # Create a list of duration variables, dropping specified variables if using the short form.
         duration_vars = DURATION_VARS[:]
@@ -114,7 +102,7 @@ class ChildPreSymptomPrep(PreSymptomPrep):
 
             self.process_date_vars(row)
 
-            self.process_weight_sd_vars(row)
+            self.process_weight_sd_vars(row, WEIGHT_SD_DATA)
 
             self.process_age_vars(row)
 
@@ -125,81 +113,6 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         self.write_output_file(headers, matrix)
 
         return True
-
-    @staticmethod
-    def process_age_vars(row):
-        for age_var in AGE_VARS:
-            years = int(row['{}a'.format(age_var)])
-            months = int(row['{}b'.format(age_var)])
-            days = int(row['{}c'.format(age_var)])
-            row['{}a'.format(age_var)] = years + (months / 12.0) + (days / 356.0)
-
-    @staticmethod
-    def validate_weight_vars(row):
-        for var in WEIGHT_VARS:
-            if int_value_or_0(row[var]) in [0, 9999]:
-                row[var] = ''
-
-    @staticmethod
-    def process_date_vars(row):
-        # Get an approximate date.
-        # Add 'd' (day) 'm' (month) 'y' (years) to each var and process.
-        date_invalid = {
-            'd': (['', '99', 99], 1),
-            'm': (['', '99', 99], 1),
-            'y': (['', '999', 999, '9999', 9999], 0),
-        }
-        for var in DATE_VARS:
-            for val, val_data in date_invalid.items():
-                var_name = var + val
-                invalid_data, default = val_data
-                if row[var_name] in invalid_data:
-                    row[var_name] = default
-
-    @staticmethod
-    def process_weight_sd_vars(row):
-        # Get most recent weight from medical records
-        if int(row['{:s}y'.format(DOB_VAR)]):
-            try:
-                dob = make_date(row, DOB_VAR)
-            except ValueError:
-                pass
-            else:
-
-                exam_data = []
-                for date_var, weight_var in EXAM_DATE_VARS.items():
-                    try:
-                        exam_date = make_date(row, date_var)
-                        exam_weight = float(row['{:s}b'.format(weight_var)])
-                        exam_data.append((exam_date, exam_weight))
-                    except ValueError:
-                        # If the date is invalid or the weight isn't a number, skip this exam.
-                        continue
-
-                if exam_data:
-                    latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
-
-                    if latest_exam > dob:
-                        age_at_exam_months = months_delta(latest_exam, dob)
-
-                        if age_at_exam_months <= 60:
-                            sex = int(row[SEX_VAR])
-                            weight_kg = latest_weight / 1000
-
-                            for sd_var, sd_data in WEIGHT_SD_DATA.items():
-                                row[sd_var] = int(
-                                    weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
-
-
-def make_date(row, key):
-    return date(int(row['{:s}y'.format(key)]),
-                int(row['{:s}m'.format(key)]),
-                int(row['{:s}d'.format(key)]))
-
-
-def months_delta(date1, date2):
-    delta = relativedelta(date1, date2)
-    return abs(delta.years * 12 + delta.months)
 
 """
 # fix child agedays.  if it's blank give it a 0, if it's not, give it a 4
@@ -214,6 +127,24 @@ if (row[headers.index('c1_25b')] != '' and int(row[headers.index('c1_25b')]) >= 
 """
 
 """
+child_1_8a = row[headers_old.index('child_1_8a')]
+child_1_8b = row[headers_old.index('child_1_8b')]
+if child_1_8a == '' or child_1_8a is None:
+    child_1_8a = '0'
+if child_1_8b == '' or child_1_8b is None:
+    child_1_8b = '0'
+if child_1_8b != 0:
+    child_1_8b = int(child_1_8b) * 1000
+row[headers.index('child_1_8num')] = float(child_1_8a) + float(child_1_8b)
+
+child_1_8 = row[headers_old.index('child_1_8')]
+if child_1_8 == '2':
+    row[headers_old.index('child_1_8')] = '1'
+"""
+
+"""
+#### Deviation from neonate!!!
+
 # child rash, 4 = days
 index = headers.index('c4_33b')
 temp = row[headers.index('c4_33a')]
@@ -221,6 +152,27 @@ if temp != '4':
     # row[index] = row[headers_old.index('child_4_33a')]
     row[index] = '0'
 """
+
+"""
+# If short form, recode answers:
+index = headers.index('c1_22a')
+temp = row[headers_old.index('child_1_22')]
+if temp == '1':
+    row[index] = '1'
+if temp == '2':
+    row[index] = '2'
+if temp == '3':
+    row[index] = '4'
+if temp == '4':
+    row[index] = '5'
+if temp == '5':
+    row[index] = '6'
+if temp == '8':
+    row[index] = '8'
+if temp == '9':
+    row[index] = '9'
+"""
+
 """
 # added for shortform
 if self.short_form:
@@ -262,6 +214,7 @@ for i, row in enumerate(matrix):
 """
 
 """
+##### Deviates from neonate
 # special case: 'child_4_50b' should be set to 1000 if it's missing
 for row in matrix:
     if row[headers.index('child_4_50b')] == '' or row[headers.index('child_4_50b')] is None:
