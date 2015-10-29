@@ -23,7 +23,7 @@ generatedHeaders = ['g4_03b', 'c1_05b', 'c1_20b', 'c1_21b', 'c2_05b', 'c4_37b', 
                     's181', 'c1_26', 'c1_08num']
 
 
-class PreSymptomPrep(object):
+class NeonatePreSymptomPrep(object):
     def __init__(self, input_file, output_dir, shortform):
         self.inputFilePath = input_file
         self.output_dir = output_dir

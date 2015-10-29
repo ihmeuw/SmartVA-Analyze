@@ -28,7 +28,7 @@ class ScoredVA:
         self.gender = gender
 
 
-class Tariff(object):
+class NeonateTariff(object):
     AGE_GROUP = 'neonate'
 
     def __init__(self, input_file, output_dir, intermediate_dir, hce, freetext, country, shortform):
