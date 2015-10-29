@@ -101,9 +101,6 @@ class AdultPreSymptomPrep(PreSymptomPrep):
 
         status_notifier.update({'sub_progress': None})
 
-        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
-            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
-            writer.writeheader()
-            writer.writerows(matrix)
+        self.write_output_file(headers, matrix)
 
         return True

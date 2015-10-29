@@ -153,3 +153,9 @@ class PreSymptomPrep(DataPrep):
         for variable, value in row.items():
             if value == '':
                 row[variable] = default_fill.get(variable, '')
+
+    def write_output_file(self, headers, matrix):
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
+            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(matrix)
