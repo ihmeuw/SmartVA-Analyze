@@ -8,9 +8,10 @@ from stemming.porter2 import stem
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
-from smartva.neonate_pre_symptom_prep import FILENAME_TEMPLATE
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import int_value_or_0
+from smartva.utils.conversion_utils import value_or_default
+
+FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
 DOB_VAR = 'g5_01'
 SEX_VAR = 'g5_02'
@@ -136,8 +137,8 @@ class PreSymptomPrep(DataPrep):
         """
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
-            code_value = int_value_or_0(row[code_var])
-            length_value = int_value_or_0(row[length_var])
+            code_value = value_or_default(row[code_var])
+            length_value = value_or_default(row[length_var])
 
             if var in special_case_vars and length_value == '':
                 row[var] = special_case_vars[var]
@@ -193,16 +194,19 @@ class PreSymptomPrep(DataPrep):
     @staticmethod
     def process_age_vars(row):
         for age_var in AGE_VARS:
-            years = int(row['{}a'.format(age_var)])
-            months = int(row['{}b'.format(age_var)])
-            days = int(row['{}c'.format(age_var)])
-            row['{}a'.format(age_var)] = years + (months / 12.0) + (days / 356.0)
+            years = value_or_default(row['{:s}a'.format(age_var)], float, [999, 9999])
+            months = value_or_default(row['{:s}b'.format(age_var)], float, 99)
+            days = value_or_default(row['{:s}c'.format(age_var)], float, 99)
+            row['{:s}a'.format(age_var)] = years + (months / 12.0) + (days / 365.0)
+            row['{:s}b'.format(age_var)] = (12.0 * years) + months + (days / 30.0)
+            row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
 
     @staticmethod
     def validate_weight_vars(row):
         for var in WEIGHT_VARS:
-            if int_value_or_0(row[var]) in [0, 9999]:
-                row[var] = ''
+            row[var] = value_or_default(row[var], int, [0, 9999], '')
+            # if value_or_default(row[var]) in [0, 9999]:
+            #     row[var] = ''
 
     @staticmethod
     def process_date_vars(row):

@@ -3,14 +3,9 @@ from __future__ import print_function
 import csv
 
 from smartva.default_fill_data import (
-    CHILD_DEFAULT_FILL as DEFAULT_FILL,
-    CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
+    NEONATE_DEFAULT_FILL as DEFAULT_FILL,
+    NEONATE_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
 )
-from smartva.answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
-from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
-from smartva.pre_symptom_prep import PreSymptomPrep
-from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns
-from smartva.utils import status_notifier
 from smartva.neonate_pre_symptom_data import (
     DURATION_VARS,
     GENERATED_VARS_DATA,
@@ -22,7 +17,13 @@ from smartva.neonate_pre_symptom_data import (
     SKIP_PATTERN_DATA,
     DURATION_VARS_SPECIAL_CASE,
     DURATION_VARS_SHORT_FORM_DROP_LIST,
-    WEIGHT_SD_DATA)
+    WEIGHT_SD_DATA
+)
+from smartva.answer_ranges import NEONATE_RANGE_LIST as RANGE_LIST
+from smartva.word_conversions import NEONATE_WORDS_TO_VARS as WORDS_TO_VARS
+from smartva.pre_symptom_prep import PreSymptomPrep
+from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns
+from smartva.utils import status_notifier
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 DROP_PATTERN = '[a]([_\d]|dult)'

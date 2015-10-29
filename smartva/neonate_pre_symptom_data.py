@@ -375,12 +375,12 @@ SKIP_PATTERN_DATA = [
 ]
 
 SHORT_FORM_FREE_TEXT_CONVERSION = {
-    'c_6_1': 'asphyxia',
-    'c_6_2': 'incubator',
-    'c_6_3': 'lung',
-    'c_6_4': 'pneumonia',
-    'c_6_5': 'preterm',
-    'c_6_6': 'distress',
+    'n_6_1': 'asphyxia',
+    'n_6_2': 'incubator',
+    'n_6_3': 'lung',
+    'n_6_4': 'pneumonia',
+    'n_6_5': 'preterm',
+    'n_6_6': 'distress',
 }
 
 FREE_TEXT_VARS = [

@@ -6,11 +6,14 @@ class ConversionError(Exception):
     pass
 
 
-def int_value_or_0(x):
+def value_or_default(x, fn=int, invalid=None, default=0):
     try:
-        return int(x)
+        value = fn(x)
+        if value not in (invalid if isinstance(invalid, list) else [invalid]):
+            return value
     except ValueError:
-        return 0
+        pass
+    return default
 
 
 def additional_headers_and_values(headers, additional_headers_data):
