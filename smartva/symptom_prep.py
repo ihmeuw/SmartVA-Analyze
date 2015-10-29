@@ -1,3 +1,6 @@
+import csv
+import os
+
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
@@ -100,3 +103,9 @@ class SymptomPrep(DataPrep):
             except ValueError:
                 value = 0
             row[read_header] = int(value == 1)
+
+    def write_output_file(self, headers, matrix):
+        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
+            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(matrix)

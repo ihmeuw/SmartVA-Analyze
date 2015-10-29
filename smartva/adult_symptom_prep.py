@@ -1,9 +1,5 @@
 import csv
-import os
 
-from smartva.symptom_prep import SymptomPrep, FILENAME_TEMPLATE
-from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import additional_headers_and_values
 from smartva.adult_symptom_data import (
     GENERATED_VARS_DATA,
     VAR_CONVERSION_MAP,
@@ -12,10 +8,11 @@ from smartva.adult_symptom_data import (
     DURATION_CUTOFF_DATA,
     INJURY_VARS,
     BINARY_VARS,
-    FREE_TEXT_VARIABLES,
-    DROP_LIST,
     BINARY_CONVERSION_MAP
 )
+from smartva.symptom_prep import SymptomPrep
+from smartva.utils import status_notifier
+from smartva.utils.conversion_utils import additional_headers_and_values
 
 
 class AdultSymptomPrep(SymptomPrep):
@@ -92,9 +89,6 @@ class AdultSymptomPrep(SymptomPrep):
 
         status_notifier.update({'sub_progress': None})
 
-        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
-            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
-            writer.writeheader()
-            writer.writerows(matrix)
+        self.write_output_file(headers, matrix)
 
         return True

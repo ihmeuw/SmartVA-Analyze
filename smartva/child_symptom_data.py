@@ -196,8 +196,6 @@ BINARY_CONVERSION_MAP = {
     's135': {
         3: 's135991',
     },
-
-
     'sex': [2]
 }
 
