@@ -2,7 +2,6 @@ from __future__ import print_function
 import os
 import pickle
 
-from smartva import config
 from smartva.child_tariff_data import (
     HCE_DROP_LIST,
     SHORT_FORM_DROP_LIST,
