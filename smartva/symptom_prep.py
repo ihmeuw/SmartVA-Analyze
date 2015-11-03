@@ -4,15 +4,77 @@ import os
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
+from smartva.utils.conversion_utils import additional_headers_and_values
 
 FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
 
 class SymptomPrep(DataPrep):
+    def __init__(self, input_file, output_dir, short_form):
+        super(SymptomPrep, self).__init__(input_file, output_dir, short_form)
+        self.data_module = None
+
+    def _init_data_module(self):
+        pass
+
     def run(self):
         super(SymptomPrep, self).run()
         status_logger.info('{} :: Processing symptom data'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
+
+        with open(self.input_file_path, 'rb') as fi:
+            reader = csv.DictReader(fi)
+            matrix = [row for row in reader]
+
+        status_notifier.update({'sub_progress': (0, len(matrix))})
+
+        headers = reader.fieldnames
+
+        additional_data = {}
+        additional_data.update(self.data_module.GENERATED_VARS_DATA)
+        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
+
+        headers.extend(additional_headers)
+        self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
+
+        # TODO - Review this and re-implement for DictWriter, if necessary.
+        # Identify unneeded variables for removal, and write the new headers to the output file.
+        """
+        not_drop_list = VAR_CONVERSION_MAP.values() + FREE_TEXT_VARIABLES + additional_headers
+
+        drop_index_list = set([i for i, header in enumerate(headers) if header not in not_drop_list])
+        drop_index_list.update([headers.index(header) for header in DROP_LIST])
+        """
+
+        for index, row in enumerate(matrix):
+            if self.want_abort:
+                return False
+
+            status_notifier.update({'sub_progress': (index,)})
+
+            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
+
+            self.copy_variables(row, self.data_module.COPY_VARS)
+
+            # Compute age quartiles.
+            self.process_progressive_value_data(row, self.data_module.AGE_QUARTILE_BINARY_VARS.items())
+
+            self.process_cutoff_data(row, self.data_module.DURATION_CUTOFF_DATA.items())
+
+            self.process_injury_data(row, self.data_module.INJURY_VARS.items())
+
+            # Dichotomize!
+            self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
+
+            # Ensure all binary variables actually ARE 0 or 1:
+            self.post_process_binary_variables(row, self.data_module.BINARY_VARS)
+
+        status_notifier.update({'sub_progress': None})
+
+        self.write_output_file(headers, matrix)
+
+        return True
 
     @staticmethod
     def copy_variables(row, copy_variables_map):
@@ -27,29 +89,6 @@ class SymptomPrep(DataPrep):
         """
         for read_header, write_header in copy_variables_map.items():
             row[write_header] = row[read_header]
-
-    @staticmethod
-    def process_quartile_data(row, quartile_data):
-        """
-        Populate quartile variables from input data.
-        Format:
-        {
-            'read variable': [
-                (upper, variable),
-                (median, variable),
-                (lower, variable),
-                (0, variable)
-            ]
-        }
-
-        :param row: Row of data.
-        :param quartile_data: Quartile ranges in specified format.
-        """
-        for read_header, conversion_data in quartile_data:
-            for value, write_header in conversion_data:
-                if float(row[read_header]) > value:
-                    row[write_header] = 1
-                    break
 
     @staticmethod
     def process_cutoff_data(row, cutoff_data_map):

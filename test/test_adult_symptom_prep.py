@@ -41,7 +41,7 @@ class TestAdultSymptomPrep(object):
         }
 
         for i, row in enumerate(rows):
-            AdultSymptomPrep.process_quartile_data(headers, row, conversion_map.items())
+            AdultSymptomPrep.process_progressive_value_data(headers, row, conversion_map.items())
 
             assert row == valid_results[i]
 
