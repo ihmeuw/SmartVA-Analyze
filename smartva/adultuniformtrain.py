@@ -1,4 +1,4 @@
-frequencies = {
+FREQUENCIES = {
     "P-C4662": 8,
     "M-1865": 3,
     "M-1867": 7,

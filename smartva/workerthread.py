@@ -6,7 +6,7 @@ import threading
 from smartva.common_prep import CommonPrep
 from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 from smartva.adult_symptom_prep import AdultSymptomPrep
-from smartva.adulttariff import Tariff as AdultTariff
+from smartva.adult_tariff import Tariff as AdultTariff
 from smartva.childpresymptom import PreSymptomPrep as ChildPreSymptomPrep
 from smartva.childsymptom import ChildSymptomPrep
 from smartva.childtariff import Tariff as ChildTariff
