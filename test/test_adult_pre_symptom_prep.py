@@ -116,7 +116,7 @@ class TestAdultPreSymptomPrep(object):
 
     def test_calculate_duration_variables(self):
         headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b']
-        row = ['0', '', 1, 1, '', 0, 0]
+        row = ['0', '', 1, 1, '', '', '']
 
         duration_vars = ['test1', 'test2']
         special_case_vars = {
@@ -125,4 +125,4 @@ class TestAdultPreSymptomPrep(object):
 
         AdultPreSymptomPrep.calculate_duration_variables(headers, row, duration_vars, special_case_vars)
 
-        assert row == ['0', 356.0, 1, 1, 999, 0, 0]
+        assert row == ['0', 356.0, 1, 1, 999, '', '']

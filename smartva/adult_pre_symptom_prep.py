@@ -288,7 +288,7 @@ class AdultPreSymptomPrep(object):
             code_value = int_value_or_0(row[headers.index(code_var)])
             length_value = int_value_or_0(row[headers.index(length_var)])
 
-            if var in special_case_vars and length_value == '':
+            if var in special_case_vars and row[headers.index(length_var)] == '':
                 row[headers.index(var)] = special_case_vars[var]
             else:
                 row[headers.index(var)] = TIME_FACTORS.get(code_value, 0) * length_value
