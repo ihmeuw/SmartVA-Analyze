@@ -225,7 +225,7 @@ class PreSymptomPrep(DataPrep):
             code_value = value_or_default(row[code_var])
             length_value = value_or_default(row[length_var])
 
-            if var in special_case_vars and length_value == '':
+            if var in special_case_vars and row[length_var] == '':
                 row[var] = special_case_vars[var]
             else:
                 row[var] = TIME_FACTORS.get(code_value, 0) * length_value
