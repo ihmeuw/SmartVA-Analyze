@@ -91,7 +91,7 @@ class AdultPreSymptomPrep(object):
                     status_notifier.update({'sub_progress': (index,)})
 
                     new_row = row + additional_values
-                    
+
                     self.verify_answers_for_row(headers, new_row, ADULT_RANGE_LIST)
 
                     self.convert_free_text_headers(headers, new_row, FREE_TEXT_HEADERS, ADULT_WORDS_TO_VARS)
@@ -105,7 +105,7 @@ class AdultPreSymptomPrep(object):
                     self.consolidate_answers(headers, new_row, CONSOLIDATION_MAP)
 
                     self.convert_binary_variables(headers, new_row, BINARY_CONVERSION_MAP.items())
-                
+
                     check_skip_patterns(headers, new_row, SKIP_PATTERN_DATA)
 
                     self.fill_missing_data(headers, new_row, default_fill)
