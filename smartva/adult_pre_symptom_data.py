@@ -1,6 +1,20 @@
-"""
-Variables generated in this step.
-"""
+from smartva.default_fill_data import (
+    ADULT_DEFAULT_FILL as DEFAULT_FILL,
+    ADULT_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
+)
+from answer_ranges import ADULT_RANGE_LIST as RANGE_LIST
+from smartva.word_conversions import ADULT_WORDS_TO_VARS as WORDS_TO_VARS
+
+DROP_PATTERN = '[cpn]([_\d]|hild|omplications|rovider|eonate)'
+
+WEIGHT_VARS = []
+
+DATE_VARS = [
+    'g5_01',
+]
+
+EXAM_DATE_VARS = {}
+
 GENERATED_VARS_DATA = {
     'g4_03b': 0,
     'a2_01b': 0,
@@ -47,9 +61,6 @@ GENERATED_VARS_DATA = {
     'a6_02_15': 0,
 }
 
-"""
-Variables to be renamed in this step.
-"""
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
     'gen_2_1': 'g2_01',

@@ -1,6 +1,28 @@
-"""
-Variables generated in this step.
-"""
+from smartva.default_fill_data import (
+    CHILD_DEFAULT_FILL as DEFAULT_FILL,
+    CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
+)
+from answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
+from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
+
+DROP_PATTERN = '[a]([_\d]|dult)'
+
+WEIGHT_VARS = [
+    'c5_07_1b',
+    'c5_07_2b',
+]
+
+DATE_VARS = [
+    'g5_01',
+    'c5_06_1',
+    'c5_06_2',
+]
+
+EXAM_DATE_VARS = {
+    'c5_06_1': 'c5_07_1',
+    'c5_06_2': 'c5_07_2',
+}
+
 GENERATED_VARS_DATA = {
     'g4_03b': 0,
     'c1_05b': 0,
@@ -290,6 +312,10 @@ VAR_CONVERSION_MAP = {
     'child_6_1': 'c_6_1'
 }
 
+PROGRESSIVE_VALUE_MAP = {
+
+}
+
 """
 Recode maps use the format:
     (read_header, write_header): {
@@ -327,12 +353,25 @@ RECODE_MAP = {
         5: 'child_4_50a',
         4: 'child_4_50b',
     },
+    ('c1_22a', 'c1_22a'): {
+        1: 1,
+        2: 2,
+        3: 4,
+        4: 5,
+        5: 6,
+        8: 8,
+        9: 9,
+    },
+    ('c4_08a', 'c4_08a'): {
+        2: 1
+    }
 }
 
 BINARY_CONVERSION_MAP = {
     'child_4_47': {
         0: 'c4_47_11',
     },
+    'c1_26': '(&(c1_25b>=1)(c1_25b<=28))'
 }
 
 SKIP_PATTERN_DATA = [

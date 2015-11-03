@@ -125,4 +125,4 @@ class TestAdultPreSymptomPrep(object):
 
         AdultPreSymptomPrep.calculate_duration_vars(headers, row, duration_vars, special_case_vars)
 
-        assert row == ['0', 356.0, 1, 1, 999, 0, 0]
+        assert row == ['0', 365.0, 1, 1, 999, 0, 0]

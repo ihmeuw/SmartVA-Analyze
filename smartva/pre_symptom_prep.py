@@ -1,15 +1,14 @@
+import abc
 import csv
 import os
 import re
 from datetime import date
 from dateutil.relativedelta import relativedelta
-
 from stemming.porter2 import stem
-
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import value_or_default
+from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values, check_skip_patterns
 
 FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
@@ -17,24 +16,8 @@ DOB_VAR = 'g5_01'
 SEX_VAR = 'g5_02'
 AGE_VARS = ['g5_04']
 
-EXAM_DATE_VARS = {
-    'c5_06_1': 'c5_07_1',
-    'c5_06_2': 'c5_07_2',
-}
-
-WEIGHT_VARS = [
-    'c5_07_1b',
-    'c5_07_2b',
-]
-
-DATE_VARS = [
-    'g5_01',
-    'c5_06_1',
-    'c5_06_2',
-]
-
 TIME_FACTORS = {
-    1: 356.0,
+    1: 365.0,
     2: 30.0,
     3: 7.0,
     4: 1.0,
@@ -55,12 +38,107 @@ def months_delta(date1, date2):
 
 
 class PreSymptomPrep(DataPrep):
-    FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, input_file, output_dir, short_form):
+        super(PreSymptomPrep, self).__init__(input_file, output_dir, short_form)
+        self.data_module = None
+        self.default_fill = None
+
+    def _init_data_module(self):
+        if self.short_form:
+            self.default_fill = self.data_module.DEFAULT_FILL_SHORT
+        else:
+            self.default_fill = self.data_module.DEFAULT_FILL
 
     def run(self):
         super(PreSymptomPrep, self).run()
+
         status_logger.info('{} :: Processing pre-symptom data'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
+
+        # Create a list of duration variables, dropping specified variables if using the short form.
+        duration_vars = self.data_module.DURATION_VARS[:]
+        if self.short_form:
+            for var in self.data_module.DURATION_VARS_SHORT_FORM_DROP_LIST:
+                duration_vars.remove(var)
+
+        with open(self.input_file_path, 'rb') as fi:
+            reader = csv.DictReader(fi)
+            matrix = [row for row in reader]
+
+        status_notifier.update({'sub_progress': (0, len(matrix))})
+
+        headers = reader.fieldnames
+
+        additional_data = {k: '' for k in self.data_module.DURATION_VARS}
+        additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
+        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
+
+        headers.extend(additional_headers)
+        self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
+
+        # TODO - Review this and re-implement for DictWriter, if necessary.
+        """
+        drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
+        drop_index_list += self.get_drop_index_list(headers, 'child')
+        drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
+        drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
+        """
+
+        for index, row in enumerate(matrix):
+            if self.want_abort:
+                return False
+
+            status_notifier.update({'sub_progress': (index,)})
+
+            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
+
+            self.verify_answers_for_row(row, self.data_module.RANGE_LIST)
+
+            self.pre_processing_step(row)
+
+            self.recode_answers(row, self.data_module.RECODE_MAP)
+
+            self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
+
+            check_skip_patterns(row, self.data_module.SKIP_PATTERN_DATA, self.default_fill)
+            # special case skip patterns
+
+            self.calculate_duration_vars(row, duration_vars, self.data_module.DURATION_VARS_SPECIAL_CASE)
+
+            self.validate_weight_vars(row, self.data_module.WEIGHT_VARS)
+
+            self.process_date_vars(row, self.data_module.DATE_VARS)
+
+            self.process_age_vars(row)
+
+            self.convert_free_text_vars(row, self.data_module.FREE_TEXT_VARS, self.data_module.WORDS_TO_VARS)
+
+            if self.short_form:
+                word_list = [v for k, v in self.data_module.SHORT_FORM_FREE_TEXT_CONVERSION.items()
+                             if value_or_default(row[k]) == 1]
+                if word_list:
+                    self.convert_free_text_words(row, word_list, self.data_module.WORDS_TO_VARS)
+
+            self.post_processing_step(row)
+
+            self.fill_missing_data(row, self.default_fill)
+
+        status_notifier.update({'sub_progress': None})
+
+        self.write_output_file(headers, matrix)
+
+        return True
+
+    @abc.abstractmethod
+    def pre_processing_step(self, row):
+        pass
+
+    @abc.abstractmethod
+    def post_processing_step(self, row):
+        self.process_weight_sd_vars(row, self.data_module.WEIGHT_SD_DATA)
 
     @staticmethod
     def get_drop_index_list(headers, drop_pattern):
@@ -98,7 +176,7 @@ class PreSymptomPrep(DataPrep):
                         if int(answer) not in range_list:
                             warning_logger.warning(
                                 'SID: {} variable {} has an illegal value {}. Please see code book for legal values.'
-                                .format(row['sid'], variable, value))
+                                    .format(row['sid'], variable, value))
                             warnings = True
         return warnings
 
@@ -109,7 +187,7 @@ class PreSymptomPrep(DataPrep):
 
         Consolidation map dictionary format:
             (read_header, write_header): {
-                VAL: data_header
+                read_value: 'data_header' or value
             }
 
         :param row: Row of data.
@@ -120,11 +198,18 @@ class PreSymptomPrep(DataPrep):
             try:
                 value = int(row[read_header])
             except ValueError:
-                # FIXME - This covers both the header index and the int operations.
                 pass
+            except KeyError:
+                warning_logger.warning(
+                    'SID: {} Variable \'{}\' does not exist.'.format(row['sid'], read_header))
             else:
+                # Changed to allow arbitrary values to be used.
+                # TODO - Maybe use '#' before var to indicate lookup.
                 if value in data_map:
-                    row[write_header] = row[data_map[value]]
+                    if isinstance(data_map[value], str):
+                        row[write_header] = row[data_map[value]]
+                    else:
+                        row[write_header] = data_map[value]
 
     @staticmethod
     def calculate_duration_vars(row, duration_vars, special_case_vars):
@@ -157,7 +242,7 @@ class PreSymptomPrep(DataPrep):
         for word in input_word_list:
             try:
                 row[word_map[stem(word)]] = 1
-                warning_logger.warning('Word {} map {}'.format(stem(word), word_map[stem(word)]))
+                # warning_logger.warning('Word {} map {}'.format(stem(word), word_map[stem(word)]))
             except KeyError:
                 # Word is not in the data map.
                 pass
@@ -202,14 +287,12 @@ class PreSymptomPrep(DataPrep):
             row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
 
     @staticmethod
-    def validate_weight_vars(row):
-        for var in WEIGHT_VARS:
+    def validate_weight_vars(row, weight_vars):
+        for var in weight_vars:
             row[var] = value_or_default(row[var], int, [0, 9999], '')
-            # if value_or_default(row[var]) in [0, 9999]:
-            #     row[var] = ''
 
     @staticmethod
-    def process_date_vars(row):
+    def process_date_vars(row, date_vars):
         # Get an approximate date.
         # Add 'd' (day) 'm' (month) 'y' (years) to each var and process.
         date_invalid = {
@@ -217,7 +300,7 @@ class PreSymptomPrep(DataPrep):
             'm': (['', '99', 99], 1),
             'y': (['', '999', 999, '9999', 9999], 0),
         }
-        for var in DATE_VARS:
+        for var in date_vars:
             for val, val_data in date_invalid.items():
                 var_name = var + val
                 invalid_data, default = val_data
@@ -225,7 +308,7 @@ class PreSymptomPrep(DataPrep):
                     row[var_name] = default
 
     @staticmethod
-    def process_weight_sd_vars(row, weight_sd_data):
+    def process_weight_sd_vars(row, exam_date_vars, weight_sd_data):
         # Get most recent weight from medical records
         if int(row['{:s}y'.format(DOB_VAR)]):
             try:
@@ -235,7 +318,7 @@ class PreSymptomPrep(DataPrep):
             else:
 
                 exam_data = []
-                for date_var, weight_var in EXAM_DATE_VARS.items():
+                for date_var, weight_var in exam_date_vars.items():
                     try:
                         exam_date = make_date(row, date_var)
                         exam_weight = float(row['{:s}b'.format(weight_var)])
