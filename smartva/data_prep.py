@@ -74,3 +74,30 @@ class DataPrep(object):
             # warning_logger.warning('')
             pass
         row.update({k: v for k, v in data.items() if k not in row})
+
+    @staticmethod
+    def process_progressive_value_data(row, progressive_data):
+        """
+        Populate progressive variables from input data.
+        Format:
+        {
+            'read variable': [
+                (upper, variable),
+                (median, variable),
+                (lower, variable),
+                (0, variable)
+            ]
+        }
+
+        :param row: Row of data.
+        :param progressive_data: Quartile ranges in specified format.
+        """
+        for read_header, conversion_data in progressive_data:
+            for value, write_header in conversion_data:
+                if float(row[read_header]) > value:
+                    if isinstance(write_header, tuple):
+                        write_header, write_value = write_header
+                    else:
+                        write_value = 1
+                    row[write_header] = write_value
+                    break
