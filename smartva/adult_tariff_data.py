@@ -1,3 +1,11 @@
+CUTOFF_POS = 0.89
+
+UNIFORM_LIST_POS = 0.18
+
+MAX_CAUSE_SCORE = 6.0
+
+DEFINITIVE_SYMPTOMS = {}
+
 HCE_DROP_LIST = [
     's1',
     's10',
@@ -470,10 +478,6 @@ CANCER_CAUSES = [
     30,
     39,
     43
-]
-
-MALARIA_CAUSES = [
-    29
 ]
 
 CAUSE_CONDITIONS = {

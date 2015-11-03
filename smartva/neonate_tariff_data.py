@@ -1,3 +1,13 @@
+CUTOFF_POS = 0.91
+
+UNIFORM_LIST_POS = 0.35
+
+MAX_CAUSE_SCORE = 1.0
+
+DEFINITIVE_SYMPTOMS = {
+    's20': 6
+}
+
 HCE_DROP_LIST = [
     's180',
     's181',

@@ -4,12 +4,13 @@ import math
 import os
 from decimal import Decimal
 import numpy as np
+import pickle
 
 from smartva import config
-from smartva.adult_tariff_data import MALARIA_CAUSES, CAUSE_REDUCTION, CAUSES
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
+from smartva.utils.conversion_utils import value_or_default
 
 CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
@@ -20,6 +21,10 @@ MAX_CAUSE_SYMPTOMS = 40
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
+
+MALARIA_CAUSES = [
+    29
+]
 
 
 def round5(value):
@@ -47,14 +52,6 @@ def cmp_rank_keys(a, b):
 
 class ScoredVA(object):
     def __init__(self, cause_scores, cause, sid, age, sex):
-        # self._backing_dict = {
-        #     'sid': sid,
-        #     'age': age,
-        #     'gender': gender,
-        #     'cause': cause,
-        #     'cause_scores': cause_scores,
-        #     'rank_list': {},
-        # }
         self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
         self.cause = cause  # int
         self.rank_list = {}
@@ -74,6 +71,16 @@ class ScoredVA(object):
 
     def __str__(self):
         return self.__repr__()
+
+
+def int_or_float(x):
+    try:
+        return int(x)
+    except ValueError:
+        try:
+            return float(x)
+        except ValueError:
+            raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))
 
 
 class TariffPrep(DataPrep):
@@ -99,7 +106,10 @@ class TariffPrep(DataPrep):
 
         self.cause_list = []
 
-        self.want_abort = False
+        self.data_module = None
+
+    def _init_data_module(self):
+        pass
 
     @property
     def va_validated_filename(self):
@@ -112,6 +122,69 @@ class TariffPrep(DataPrep):
     def run(self):
         status_logger.info('{:s} :: Processing tariffs'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
+
+        # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
+        # tariff data. It is unnecessary to drop headers from other matrices.
+        drop_headers = {TARIFF_CAUSE_NUM_KEY}
+        if not self.hce:
+            drop_headers.update(self.data_module.HCE_DROP_LIST)
+        if not self.free_text:
+            drop_headers.update(self.data_module.FREE_TEXT)
+        if self.short_form:
+            drop_headers.update(self.data_module.SHORT_FORM_DROP_LIST)
+
+        cause46_names = self.get_cause46_names()
+
+        undetermined_matrix = self.get_undetermined_matrix()
+
+        cause40s = self.get_cause40s(drop_headers)
+        self.cause_list = sorted(cause40s.keys())
+
+        # """
+        status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
+        va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
+
+        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+            pickle.dump(va_validated_cause_list, f)
+        """
+        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+            va_validated_cause_list = pickle.load(f)
+        # """
+
+        uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
+
+        status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
+        cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
+
+        # """
+        status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
+        va_cause_list = self.get_va_cause_list(self.input_file_path, cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
+
+        status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
+        self.generate_cause_rankings(va_cause_list, uniform_list)
+
+        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+            pickle.dump(va_cause_list, f)
+        """
+        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+            va_cause_list = pickle.load(f)
+        # """
+
+        self.write_external_ranks(va_cause_list)
+
+        lowest_rank = len(uniform_list)
+
+        self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS, lowest_rank, self.data_module.UNIFORM_LIST_POS, self.data_module.MAX_CAUSE_SCORE)
+
+        cause_counts = self.write_predictions(va_cause_list, undetermined_matrix, lowest_rank, self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
+
+        self.write_csmf(cause_counts)
+
+        self.write_tariff_ranks(va_cause_list)
+
+        self.write_tariff_scores(va_cause_list)
+
+        return True
 
     def get_cause46_names(self):
         with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
@@ -132,7 +205,7 @@ class TariffPrep(DataPrep):
                                       :MAX_CAUSE_SYMPTOMS]
         return cause40s
 
-    def get_va_cause_list(self, input_file, cause40s):
+    def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
         va_cause_list = []
         with open(input_file, 'rb') as f:
             reader = csv.DictReader(f)
@@ -150,6 +223,11 @@ class TariffPrep(DataPrep):
 
             for cause, symptoms in cause40s.items():
                 cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
+
+            if definitive_symptoms:
+                for symptom, cause in definitive_symptoms.items():
+                    if row[symptom] == '1':
+                        row[CAUSE_NUM_KEY] = cause
 
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
                                           row.get(AGE_KEY), row.get(SEX_KEY)))
@@ -243,7 +321,7 @@ class TariffPrep(DataPrep):
             lowest_cause_list = set()
 
             for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: int(va[t]), int).parse():
+                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).parse():
                     lowest_cause_list.update(causes)
 
             if not self.malaria:
@@ -266,10 +344,10 @@ class TariffPrep(DataPrep):
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
 
             for va in va_cause_list:
-                cause34 = ''
+                cause34 = va.cause
 
                 va_lowest_rank = min(va.rank_list.values())
-                if va_lowest_rank < lowest_rank:
+                if va_lowest_rank < lowest_rank and not cause34:
                     multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
                     cause34 = cause_reduction[int(multiple[0])]
                     if len(multiple) > 1:
