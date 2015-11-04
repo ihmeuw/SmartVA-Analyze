@@ -1,3 +1,4 @@
+from smartva.common_data import CHILD as AGE_GROUP
 from smartva.default_fill_data import (
     CHILD_DEFAULT_FILL as DEFAULT_FILL,
     CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT

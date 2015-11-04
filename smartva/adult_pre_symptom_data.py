@@ -1,3 +1,4 @@
+from smartva.common_data import ADULT as AGE_GROUP
 from smartva.default_fill_data import (
     ADULT_DEFAULT_FILL as DEFAULT_FILL,
     ADULT_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
@@ -5,7 +6,7 @@ from smartva.default_fill_data import (
 from answer_ranges import ADULT_RANGE_LIST as RANGE_LIST
 from smartva.word_conversions import ADULT_WORDS_TO_VARS as WORDS_TO_VARS
 
-DROP_PATTERN = '[cpn]([_\d]|hild|omplications|rovider|eonate)'
+KEEP_PATTERN = r'(sid$|real|age|sex|g5_|a\d+_\d|s\d+)'
 
 WEIGHT_VARS = []
 

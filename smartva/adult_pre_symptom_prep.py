@@ -6,8 +6,6 @@ from smartva.pre_symptom_prep import PreSymptomPrep
 class AdultPreSymptomPrep(PreSymptomPrep):
     def __init__(self, input_file, output_dir, short_form):
         PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
-        self.AGE_GROUP = 'adult'
-
         self.data_module = adult_pre_symptom_data
 
         self._init_data_module()

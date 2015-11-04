@@ -7,8 +7,6 @@ from smartva.utils.conversion_utils import value_or_default
 class ChildPreSymptomPrep(PreSymptomPrep):
     def __init__(self, input_file, output_dir, short_form):
         PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
-        self.AGE_GROUP = 'child'
-
         self.data_module = child_pre_symptom_data
 
         self._init_data_module()

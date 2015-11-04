@@ -46,6 +46,8 @@ class PreSymptomPrep(DataPrep):
         self.default_fill = None
 
     def _init_data_module(self):
+        self.AGE_GROUP = self.data_module.AGE_GROUP
+
         if self.short_form:
             self.default_fill = self.data_module.DEFAULT_FILL_SHORT
         else:
