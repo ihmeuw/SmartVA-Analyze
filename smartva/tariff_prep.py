@@ -296,6 +296,10 @@ class TariffPrep(DataPrep):
         """
         status_notifier.update({'sub_progress': (0, len(va_cause_list))})
 
+        cause_scores = {}
+        for cause in self.cause_list:
+            cause_scores[cause] = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
+
         for index, va in enumerate(va_cause_list):
             status_notifier.update({'sub_progress': (index,)})
 
@@ -306,10 +310,7 @@ class TariffPrep(DataPrep):
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]
 
-                # make a list of tariffs of ALL validated VAs for this cause
-                cause_scores = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
-
-                tariffs = [math.fabs(_ - death_score) for _ in cause_scores]
+                tariffs = [math.fabs(_ - death_score) for _ in cause_scores[cause]]
 
                 # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
