@@ -1,4 +1,4 @@
-from smartva.common_data import CHILD as AGE_GROUP
+from smartva.common_data import CHILD as AGE_GROUP, MALE, FEMALE
 from smartva.default_fill_data import (
     CHILD_DEFAULT_FILL as DEFAULT_FILL,
     CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
@@ -528,15 +528,15 @@ WEIGHT_SD_DATA = {
     # Standard deviation 3
     's180': {
         # Male
-        1: MALE_SD3,
+        MALE: MALE_SD3,
         # Female
-        2: FEMALE_SD3,
+        FEMALE: FEMALE_SD3,
     },
     # Standard deviation 2
     's181': {
         # Male
-        1: MALE_SD2,
+        MALE: MALE_SD2,
         # Female
-        2: FEMALE_SD2,
+        FEMALE: FEMALE_SD2,
     },
 }

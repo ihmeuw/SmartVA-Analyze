@@ -1,7 +1,6 @@
 import csv
-import os
-import re
 import threading
+from decimal import Decimal
 
 
 def shorten_path(path, max_length):
@@ -80,3 +79,17 @@ def get_item_count_for_file(f):
         count += 1
     f.seek(0)
     return count
+
+
+def round5(value):
+    return round(value / Decimal(.5)) * .5
+
+
+def int_or_float(x):
+    try:
+        return int(x)
+    except ValueError:
+        try:
+            return float(x)
+        except ValueError:
+            raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))

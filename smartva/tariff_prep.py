@@ -30,27 +30,8 @@ MALARIA_CAUSES = [
 ]
 
 
-def round5(value):
-    return round(value / Decimal(.5)) * .5
-
-
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
-
-
-def cmp_rank_keys(a, b):
-    """
-    Compare rank keys for sorting. Sorts non-causes first, then causes by cause number.
-
-    :param a: Tuple (is cause? (bool), value)
-    :param b: Tuple (is cause? (bool), value)
-    :return: cmp(a, b)
-    """
-    # If both values are causes, sort by the cause number.
-    if a[0] & b[0]:
-        cmp_a, cmp_b = get_cause_num(a[1]), get_cause_num(b[1])
-        return cmp(cmp_a, cmp_b)
-    return cmp(a, b)
 
 
 class ScoredVA(object):
@@ -75,14 +56,6 @@ class ScoredVA(object):
         return self.__repr__()
 
 
-def int_or_float(x):
-    try:
-        return int(x)
-    except ValueError:
-        try:
-            return float(x)
-        except ValueError:
-            raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))
 class TariffPrep(DataPrep):
     """Process prepared answers against validated VA data.
 
@@ -147,7 +120,7 @@ class TariffPrep(DataPrep):
 
         cause46_names = self.get_cause46_names()
 
-        undetermined_matrix = self.get_undetermined_matrix()
+        undetermined_matrix = self._get_undetermined_matrix()
 
         cause40s = self.get_cause40s(drop_headers)
         self.cause_list = sorted(cause40s.keys())
@@ -186,9 +159,12 @@ class TariffPrep(DataPrep):
 
         lowest_rank = len(uniform_list)
 
-        self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS, lowest_rank, self.data_module.UNIFORM_LIST_POS, self.data_module.MAX_CAUSE_SCORE)
+        self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
+                                           lowest_rank, self.data_module.UNIFORM_LIST_POS,
+                                           self.data_module.MIN_CAUSE_SCORE)
 
-        cause_counts = self.write_predictions(va_cause_list, undetermined_matrix, lowest_rank, self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
+        cause_counts = self.write_predictions(va_cause_list, undetermined_matrix, lowest_rank,
+                                              self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
 
         self.write_csmf(cause_counts)
 
@@ -358,7 +334,7 @@ class TariffPrep(DataPrep):
             writer.writeheader()
             writer.writerows(ranks)
 
-    def get_undetermined_matrix(self):
+    def _get_undetermined_matrix(self):
         """Return matrix undetermined weights read from the specified file.
 
         Returns:
@@ -370,7 +346,7 @@ class TariffPrep(DataPrep):
         return undetermined_matrix
 
     def identify_lowest_ranked_causes(self, va_cause_list, uniform_list, cutoffs, cause_conditions, lowest_rank,
-                                      uniform_list_pos, max_cause_score):
+                                      uniform_list_pos, min_cause_score):
         """Determine which causes are least likely by testing conditions.
         Only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis.
         Only males can have prostate cancer.
@@ -405,7 +381,7 @@ class TariffPrep(DataPrep):
                 if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
                         (float(va.rank_list[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
                     # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.cause_scores[cause_num]) <= max_cause_score)):
+                        (float(va.cause_scores[cause_num]) <= min_cause_score)):
                     lowest_cause_list.add(cause_num)
 
             for cause_num in lowest_cause_list:
@@ -449,20 +425,21 @@ class TariffPrep(DataPrep):
                             'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,
                                                               causes=multiple_cause_list))
 
+                # Count causes, for use in graphs
+                cause34_name = cause34_names.get(cause34, 'Undetermined')
                 if not cause34:
-                    cause34_name = 'Undetermined'
                     if self.iso3 is None:
                         cause_counts.update([cause34_name])
                     else:
-                        # for undetermined, look up the values for each cause using keys (age, sex, country) and
+                        # For undetermined, look up the values for each cause using keys (age, sex, country) and
                         # add them to the 'count' for that cause
+                        # TODO - What to do if nothing matches?
                         for u_row in undetermined_matrix:
                             if (u_row['iso3'] == self.iso3 and u_row['sex'] == va.sex and
                                     self._matches_undetermined_cause(va, u_row)):
                                 cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
-
+                                break
                 else:
-                    cause34_name = cause34_names[cause34]
                     cause_counts.update([cause34_name])
 
                 writer.writerow([va.sid, cause34, cause34_name, va.age, va.sex])
