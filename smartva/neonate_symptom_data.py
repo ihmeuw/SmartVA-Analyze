@@ -6,8 +6,6 @@ KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
 GENERATED_VARS_DATA = {
     'age': 0,
     'sex': 0,
-    # 'real_age': 0,
-    # 'real_gender': 0,
     's5': 0,
     's6': 0,
     's13': 0,
@@ -39,8 +37,6 @@ GENERATED_VARS_DATA = {
 
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
-    # 'g5_02': 'sex',
-    # 'g5_04a': 's2',
     'g5_02': 'real_gender',
     'g5_04a': 's2',
     'g5_04b': 's3',
@@ -171,7 +167,6 @@ AGE_QUARTILE_BINARY_VARS = {
         (None, 's4991'),
     ],
     's105_1': [
-        # (1, 's105_1'),
         (1, 's105'),
     ]
 }
@@ -201,12 +196,9 @@ INJURY_VARS = {}
 
 BINARY_CONVERSION_MAP = {
     's5_1': {
-        # 2: 's5_1',
         2: 's5',
     },
     's6_1': {
-        # 2: 's6_1',
-        # 3: 's6_1',
         2: 's6',
         3: 's6',
     },
@@ -219,13 +211,10 @@ BINARY_CONVERSION_MAP = {
         5: 's11991',
     },
     's13_1': {
-        # 1: 's13_1',
-        # 2: 's13_1',
         1: 's13',
         2: 's13',
     },
     's16_1': {
-        # 2: 's16_1',
         2: 's16',
     },
     's30': {
@@ -352,16 +341,15 @@ BINARY_VARS = [
 ]
 
 DROP_LIST = [
-    # 'age',
     's2',
     's3',
     's4',  # Added
-    # 's5',
-    # 's6',
+    's5_1',
+    's6_1',
     's8',
     's11',
-    # 's13',
-    # 's16',
+    's13_1',
+    's16_1',
     's30',
     's46',
     's49',
@@ -373,5 +361,5 @@ DROP_LIST = [
     's69',
     's71',
     's76',
-    # 's105',
+    's105_1',
 ]
