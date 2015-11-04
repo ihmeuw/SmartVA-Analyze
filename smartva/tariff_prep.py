@@ -109,7 +109,7 @@ class TariffPrep(DataPrep):
         self.data_module = None
 
     def _init_data_module(self):
-        pass
+        self.AGE_GROUP = self.data_module.AGE_GROUP
 
     @property
     def va_validated_filename(self):

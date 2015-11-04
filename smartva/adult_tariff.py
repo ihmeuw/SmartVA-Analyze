@@ -7,8 +7,6 @@ from smartva.tariff_prep import TariffPrep
 class AdultTariff(TariffPrep):
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         super(AdultTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
-        self.AGE_GROUP = 'adult'
-
         self.data_module = adult_tariff_data
 
         self._init_data_module()

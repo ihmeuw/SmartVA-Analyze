@@ -1,3 +1,5 @@
+from smartva.adult_pre_symptom_data import AGE_GROUP
+
 CUTOFF_POS = 0.89
 
 UNIFORM_LIST_POS = 0.18
