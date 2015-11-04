@@ -42,6 +42,15 @@ def months_delta(date1, date2):
 
 
 class PreSymptomPrep(DataPrep):
+    """
+    Prepare pre-symptom data for symptom processing.
+
+    The main goal of this step is to verify and recode answers.
+
+
+    Notes:
+    """
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, input_file, output_dir, short_form):
