@@ -1,16 +1,19 @@
+import abc
 import collections
 import csv
 import math
 import os
-from decimal import Decimal
-import numpy as np
 import pickle
+from decimal import Decimal
+
+import numpy as np
 
 from smartva import config
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
+from smartva.utils.utils import round5, int_or_float
 
 CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
@@ -66,8 +69,7 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(
-            **self.__dict__)
+        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
 
     def __str__(self):
         return self.__repr__()
@@ -94,6 +96,7 @@ class TariffPrep(DataPrep):
         Processing pipelines must implement `_matches_undetermined_cause` method.
     """
 
+    __metaclass__ = abc.ABCMeta
 
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         DataPrep.__init__(self, input_file, output_dir, short_form)
@@ -107,9 +110,17 @@ class TariffPrep(DataPrep):
 
         self.cause_list = []
 
-        self.data_module = None
+        self._data_module = None
 
-    def _init_data_module(self):
+    @property
+    def data_module(self):
+        return self._data_module
+
+    @data_module.setter
+    def data_module(self, value):
+        assert self._data_module is None
+        self._data_module = value
+
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
     @property
@@ -457,6 +468,7 @@ class TariffPrep(DataPrep):
                 writer.writerow([va.sid, cause34, cause34_name, va.age, va.sex])
         return cause_counts
 
+    @abc.abstractmethod
     def _matches_undetermined_cause(self, va, u_row):
         """Determine if a undetermined cause matches conditions of a given Scored VA.
 

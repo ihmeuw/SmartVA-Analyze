@@ -3,7 +3,7 @@ from smartva.utils.conversion_utils import convert_binary_variable, ConversionEr
 
 
 class DataPrep(object):
-    AGE_GROUP = 'none'
+    AGE_GROUP = None
 
     def __init__(self, input_file, output_dir, short_form):
         self.input_file_path = input_file

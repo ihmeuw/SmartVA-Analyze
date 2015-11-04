@@ -1,3 +1,4 @@
+import abc
 import csv
 import os
 import re
@@ -26,11 +27,21 @@ class SymptomPrep(DataPrep):
         years prior to death be assigned to road traffic deaths.
     """
 
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, input_file, output_dir, short_form):
         super(SymptomPrep, self).__init__(input_file, output_dir, short_form)
-        self.data_module = None
+        self._data_module = None
 
-    def _init_data_module(self):
+    @property
+    def data_module(self):
+        return self._data_module
+
+    @data_module.setter
+    def data_module(self, value):
+        assert self._data_module is None
+        self._data_module = value
+
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
     def run(self):

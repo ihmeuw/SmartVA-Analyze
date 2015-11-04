@@ -9,7 +9,5 @@ class AdultSymptomPrep(SymptomPrep):
         super(AdultSymptomPrep, self).__init__(input_file, output_dir, short_form)
         self.data_module = adult_symptom_data
 
-        self._init_data_module()
-
     def run(self):
-        super(AdultSymptomPrep, self).run()
+        return super(AdultSymptomPrep, self).run()

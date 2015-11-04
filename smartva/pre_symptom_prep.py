@@ -60,10 +60,18 @@ class PreSymptomPrep(DataPrep):
 
     def __init__(self, input_file, output_dir, short_form):
         super(PreSymptomPrep, self).__init__(input_file, output_dir, short_form)
-        self.data_module = None
+        self._data_module = None
         self.default_fill = None
 
-    def _init_data_module(self):
+    @property
+    def data_module(self):
+        return self._data_module
+
+    @data_module.setter
+    def data_module(self, value):
+        assert self._data_module is None
+        self._data_module = value
+
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
         if self.short_form:
@@ -132,7 +140,7 @@ class PreSymptomPrep(DataPrep):
 
             self.validate_weight_vars(row, self.data_module.WEIGHT_VARS)
 
-            self.process_date_vars(row, self.data_module.DATE_VARS)
+            self.validate_date_vars(row, self.data_module.DATE_VARS)
 
             self.process_age_vars(row)
 
@@ -326,7 +334,7 @@ class PreSymptomPrep(DataPrep):
             row[var] = value_or_default(row[var], int, [0, 9999], '')
 
     @staticmethod
-    def process_date_vars(row, date_vars):
+    def validate_date_vars(row, date_vars):
         """Try to get an approximate date by replacing invalid values with defaults.
 
         Args:

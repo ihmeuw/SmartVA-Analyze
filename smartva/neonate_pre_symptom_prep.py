@@ -10,10 +10,8 @@ class NeonatePreSymptomPrep(PreSymptomPrep):
         PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
         self.data_module = neonate_pre_symptom_data
 
-        self._init_data_module()
-
     def run(self):
-        super(NeonatePreSymptomPrep, self).run()
+        return super(NeonatePreSymptomPrep, self).run()
 
     def pre_processing_step(self, row):
         self.fix_agedays(row)

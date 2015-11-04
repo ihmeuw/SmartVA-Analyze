@@ -12,10 +12,8 @@ class AdultPreSymptomPrep(PreSymptomPrep):
         PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
         self.data_module = adult_pre_symptom_data
 
-        self._init_data_module()
-
     def run(self):
-        super(AdultPreSymptomPrep, self).run()
+        return super(AdultPreSymptomPrep, self).run()
 
     def post_processing_step(self, row):
         pass
