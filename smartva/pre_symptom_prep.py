@@ -1,10 +1,14 @@
+from __future__ import print_function
+
 import abc
 import csv
 import os
 import re
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
+
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
@@ -84,7 +88,8 @@ class PreSymptomPrep(DataPrep):
         drop_list = (['{}a'.format(header) for header in duration_vars] +
                      ['{}b'.format(header) for header in duration_vars])
 
-        headers = [header for header in headers if header in keep_list and header not in drop_list]
+        headers = sorted([header for header in headers if header in keep_list and header not in drop_list],
+                         key=lambda t: (t != 'sid', t[1].isdigit(), not t.startswith('g'), t))
 
         for index, row in enumerate(matrix):
             if self.want_abort:

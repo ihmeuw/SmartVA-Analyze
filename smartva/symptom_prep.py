@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
@@ -37,14 +38,11 @@ class SymptomPrep(DataPrep):
         headers.extend(additional_headers)
         self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
 
-        # TODO - Review this and re-implement for DictWriter, if necessary.
-        # Identify unneeded variables for removal, and write the new headers to the output file.
-        """
-        not_drop_list = VAR_CONVERSION_MAP.values() + FREE_TEXT_VARIABLES + additional_headers
+        keep_list = [header for header in headers if re.match(self.data_module.KEEP_PATTERN, header)]
+        drop_list = self.data_module.DROP_LIST
 
-        drop_index_list = set([i for i, header in enumerate(headers) if header not in not_drop_list])
-        drop_index_list.update([headers.index(header) for header in DROP_LIST])
-        """
+        headers = sorted([header for header in headers if header in keep_list and header not in drop_list],
+                         key=lambda t: (t != 'sid', t[1].isdigit(), t))
 
         for index, row in enumerate(matrix):
             if self.want_abort:

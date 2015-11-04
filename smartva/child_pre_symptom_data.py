@@ -6,7 +6,7 @@ from smartva.default_fill_data import (
 from answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
 from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
 
-KEEP_PATTERN = r'(sid$|real|age|sex|g5_|c\d+_\d|s\d+)'
+KEEP_PATTERN = r'(sid$|g5_|c\d+_\d|s\d+)'
 
 WEIGHT_VARS = [
     'c5_07_1b',
