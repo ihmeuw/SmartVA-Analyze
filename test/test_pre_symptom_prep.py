@@ -14,13 +14,6 @@ class TestPreSymptomPrep(object):
 
         assert headers == ['t1_01', 't1_02', 'test3']
 
-    def test_get_drop_index_list(self):
-        headers = ['pre_test1', 'test1', 'test2', 'test3', 'post_test1']
-
-        drop_index_list = PreSymptomPrep.get_drop_index_list(headers, 'test')
-
-        assert drop_index_list == [1, 2, 3]
-
     def test_drop_from_list(self):
         headers = ['pre_test1', 'test1', 'test2', 'test3', 'post_test1']
         drop_index_list = [1, 2, 3]

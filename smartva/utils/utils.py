@@ -7,7 +7,7 @@ def shorten_path(path, max_length):
     if len(path) <= max_length:
         return path
 
-    return path[:int(max_length * .25)] + ' ~ ' + path[-int(max_length * .75):]
+    return path[:int(max_length * .25)] + '...' + path[-int(max_length * .75):]
 
 
 def synchronized(fn):
@@ -82,10 +82,29 @@ def get_item_count_for_file(f):
 
 
 def round5(value):
+    """Round value to the nearest 0.5.
+
+    Args:
+        value (Decimal): Value to round.
+
+    Returns:
+        Decimal: Rounded value.
+    """
     return round(value / Decimal(.5)) * .5
 
 
 def int_or_float(x):
+    """Return int or float value of x.
+
+    Args:
+        x (str): Value to convert.
+
+    Returns:
+        int or float:
+
+    Raises:
+        ValueError:
+    """
     try:
         return int(x)
     except ValueError:
