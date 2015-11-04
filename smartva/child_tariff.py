@@ -1,10 +1,10 @@
-from __future__ import print_function
-
 from smartva import child_tariff_data
 from smartva.tariff_prep import TariffPrep
 
 
 class ChildTariff(TariffPrep):
+    """Process Child VA Tariff data."""
+
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         super(ChildTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
         self.data_module = child_tariff_data

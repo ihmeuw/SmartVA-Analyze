@@ -1,12 +1,13 @@
-from __future__ import print_function
 from smartva import adult_pre_symptom_data
 from smartva.pre_symptom_prep import PreSymptomPrep
 
 
 class AdultPreSymptomPrep(PreSymptomPrep):
-    """
+    """Process Adult VA Pre-Symptom data.
 
-    """
+    Notes:
+        Adult data does not require special pre/post-processing actions. """
+
     def __init__(self, input_file, output_dir, short_form):
         PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
         self.data_module = adult_pre_symptom_data

@@ -1,10 +1,10 @@
-from __future__ import print_function
-
 from smartva import neonate_tariff_data
 from smartva.tariff_prep import TariffPrep
 
 
 class NeonateTariff(TariffPrep):
+    """Process Neonate VA Tariff data."""
+
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
         super(NeonateTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
         self.data_module = neonate_tariff_data

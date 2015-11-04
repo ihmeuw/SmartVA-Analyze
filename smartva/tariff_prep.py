@@ -81,20 +81,21 @@ def int_or_float(x):
             return float(x)
         except ValueError:
             raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))
-
-
 class TariffPrep(DataPrep):
+    """Process prepared answers against validated VA data.
+
+    The main goal of this step is to determine cause of death by comparing symptom scores to those in a uniform list
+    of validated VAs.
+    Steps to accomplish this goal:
+        Read intermediate data file
+        Drop answers based on user flags
+
+    Notes:
+        Processing pipelines must implement `_matches_undetermined_cause` method.
+    """
+
+
     def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
-        """
-        :type input_file: str
-        :type output_dir: str
-        :type intermediate_dir: str
-        :type hce: bool
-        :type free_text: bool
-        :type malaria: bool
-        :type country: str
-        :type short_form: bool
-        """
         DataPrep.__init__(self, input_file, output_dir, short_form)
 
         self.intermediate_dir = intermediate_dir
@@ -140,14 +141,14 @@ class TariffPrep(DataPrep):
         cause40s = self.get_cause40s(drop_headers)
         self.cause_list = sorted(cause40s.keys())
 
-        # """
+        # """ # Uncomment this line to read from the pickle.
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
 
-        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_validated_cause_list, f)
         """
-        with open(os.path.join(self.intermediate_dir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             va_validated_cause_list = pickle.load(f)
         # """
 
@@ -156,7 +157,7 @@ class TariffPrep(DataPrep):
         status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
-        # """
+        # """ # Uncomment this line to read from the pickle. (For testing purposes.)
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_cause_list = self.get_va_cause_list(self.input_file_path, cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
 
@@ -206,6 +207,16 @@ class TariffPrep(DataPrep):
         return cause40s
 
     def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
+        """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
+
+        Args:
+            input_file (str): Path of input file.
+            cause40s (dict):
+            definitive_symptoms (dict):
+
+        Returns:
+            list: List of Scored VAs.
+        """
         va_cause_list = []
         with open(input_file, 'rb') as f:
             reader = csv.DictReader(f)
@@ -224,6 +235,8 @@ class TariffPrep(DataPrep):
             for cause, symptoms in cause40s.items():
                 cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
 
+            # This is added for pipelines with symptoms that clearly indicate a cause.
+            # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
             if definitive_symptoms:
                 for symptom, cause in definitive_symptoms.items():
                     if row[symptom] == '1':
@@ -237,6 +250,15 @@ class TariffPrep(DataPrep):
         return va_cause_list
 
     def generate_uniform_list(self, va_cause_list, frequencies):
+        """Generate a uniform list of validated Scored VAs from a list of frequencies.
+
+        Args:
+            va_cause_list (list): List of validated Scored VAs.
+            frequencies (dict): Map of scored VA to frequency.
+
+        Returns:
+            list: Uniform list of validated VAs.
+        """
         uniform_list = []
         for va in va_cause_list:
             uniform_list.extend([va] * frequencies[va.sid])
@@ -249,6 +271,15 @@ class TariffPrep(DataPrep):
         return uniform_list
 
     def generate_cutoffs(self, uniform_list, cutoff_pos):
+        """Determine cutoff score for each cause. Write scores to a file.
+
+        Args:
+            uniform_list (list): Uniform list of validated VAs.
+            cutoff_pos (int): Cutoff position.
+
+        Returns:
+            dict: Cutoff score for each cause.
+        """
         cutoffs = {}
         with open(os.path.join(self.intermediate_dir, '{:s}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
             for cause_num in self.cause_list:
@@ -260,7 +291,7 @@ class TariffPrep(DataPrep):
                 # numbers as the original stata tool
                 local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if int(va.cause) == cause_num]
 
-                # Find the index of the item at 89%.
+                # Find the index of the item at cutoff position.
                 cutoffs[cause_num] = local_list[int(len(local_list) * cutoff_pos)]
 
                 f.write('{} : {}\n'.format(cause_num, cutoffs[cause_num]))
@@ -268,6 +299,14 @@ class TariffPrep(DataPrep):
         return cutoffs
 
     def generate_cause_rankings(self, va_cause_list, uniform_list):
+        """Determine cause rankings by comparing
+        Args:
+            va_cause_list:
+            uniform_list:
+
+        Returns:
+
+        """
         status_notifier.update({'sub_progress': (0, len(va_cause_list))})
 
         for index, va in enumerate(va_cause_list):
@@ -292,6 +331,11 @@ class TariffPrep(DataPrep):
         status_notifier.update({'sub_progress': None})
 
     def write_external_ranks(self, va_cause_list):
+        """Write Scored VA ranks to a file.
+
+        Args:
+            va_cause_list (list): List of Scored VAs.
+        """
         ranks = []
         for va in va_cause_list:
             rank_dict = {"sid": va.sid}
@@ -304,6 +348,11 @@ class TariffPrep(DataPrep):
             writer.writerows(ranks)
 
     def get_undetermined_matrix(self):
+        """Return matrix undetermined weights read from the specified file.
+
+        Returns:
+            list: Undetermined weights data.
+        """
         with open(self.undetermined_matrix_filename, 'rU') as f:
             reader = csv.DictReader(f)
             undetermined_matrix = [row for row in reader]
@@ -311,6 +360,20 @@ class TariffPrep(DataPrep):
 
     def identify_lowest_ranked_causes(self, va_cause_list, uniform_list, cutoffs, cause_conditions, lowest_rank,
                                       uniform_list_pos, max_cause_score):
+        """Determine which causes are least likely by testing conditions.
+        Only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis.
+        Only males can have prostate cancer.
+        Eliminate user specified causes (Malaria).
+
+        Args:
+            va_cause_list (list): List of Scored VAs.
+            uniform_list (list): Uniform list of validated VAs.
+            cutoffs (dict): Map of cutoff values for each cause.
+            cause_conditions (dict): Conditions necessary for a given list of causes.
+            lowest_rank (int): Value to assign to the least likely causes.
+            uniform_list_pos (float): Reject causes above this position in the uniform list.
+            min_cause_score (float): Reject causes under this threshold.
+        """
         for va in va_cause_list:
             # if a VA has a tariff score less than 0 for a certain cause,
             # replace the rank for that cause with the lowest possible rank
@@ -338,20 +401,38 @@ class TariffPrep(DataPrep):
                 va.rank_list[cause_num] = lowest_rank
 
     def write_predictions(self, va_cause_list, undetermined_matrix, lowest_rank, cause_reduction, cause34_names, cause46_names):
+        """Determine cause predictions and write to a file. Return cause count.
+
+        Args:
+            va_cause_list (list): List of Scored VAs.
+            undetermined_matrix (list): Matrix of undetermined cause weights.
+            lowest_rank (int): Lowest possible rank (highest value, length of uniform list).
+            cause_reduction (dict): Map to reduce cause46 values to cause34.
+            cause34_names (dict): Cause34 cause names for prediction output.
+            cause46_names (dict): Cause46 cause names for warning messages.
+
+        Returns:
+            collections.Counter: Dict of cause counts.
+        """
         cause_counts = collections.Counter()
         with open(os.path.join(self.output_dir, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
 
             for va in va_cause_list:
+                # Record causes already determined.
                 cause34 = va.cause
 
+                # If a cause is not yet determined and any cause is higher than the lowest rank:
                 va_lowest_rank = min(va.rank_list.values())
                 if va_lowest_rank < lowest_rank and not cause34:
-                    multiple = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
-                    cause34 = cause_reduction[int(multiple[0])]
-                    if len(multiple) > 1:
-                        multiple_cause_list = [cause46_names[int(_)] for _ in multiple]
+                    # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
+                    causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
+                    cause34 = cause_reduction[int(causes[0])]
+
+                    # Warn user if multiple causes are equally likely and which will be chosen.
+                    if len(causes) > 1:
+                        multiple_cause_list = [cause46_names[int(_)] for _ in causes]
                         warning_logger.info(
                             '{group:s} :: SID: {sid:s} had multiple causes {causes} predicted to be equally likely, '
                             'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,
@@ -377,22 +458,45 @@ class TariffPrep(DataPrep):
         return cause_counts
 
     def _matches_undetermined_cause(self, va, u_row):
+        """Determine if a undetermined cause matches conditions of a given Scored VA.
+
+        Args:
+            va (ScoredVA): Verbal Autopsy data.
+            u_row (list): Row of data from the undetermined matrix.
+
+        Returns:
+            bool: True if conditions match.
+        """
         pass
 
     def write_tariff_scores(self, va_cause_list):
-        with open(os.path.join(self.intermediate_dir + os.sep + '{:s}-tariff-scores.csv'.format(self.AGE_GROUP)),
-                  'wb') as f:
+        """Write Scored VA Tariff scores.
+
+        Args:
+            va_cause_list (list): List of Scored VAs.
+        """
+        with open(os.path.join(self.intermediate_dir, '{:s}-tariff-scores.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([[va.sid] + [va.cause_scores[cause] for cause in self.cause_list] for va in va_cause_list])
 
     def write_tariff_ranks(self, va_cause_list):
+        """Write Scored VA Tariff ranks.
+
+        Args:
+            va_cause_list (list): List of Scored VAs.
+        """
         with open(os.path.join(self.intermediate_dir, '{:s}-tariff-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([[va.sid] + [va.rank_list[cause] for cause in self.cause_list] for va in va_cause_list])
 
     def write_csmf(self, cause_counts):
+        """Write Scored VA cause counts.
+
+        Args:
+            cause_counts (dict): Map of causes to count.
+        """
         cause_count_values = float(sum(cause_counts.values()))
         with open(os.path.join(self.output_dir, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)

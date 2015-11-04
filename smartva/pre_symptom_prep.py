@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import abc
 import csv
 import os
@@ -42,13 +40,20 @@ def months_delta(date1, date2):
 
 
 class PreSymptomPrep(DataPrep):
-    """
-    Prepare pre-symptom data for symptom processing.
+    """Prepare pre-symptom data for symptom processing.
 
-    The main goal of this step is to verify and recode answers.
+    The main goal of this step is to verify and recode answers for further processing.
+    Steps to accomplish this goal:
+        Read intermediate data file
+        Identify new headers and additional data to be added this step
+        Verify answers
+        Run pre-processing actions
+        Process and recode answers
+        Run post-processing actions
+        Fill missing answers with default values
+        Write new intermediate data file
 
-
-    Notes:
+    Subclasses must set the data_module property, which will get the class ready.
     """
 
     __metaclass__ = abc.ABCMeta
@@ -86,6 +91,7 @@ class PreSymptomPrep(DataPrep):
 
         headers = reader.fieldnames
 
+        # Identify new headers and data to be included.
         additional_data = {k: '' for k in self.data_module.DURATION_VARS}
         additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
         additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
@@ -93,10 +99,12 @@ class PreSymptomPrep(DataPrep):
         headers.extend(additional_headers)
         self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
 
+        # Make a list of headers to keep and to drop.
         keep_list = [header for header in headers if re.match(self.data_module.KEEP_PATTERN, header)]
         drop_list = (['{}a'.format(header) for header in duration_vars] +
                      ['{}b'.format(header) for header in duration_vars])
 
+        # Prune headers and sort by 'sid', then anything that doesn't contain a digit at pos 1, then general vars.
         headers = sorted([header for header in headers if header in keep_list and header not in drop_list],
                          key=lambda t: (t != 'sid', t[1].isdigit(), not t.startswith('g'), t))
 
@@ -148,31 +156,32 @@ class PreSymptomPrep(DataPrep):
 
     @abc.abstractmethod
     def pre_processing_step(self, row):
+        """Pipeline specific pre-processing actions.
+
+        Args:
+            row: Row of VA data.
+        """
         pass
 
     @abc.abstractmethod
     def post_processing_step(self, row):
-        self.process_weight_sd_vars(row, self.data_module.WEIGHT_SD_DATA)
+        """Pipeline specific post-processing actions.
 
-    @staticmethod
-    def get_drop_list(headers, drop_pattern):
+        Args:
+            row: Row of VA data.
         """
-        Find and return a list of headers that match a given pattern.
-
-        :param headers: List of headers.
-        :param drop_pattern: Regular expression of drop pattern.
-        :return: List of headers.
-        """
-        return [header for header in headers if re.match(drop_pattern, header)]
+        pass
 
     @staticmethod
     def verify_answers_for_row(row, valid_range_data):
-        """
-        Verify answers in a row of data are valid.
+        """Verify answers in a row of data are valid.
 
-        :param row: Row of data.
-        :param valid_range_data: Dictionary of headers and valid ranges.
-        :return: True if any values fail validation.
+        Args:
+            row (dict): Row of VA data.
+            valid_range_data (dict): Map of answers and valid ranges.
+
+        Returns:
+            bool: True if any warnings were logged.
         """
         warnings = False
         for variable, range_list in valid_range_data.items():
@@ -189,23 +198,23 @@ class PreSymptomPrep(DataPrep):
                     for answer in answer_array:
                         if int(answer) not in range_list:
                             warning_logger.warning(
-                                'SID: {} variable {} has an illegal value {}. Please see code book for legal values.'
-                                    .format(row['sid'], variable, value))
+                                'SID: {} variable {} has an illegal value {}. '
+                                'Please see code book for legal values.'.format(row['sid'], variable, value))
                             warnings = True
         return warnings
 
     @staticmethod
     def recode_answers(row, consolidation_map):
-        """
-        Consolidate answers from data answers into new variables.
+        """Recode answers from data answers into new variables.
 
         Consolidation map dictionary format:
             (read_header, write_header): {
                 read_value: 'data_header' or value
             }
 
-        :param row: Row of data.
-        :param consolidation_map: Dictionary of read/write variables and their data counterparts.
+        Args:
+            row (dict): Row of VA data.
+            consolidation_map (dict): Dictionary of read/write variables and their data counterparts.
         """
         for data_headers, data_map in consolidation_map.items():
             read_header, write_header = data_headers
@@ -227,12 +236,12 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def calculate_duration_vars(row, duration_vars, special_case_vars):
-        """
-        Calculate duration variables in days.
+        """Calculate duration variables in days.
 
-        :param row: Row of data.
-        :param duration_vars: List of variables containing duration variables.
-        :param special_case_vars: Dictionary of special variables and their value if duration is blank.
+        Args:
+            row (dict): Row of VA data.
+            duration_vars (list): Answers which contain duration variables.
+            special_case_vars (dict): Dictionary of special variables and their value if duration is blank.
         """
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
@@ -246,12 +255,12 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def convert_free_text_words(row, input_word_list, word_map):
-        """
-        Process free text word lists into binary variables.
+        """Process free text word lists into binary variables.
 
-        :param row: Row of data.
-        :param input_word_list: List of free text words to process.
-        :param word_map: Dictionary of words and variables.
+        Args:
+            row (dict): Row of VA data.
+            input_word_list (list): List of free text words to process.
+            word_map (dict): Dictionary of words and variables.
         """
         for word in input_word_list:
             try:
@@ -266,12 +275,12 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def convert_free_text_vars(row, data_headers, word_map):
-        """
-        Process all free text data from a list of data headers into binary variables.
+        """Process all free text data from a list of data headers into binary variables.
 
-        :param row: Row of data.
-        :param data_headers: List of headers to process.
-        :param word_map: Dictionary of words and variables.
+        Args:
+            row (dict): Row of VA data.
+            data_headers (list): Answers which contain free text data.
+            word_map (dict): Dictionary of words and variables.
         """
         for data_header in data_headers:
             if row[data_header]:
@@ -280,11 +289,11 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def fill_missing_data(row, default_fill):
-        """
-        Fill missing data with default fill values.
+        """Fill missing data with default fill values.
 
-        :param row: Row of data.
-        :param default_fill: Dictionary of headers and default values.
+        Args:
+            row (dict): Row of VA data.
+            default_fill (dict): Dictionary of headers and default values.
         """
         for variable, value in row.items():
             if value == '':
@@ -292,6 +301,11 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def process_age_vars(row):
+        """Calculate and store age in years, months, and days.
+
+        Args:
+            row (dict): Row of VA data.
+        """
         for age_var in AGE_VARS:
             years = value_or_default(row['{:s}a'.format(age_var)], float, [999, 9999])
             months = value_or_default(row['{:s}b'.format(age_var)], float, 99)
@@ -302,11 +316,23 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def validate_weight_vars(row, weight_vars):
+        """Replace invalid weight data with a default value.
+
+        Args:
+            row (dict): Row of VA data.
+            weight_vars (list): Answers which contain weight data.
+        """
         for var in weight_vars:
             row[var] = value_or_default(row[var], int, [0, 9999], '')
 
     @staticmethod
     def process_date_vars(row, date_vars):
+        """Try to get an approximate date by replacing invalid values with defaults.
+
+        Args:
+            row (dict): Row of VA data.
+            date_vars (dict): Answers which contain date data.
+        """
         # Get an approximate date.
         # Add 'd' (day) 'm' (month) 'y' (years) to each var and process.
         date_invalid = {
@@ -324,6 +350,18 @@ class PreSymptomPrep(DataPrep):
     @staticmethod
     def process_weight_sd_vars(row, exam_date_vars, weight_sd_data):
         # Get most recent weight from medical records
+        """Calculate and store SD value for weight at most recent exam.
+
+        Weight SD data Format:
+            'var' (str): {
+                SEX (int): SEX_SD_DATA (dict)
+            }
+
+        Args:
+            row (dict): Row of VA data.
+            exam_date_vars (dict): Answers which contain exam dates.
+            weight_sd_data (dict): Map of variable to store and applicable SD data.
+        """
         if int(row['{:s}y'.format(DOB_VAR)]):
             try:
                 dob = make_date(row, DOB_VAR)
@@ -356,6 +394,12 @@ class PreSymptomPrep(DataPrep):
                                     weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 
     def write_output_file(self, headers, matrix):
+        """Write intermediate pre-symptom data.
+
+        Args:
+            headers (list): List of headers to be retained.
+            matrix (list): Matrix of VA answers.
+        """
         with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
             writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
             writer.writeheader()
