@@ -10,19 +10,13 @@ from smartva.common_data import (
     ADULT_RASH_DATA,
     CHILD_WEIGHT_CONVERSION_DATA,
     FREE_TEXT_VARS,
-    WORD_SUBS
+    WORD_SUBS,
+    ADULT, CHILD, NEONATE,
 )
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
-
-ADULT = 'adult'
-CHILD = 'child'
-NEONATE = 'neonate'
-
-FEMALE = 1
-MALE = 2
 
 PREPPED_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 

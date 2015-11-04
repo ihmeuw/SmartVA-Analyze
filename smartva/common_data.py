@@ -1,3 +1,10 @@
+ADULT = 'adult'
+CHILD = 'child'
+NEONATE = 'neonate'
+
+FEMALE = 1
+MALE = 2
+
 ADDITIONAL_HEADERS = [
     'adultparalysis1',
     'adultparalysis2',
