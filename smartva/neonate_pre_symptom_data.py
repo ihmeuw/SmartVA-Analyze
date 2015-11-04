@@ -8,7 +8,7 @@ from smartva.word_conversions import NEONATE_WORDS_TO_VARS as WORDS_TO_VARS
 
 from child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS
 
-DROP_PATTERN = '[a]([_\d]|dult)'
+KEEP_PATTERN = r'(sid$|real|age|sex|g5_|c\d+_\d|s\d+)'
 
 GENERATED_VARS_DATA = {
     'g4_03b': 0,

@@ -80,13 +80,11 @@ class PreSymptomPrep(DataPrep):
         headers.extend(additional_headers)
         self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
 
-        # TODO - Review this and re-implement for DictWriter, if necessary.
-        """
-        drop_index_list = self.get_drop_index_list(headers, DROP_PATTERN)
-        drop_index_list += self.get_drop_index_list(headers, 'child')
-        drop_index_list += [headers.index('{}a'.format(header)) for header in DURATION_VARS]
-        drop_index_list += [headers.index('{}b'.format(header)) for header in DURATION_VARS]
-        """
+        keep_list = [header for header in headers if re.match(self.data_module.KEEP_PATTERN, header)]
+        drop_list = (['{}a'.format(header) for header in duration_vars] +
+                     ['{}b'.format(header) for header in duration_vars])
+
+        headers = [header for header in headers if header in keep_list and header not in drop_list]
 
         for index, row in enumerate(matrix):
             if self.want_abort:
@@ -143,15 +141,15 @@ class PreSymptomPrep(DataPrep):
         self.process_weight_sd_vars(row, self.data_module.WEIGHT_SD_DATA)
 
     @staticmethod
-    def get_drop_index_list(headers, drop_pattern):
+    def get_drop_list(headers, drop_pattern):
         """
-        Find and return a list of header indices that match a given pattern.
+        Find and return a list of headers that match a given pattern.
 
         :param headers: List of headers.
         :param drop_pattern: Regular expression of drop pattern.
-        :return: List of indices.
+        :return: List of headers.
         """
-        return [headers.index(header) for header in headers if re.match(drop_pattern, header)]
+        return [header for header in headers if re.match(drop_pattern, header)]
 
     @staticmethod
     def verify_answers_for_row(row, valid_range_data):
