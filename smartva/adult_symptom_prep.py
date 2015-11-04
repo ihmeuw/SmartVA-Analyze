@@ -23,8 +23,6 @@ class AdultSymptomPrep(SymptomPrep):
 
     def __init__(self, input_file, output_dir, short_form):
         super(AdultSymptomPrep, self).__init__(input_file, output_dir, short_form)
-        self.AGE_GROUP = 'adult'
-
         self.data_module = adult_symptom_data
 
         self._init_data_module()

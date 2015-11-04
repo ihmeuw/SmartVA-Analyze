@@ -1,4 +1,5 @@
 from smartva.freetext_vars import NEONATE_FREE_TEXT as FREE_TEXT_VARIABLES
+from smartva.common_data import NEONATE as AGE_GROUP
 
 GENERATED_VARS_DATA = {
     'age': 0,

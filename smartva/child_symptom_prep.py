@@ -7,8 +7,6 @@ from smartva.symptom_prep import SymptomPrep
 class ChildSymptomPrep(SymptomPrep):
     def __init__(self, input_file, output_dir, short_form):
         super(ChildSymptomPrep, self).__init__(input_file, output_dir, short_form)
-        self.AGE_GROUP = 'child'
-
         self.data_module = child_symptom_data
 
         self._init_data_module()

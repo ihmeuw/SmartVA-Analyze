@@ -15,7 +15,7 @@ class SymptomPrep(DataPrep):
         self.data_module = None
 
     def _init_data_module(self):
-        pass
+        self.AGE_GROUP = self.data_module.AGE_GROUP
 
     def run(self):
         super(SymptomPrep, self).run()

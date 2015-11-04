@@ -1,3 +1,4 @@
+from smartva.common_data import CHILD as AGE_GROUP
 from smartva.freetext_vars import CHILD_FREE_TEXT as FREE_TEXT_VARIABLES
 
 GENERATED_VARS_DATA = {

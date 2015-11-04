@@ -1,3 +1,4 @@
+from smartva.adult_pre_symptom_data import AGE_GROUP
 from smartva.freetext_vars import ADULT_FREE_TEXT as FREE_TEXT_VARIABLES
 
 GENERATED_VARS_DATA = {
