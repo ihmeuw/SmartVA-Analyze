@@ -134,6 +134,8 @@ CAUSES = {
     6: 'Stillbirth'
 }
 
+CAUSES46 = CAUSES
+
 CAUSE_CONDITIONS = {}
 
 MALARIA_CAUSES = [

@@ -144,6 +144,8 @@ CAUSES = {
     21: 'Violent Death'
 }
 
+CAUSES46 = CAUSES
+
 CAUSE_CONDITIONS = {}
 
 MALARIA_CAUSES = [

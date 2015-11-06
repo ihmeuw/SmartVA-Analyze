@@ -118,7 +118,7 @@ class TariffPrep(DataPrep):
         if self.short_form:
             drop_headers.update(self.data_module.SHORT_FORM_DROP_LIST)
 
-        cause46_names = self.get_cause46_names()
+        cause46_names = self.data_module.CAUSES46
 
         undetermined_matrix = self._get_undetermined_matrix()
 
@@ -173,12 +173,6 @@ class TariffPrep(DataPrep):
         self.write_tariff_scores(va_cause_list)
 
         return True
-
-    def get_cause46_names(self):
-        with open(os.path.join(config.basedir, '{:s}_cause_names.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            reader = csv.DictReader(f)
-            cause46_names = {int(cause[CAUSE_NUM_KEY]): cause[CAUSE_NAME_KEY] for cause in reader}
-        return cause46_names
 
     def get_cause40s(self, drop_headers):
         cause40s = {}
