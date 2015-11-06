@@ -108,9 +108,11 @@ class CommandLineNotificationHandler(object):
         :param progress: List, set, or tuple with the first pos as the value, and second pos as the range.
         :type progress: (list, set, tuple)
         """
-        if not progress:
+        if progress is None:
             if self._progress_bar:
                 self._progress_bar.finish()
+        elif isinstance(progress, int):
+            self._progress_bar.update(self._progress_bar.currval + progress)
         elif isinstance(progress, (list, set, tuple)):
             if len(progress) > 1:
                 if progress[1]:

@@ -6,6 +6,7 @@ import re
 import os
 import platform
 import threading
+import time
 
 import wx
 import wx.html
@@ -15,6 +16,7 @@ from smartva import prog_name
 from smartva import utils
 from smartva import workerthread
 from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
+from smartva.utils.adaptive_eta import AdaptiveETA
 from smartva.gui.prompting_combo_box import PromptingComboBox
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
@@ -34,7 +36,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 474
+WINDOW_HEIGHT = 500
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -48,6 +50,43 @@ COMBO_BOX_STYLE = wx.CB_DROPDOWN
 if platform.system().lower() != 'darwin':
     # Mac does not support sort style
     COMBO_BOX_STYLE |= wx.CB_SORT
+
+
+class ETAProgressGauge(wx.Gauge):
+    def __init__(self, *args, **kwargs):
+        super(ETAProgressGauge, self).__init__(*args, **kwargs)
+        self._eta = AdaptiveETA()
+        self._start_time = time.time()
+        # self._status_bar = status_bar
+
+    # Adapter to progressbar.widgets.timer
+    @property
+    def currval(self):
+        return self.Value
+
+    @property
+    def maxval(self):
+        return self.Range
+
+    @property
+    def seconds_elapsed(self):
+        return time.time() - self._start_time
+
+    @property
+    def finished(self):
+        return self.Value == self.Range
+
+    def SetRange(*args, **kwargs):
+        self = args[0]
+        super(ETAProgressGauge, self).SetRange(*args[1:], **kwargs)
+        self._start_time = time.time()
+        self._eta = AdaptiveETA()
+        # self._eta.update(self)
+
+    def SetValue(*args, **kwargs):
+        self = args[0]
+        super(ETAProgressGauge, self).SetValue(*args[1:], **kwargs)
+        self.TopLevelParent.StatusBar.SetStatusText(self._eta.update(self))
 
 
 class TextEntryStreamWriter(io.TextIOBase):
@@ -155,6 +194,8 @@ class vaUI(wx.Frame):
         self.Show()
 
     def _init_menu_bar(self):
+        self.CreateStatusBar()
+
         menu_bar = wx.MenuBar()
         self.SetMenuBar(menu_bar)
 
@@ -286,8 +327,8 @@ class vaUI(wx.Frame):
         self._gui_log_handler.setLevel(logging.INFO)
         status_logger.addHandler(self._gui_log_handler)
 
-        self.status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
-        self.sub_status_gauge = wx.Gauge(parent_panel, size=(-1, -1))
+        self.status_gauge = ETAProgressGauge(parent_panel, size=(-1, -1))
+        self.sub_status_gauge = ETAProgressGauge(parent_panel, size=(-1, -1))
         self.action_button = wx.Button(parent_panel, label='Start')
         self.action_button.Bind(wx.EVT_BUTTON, self.on_action)
 
@@ -457,6 +498,8 @@ class vaUI(wx.Frame):
             status_logger.info(status_message)
             status_notifier.update({'message': (status_message + message, style)})
 
+            self.StatusBar.SetStatusText('')
+
         with self._completion_lock:
             self._completion_lock.notifyAll()
 
@@ -483,9 +526,11 @@ class vaUI(wx.Frame):
         :param progress: List, set, or tuple with the first pos as the value, and second pos as the range.
         :type progress: (list, set, tuple)
         """
-        if not progress:
+        if progress is None:
             gauge.SetRange(1)
             gauge.SetValue(0)
+        elif isinstance(progress, int):
+            gauge.SetValue(gauge.GetValue() + progress)
         elif isinstance(progress, (list, set, tuple)):
             if len(progress) > 1:
                 if progress[1]:

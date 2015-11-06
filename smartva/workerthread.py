@@ -6,17 +6,17 @@ import threading
 from smartva.common_prep import CommonPrep
 from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
 from smartva.adult_symptom_prep import AdultSymptomPrep
-from smartva.adult_tariff import Tariff as AdultTariff
-from smartva.childpresymptom import PreSymptomPrep as ChildPreSymptomPrep
-from smartva.childsymptom import ChildSymptomPrep
-from smartva.childtariff import Tariff as ChildTariff
-from smartva.neonatepresymptom import PreSymptomPrep as NeonatePreSymptomPrep
-from smartva.neonatesymptom import NeonateSymptomPrep
-from smartva.neonatetariff import Tariff as NeonateTariff
+from smartva.adult_tariff import AdultTariff
+from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
+from smartva.child_symptom_prep import ChildSymptomPrep
+from smartva.child_tariff import ChildTariff
+from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
+from smartva.neonate_symptom_prep import NeonateSymptomPrep
+from smartva.neonate_tariff import NeonateTariff
 from smartva.causegrapher import CauseGrapher
 from smartva.csmfgrapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import status_notifier
+from smartva.utils import find_dupes, status_notifier
 
 SHORT_FORM_HEADER = 'adult_7_11'
 CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'
@@ -76,13 +76,24 @@ class WorkerThread(threading.Thread):
 
         self.start()
 
-    @staticmethod
-    def format_headers(source_path, dest_path):
+    @classmethod
+    def _format_header(cls, header):
+        return header.split('-')[-1]
+
+    @classmethod
+    def format_headers(cls, source_path, dest_path):
         with open(source_path, 'Ub') as in_f:
             with open(dest_path, 'wb') as out_f:
                 reader = csv.reader(in_f)
                 writer = csv.writer(out_f)
-                writer.writerow([col.split('-')[-1] for col in next(reader)])
+
+                headers = list(map(cls._format_header, next(reader)))
+                dupes = find_dupes(headers)
+                if dupes:
+                    warning_logger.warning(
+                        'Duplicate headers found: {}. Please review the input file for conflicts.'.format(dupes))
+
+                writer.writerow(headers)
                 writer.writerow(next(reader))
                 writer.writerows(reader)
 
@@ -127,8 +138,8 @@ class WorkerThread(threading.Thread):
         child_symptom = ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.short_form)
         child_results = ChildTariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
         neonate_pre_symptom = NeonatePreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.short_form)
-        neonate_symptom = NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir)
-        neonate_results = NeonateTariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.country, self.short_form)
+        neonate_symptom = NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir, self.short_form)
+        neonate_results = NeonateTariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
         cause_grapher = CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
         csmf_grapher = CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
 

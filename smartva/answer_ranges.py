@@ -291,7 +291,7 @@ ADULT_RANGE_LIST = {
     'a7_01': ''
 }
 
-child_rangelist = {
+CHILD_RANGE_LIST = {
     'g1_01d': range(1, 31 + 1) + [99],
     'g1_01m': range(1, 12 + 1) + [99],
     'g1_01y': range(1900, MAX_YEAR) + [9999],
@@ -610,7 +610,7 @@ child_rangelist = {
     'c5_19': [0, 1, 8, 9]
 }
 
-neonate_rangelist = {
+NEONATE_RANGE_LIST = {
     'g1_01d': range(1, 31 + 1) + [99],
     'g1_01m': range(1, 12 + 1) + [99],
     'g1_01y': range(1900, MAX_YEAR) + [9999],

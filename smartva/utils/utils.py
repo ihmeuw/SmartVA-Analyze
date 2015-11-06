@@ -1,37 +1,13 @@
 import csv
-import os
-import re
 import threading
+from decimal import Decimal
 
 
-def shorten_path(path, maxLength):
-    pathLength = 0
-    pathLengthMax = maxLength
-    shortenedPathList = []
+def shorten_path(path, max_length):
+    if len(path) <= max_length:
+        return path
 
-    # split path into list
-    splitPathList = path.split(os.path.sep)
-
-    # start from end and iterate through each path element,
-    for pathItem in reversed(splitPathList):
-        # sum the length of the path so far
-        pathLength += len(pathItem)
-        # if less than max
-        if pathLength <= pathLengthMax:
-            # create shorted path
-            shortenedPathList.append(pathItem)
-        else:
-            # no need to go through the loop
-            break
-
-    # reverse the shortened path, convert to a string
-    shortenedPathList.reverse()
-    shortenedPath = os.path.sep.join(shortenedPathList)
-    # for shorter path, add ...
-    if shortenedPath.startswith(os.path.sep) or re.match('[A-Z]:', shortenedPath):
-        return shortenedPath
-    else:
-        return '..' + os.path.sep + shortenedPath
+    return path[:int(max_length * .25)] + '...' + path[-int(max_length * .75):]
 
 
 def synchronized(fn):
@@ -67,6 +43,15 @@ class StatusNotifier(object):
 status_notifier = StatusNotifier()
 
 
+def find_dupes(items):
+    dupe_items = []
+    for item in items:
+        if item and item not in dupe_items:
+            if items.count(item) > 1:
+                dupe_items.append(item)
+    return dupe_items
+
+
 def get_item_count(items, f=None):
     """
     Use this to get a count of items in a collection that doesn't support len(), like a file reader.
@@ -94,3 +79,36 @@ def get_item_count_for_file(f):
         count += 1
     f.seek(0)
     return count
+
+
+def round5(value):
+    """Round value to the nearest 0.5.
+
+    Args:
+        value (Decimal): Value to round.
+
+    Returns:
+        Decimal: Rounded value.
+    """
+    return round(value / Decimal(.5)) * .5
+
+
+def int_or_float(x):
+    """Return int or float value of x.
+
+    Args:
+        x (str): Value to convert.
+
+    Returns:
+        int or float:
+
+    Raises:
+        ValueError:
+    """
+    try:
+        return int(x)
+    except ValueError:
+        try:
+            return float(x)
+        except ValueError:
+            raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))

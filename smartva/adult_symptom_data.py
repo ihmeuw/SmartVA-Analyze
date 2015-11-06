@@ -1,36 +1,42 @@
+from smartva.adult_pre_symptom_data import AGE_GROUP
 from smartva.freetext_vars import ADULT_FREE_TEXT as FREE_TEXT_VARIABLES
 
-GENERATED_HEADERS = [
-    ('s88881', 0),
-    ('s88882', 0),
-    ('s88883', 0),
-    ('s88884', 0),
-    ('s36991', 0),
-    ('s36992', 0),
-    ('s18991', 0),
-    ('s18992', 0),
-    ('s19991', 0),
-    ('s19992', 0),
-    ('s23991', 0),
-    ('s23992', 0),
-    ('s23993', 0),
-    ('s23994', 0),
-    ('s56991', 0),
-    ('s56992', 0),
-    ('s56993', 0),
-    ('s56994', 0),
-    ('s55991', 0),
-    ('s55992', 0),
-    ('s64991', 0),
-    ('s64992', 0),
-    ('s82991', 0),
-    ('s150991', 0),
-    ('s150992', 0),
-    ('age', 0),
-    ('sex', 0),
-]
+KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
 
-ADULT_CONVERSION_VARIABLES = {
+GENERATED_VARS_DATA = {
+    's88881': 0,
+    's88882': 0,
+    's88883': 0,
+    's88884': 0,
+    's36991': 0,
+    's36992': 0,
+    's18991': 0,
+    's18992': 0,
+    's19991': 0,
+    's19992': 0,
+    's23991': 0,
+    's23992': 0,
+    's23993': 0,
+    's23994': 0,
+    's56991': 0,
+    's56992': 0,
+    's56993': 0,
+    's56994': 0,
+    's55991': 0,
+    's55992': 0,
+    's64991': 0,
+    's64992': 0,
+    's82991': 0,
+    's150991': 0,
+    's150992': 0,
+    'age': 0,
+    'sex': 0,
+}
+
+VAR_CONVERSION_MAP = {
+    'sid': 'sid',
+    'g5_02': 'real_gender',
+    'g5_04a': 'real_age',
     'a1_01_1': 's1',
     'a1_01_2': 's2',
     'a1_01_3': 's3',
@@ -188,17 +194,14 @@ ADULT_CONVERSION_VARIABLES = {
     'a5_02': 's161',
     'a5_03': 's162',
     'a5_04': 's163',
-    'g5_02': 'real_gender',
-    'g5_04a': 'real_age',
-    'sid': 'sid'
 }
 
-COPY_VARIABLES = {
+COPY_VARS = {
     'real_age': 'age',
     'real_gender': 'sex'
 }
 
-AGE_QUARTILE_BINARY_VARIABLES = {
+AGE_QUARTILE_BINARY_VARS = {
     'age': [
         (65, 's88884'),
         (49, 's88883'),
@@ -239,8 +242,8 @@ DURATION_CUTOFF_DATA = {
     's148': 10
 }
 
-INJURY_VARIABLES = {
-    's163': [
+INJURY_VARS = {
+    ('s163', 30): [
         's151',
         's152',
         's153',
@@ -275,6 +278,7 @@ BINARY_CONVERSION_MAP = {
         3: 's23993',
         4: 's23994',
     },
+    # This is correct...
     's25': {
         1: 's23991',
         2: 's23992',
@@ -316,7 +320,7 @@ BINARY_CONVERSION_MAP = {
     'sex': [2]
 }
 
-BINARY_VARIABLES = [
+BINARY_VARS = [
     's1',
     's2',
     's3',
