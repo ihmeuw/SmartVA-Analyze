@@ -5,8 +5,9 @@ from smartva.tariff_prep import TariffPrep
 class ChildTariff(TariffPrep):
     """Process Child VA Tariff data."""
 
-    def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
-        super(ChildTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
+    def __init__(self, working_dir_path, short_form, hce, free_text, malaria, country):
+        super(ChildTariff, self).__init__(working_dir_path, short_form, hce, free_text, malaria, country)
+
         self.data_module = child_tariff_data
 
     def run(self):

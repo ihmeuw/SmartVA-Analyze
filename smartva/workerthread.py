@@ -16,7 +16,7 @@ from smartva.neonate_tariff import NeonateTariff
 from smartva.causegrapher import CauseGrapher
 from smartva.csmfgrapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
-from smartva.utils import find_dupes, status_notifier
+from smartva.utils import find_dupes, status_notifier, intermediate_dir_path
 
 SHORT_FORM_HEADER = 'adult_7_11'
 CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'
@@ -64,11 +64,11 @@ class WorkerThread(threading.Thread):
         self.country = country
 
         self.input_file_path = input_file
-        self.output_dir = output_dir
+        self.output_dir_path = output_dir
         # This starts the thread running on creation, but you could
         # also make the GUI thread responsible for calling this
 
-        self._warnings_file = os.path.join(self.output_dir, 'warnings.txt')
+        self._warnings_file = os.path.join(self.output_dir_path, 'warnings.txt')
         warning_file_handler = logging.FileHandler(self._warnings_file, mode='w', delay=True)
         warning_logger.addHandler(warning_file_handler)
 
@@ -112,10 +112,10 @@ class WorkerThread(threading.Thread):
         status_logger.info('Preparing variable headers.')
         status_notifier.update({'progress': (0, 15), 'sub_progress': None})
 
-        intermediate_dir = os.path.join(self.output_dir, 'intermediate-files')
-        figures_dir = os.path.join(self.output_dir, 'figures')
+        intermediate_dir = intermediate_dir_path(self.output_dir_path)
+        figures_dir = os.path.join(self.output_dir_path, 'figures')
 
-        self.make_dir(intermediate_dir)
+        self.make_dir(intermediate_dir_path(self.output_dir_path))
         self.make_dir(figures_dir)
 
         try:
@@ -130,18 +130,18 @@ class WorkerThread(threading.Thread):
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
 
-        common_prep = CommonPrep(intermediate_dir + os.sep + "cleanheaders.csv", intermediate_dir, self.short_form)
-        adult_pre_symptom = AdultPreSymptomPrep(intermediate_dir + os.sep + "adult-prepped.csv", intermediate_dir, self.short_form)
-        adult_symptom = AdultSymptomPrep(intermediate_dir + os.sep + "adult-presymptom.csv", intermediate_dir, self.short_form)
-        adult_results = AdultTariff(intermediate_dir + os.sep + "adult-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
-        child_pre_symptom = ChildPreSymptomPrep(intermediate_dir + os.sep + "child-prepped.csv", intermediate_dir, self.short_form)
-        child_symptom = ChildSymptomPrep(intermediate_dir + os.sep + "child-presymptom.csv", intermediate_dir, self.short_form)
-        child_results = ChildTariff(intermediate_dir + os.sep + "child-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
-        neonate_pre_symptom = NeonatePreSymptomPrep(intermediate_dir + os.sep + "neonate-prepped.csv", intermediate_dir, self.short_form)
-        neonate_symptom = NeonateSymptomPrep(intermediate_dir + os.sep + "neonate-presymptom.csv", intermediate_dir, self.short_form)
-        neonate_results = NeonateTariff(intermediate_dir + os.sep + "neonate-symptom.csv", self.output_dir, intermediate_dir, self.hce, self.free_text, self.malaria, self.country, self.short_form)
-        cause_grapher = CauseGrapher(self.output_dir + os.sep + '$module-predictions.csv', figures_dir)
-        csmf_grapher = CSMFGrapher(self.output_dir + os.sep + '$module-csmf.csv', figures_dir)
+        common_prep = CommonPrep(self.output_dir_path, self.short_form)
+        adult_pre_symptom = AdultPreSymptomPrep(self.output_dir_path, self.short_form)
+        adult_symptom = AdultSymptomPrep(self.output_dir_path, self.short_form)
+        adult_results = AdultTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        child_pre_symptom = ChildPreSymptomPrep(self.output_dir_path, self.short_form)
+        child_symptom = ChildSymptomPrep(self.output_dir_path, self.short_form)
+        child_results = ChildTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
+        neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
+        neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        cause_grapher = CauseGrapher(self.output_dir_path + os.sep + '$module-predictions.csv', figures_dir)
+        csmf_grapher = CSMFGrapher(self.output_dir_path + os.sep + '$module-csmf.csv', figures_dir)
 
         self._abort_list.extend([
             common_prep,

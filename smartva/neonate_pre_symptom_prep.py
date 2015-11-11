@@ -6,8 +6,9 @@ from smartva.utils.conversion_utils import value_or_default
 class NeonatePreSymptomPrep(PreSymptomPrep):
     """Process Neonate VA Pre-Symptom data."""
 
-    def __init__(self, input_file, output_dir, short_form):
-        PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
+    def __init__(self, working_dir_path, short_form):
+        PreSymptomPrep.__init__(self, working_dir_path, short_form)
+
         self.data_module = neonate_pre_symptom_data
 
     def run(self):

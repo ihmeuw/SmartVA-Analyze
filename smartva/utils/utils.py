@@ -1,6 +1,12 @@
 import csv
+import os
 import threading
+
 from decimal import Decimal
+
+
+def intermediate_dir_path(output_dir_path):
+    return os.path.join(output_dir_path, 'intermediate-files')
 
 
 def shorten_path(path, max_length):

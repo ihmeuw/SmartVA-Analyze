@@ -15,6 +15,8 @@ from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
 from smartva.utils.utils import round5, int_or_float
 
+INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
+
 CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
 TARIFF_CAUSE_NUM_KEY = 'xs_name'
@@ -71,10 +73,12 @@ class TariffPrep(DataPrep):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
-        DataPrep.__init__(self, input_file, output_dir, short_form)
+    def __init__(self, working_dir_path, short_form, hce, free_text, malaria, country):
+        super(TariffPrep, self).__init__(working_dir_path, short_form)
 
-        self.intermediate_dir = intermediate_dir
+        self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
+
+        self.input_dir_path = self.intermediate_dir
 
         self.hce = hce
         self.free_text = free_text
@@ -104,6 +108,10 @@ class TariffPrep(DataPrep):
     def undetermined_matrix_filename(self):
         return os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
 
+    @property
+    def external_ranks_filename(self):
+        return os.path.join(self.intermediate_dir, '{:s}-external-ranks.csv'.format(self.AGE_GROUP))
+
     def run(self):
         status_logger.info('{:s} :: Processing tariffs'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
@@ -129,12 +137,12 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
 
+        """
         with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_validated_cause_list, f)
-        """
         with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             va_validated_cause_list = pickle.load(f)
-        # """
+        """
 
         uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
 
@@ -143,17 +151,17 @@ class TariffPrep(DataPrep):
 
         # """ # Uncomment this line to read from the pickle. (For testing purposes.)
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path, cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
+        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
 
+        """
         with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_cause_list, f)
-        """
         with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             va_cause_list = pickle.load(f)
-        # """
+        """
 
         self.write_external_ranks(va_cause_list)
 
@@ -199,9 +207,7 @@ class TariffPrep(DataPrep):
             list: List of Scored VAs.
         """
         va_cause_list = []
-        with open(input_file, 'rb') as f:
-            reader = csv.DictReader(f)
-            matrix = [row for row in reader]
+        headers, matrix = DataPrep.read_input_file(input_file)
 
         status_notifier.update({'sub_progress': (0, len(matrix))})
 
@@ -324,10 +330,9 @@ class TariffPrep(DataPrep):
             rank_dict.update(va.rank_list)
             ranks.append(rank_dict)
 
-        with open(os.path.join(self.intermediate_dir, '{:s}-external-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            writer = csv.DictWriter(f, sorted(ranks[0].keys(), key=lambda x: (isinstance(x, int), x)))
-            writer.writeheader()
-            writer.writerows(ranks)
+        DataPrep.write_output_file(sorted(ranks[0].keys(), key=lambda x: (isinstance(x, int), x)),
+                                   ranks,
+                                   self.external_ranks_filename)
 
     def _get_undetermined_matrix(self):
         """Return matrix undetermined weights read from the specified file.
@@ -397,7 +402,7 @@ class TariffPrep(DataPrep):
             collections.Counter: Dict of cause counts.
         """
         cause_counts = collections.Counter()
-        with open(os.path.join(self.output_dir, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
 
@@ -482,7 +487,7 @@ class TariffPrep(DataPrep):
             cause_counts (dict): Map of causes to count.
         """
         cause_count_values = float(sum(cause_counts.values()))
-        with open(os.path.join(self.output_dir, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
             writer.writerows([[k, (v / cause_count_values)] for k, v in cause_counts.items()])

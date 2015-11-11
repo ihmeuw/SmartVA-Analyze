@@ -5,8 +5,9 @@ from smartva.tariff_prep import TariffPrep
 class NeonateTariff(TariffPrep):
     """Process Neonate VA Tariff data."""
 
-    def __init__(self, input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form):
-        super(NeonateTariff, self).__init__(input_file, output_dir, intermediate_dir, hce, free_text, malaria, country, short_form)
+    def __init__(self, working_dir_path, short_form, hce, free_text, malaria, country):
+        super(NeonateTariff, self).__init__(working_dir_path, short_form, hce, free_text, malaria, country)
+
         self.data_module = neonate_tariff_data
 
     def run(self):
