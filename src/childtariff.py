@@ -244,12 +244,13 @@ class Tariff():
                 # for each svar, if it's 1, find the number in the tariff matrix and add it to the total
                 causeval = 0.0
                 for svar in slist:
-                    index = headers.index(svar)
-                    if row[index] == str(1):
-                        tariffindex = tariffheaders.index(svar)
-                        # row is causenum - 1 since causenum starts at 1 and index starts at 0
-                        tariff = self.round5(Decimal(tariffmatrix[causenum-1][tariffindex]))
-                        causeval = causeval + float(tariff)
+                    if svar in headers:
+                        index = headers.index(svar)
+                        if row[index] == str(1):
+                            tariffindex = tariffheaders.index(svar)
+                            # row is causenum - 1 since causenum starts at 1 and index starts at 0
+                            tariff = self.round5(Decimal(tariffmatrix[causenum-1][tariffindex]))
+                            causeval = causeval + float(tariff)
                 causedict[cause] = causeval
             sid = row[headers.index('sid')]
             va = ScoredVA(causedict, row[validatedheaders.index('va34')], sid, row[headers.index('real_age')], row[headers.index('real_gender')])

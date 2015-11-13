@@ -164,14 +164,20 @@ class ChildSymptomPrep():
             
             #dichotimize!
             index = headers.index('s5991')
-            val = row[headers.index('s5')]
+            if 's5' in headers:
+                val = row[headers.index('s5')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if val == '2':
                 row[index] = '1'
                 
             index = headers.index('s6991')
-            val = row[headers.index('s6')]
+            if 's6' in headers:
+                val = row[headers.index('s6')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '2' or val == '3'):
@@ -209,7 +215,10 @@ class ChildSymptomPrep():
                 row[index] = '1'
                 
             index = headers.index('s30991')
-            val = row[headers.index('s30')]
+            if 's30' in headers:
+                val = row[headers.index('s30')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '3' or val == '4'):
@@ -266,9 +275,10 @@ class ChildSymptomPrep():
          
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:
-                val = row[headers.index(bin)]
-                if val == '' or val != '1':
-                    row[headers.index(bin)] = '0'
+                if bin in headers:
+                    val = row[headers.index(bin)]
+                    if val == '' or val != '1':
+                        row[headers.index(bin)] = '0'
                     
         #rename s2 -> age
         s2index = headers.index('s2')
@@ -276,10 +286,11 @@ class ChildSymptomPrep():
         
         droplist = ['s3', 's4', 's166', 's5', 's6', 's8', 's11', 's13', 's16', 's30', 's113', 's114', 's116', 's135', 's139', 's141']
         for d in droplist:
-            index = headers.index(d)
-            headers.remove(d)
-            for row in matrix:
-                del row[index]
+            if d in headers:
+                index = headers.index(d)
+                headers.remove(d)
+                for row in matrix:
+                    del row[index]
         
         
         adultwriter.writerow(headers)
