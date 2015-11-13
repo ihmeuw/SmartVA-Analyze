@@ -237,7 +237,11 @@ class AdultSymptomPrep():
             
             index1 = headers.index('s55991')
             index2 = headers.index('s55992')
-            val = row[headers.index('s55')]
+            if 's55' in headers:
+                val = row[headers.index('s55')]
+            else:
+                val = ''
+
             if val == '':
                 val = 0
             else:
@@ -357,10 +361,11 @@ class AdultSymptomPrep():
         
         droplist = ['s163', 's36', 's18', 's19', 's23', 's25', 's56', 's55', 's64', 's82', 's150', 's108']
         for d in droplist:
-            index = headers.index(d)
-            headers.remove(d)
-            for row in matrix:
-                del row[index]
+            if d in headers:
+                index = headers.index(d)
+                headers.remove(d)
+                for row in matrix:
+                    del row[index]
         
         
         
