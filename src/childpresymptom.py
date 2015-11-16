@@ -681,6 +681,7 @@ class PreSymptomPrep():
                 if not (c4_34 is None or c4_34 == ''):
                     self.printWarning( 'c4_34', i, row, headers, child_defaultFill)
             if 'c4_36' in headers:
+                c4_36 = row[headers.index('c4_36')]
                 if c1_15 == '1' or c1_26 == '1' or c4_36 != '1':
                     c4_37a = row[headers.index('c4_37a')]
                     if not (c4_37a is None or c4_37a == ''):
