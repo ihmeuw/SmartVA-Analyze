@@ -6,19 +6,38 @@ from smartva.utils.conversion_utils import convert_binary_variable, ConversionEr
 from smartva.utils import intermediate_dir_path
 
 
-class DataPrep(object):
-    AGE_GROUP = None
+class AbortException(Exception):
+    pass
+
+
+class Prep(object):
     INPUT_FILENAME_TEMPLATE = ''
     OUTPUT_FILENAME_TEMPLATE = ''
 
-    def __init__(self, working_dir_path, short_form):
+    def __init__(self, working_dir_path):
         self.working_dir_path = working_dir_path
         self.input_dir_path = working_dir_path
         self.output_dir_path = working_dir_path
 
-        self.short_form = short_form
-
         self.want_abort = False
+
+    def check_abort(self):
+        if self.want_abort:
+            raise AbortException()
+
+    def run(self):
+        pass
+
+    def abort(self):
+        self.want_abort = True
+
+
+class DataPrep(Prep):
+    AGE_GROUP = None
+
+    def __init__(self, working_dir_path, short_form):
+        super(DataPrep, self).__init__(working_dir_path)
+        self.short_form = short_form
 
     def input_file_path(self, age_group=None):
         age_group = age_group or self.AGE_GROUP
@@ -27,12 +46,6 @@ class DataPrep(object):
     def output_file_path(self, age_group=None):
         age_group = age_group or self.AGE_GROUP
         return os.path.join(self.output_dir_path, self.OUTPUT_FILENAME_TEMPLATE.format(age_group))
-
-    def run(self):
-        pass
-
-    def abort(self):
-        self.want_abort = True
 
     @property
     def intermediate_dir(self):
