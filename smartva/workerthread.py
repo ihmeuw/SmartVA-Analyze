@@ -14,7 +14,7 @@ from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
 from smartva.neonate_symptom_prep import NeonateSymptomPrep
 from smartva.neonate_tariff import NeonateTariff
 from smartva.cause_grapher import CauseGrapher
-from smartva.csmfgrapher import CSMFGrapher
+from smartva.csmf_grapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import find_dupes, status_notifier, intermediate_dir_path
 
@@ -140,8 +140,8 @@ class WorkerThread(threading.Thread):
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
         neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
         neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
-        cause_grapher = CauseGrapher(self.output_dir_path + os.sep + '$module-predictions.csv', figures_dir)
-        csmf_grapher = CSMFGrapher(self.output_dir_path + os.sep + '$module-csmf.csv', figures_dir)
+        cause_grapher = CauseGrapher(self.output_dir_path, figures_dir)
+        csmf_grapher = CSMFGrapher(self.output_dir_path, figures_dir)
 
         self._abort_list.extend([
             common_prep,
@@ -253,6 +253,6 @@ class WorkerThread(threading.Thread):
 
         # The warnings file will be created on the first warning. If the file doesn't exist, no warnings.
         if os.path.exists(self._warnings_file):
-            message += ('\nWarnings were generated during processings. '
+            message += ('\nWarnings were generated during processing. '
                         'Please review the file "{}" for further information.'.format(self._warnings_file))
         self._completion_callback(status, message)
