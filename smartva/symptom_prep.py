@@ -163,6 +163,9 @@ class SymptomPrep(DataPrep):
                 value = int(row[read_header])
             except ValueError:
                 value = 0
+            except KeyError:
+                # Variable does not exist.
+                continue
             row[read_header] = int(value == 1)
 
     def write_output_file(self, headers, matrix):
