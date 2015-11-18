@@ -4,6 +4,7 @@ import re
 from collections import defaultdict, OrderedDict
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy as np
 
 from smartva.common_data import MALE, FEMALE, ADULT, CHILD, NEONATE
@@ -13,8 +14,6 @@ from smartva.utils import status_notifier
 INPUT_FILENAME_TEMPLATE = '{:s}-predictions.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-figure.png'
 
-
-# labels for dict
 MODULE_LABELS = (ADULT, CHILD, NEONATE)
 
 AGE_DATA = OrderedDict(
@@ -92,6 +91,7 @@ def make_graph(graph_data, cause_key, output_dir):
     ax.set_title(graph_title)
     ax.set_ylabel('Number of VAs')
     ax.yaxis.grid()
+    ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
     ax.set_xticklabels(reversed(AGE_DATA.values()), rotation=90)
     ax.set_xticks(xlocations + bar_width / 2)
@@ -100,7 +100,7 @@ def make_graph(graph_data, cause_key, output_dir):
     ax.legend((rects1[0], rects2[0]), GENDER_DATA.values(), loc='upper center', bbox_to_anchor=(0.5, -0.375), ncol=2)
 
     # Add whitespace at top of bar.
-    ax.set_ylim(top=max_value + .5)
+    ax.set_ylim(top=max_value + max_value * 0.1)
 
     # Add whitespace before first bar and after last.
     plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
