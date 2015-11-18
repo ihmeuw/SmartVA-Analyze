@@ -38,9 +38,9 @@ GENERATED_VARS_DATA = {
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
     'g5_02': 'real_gender',
-    'g5_04a': 's2',
+    'g5_04a': 'real_age',
     'g5_04b': 's3',
-    'g5_04c': 'real_age',
+    'g5_04c': 'age',
     'c1_01': 's5_1',
     'c1_02': 's6_1',
     'c1_03': 's7',
@@ -153,7 +153,7 @@ VAR_CONVERSION_MAP = {
 
 # read -> write
 COPY_VARS = {
-    'real_age': 'age',
+    # 'real_age': 'age',
     'real_gender': 'sex',
     's62': 's24',
     's63': 's25',
