@@ -8,7 +8,7 @@ import matplotlib.ticker as ticker
 import numpy as np
 
 from smartva.common_data import MALE, FEMALE, ADULT, CHILD, NEONATE
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 
 INPUT_FILENAME_TEMPLATE = '{:s}-predictions.csv'
@@ -143,8 +143,14 @@ class CauseGrapher(object):
                         if self.want_abort:
                             return
 
-                        age_key = get_age_key(float(row['age']))
-                        sex_key = int(row['sex'])
+                        try:
+                            age_key = get_age_key(float(row['age']))
+                            sex_key = int(row['sex'])
+                        except ValueError as e:
+                            # Age or sex is invalid. Log warning and skip this item.
+                            warning_logger.warning('Cause Grapher :: SID {} value for age or sex is invalid.'
+                                                   .format(row['sid'], e.message))
+                            continue
 
                         graph_data[row['cause34']][sex_key][age_key] += 1
                         graph_data['All'][sex_key][age_key] += 1
