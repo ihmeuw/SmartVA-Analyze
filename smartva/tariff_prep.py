@@ -220,7 +220,7 @@ class TariffPrep(DataPrep):
             cause_dict = {}
 
             for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
+                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row.get(k) == '1')
 
             # This is added for pipelines with symptoms that clearly indicate a cause.
             # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
@@ -371,7 +371,7 @@ class TariffPrep(DataPrep):
             lowest_cause_list = set()
 
             for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).parse():
+                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
                     lowest_cause_list.update(causes)
 
             if not self.malaria:

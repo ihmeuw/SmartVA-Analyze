@@ -150,7 +150,7 @@ class PreSymptomPrep(DataPrep):
 
             if self.short_form:
                 word_list = [v for k, v in self.data_module.SHORT_FORM_FREE_TEXT_CONVERSION.items()
-                             if value_or_default(row[k]) == 1]
+                             if value_or_default(row.get(k)) == 1]
                 if word_list:
                     self.convert_free_text_words(row, word_list, self.data_module.WORDS_TO_VARS)
 
@@ -255,8 +255,12 @@ class PreSymptomPrep(DataPrep):
         """
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
-            code_value = value_or_default(row[code_var])
-            length_value = value_or_default(row[length_var])
+            try:
+                code_value = value_or_default(row[code_var])
+                length_value = value_or_default(row[length_var])
+            except KeyError:
+                # Variable does not exist.
+                continue
 
             if var in special_case_vars and row[length_var] == '':
                 row[var] = special_case_vars[var]

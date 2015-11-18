@@ -2,6 +2,10 @@ import functools
 import re
 
 
+class LdapNotationParserError(Exception):
+    pass
+
+
 class LdapNotationParser(object):
     def __init__(self, statement, arg1_fn=None, arg2_fn=None):
         """
@@ -18,34 +22,37 @@ class LdapNotationParser(object):
         self._arg1_fn = arg1_fn or LdapNotationParser.no_fn
         self._arg2_fn = arg2_fn or LdapNotationParser.no_fn
 
-    def parse_element(self, element):
+    def _eval_element(self, element):
         arg1, cond, arg2 = re.match('(\w+)([<>=]+)(\w+)', element).groups()
-        fn1 = self._arg1_fn(arg1)
-        fn2 = self._arg2_fn(arg2)
-        return LdapNotationParser.get_op(cond)(fn1, fn2)
+        try:
+            fn1 = self._arg1_fn(arg1)
+            fn2 = self._arg2_fn(arg2)
+            return LdapNotationParser.get_op(cond)(fn1, fn2)
+        except Exception as e:
+            raise LdapNotationParserError(e.message)
 
-    def _do_parse(self, parse_str):
+    def _do_eval(self, parse_str):
         if parse_str[0] in ['(']:
-            return [self._do_parse(group) for group in find_groups(parse_str)]
+            return [self._do_eval(group) for group in find_groups(parse_str)]
         elif parse_str[0] in ['!']:
             op = LdapNotationParser.get_op(parse_str[0])
-            return op(self._do_parse(parse_str[1:])[0])
+            return op(self._do_eval(parse_str[1:])[0])
         elif parse_str[0] in ['&', '|']:
             op = LdapNotationParser.get_op(parse_str[0])
-            return functools.reduce(op, self._do_parse(parse_str[1:]))
+            return functools.reduce(op, self._do_eval(parse_str[1:]))
         else:
-            return self.parse_element(parse_str)
+            return self._eval_element(parse_str)
 
-    def _parse(self, parse_str):
-        return self._do_parse(parse_str)[0]
+    def _eval(self, parse_str):
+        return self._do_eval(parse_str)[0]
 
-    def parse(self):
+    def evaluate(self):
         """
         Parse the statement and return a boolean value.
 
         :return: Boolean representation of parsed statement.
         """
-        return self._parse(self.statement)
+        return self._eval(self.statement)
 
     @staticmethod
     def no_fn(arg):
