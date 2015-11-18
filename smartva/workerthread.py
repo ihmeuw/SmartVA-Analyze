@@ -140,8 +140,8 @@ class WorkerThread(threading.Thread):
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
         neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
         neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
-        cause_grapher = CauseGrapher(self.output_dir_path, figures_dir)
-        csmf_grapher = CSMFGrapher(self.output_dir_path, figures_dir)
+        cause_grapher = CauseGrapher(self.output_dir_path)
+        csmf_grapher = CSMFGrapher(self.output_dir_path)
 
         self._abort_list.extend([
             common_prep,

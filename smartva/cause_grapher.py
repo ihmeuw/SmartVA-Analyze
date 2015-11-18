@@ -8,6 +8,7 @@ import matplotlib.ticker as ticker
 import numpy as np
 
 from smartva.common_data import MALE, FEMALE, ADULT, CHILD, NEONATE
+from smartva.grapher_prep import GrapherPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 
@@ -116,32 +117,25 @@ def make_graph(graph_data, cause_key, output_dir):
     plt.close()
 
 
-class CauseGrapher(object):
+class CauseGrapher(GrapherPrep):
     """Generate and save a graph for each cause, and one for all causes."""
 
-    def __init__(self, input_dir, output_dir):
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        self.want_abort = False
-
-    def run(self):
+    def _update_status(self):
         status_logger.info('Making cause graphs')
         status_notifier.update({'progress': 1})
 
+    def _read_graph_data(self):
         graph_data = defaultdict(get_default_dict)
-
         status_notifier.update({'sub_progress': (0, len(MODULE_LABELS))})
-
         for cnt, module_key in enumerate(MODULE_LABELS):
             status_notifier.update({'sub_progress': (cnt,)})
 
             try:
-                with open(os.path.join(self.input_dir, INPUT_FILENAME_TEMPLATE.format(module_key)), 'rb') as f:
+                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'rb') as f:
                     reader = csv.DictReader(f)
 
                     for row in reader:
-                        if self.want_abort:
-                            return
+                        self.check_abort()
 
                         try:
                             age_key = get_age_key(float(row['age']))
@@ -159,15 +153,16 @@ class CauseGrapher(object):
                 # The file isn't there, there was no data or an error, so just skip it.
                 continue
 
+        return graph_data
+
+    def _make_graphs(self, graph_data):
         # Make cause of death graphs.
         status_notifier.update({'sub_progress': (0, len(graph_data))})
-
         for cnt, (cause_key, data) in enumerate(graph_data.items()):
+            self.check_abort()
+
             status_notifier.update({'sub_progress': (cnt,)})
 
-            make_graph(data, cause_key, self.output_dir)
-
+            make_graph(data, cause_key, self.output_dir_path)
         status_notifier.update({'sub_progress': None})
 
-    def abort(self):
-        self.want_abort = True

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from smartva.common_data import ADULT, CHILD, NEONATE
+from smartva.grapher_prep import GrapherPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 
@@ -63,18 +64,16 @@ def make_graph(graph_data, module_key, output_dir):
     plt.close()
 
 
-class CSMFGrapher(object):
+class CSMFGrapher(GrapherPrep):
     """Generate and save a graph for each group's mortality fraction."""
 
-    def __init__(self, input_dir, output_dir):
-        self.input_dir = input_dir
-        self.output_dir = output_dir
-        self.want_abort = False
-
-    def run(self):
+    def _update_status(self):
+        super(CSMFGrapher, self)._update_status()
         status_logger.info('Making CSMF graphs')
         status_notifier.update({'progress': 1})
 
+    def _read_graph_data(self):
+        super(CSMFGrapher, self)._read_graph_data()
         # build ordered dict for values to be graphed. indexed by module
         graph_data_unsorted = defaultdict(dict)
 
@@ -84,12 +83,11 @@ class CSMFGrapher(object):
             status_notifier.update({'sub_progress': (cnt,)})
 
             try:
-                with open(os.path.join(self.input_dir, INPUT_FILENAME_TEMPLATE.format(module_key)), 'rb') as f:
+                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'rb') as f:
                     reader = csv.DictReader(f)
 
                     for row in reader:
-                        if self.want_abort:
-                            return
+                        self.check_abort()
 
                         cause_key = row['cause'].rstrip()
                         cause_fraction = row['CSMF']
@@ -100,17 +98,20 @@ class CSMFGrapher(object):
                 # The file isn't there, there was no data or an error, so just skip it
                 continue
 
+        return graph_data_unsorted
+
+    def _make_graphs(self, graph_data_unsorted):
+        super(CSMFGrapher, self)._make_graphs(graph_data_unsorted)
         # Make csmf graphs.
         status_notifier.update({'sub_progress': (0, len(graph_data_unsorted))})
 
         for cnt, (module_key, data) in enumerate(graph_data_unsorted.items()):
+            self.check_abort()
+
             status_notifier.update({'sub_progress': (cnt,)})
 
             # sort data in decreasing order
             graph_data = OrderedDict(sorted(data.iteritems(), key=lambda x: x[1], reverse=True))
-            make_graph(graph_data, module_key, self.output_dir)
+            make_graph(graph_data, module_key, self.output_dir_path)
 
         status_notifier.update({'sub_progress': None})
-
-    def abort(self):
-        self.want_abort = True
