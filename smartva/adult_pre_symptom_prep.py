@@ -8,8 +8,9 @@ class AdultPreSymptomPrep(PreSymptomPrep):
     Notes:
         Adult data does not require special pre/post-processing actions. """
 
-    def __init__(self, input_file, output_dir, short_form):
-        PreSymptomPrep.__init__(self, input_file, output_dir, short_form)
+    def __init__(self, working_dir_path, short_form):
+        PreSymptomPrep.__init__(self, working_dir_path, short_form)
+
         self.data_module = adult_pre_symptom_data
 
     def run(self):

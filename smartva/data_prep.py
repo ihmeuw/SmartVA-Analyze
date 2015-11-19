@@ -1,22 +1,55 @@
+import csv
+import os
+
 from smartva.loggers import warning_logger
 from smartva.utils.conversion_utils import convert_binary_variable, ConversionError
+from smartva.utils import intermediate_dir_path
 
 
-class DataPrep(object):
-    AGE_GROUP = None
+class AbortException(Exception):
+    pass
 
-    def __init__(self, input_file, output_dir, short_form):
-        self.input_file_path = input_file
-        self.output_dir = output_dir
-        self.short_form = short_form
+
+class Prep(object):
+    INPUT_FILENAME_TEMPLATE = ''
+    OUTPUT_FILENAME_TEMPLATE = ''
+
+    def __init__(self, working_dir_path):
+        self.working_dir_path = working_dir_path
+        self.input_dir_path = working_dir_path
+        self.output_dir_path = working_dir_path
 
         self.want_abort = False
+
+    def check_abort(self):
+        if self.want_abort:
+            raise AbortException()
 
     def run(self):
         pass
 
     def abort(self):
         self.want_abort = True
+
+
+class DataPrep(Prep):
+    AGE_GROUP = None
+
+    def __init__(self, working_dir_path, short_form):
+        super(DataPrep, self).__init__(working_dir_path)
+        self.short_form = short_form
+
+    def input_file_path(self, age_group=None):
+        age_group = age_group or self.AGE_GROUP
+        return os.path.join(self.input_dir_path, self.INPUT_FILENAME_TEMPLATE.format(age_group))
+
+    def output_file_path(self, age_group=None):
+        age_group = age_group or self.AGE_GROUP
+        return os.path.join(self.output_dir_path, self.OUTPUT_FILENAME_TEMPLATE.format(age_group))
+
+    @property
+    def intermediate_dir(self):
+        return intermediate_dir_path(self.working_dir_path)
 
     @staticmethod
     def rename_vars(row, conversion_map):
@@ -104,3 +137,33 @@ class DataPrep(object):
                         write_value = 1
                     row[write_header] = write_value
                     break
+
+    @staticmethod
+    def read_input_file(input_file_path, mode='rb'):
+        """Read input file. Return headers and matrix data.
+
+        Args:
+            headers (list): List of headers to be retained.
+            matrix (list): Matrix of VA answers.
+            output_file_path (str): Path of output file.
+
+        Returns:
+            list, list: List of headers, List of matrix data.
+        """
+        with open(input_file_path, mode) as fi:
+            reader = csv.DictReader(fi)
+            return reader.fieldnames, [row for row in reader]
+
+    @staticmethod
+    def write_output_file(headers, matrix, output_file_path):
+        """Write output file.
+
+        Args:
+            headers (list): List of headers to be retained.
+            matrix (list): Matrix of VA answers.
+            output_file_path (str): Path of output file.
+        """
+        with open(output_file_path, 'wb') as fo:
+            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
+            writer.writeheader()
+            writer.writerows(matrix)

@@ -1,9 +1,7 @@
 import abc
-import csv
-import os
 import re
-
 from datetime import date
+
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 
@@ -12,7 +10,8 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values, check_skip_patterns
 
-FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+INPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
+OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
 DOB_VAR = 'g5_01'
 SEX_VAR = 'g5_02'
@@ -58,8 +57,15 @@ class PreSymptomPrep(DataPrep):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, input_file, output_dir, short_form):
-        super(PreSymptomPrep, self).__init__(input_file, output_dir, short_form)
+    def __init__(self, working_dir_path, short_form):
+        super(PreSymptomPrep, self).__init__(working_dir_path, short_form)
+
+        self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
+        self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE
+
+        self.input_dir_path = self.intermediate_dir
+        self.output_dir_path = self.intermediate_dir
+
         self._data_module = None
         self.default_fill = None
 
@@ -91,13 +97,9 @@ class PreSymptomPrep(DataPrep):
             for var in self.data_module.DURATION_VARS_SHORT_FORM_DROP_LIST:
                 duration_vars.remove(var)
 
-        with open(self.input_file_path, 'rb') as fi:
-            reader = csv.DictReader(fi)
-            matrix = [row for row in reader]
+        headers, matrix = DataPrep.read_input_file(self.input_file_path())
 
         status_notifier.update({'sub_progress': (0, len(matrix))})
-
-        headers = reader.fieldnames
 
         # Identify new headers and data to be included.
         additional_data = {k: '' for k in self.data_module.DURATION_VARS}
@@ -158,7 +160,7 @@ class PreSymptomPrep(DataPrep):
 
         status_notifier.update({'sub_progress': None})
 
-        self.write_output_file(headers, matrix)
+        DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
         return True
 
@@ -404,15 +406,3 @@ class PreSymptomPrep(DataPrep):
                             for sd_var, sd_data in weight_sd_data.items():
                                 row[sd_var] = int(
                                     weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
-
-    def write_output_file(self, headers, matrix):
-        """Write intermediate pre-symptom data.
-
-        Args:
-            headers (list): List of headers to be retained.
-            matrix (list): Matrix of VA answers.
-        """
-        with open(os.path.join(self.output_dir, FILENAME_TEMPLATE.format(self.AGE_GROUP)), 'wb') as fo:
-            writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
-            writer.writeheader()
-            writer.writerows(matrix)

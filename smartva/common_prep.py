@@ -18,7 +18,8 @@ from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
-PREPPED_FILENAME_TEMPLATE = '{:s}-prepped.csv'
+INPUT_FILENAME_TEMPLATE = 'cleanheaders.csv'
+OUTPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 
 
 def int_value(x):
@@ -33,8 +34,14 @@ class CommonPrep(DataPrep):
     This file cleans up input and converts from ODK collected data to VA variables.
     """
 
-    def __init__(self, input_file, output_dir, short_form):
-        DataPrep.__init__(self, input_file, output_dir, short_form)
+    def __init__(self, working_dir_path, short_form):
+        super(CommonPrep, self).__init__(working_dir_path, short_form)
+
+        self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
+        self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE
+
+        self.input_dir_path = self.intermediate_dir
+        self.output_dir_path = self.intermediate_dir
 
         self._matrix_data = {
             ADULT: [],
@@ -52,14 +59,9 @@ class CommonPrep(DataPrep):
         status_logger.info('Initial data prep')
         status_notifier.update({'progress': 1})
 
-        with open(self.input_file_path, 'rU') as f:
-            reader = csv.DictReader(f)
-            matrix = [row for row in reader]
+        headers, matrix = DataPrep.read_input_file(self.input_file_path())
 
         status_notifier.update({'sub_progress': (0, len(matrix))})
-
-        # Read headers and check for free text columns
-        headers = reader.fieldnames
 
         # Extend the headers with additional headers and read the remaining data into the matrix
         additional_data = {k: '' for k in ADDITIONAL_HEADERS}
@@ -91,7 +93,7 @@ class CommonPrep(DataPrep):
 
         status_notifier.update({'sub_progress': None})
 
-        self.write_data(headers, self._matrix_data, self.output_dir)
+        self.write_data(headers, self._matrix_data)
 
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
@@ -220,19 +222,15 @@ class CommonPrep(DataPrep):
         """
         self.get_matrix(self._matrix_data, **self.get_age_data(row)).extend([row])
 
-    @staticmethod
-    def write_data(headers, matrix_data, output_dir):
+    def write_data(self, headers, matrix_data):
         """
         Write intermediate prepped csv files.
 
+        :param headers: Data headers.
         :param matrix_data: Data from a all reports.
-        :param output_dir: Directory to write results.
         """
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
         for age, matrix in matrix_data.items():
             if matrix:
-                with open(os.path.join(output_dir, PREPPED_FILENAME_TEMPLATE.format(age)), 'wb') as f:
-                    writer = csv.DictWriter(f, fieldnames=headers, extrasaction='ignore')
-                    writer.writeheader()
-                    writer.writerows(matrix)
+                DataPrep.write_output_file(headers, matrix, self.output_file_path(age))
