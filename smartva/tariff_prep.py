@@ -129,9 +129,9 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
 
+        """
         with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_validated_cause_list, f)
-        """
         with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             va_validated_cause_list = pickle.load(f)
         # """
@@ -148,9 +148,9 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
 
+        """
         with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_cause_list, f)
-        """
         with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
             va_cause_list = pickle.load(f)
         # """
@@ -214,7 +214,7 @@ class TariffPrep(DataPrep):
             cause_dict = {}
 
             for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row[k] == '1')
+                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row.get(k) == '1')
 
             # This is added for pipelines with symptoms that clearly indicate a cause.
             # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
@@ -366,7 +366,7 @@ class TariffPrep(DataPrep):
             lowest_cause_list = set()
 
             for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).parse():
+                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
                     lowest_cause_list.update(causes)
 
             if not self.malaria:

@@ -27,7 +27,7 @@ class TestLdapNotationParser(object):
             ['(&(1<=1)(0<=1))', int, int]
         ]
         for test_arg in test_args:
-            assert LdapNotationParser(*test_arg).parse() is True
+            assert LdapNotationParser(*test_arg).evaluate() is True
 
     def test_false_conditions(self):
         test_args = [
@@ -39,4 +39,4 @@ class TestLdapNotationParser(object):
             ['(&(1<=1)(0>=1))', int, int]
         ]
         for test_arg in test_args:
-            assert LdapNotationParser(*test_arg).parse() is False
+            assert LdapNotationParser(*test_arg).evaluate() is False

@@ -66,6 +66,9 @@ class DataPrep(object):
                 convert_binary_variable(row, data_header, data_map)
             except ConversionError as e:
                 warning_logger.debug(e.message)
+            except KeyError:
+                # Variable does not exist. The new published form does not contain all of the previous variables.
+                continue
 
     @staticmethod
     def expand_row(row, data):
