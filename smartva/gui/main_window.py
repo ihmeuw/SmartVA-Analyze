@@ -55,7 +55,9 @@ if platform.system().lower() != 'darwin':
 
 def open_folder(path):
     if platform.system().lower() == 'windows':
-        subprocess.Popen('explorer /n,/e,"{}"'.format(path))
+        subprocess.call(['explorer', '/n,/e,"{}"'.format(path)])
+    if platform.system().lower() == 'darwin':
+        subprocess.call(['open', '-R', path])
 
 
 class ETAProgressGauge(wx.Gauge):
