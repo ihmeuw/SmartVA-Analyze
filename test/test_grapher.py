@@ -1,14 +1,13 @@
 from collections import defaultdict, OrderedDict
-import cause_grapher
-from cause_grapher import AGE_DATA
-from common_data import MALE, FEMALE
+from smartva import cause_grapher
+from smartva.common_data import MALE, FEMALE
 
 
 def test_get_default_dict():
     valid_d = {
         'test': {
-            MALE: OrderedDict.fromkeys(reversed(AGE_DATA.values()), 0),
-            FEMALE: OrderedDict.fromkeys(reversed(AGE_DATA.values()), 0)
+            MALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0),
+            FEMALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0)
         }
     }
 
@@ -21,8 +20,8 @@ def test_get_default_dict():
 def test_get_default_dict_inc():
     valid_d = {
         'test': {
-            MALE: OrderedDict.fromkeys(reversed(AGE_DATA.values()), 0),
-            FEMALE: OrderedDict.fromkeys(reversed(AGE_DATA.values()), 0)
+            MALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0),
+            FEMALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0)
         }
     }
     valid_d['test'][MALE]['0-28 days'] += 1
