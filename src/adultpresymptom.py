@@ -138,14 +138,19 @@ class PreSymptomPrep():
                 row[index] = row[headers_old.index('gen_4_3c')]
                 
             index = headers.index('a2_01b')
-            if row[headers.index('a2_01a')] == '1':
-                row[index] = row[headers_old.index('adult_2_1a')]
-            if row[headers.index('a2_01a')] == '2':
-                row[index] = row[headers_old.index('adult_2_1b')]
-            if row[headers.index('a2_01a')] == '4':
-                row[index] = row[headers_old.index('adult_2_1c')]
-            if row[headers.index('a2_01a')] == '5':
-                row[index] = row[headers_old.index('adult_2_1d')]
+            if 'a2_01a' in headers:
+                if row[headers.index('a2_01a')] == '1':
+                    if 'adult_2_1a' in headers_old:
+                        row[index] = row[headers_old.index('adult_2_1a')]
+                if row[headers.index('a2_01a')] == '2':
+                    if 'adult_2_1b' in headers_old:
+                        row[index] = row[headers_old.index('adult_2_1b')]
+                if row[headers.index('a2_01a')] == '4':
+                    if 'adult_2_1c' in headers_old:
+                        row[index] = row[headers_old.index('adult_2_1c')]
+                if row[headers.index('a2_01a')] == '5':
+                    if 'adult_2_1d' in headers_old:
+                        row[index] = row[headers_old.index('adult_2_1d')]
                             
             index = headers.index('a2_22b')
             if row[headers.index('a2_22a')] == '4':
@@ -172,10 +177,12 @@ class PreSymptomPrep():
                 row[index] = row[headers_old.index('adult_2_28b')]
                 
             index = headers.index('a2_33b')
-            if row[headers.index('a2_33a')] == '4':
-                row[index] = row[headers_old.index('adult_2_33a')]
-            if row[headers.index('a2_33a')] == '2':
-                row[index] = row[headers_old.index('adult_2_33b')]
+            if 'a2_33a' in headers and 'adult_2_33a' in headers_old:
+                if row[headers.index('a2_33a')] == '4':
+                    row[index] = row[headers_old.index('adult_2_33a')]
+            if 'a2_33a' in headers and 'adult_2_33b' in headers_old:
+                if row[headers.index('a2_33a')] == '2':
+                    row[index] = row[headers_old.index('adult_2_33b')]
             
             index = headers.index('a2_37b')
             if row[headers.index('a2_37a')] == '4':
@@ -324,9 +331,12 @@ class PreSymptomPrep():
             
             #added for shortform
             if self.shortform:
-                index = headers.index('a2_08b')
-                if row[headers.index('a2_08a')] == '4':
-                    row[index] = row[headers_old.index('adult_2_8a')]
+                if 'a2_08b' in headers:
+                    index = headers.index('a2_08b')
+                    if 'a2_08a' in headers:
+                        if row[headers.index('a2_08a')] == '4':
+                            if 'adult_2_8a' in headers_old:
+                                row[index] = row[headers_old.index('adult_2_8a')]
                 index = headers.index('a2_15b')
                 if row[headers.index('a2_15a')] == '4':
                     row[index] = row[headers_old.index('adult_2_15a')]
@@ -368,12 +378,14 @@ class PreSymptomPrep():
                     self.printWarning('a2_06', i, row, headers, adult_defaultFill)
             a2_07 = row[headers.index('a2_07')]
             if a2_07 != '1':        
-                a2_08a = row[headers.index('a2_08a')]
-                if not (a2_08a is None or a2_08a == ''):
-                    self.printWarning('a2_08a', i, row, headers, adult_defaultFill)
-                a2_08b = row[headers.index('a2_08b')]
-                if not (a2_08b is None or a2_08b == ''):
-                    self.printWarning('a2_08b', i, row, headers, adult_defaultFill)
+                if 'a2_08a' in headers:
+                    a2_08a = row[headers.index('a2_08a')]
+                    if not (a2_08a is None or a2_08a == ''):
+                        self.printWarning('a2_08a', i, row, headers, adult_defaultFill)
+                if 'a2_08b' in headers:
+                    a2_08b = row[headers.index('a2_08b')]
+                    if not (a2_08b is None or a2_08b == ''):
+                        self.printWarning('a2_08b', i, row, headers, adult_defaultFill)
                 a2_09_1a = row[headers.index('a2_09_1a')]
                 if not (a2_09_1a is None or a2_09_1a == ''):
                    self.printWarning('a2_09_1a', i, row, headers, adult_defaultFill)
@@ -447,9 +459,10 @@ class PreSymptomPrep():
                     self.printWarning('a2_28b', i, row, headers, adult_defaultFill)
             a2_32 = row[headers.index('a2_32')]
             if a2_32 != '1': 
-                a2_33a = row[headers.index('a2_33a')]
-                if not (a2_33a is None or a2_33a == ''):
-                    self.printWarning('a2_33a', i, row, headers, adult_defaultFill)
+                if 'a2_33a' in headers:
+                    a2_33a = row[headers.index('a2_33a')]
+                    if not (a2_33a is None or a2_33a == ''):
+                        self.printWarning('a2_33a', i, row, headers, adult_defaultFill)
                 a2_33b = row[headers.index('a2_33b')]
                 if not (a2_33b is None or a2_33b == '' or a2_33b == '0'):
                    self.printWarning('a2_33b', i, row, headers, adult_defaultFill)
@@ -467,9 +480,10 @@ class PreSymptomPrep():
                 a2_37b = row[headers.index('a2_37b')]
                 if not (a2_37b is None or a2_37b == '' or a2_37b == '0'):
                     self.printWarning('a2_37b', i, row, headers, adult_defaultFill)
-                a2_38 = row[headers.index('a2_38')]
-                if not (a2_38 is None or a2_38 == ''):
-                    self.printWarning('a2_38', i, row, headers, adult_defaultFill)
+                if 'a2_38' in headers:
+                    a2_38 = row[headers.index('a2_38')]
+                    if not (a2_38 is None or a2_38 == ''):
+                        self.printWarning('a2_38', i, row, headers, adult_defaultFill)
                 a2_39_1 = row[headers.index('a2_39_1')]
                 if not (a2_39_1 is None or a2_39_1 == ''):
                     self.printWarning('a2_39_1', i, row, headers, adult_defaultFill)
@@ -1046,6 +1060,9 @@ class PreSymptomPrep():
                 continue
             a = var + 'a'
             b = var + 'b'
+
+            if a not in headers:
+                continue
             aindex = headers.index(a)
             bindex = headers.index(b)
             index = headers.index(var)
@@ -1078,6 +1095,8 @@ class PreSymptomPrep():
         for var in durationVars:
             a = var + 'a'
             b = var + 'b'
+            if a not in headers:
+                continue
             aindex = headers.index(a)
             headers.remove(a)
    

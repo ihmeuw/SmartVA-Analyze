@@ -158,14 +158,20 @@ class NeonateSymptomPrep():
                     
             #dichotimize!
             index = headers.index('s5_1')
-            val = row[headers.index('s5')]
+            if 's5' in headers:
+                val = row[headers.index('s5')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '2'):
                 row[index] = '1'
                 
             index = headers.index('s6_1')
-            val = row[headers.index('s6')]
+            if 's6' in headers:
+                val = row[headers.index('s6')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '2' or val == '3'):
@@ -207,7 +213,10 @@ class NeonateSymptomPrep():
                 row[index] = '1'
                 
             index = headers.index('s30991')
-            val = row[headers.index('s30')]
+            if 's30' in headers:
+                val = row[headers.index('s30')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '3' or val == '4'):
@@ -249,7 +258,10 @@ class NeonateSymptomPrep():
                 row[index] = '1'
                 
             index = headers.index('s55991')
-            val = row[headers.index('s55')]
+            if 's55' in headers:
+                val = row[headers.index('s55')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if (val == '1' or val == '2'):
@@ -308,7 +320,10 @@ class NeonateSymptomPrep():
                 row[index] = '1'
                 
             index = headers.index('s71991')
-            val = row[headers.index('s71')]
+            if 's71' in headers:
+                val = row[headers.index('s71')]
+            else:
+                val = ''
             if val == '':
                 val = '0'
             if val == '2':
@@ -331,9 +346,10 @@ class NeonateSymptomPrep():
                 
             # ensure all binary variables actually ARE 0 or 1:
             for bin in binaryVars:
-                val = row[headers.index(bin)]
-                if val == '' or val != '1':
-                    row[headers.index(bin)] = '0'
+                if bin in headers:
+                    val = row[headers.index(bin)]
+                    if val == '' or val != '1':
+                        row[headers.index(bin)] = '0'
             
                 
             
@@ -342,10 +358,11 @@ class NeonateSymptomPrep():
         # drop 'age' because it was just used for a calculation, and will be replaced with a new 'age'
         droplist = ['s2', 's3', 's5', 's6', 's8', 's11', 's13', 's16', 's30', 's46', 's49', 's50', 's51', 's55', 's57', 's58', 's69', 's71', 's76', 's105', 'age']
         for d in droplist:
-            index = headers.index(d)
-            headers.remove(d)
-            for row in matrix:
-                del row[index]
+            if d in headers:
+                index = headers.index(d)
+                headers.remove(d)
+                for row in matrix:
+                    del row[index]
                 
                 
         rename = {'s5_1' : 's5', 's6_1' : 's6', 's13_1' : 's13', 's16_1' : 's16', 's105_1' : 's105', 's4' : 'age'} 
