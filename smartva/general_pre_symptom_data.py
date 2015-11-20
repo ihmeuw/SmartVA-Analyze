@@ -1,0 +1,1 @@
+KEEP_PATTERNS = ['sid$', 'g5_', 's\d+']
