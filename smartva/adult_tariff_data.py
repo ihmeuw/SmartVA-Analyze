@@ -531,6 +531,8 @@ CANCER_CAUSES = [
     43
 ]
 
+MALARIA_CAUSES = [29]
+
 CAUSE_CONDITIONS = {
     '(&(sex=2)(age>15)(age<49))': MATERNAL_CAUSES,
     '(sex=2)': FEMALE_CAUSES,

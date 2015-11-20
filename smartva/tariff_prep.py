@@ -27,10 +27,6 @@ SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
 
-MALARIA_CAUSES = [
-    29
-]
-
 
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
@@ -375,7 +371,7 @@ class TariffPrep(DataPrep):
                     lowest_cause_list.update(causes)
 
             if not self.malaria:
-                lowest_cause_list.update(MALARIA_CAUSES)
+                lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
 
             for cause_num in self.cause_list:
                 if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or

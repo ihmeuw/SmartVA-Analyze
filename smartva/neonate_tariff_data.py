@@ -138,9 +138,7 @@ CAUSES46 = CAUSES
 
 CAUSE_CONDITIONS = {}
 
-MALARIA_CAUSES = [
-    29
-]
+MALARIA_CAUSES = []
 
 # changing 46 causes to 34 causes:
 CAUSE_REDUCTION = {
