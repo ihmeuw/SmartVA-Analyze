@@ -26,7 +26,7 @@ class Prep(object):
             raise AbortException()
 
     def run(self):
-        pass
+        self.check_abort()
 
     def abort(self):
         self.want_abort = True
