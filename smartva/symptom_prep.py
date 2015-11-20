@@ -52,6 +52,7 @@ class SymptomPrep(DataPrep):
 
     def run(self):
         super(SymptomPrep, self).run()
+
         status_logger.info('{} :: Processing symptom data'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
 
@@ -73,8 +74,7 @@ class SymptomPrep(DataPrep):
                          key=lambda t: (t != 'sid', t[1].isdigit(), t))
 
         for index, row in enumerate(matrix):
-            if self.want_abort:
-                return False
+            self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 

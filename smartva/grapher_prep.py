@@ -1,7 +1,7 @@
 import abc
 import os
 
-from smartva.data_prep import Prep, AbortException
+from smartva.data_prep import Prep
 
 
 class GrapherPrep(Prep):
@@ -12,15 +12,14 @@ class GrapherPrep(Prep):
         self.output_dir_path = os.path.join(self.input_dir_path, 'figures')
 
     def run(self):
+        super(GrapherPrep, self).run()
+
         self._update_status()
 
-        try:
-            graph_data = self._read_graph_data()
+        graph_data = self._read_graph_data()
 
-            self._make_graphs(graph_data)
+        self._make_graphs(graph_data)
 
-        except AbortException:
-            return
 
     @abc.abstractmethod
     def _update_status(self):

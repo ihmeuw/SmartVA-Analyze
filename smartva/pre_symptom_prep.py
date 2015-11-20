@@ -119,8 +119,7 @@ class PreSymptomPrep(DataPrep):
                          key=lambda t: (t != 'sid', t[1].isdigit(), not t.startswith('g'), t))
 
         for index, row in enumerate(matrix):
-            if self.want_abort:
-                return False
+            self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 

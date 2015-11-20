@@ -109,6 +109,8 @@ class TariffPrep(DataPrep):
         return os.path.join(self.intermediate_dir, '{:s}-external-ranks.csv'.format(self.AGE_GROUP))
 
     def run(self):
+        super(TariffPrep, self).run()
+
         status_logger.info('{:s} :: Processing tariffs'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
 
@@ -208,8 +210,7 @@ class TariffPrep(DataPrep):
         status_notifier.update({'sub_progress': (0, len(matrix))})
 
         for index, row in enumerate(matrix):
-            if self.want_abort:
-                return False
+            self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 
@@ -266,6 +267,8 @@ class TariffPrep(DataPrep):
         cutoffs = {}
         with open(os.path.join(self.intermediate_dir, '{:s}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
             for cause_num in self.cause_list:
+                self.check_abort()
+
                 # Get the uniform list sorted by (reversed) cause_score and sid.
                 sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause_num], va.sid))
 
@@ -300,8 +303,7 @@ class TariffPrep(DataPrep):
             status_notifier.update({'sub_progress': (index,)})
 
             for cause in self.cause_list:
-                if self.want_abort:
-                    return
+                self.check_abort()
 
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]
@@ -322,6 +324,8 @@ class TariffPrep(DataPrep):
         """
         ranks = []
         for va in va_cause_list:
+            self.check_abort()
+
             rank_dict = {"sid": va.sid}
             rank_dict.update(va.rank_list)
             ranks.append(rank_dict)
@@ -358,6 +362,8 @@ class TariffPrep(DataPrep):
             min_cause_score (float): Reject causes under this threshold.
         """
         for va in va_cause_list:
+            self.check_abort()
+
             # if a VA has a tariff score less than 0 for a certain cause,
             # replace the rank for that cause with the lowest possible rank
             for cause in va.cause_scores:
@@ -403,6 +409,8 @@ class TariffPrep(DataPrep):
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
 
             for va in va_cause_list:
+                self.check_abort()
+
                 # Record causes already determined.
                 cause34 = va.cause
 
