@@ -65,7 +65,7 @@ class ETAProgressGauge(wx.Gauge):
         super(ETAProgressGauge, self).__init__(*args, **kwargs)
         self._eta = AdaptiveETA()
         self._start_time = time.time()
-        # self._status_bar = status_bar
+        self._last_update = 0
 
     # Adapter to progressbar.widgets.timer
     @property
@@ -89,12 +89,16 @@ class ETAProgressGauge(wx.Gauge):
         super(ETAProgressGauge, self).SetRange(*args[1:], **kwargs)
         self._start_time = time.time()
         self._eta = AdaptiveETA()
-        # self._eta.update(self)
+        self._last_update = 0
 
     def SetValue(*args, **kwargs):
         self = args[0]
         super(ETAProgressGauge, self).SetValue(*args[1:], **kwargs)
-        self.TopLevelParent.StatusBar.SetStatusText(self._eta.update(self))
+        now = time.time()
+        if now > self._last_update + 0.5:
+            eta = self._eta.update(self)
+            self._last_update = now
+            self.TopLevelParent.StatusBar.SetStatusText(eta)
 
 
 class TextEntryStreamWriter(io.TextIOBase):

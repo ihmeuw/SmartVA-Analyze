@@ -1,6 +1,4 @@
-import csv
 import re
-import os
 
 from smartva.common_data import (
     ADDITIONAL_HEADERS,
@@ -56,6 +54,8 @@ class CommonPrep(DataPrep):
         :return: True if processing was successful, False if aborted.
         :rtype : bool
         """
+        super(CommonPrep, self).run()
+
         status_logger.info('Initial data prep')
         status_notifier.update({'progress': 1})
 
@@ -72,8 +72,7 @@ class CommonPrep(DataPrep):
         headers.extend(additional_headers)
 
         for index, row in enumerate(matrix):
-            if self.want_abort:
-                return False
+            self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 

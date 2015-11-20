@@ -2,6 +2,7 @@ import csv
 import logging
 import os
 import threading
+from data_prep import AbortException
 
 from smartva.common_prep import CommonPrep
 from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
@@ -158,86 +159,44 @@ class WorkerThread(threading.Thread):
             csmf_grapher,
         ])
 
-        # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
-        # we have data at this point, so all of these files should have been created
-        adult_data, child_data, neonate_data = common_prep.run()
-        if self._want_abort:
+        try:
+            # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
+            adult_data, child_data, neonate_data = common_prep.run()
+
+            if adult_data:
+                # makes adult-presymptom.csv
+                adult_pre_symptom.run()
+                # makes adult-symptom.csv
+                adult_symptom.run()
+                # creates adult output files
+                adult_results.run()
+
+            if child_data:
+                # makes child-presymptom.csv
+                child_pre_symptom.run()
+                # makes child-symptom.csv
+                child_symptom.run()
+                # creates child output files
+                child_results.run()
+
+            if neonate_data:
+                # makes neonate-presymptom.csv
+                neonate_pre_symptom.run()
+                # makes neonate-symptom.csv
+                neonate_symptom.run()
+                # creates neonate output files
+                neonate_results.run()
+
+            if adult_data or child_data or neonate_data:
+                # generate all cause graphs
+                cause_grapher.run()
+                # generate all csmf graphs
+                csmf_grapher.run()
+
+        except AbortException:
             self._complete(CompletionStatus.ABORT)
-            return
-
-        if adult_data:
-            # makes adult-presymptom.csv
-            adult_pre_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # makes adult-symptom.csv
-            adult_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # creates adult output files
-            adult_results.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-        if child_data:
-            # makes child-presymptom.csv
-            child_pre_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # makes child-symptom.csv
-            child_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # creates child output files
-            child_results.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-        if neonate_data:
-            # makes neonate-presymptom.csv
-            # TODO:  right now this is the same as child presymptom, should probably just combine into one
-            neonate_pre_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # makes neonate-symptom.csv
-            neonate_symptom.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # creates neonate output files
-            neonate_results.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-        if adult_data or child_data or neonate_data:
-            # generate all cause graphs
-            cause_grapher.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-            # generate all csmf graphs
-            csmf_grapher.run()
-            if self._want_abort:
-                self._complete(CompletionStatus.ABORT)
-                return
-
-        self._complete(CompletionStatus.DONE)
-        return
+        else:
+            self._complete(CompletionStatus.DONE)
 
     def abort(self):
         """abort worker thread."""
