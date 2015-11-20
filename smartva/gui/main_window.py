@@ -5,6 +5,7 @@ import logging
 import re
 import os
 import platform
+import subprocess
 import threading
 import time
 
@@ -50,6 +51,13 @@ COMBO_BOX_STYLE = wx.CB_DROPDOWN
 if platform.system().lower() != 'darwin':
     # Mac does not support sort style
     COMBO_BOX_STYLE |= wx.CB_SORT
+
+
+def open_folder(path):
+    if platform.system().lower() == 'windows':
+        subprocess.Popen('explorer /n,/e,"{}"'.format(path))
+    if platform.system().lower() == 'darwin':
+        subprocess.call(['open', path])
 
 
 class ETAProgressGauge(wx.Gauge):
@@ -486,8 +494,10 @@ class vaUI(wx.Frame):
             if status == workerthread.CompletionStatus.ABORT:
                 status_message = 'Computation successfully aborted. '
             elif status == workerthread.CompletionStatus.DONE:
+                open_folder(self.output_folder_path)
                 status_message = 'Processing complete. '
             elif status == workerthread.CompletionStatus.FAIL:
+                open_folder(self.output_folder_path)
                 status_message = 'Processing failed. '
                 style = 'error'
 
