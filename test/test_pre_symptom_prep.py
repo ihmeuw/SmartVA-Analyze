@@ -32,16 +32,12 @@ class TestPreSymptomPrep(object):
             'test3': range(1900, 2016) + [9999]
         }
 
-        warnings = PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
-
-        assert warnings is False
+        PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
 
         # TODO - Break this out into own test and test warning logger.
         valid_range_data['test1'] = [0]
 
-        warnings = PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
-
-        assert warnings is True
+        PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
 
     def test_convert_free_text_words(self):
         headers = ['sid', 'test1', 'test2', 'test3']
