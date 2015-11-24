@@ -4,6 +4,7 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
+from smartva.answer_ranges import RANGE_LIST
 
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
@@ -126,7 +127,7 @@ class PreSymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
-            self.verify_answers_for_row(row, self.data_module.RANGE_LIST)
+            self.verify_answers_for_row(row, RANGE_LIST)
 
             self.pre_processing_step(row)
 
@@ -183,34 +184,26 @@ class PreSymptomPrep(DataPrep):
 
     @staticmethod
     def verify_answers_for_row(row, valid_range_data):
-        """Verify answers in a row of data are valid.
+        """Verify answers in a row of data are valid. Log a warning when an invalid answer has been identified.
 
         Args:
             row (dict): Row of VA data.
             valid_range_data (dict): Map of answers and valid ranges.
-
-        Returns:
-            bool: True if any warnings were logged.
         """
-        warnings = False
         for variable, range_list in valid_range_data.items():
             try:
                 value = row[variable]
             except KeyError:
                 pass  # Header not in data set.
             else:
-                if value != '' and range_list:
+                for answer in str(value).split():
                     try:
-                        answer_array = value.split()
-                    except AttributeError:
-                        answer_array = [value]
-                    for answer in answer_array:
                         if int(answer) not in range_list:
                             warning_logger.warning(
-                                'SID: {} variable {} has an illegal value {}. '
+                                'SID: {} variable \'{}\' has an illegal value {}. '
                                 'Please see code book for legal values.'.format(row['sid'], variable, value))
-                            warnings = True
-        return warnings
+                    except ValueError:
+                        continue
 
     @staticmethod
     def recode_answers(row, consolidation_map):
