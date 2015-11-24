@@ -4,8 +4,8 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
-from smartva.answer_ranges import RANGE_LIST
 
+from smartva.data.answer_ranges import RANGE_LIST
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
