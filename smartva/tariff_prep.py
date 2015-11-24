@@ -136,9 +136,9 @@ class TariffPrep(DataPrep):
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
 
         """
-        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_validated_cause_list, f)
-        with open(os.path.join(config.basedir, 'validated-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
             va_validated_cause_list = pickle.load(f)
         """
 
@@ -155,9 +155,9 @@ class TariffPrep(DataPrep):
         self.generate_cause_rankings(va_cause_list, uniform_list)
 
         """
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'wb') as f:
+        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
             pickle.dump(va_cause_list, f)
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pickle'.format(self.AGE_GROUP)), 'rb') as f:
+        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
             va_cause_list = pickle.load(f)
         """
 
