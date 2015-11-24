@@ -301,9 +301,13 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
             default_fill (dict): Dictionary of headers and default values.
         """
-        for variable, value in row.items():
-            if value == '':
-                row[variable] = default_fill.get(variable, '')
+        for variable, value in default_fill.items():
+            try:
+                if row[variable] == '':
+                    row[variable] = value
+            except KeyError:
+                # Variable does not exist in row.
+                continue
 
     @staticmethod
     def process_age_vars(row):
