@@ -1,12 +1,13 @@
-from smartva.common_data import ADULT as AGE_GROUP
-from smartva.default_fill_data import (
-    ADULT_DEFAULT_FILL as DEFAULT_FILL,
-    ADULT_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
-)
-from answer_ranges import ADULT_RANGE_LIST as RANGE_LIST
-from smartva.word_conversions import ADULT_WORDS_TO_VARS as WORDS_TO_VARS
+from smartva.common_data import ADULT
+from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
+from smartva.word_conversions import ADULT_WORDS_TO_VARS
 
-KEEP_PATTERN = r'(sid$|g5_|a_\d+|a\d+_\d|s\d+)'
+AGE_GROUP = ADULT
+DEFAULT_FILL = ADULT_DEFAULT_FILL
+DEFAULT_FILL_SHORT = ADULT_DEFAULT_FILL_SHORT
+WORDS_TO_VARS = ADULT_WORDS_TO_VARS
+
+KEEP_PATTERN = r'(sid$|g5_|a[\d_]|s\d+)'
 
 WEIGHT_VARS = []
 

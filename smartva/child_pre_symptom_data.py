@@ -1,12 +1,13 @@
-from smartva.common_data import CHILD as AGE_GROUP, MALE, FEMALE
-from smartva.default_fill_data import (
-    CHILD_DEFAULT_FILL as DEFAULT_FILL,
-    CHILD_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
-)
-from answer_ranges import CHILD_RANGE_LIST as RANGE_LIST
-from smartva.word_conversions import CHILD_WORDS_TO_VARS as WORDS_TO_VARS
+from smartva.common_data import CHILD, MALE, FEMALE
+from smartva.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
+from smartva.word_conversions import CHILD_WORDS_TO_VARS
 
-KEEP_PATTERN = r'(sid$|g5_|c\d+_\d|s\d+)'
+AGE_GROUP = CHILD
+DEFAULT_FILL = CHILD_DEFAULT_FILL
+DEFAULT_FILL_SHORT = CHILD_DEFAULT_FILL_SHORT
+WORDS_TO_VARS = CHILD_WORDS_TO_VARS
+
+KEEP_PATTERN = r'(sid$|g5_|c[\d_]|s\d+)'
 
 WEIGHT_VARS = [
     'c5_07_1b',
@@ -27,6 +28,7 @@ EXAM_DATE_VARS = {
 GENERATED_VARS_DATA = {
     'g4_03b': 0,
     'c1_05b': 0,
+    'c1_08num': 0,
     'c1_20b': 0,
     'c1_21b': 0,
     'c2_05b': 0,
@@ -34,10 +36,9 @@ GENERATED_VARS_DATA = {
     'c4_47_11': 0,
     'c4_49b': 0,
     'c1_25a': 0,
+    'c1_26': 0,
     's180': 0,
     's181': 0,
-    'c1_26': 0,
-    'c1_08num': 0,
 }
 
 VAR_CONVERSION_MAP = {

@@ -1,30 +1,13 @@
-from smartva.common_data import NEONATE as AGE_GROUP, MALE, FEMALE
-from smartva.default_fill_data import (
-    NEONATE_DEFAULT_FILL as DEFAULT_FILL,
-    NEONATE_DEFAULT_FILL_SHORT as DEFAULT_FILL_SHORT
-)
-from answer_ranges import NEONATE_RANGE_LIST as RANGE_LIST
-from smartva.word_conversions import NEONATE_WORDS_TO_VARS as WORDS_TO_VARS
+from smartva.common_data import NEONATE, MALE, FEMALE
+from smartva.default_fill_data import NEONATE_DEFAULT_FILL, NEONATE_DEFAULT_FILL_SHORT
+from smartva.word_conversions import NEONATE_WORDS_TO_VARS
 
-from child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS
+from smartva.child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS, KEEP_PATTERN, GENERATED_VARS_DATA
 
-KEEP_PATTERN = r'(sid$|g5_|c\d+_\d|s\d+)'
-
-GENERATED_VARS_DATA = {
-    'g4_03b': 0,
-    'c1_05b': 0,
-    'c1_20b': 0,
-    'c1_21b': 0,
-    'c2_05b': 0,
-    'c4_37b': 0,
-    'c4_47_11': 0,
-    'c4_49b': 0,
-    'c1_25a': 0,
-    's180': 0,
-    's181': 0,
-    'c1_26': 0,
-    'c1_08num': 0,
-}
+AGE_GROUP = NEONATE
+DEFAULT_FILL = NEONATE_DEFAULT_FILL
+DEFAULT_FILL_SHORT = NEONATE_DEFAULT_FILL_SHORT
+WORDS_TO_VARS = NEONATE_WORDS_TO_VARS
 
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
