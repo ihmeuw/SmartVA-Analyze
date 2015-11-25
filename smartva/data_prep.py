@@ -166,9 +166,8 @@ class DataPrep(Prep):
         """Read input file. Return headers and matrix data.
 
         Args:
-            headers (list): List of headers to be retained.
-            matrix (list): Matrix of VA answers.
-            output_file_path (str): Path of output file.
+            input_file_path (str): Input file path.
+            mode (str): Read mode.
 
         Returns:
             list, list: List of headers, List of matrix data.
