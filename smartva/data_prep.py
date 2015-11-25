@@ -81,7 +81,8 @@ class DataPrep(Prep):
                 row[new_header] = row.pop(old_header)
             except KeyError:
                 warning_logger.warning(
-                    'Variable \'{}\' does not exist and cannot be renamed to \'{}\'.'.format(old_header, new_header))
+                    'SID: {} variable \'{}\' does not exist and cannot be renamed to \'{}\'.'
+                    .format(row['sid'], old_header, new_header))
 
     @staticmethod
     def rename_headers(headers, conversion_map):

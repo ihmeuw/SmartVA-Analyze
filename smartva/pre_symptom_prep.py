@@ -208,7 +208,7 @@ class PreSymptomPrep(DataPrep):
                 pass
             except KeyError:
                 warning_logger.warning(
-                    'SID: {} Variable \'{}\' does not exist.'.format(row['sid'], read_header))
+                    'SID: {} variable \'{}\' does not exist.'.format(row['sid'], read_header))
             else:
                 # Changed to allow arbitrary values to be used.
                 # TODO - Maybe use '#' before var to indicate lookup.
