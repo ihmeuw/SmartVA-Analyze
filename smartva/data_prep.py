@@ -50,7 +50,7 @@ class DataPrep(Prep):
         return os.path.join(self.input_dir_path, template.format(age_group))
 
     def output_file_path(self, age_group=None, filename_template=None):
-        template = filename_template or self.INPUT_FILENAME_TEMPLATE
+        template = filename_template or self.OUTPUT_FILENAME_TEMPLATE
         age_group = age_group or self.AGE_GROUP
         return os.path.join(self.output_dir_path, template.format(age_group))
 
