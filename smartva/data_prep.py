@@ -1,3 +1,4 @@
+import abc
 import csv
 import os
 
@@ -11,6 +12,8 @@ class AbortException(Exception):
 
 
 class Prep(object):
+    __metaclass__ = abc.ABCMeta
+
     INPUT_FILENAME_TEMPLATE = ''
     OUTPUT_FILENAME_TEMPLATE = ''
 
@@ -33,23 +36,43 @@ class Prep(object):
 
 
 class DataPrep(Prep):
+    __metaclass__ = abc.ABCMeta
+
     AGE_GROUP = None
 
     def __init__(self, working_dir_path, short_form):
         super(DataPrep, self).__init__(working_dir_path)
         self.short_form = short_form
 
-    def input_file_path(self, age_group=None):
+    def input_file_path(self, age_group=None, filename_template=None):
+        template = filename_template or self.INPUT_FILENAME_TEMPLATE
         age_group = age_group or self.AGE_GROUP
-        return os.path.join(self.input_dir_path, self.INPUT_FILENAME_TEMPLATE.format(age_group))
+        return os.path.join(self.input_dir_path, template.format(age_group))
 
-    def output_file_path(self, age_group=None):
+    def output_file_path(self, age_group=None, filename_template=None):
+        template = filename_template or self.INPUT_FILENAME_TEMPLATE
         age_group = age_group or self.AGE_GROUP
-        return os.path.join(self.output_dir_path, self.OUTPUT_FILENAME_TEMPLATE.format(age_group))
+        return os.path.join(self.output_dir_path, template.format(age_group))
 
     @property
     def intermediate_dir(self):
         return intermediate_dir_path(self.working_dir_path)
+
+    def pre_processing_step(self, row):
+        """Pipeline specific pre-processing actions.
+
+        Args:
+            row: Row of VA data.
+        """
+        pass
+
+    def post_processing_step(self, row):
+        """Pipeline specific post-processing actions.
+
+        Args:
+            row: Row of VA data.
+        """
+        pass
 
     @staticmethod
     def rename_vars(row, conversion_map):

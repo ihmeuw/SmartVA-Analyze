@@ -164,24 +164,6 @@ class PreSymptomPrep(DataPrep):
 
         return True
 
-    @abc.abstractmethod
-    def pre_processing_step(self, row):
-        """Pipeline specific pre-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
-    @abc.abstractmethod
-    def post_processing_step(self, row):
-        """Pipeline specific post-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
     @staticmethod
     def verify_answers_for_row(row, valid_range_data):
         """Verify answers in a row of data are valid. Log a warning when an invalid answer has been identified.

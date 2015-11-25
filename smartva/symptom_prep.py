@@ -81,6 +81,8 @@ class SymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
+            self.pre_processing_step(row)
+
             self.copy_variables(row, self.data_module.COPY_VARS)
 
             # Compute age quartiles.
@@ -95,6 +97,8 @@ class SymptomPrep(DataPrep):
 
             # Ensure all binary variables actually ARE 0 or 1:
             self.post_process_binary_variables(row, self.data_module.BINARY_VARS)
+
+            self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
 
