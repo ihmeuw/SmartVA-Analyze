@@ -1,4 +1,4 @@
-from smartva import child_pre_symptom_data
+from smartva.data import child_pre_symptom_data
 from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.utils.conversion_utils import value_or_default
 

@@ -1,4 +1,6 @@
-from smartva.adult_pre_symptom_data import AGE_GROUP
+from smartva.data.common_data import ADULT
+
+AGE_GROUP = ADULT
 
 CUTOFF_POS = 0.89
 

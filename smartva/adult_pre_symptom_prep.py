@@ -1,4 +1,4 @@
-from smartva import adult_pre_symptom_data
+from smartva.data import adult_pre_symptom_data
 from smartva.pre_symptom_prep import PreSymptomPrep
 
 

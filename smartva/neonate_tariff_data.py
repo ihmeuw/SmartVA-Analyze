@@ -1,6 +1,7 @@
 from smartva.data.common_data import NEONATE
 
 AGE_GROUP = NEONATE
+
 CUTOFF_POS = 0.91
 
 UNIFORM_LIST_POS = 0.35
