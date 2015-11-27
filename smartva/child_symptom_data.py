@@ -1,6 +1,7 @@
-from smartva.common_data import CHILD as AGE_GROUP
-from smartva.freetext_vars import CHILD_FREE_TEXT as FREE_TEXT_VARIABLES
+from smartva.data.common_data import CHILD
+from smartva.data.freetext_vars import CHILD_FREE_TEXT as FREE_TEXT_VARIABLES
 
+AGE_GROUP = CHILD
 KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
 
 GENERATED_VARS_DATA = {

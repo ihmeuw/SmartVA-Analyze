@@ -1,6 +1,6 @@
-from smartva.common_data import ADULT
-from smartva.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
-from smartva.word_conversions import ADULT_WORDS_TO_VARS
+from smartva.data.common_data import ADULT
+from smartva.data.default_fill_data import ADULT_DEFAULT_FILL, ADULT_DEFAULT_FILL_SHORT
+from smartva.data.word_conversions import ADULT_WORDS_TO_VARS
 
 AGE_GROUP = ADULT
 DEFAULT_FILL = ADULT_DEFAULT_FILL

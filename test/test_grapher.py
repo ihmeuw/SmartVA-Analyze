@@ -1,6 +1,7 @@
 from collections import defaultdict, OrderedDict
+
 from smartva import cause_grapher
-from smartva.common_data import MALE, FEMALE
+from smartva.data.common_data import MALE, FEMALE
 
 
 def test_get_default_dict():

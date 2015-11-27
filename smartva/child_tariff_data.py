@@ -1,5 +1,6 @@
-from smartva.common_data import CHILD as AGE_GROUP
+from smartva.data.common_data import CHILD
 
+AGE_GROUP = CHILD
 CUTOFF_POS = 0.95
 
 UNIFORM_LIST_POS = 0.17

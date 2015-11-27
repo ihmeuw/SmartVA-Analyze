@@ -5,7 +5,7 @@ from collections import OrderedDict, defaultdict
 import matplotlib.pyplot as plt
 import numpy as np
 
-from smartva.common_data import ADULT, CHILD, NEONATE
+from smartva.data.common_data import ADULT, CHILD, NEONATE
 from smartva.grapher_prep import GrapherPrep
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier

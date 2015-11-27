@@ -2,9 +2,9 @@
 
 import io
 import logging
-import re
 import os
 import platform
+import re
 import subprocess
 import threading
 import time
@@ -16,12 +16,11 @@ from smartva import config
 from smartva import prog_name
 from smartva import utils
 from smartva import workerthread
-from smartva.countries import COUNTRY_DEFAULT, COUNTRIES
-from smartva.utils.adaptive_eta import AdaptiveETA
+from smartva.data.countries import COUNTRY_DEFAULT, COUNTRIES
 from smartva.gui.prompting_combo_box import PromptingComboBox
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
-
+from smartva.utils.adaptive_eta import AdaptiveETA
 
 # TODO: pull out all strings
 # TODO: why is the first button selected

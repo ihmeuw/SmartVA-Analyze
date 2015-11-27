@@ -1,6 +1,7 @@
-from smartva.freetext_vars import NEONATE_FREE_TEXT as FREE_TEXT_VARIABLES
-from smartva.common_data import NEONATE as AGE_GROUP
+from smartva.data.common_data import NEONATE
+from smartva.data.freetext_vars import NEONATE_FREE_TEXT as FREE_TEXT_VARIABLES
 
+AGE_GROUP = NEONATE
 KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
 
 GENERATED_VARS_DATA = {

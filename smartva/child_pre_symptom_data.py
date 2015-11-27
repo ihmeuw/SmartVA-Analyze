@@ -1,6 +1,6 @@
-from smartva.common_data import CHILD, MALE, FEMALE
-from smartva.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
-from smartva.word_conversions import CHILD_WORDS_TO_VARS
+from smartva.data.common_data import CHILD, MALE, FEMALE
+from smartva.data.default_fill_data import CHILD_DEFAULT_FILL, CHILD_DEFAULT_FILL_SHORT
+from smartva.data.word_conversions import CHILD_WORDS_TO_VARS
 
 AGE_GROUP = CHILD
 DEFAULT_FILL = CHILD_DEFAULT_FILL

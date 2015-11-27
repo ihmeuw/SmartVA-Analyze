@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 
-from smartva.common_data import MALE, FEMALE, ADULT, CHILD, NEONATE
+from smartva.data.common_data import MALE, FEMALE, ADULT, CHILD, NEONATE
 from smartva.grapher_prep import GrapherPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier

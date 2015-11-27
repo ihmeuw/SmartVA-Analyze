@@ -1,6 +1,6 @@
 import re
 
-from smartva.common_data import (
+from smartva.data.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,

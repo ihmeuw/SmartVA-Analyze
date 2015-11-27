@@ -1,13 +1,13 @@
-import click
 import logging
 import signal
 import sys
 
-from progressbar import ProgressBar, Bar, Percentage, ETA
+import click
+from progressbar import ProgressBar, Bar, ETA
 
 from smartva import prog_name, version
 from smartva import workerthread
-from smartva.countries import COUNTRIES, COUNTRY_DEFAULT
+from smartva.data.countries import COUNTRIES, COUNTRY_DEFAULT
 from smartva.loggers import status_logger
 from smartva.utils import status_notifier
 

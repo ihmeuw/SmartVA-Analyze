@@ -1,8 +1,8 @@
-from smartva.common_data import NEONATE, MALE, FEMALE
-from smartva.default_fill_data import NEONATE_DEFAULT_FILL, NEONATE_DEFAULT_FILL_SHORT
-from smartva.word_conversions import NEONATE_WORDS_TO_VARS
-
 from smartva.child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS, KEEP_PATTERN, GENERATED_VARS_DATA
+
+from smartva.data.common_data import NEONATE, MALE, FEMALE
+from smartva.data.default_fill_data import NEONATE_DEFAULT_FILL, NEONATE_DEFAULT_FILL_SHORT
+from smartva.data.word_conversions import NEONATE_WORDS_TO_VARS
 
 AGE_GROUP = NEONATE
 DEFAULT_FILL = NEONATE_DEFAULT_FILL
