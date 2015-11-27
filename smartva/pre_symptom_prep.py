@@ -232,8 +232,10 @@ class PreSymptomPrep(DataPrep):
             try:
                 code_value = value_or_default(row[code_var])
                 length_value = value_or_default(row[length_var])
-            except KeyError:
+            except KeyError as e:
                 # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_duration_vars'
+                                     .format(row['sid'], e.message))
                 continue
 
             if var in special_case_vars and row[length_var] == '':
@@ -287,8 +289,10 @@ class PreSymptomPrep(DataPrep):
             try:
                 if row[variable] == '':
                     row[variable] = value
-            except KeyError:
-                # Variable does not exist in row.
+            except KeyError as e:
+                # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. fill_missing_data'
+                                     .format(row['sid'], e.message))
                 continue
 
     @staticmethod

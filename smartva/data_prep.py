@@ -123,8 +123,11 @@ class DataPrep(Prep):
                 convert_binary_variable(row, data_header, data_map)
             except ConversionError as e:
                 warning_logger.debug(e.message)
-            except KeyError:
+                continue
+            except KeyError as e:
                 # Variable does not exist. The new published form does not contain all of the previous variables.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. process_binary_vars'
+                                     .format(row['sid'], e.message))
                 continue
 
     @staticmethod
