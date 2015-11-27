@@ -98,11 +98,11 @@ class TariffPrep(DataPrep):
 
     @property
     def va_validated_filename(self):
-        return os.path.join(config.basedir, 'validated-{:s}.csv'.format(self.AGE_GROUP))
+        return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
     def undetermined_matrix_filename(self):
-        return os.path.join(config.basedir, '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
+        return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
 
     @property
     def external_ranks_filename(self):
@@ -182,7 +182,7 @@ class TariffPrep(DataPrep):
 
     def get_cause40s(self, drop_headers):
         cause40s = {}
-        with open(os.path.join(config.basedir, 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
+        with open(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
             reader = csv.DictReader(f)
 
             for row in reader:
