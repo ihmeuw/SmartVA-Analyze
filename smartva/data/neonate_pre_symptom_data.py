@@ -1,4 +1,4 @@
-from smartva.child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS, KEEP_PATTERN, GENERATED_VARS_DATA
+from smartva.data.child_pre_symptom_data import WEIGHT_VARS, DATE_VARS, EXAM_DATE_VARS, KEEP_PATTERN, GENERATED_VARS_DATA
 
 from smartva.data.common_data import NEONATE, MALE, FEMALE
 from smartva.data.default_fill_data import NEONATE_DEFAULT_FILL, NEONATE_DEFAULT_FILL_SHORT

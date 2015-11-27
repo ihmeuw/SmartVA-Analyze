@@ -1,4 +1,4 @@
-from smartva import child_symptom_data
+from smartva.data import child_symptom_data
 from smartva.symptom_prep import SymptomPrep
 
 
