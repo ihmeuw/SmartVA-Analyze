@@ -1,4 +1,4 @@
-from smartva import neonate_tariff_data
+from smartva.data import neonate_tariff_data
 from smartva.tariff_prep import TariffPrep
 
 

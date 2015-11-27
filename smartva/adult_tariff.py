@@ -1,4 +1,4 @@
-from smartva import adult_tariff_data
+from smartva.data import adult_tariff_data
 from smartva.tariff_prep import TariffPrep
 
 
