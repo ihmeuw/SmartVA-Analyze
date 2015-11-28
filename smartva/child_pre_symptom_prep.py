@@ -50,4 +50,18 @@ class ChildPreSymptomPrep(PreSymptomPrep):
 
     def post_processing_step(self, row):
         self.fix_rash_length(row)
+        self.fix_rash_location(row)
         self.process_weight_sd_vars(row, self.data_module.EXAM_DATE_VARS, self.data_module.WEIGHT_SD_DATA)
+
+    def fix_rash_location(self, row):
+        """Only rashes which are located on the face are relevant. Filter out other values.
+
+        Args:
+            row: Row of VA data.
+        """
+        try:
+            for var in ['c4_31_1', 'c4_32']:
+                row[var] = int('1' in str(row[var]).split())
+        except KeyError as e:
+            warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_location'
+                                 .format(row['sid'], e.message))
