@@ -118,7 +118,11 @@ class SymptomPrep(DataPrep):
             copy_variables_map (dict): Read and write answer variables.
         """
         for read_header, write_header in copy_variables_map.items():
-            row[write_header] = row[read_header]
+            try:
+                row[write_header] = row[read_header]
+            except KeyError as e:
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. copy_variables'
+                                     .format(row['sid'], e.message))
 
     @staticmethod
     def process_cutoff_data(row, cutoff_data_map):
@@ -135,6 +139,9 @@ class SymptomPrep(DataPrep):
                 row[read_header] = int(float(row[read_header]) >= cutoff_data)
             except ValueError:
                 row[read_header] = 0
+            except KeyError as e:
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. process_cutoff_data'
+                                     .format(row['sid'], e.message))
 
     @staticmethod
     def process_injury_data(row, injury_variable_map):
