@@ -164,8 +164,7 @@ class PreSymptomPrep(DataPrep):
 
         return True
 
-    @staticmethod
-    def verify_answers_for_row(row, valid_range_data):
+    def verify_answers_for_row(self, row, valid_range_data):
         """Verify answers in a row of data are valid. Log a warning when an invalid answer has been identified.
 
         Args:
@@ -187,8 +186,7 @@ class PreSymptomPrep(DataPrep):
                     except ValueError:
                         continue
 
-    @staticmethod
-    def recode_answers(row, consolidation_map):
+    def recode_answers(self, row, consolidation_map):
         """Recode answers from data answers into new variables.
 
         Consolidation map dictionary format:
@@ -218,8 +216,7 @@ class PreSymptomPrep(DataPrep):
                     else:
                         row[write_header] = data_map[value]
 
-    @staticmethod
-    def calculate_duration_vars(row, duration_vars, special_case_vars):
+    def calculate_duration_vars(self, row, duration_vars, special_case_vars):
         """Calculate duration variables in days.
 
         Args:
@@ -243,8 +240,7 @@ class PreSymptomPrep(DataPrep):
             else:
                 row[var] = TIME_FACTORS.get(code_value, 0) * length_value
 
-    @staticmethod
-    def convert_free_text_words(row, input_word_list, word_map):
+    def convert_free_text_words(self, row, input_word_list, word_map):
         """Process free text word lists into binary variables.
 
         Args:
@@ -263,8 +259,7 @@ class PreSymptomPrep(DataPrep):
                 warning_logger.warning('SID: {} variable {} not found for valid word "{}".'
                                        .format(row['sid'], word_map[stem(word)], word))
 
-    @staticmethod
-    def convert_free_text_vars(row, data_headers, word_map):
+    def convert_free_text_vars(self, row, data_headers, word_map):
         """Process all free text data from a list of data headers into binary variables.
 
         Args:
@@ -275,10 +270,9 @@ class PreSymptomPrep(DataPrep):
         for data_header in data_headers:
             if row[data_header]:
                 word_list = row[data_header].split(' ')
-                PreSymptomPrep.convert_free_text_words(row, word_list, word_map)
+                self.convert_free_text_words(row, word_list, word_map)
 
-    @staticmethod
-    def fill_missing_data(row, default_fill):
+    def fill_missing_data(self, row, default_fill):
         """Fill missing data with default fill values.
 
         Args:
@@ -295,8 +289,7 @@ class PreSymptomPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
 
-    @staticmethod
-    def process_age_vars(row):
+    def process_age_vars(self, row):
         """Calculate and store age in years, months, and days.
 
         Args:
@@ -310,8 +303,7 @@ class PreSymptomPrep(DataPrep):
             row['{:s}b'.format(age_var)] = (12.0 * years) + months + (days / 30.0)
             row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
 
-    @staticmethod
-    def validate_weight_vars(row, weight_vars):
+    def validate_weight_vars(self, row, weight_vars):
         """Replace invalid weight data with a default value.
 
         Args:
@@ -321,8 +313,7 @@ class PreSymptomPrep(DataPrep):
         for var in weight_vars:
             row[var] = value_or_default(row[var], int, [0, 9999], '')
 
-    @staticmethod
-    def validate_date_vars(row, date_vars):
+    def validate_date_vars(self, row, date_vars):
         """Try to get an approximate date by replacing invalid values with defaults.
 
         Args:
@@ -343,8 +334,7 @@ class PreSymptomPrep(DataPrep):
                 if row[var_name] in invalid_data:
                     row[var_name] = default
 
-    @staticmethod
-    def process_weight_sd_vars(row, exam_date_vars, weight_sd_data):
+    def process_weight_sd_vars(self, row, exam_date_vars, weight_sd_data):
         # Get most recent weight from medical records
         """Calculate and store SD value for weight at most recent exam.
 
@@ -388,3 +378,12 @@ class PreSymptomPrep(DataPrep):
                             for sd_var, sd_data in weight_sd_data.items():
                                 row[sd_var] = int(
                                     weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
+
+    def fix_rash_length(self, row):
+        """Only consider values in days for child rash data.
+
+        Args:
+            row: Row of VA data.
+        """
+        if int(row['c4_33a']) != 4:
+            row['c4_33b'] = 0

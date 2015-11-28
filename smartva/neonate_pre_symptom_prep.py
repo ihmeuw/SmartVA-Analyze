@@ -7,7 +7,7 @@ class NeonatePreSymptomPrep(PreSymptomPrep):
     """Process Neonate VA Pre-Symptom data."""
 
     def __init__(self, working_dir_path, short_form):
-        PreSymptomPrep.__init__(self, working_dir_path, short_form)
+        super(NeonatePreSymptomPrep, self).__init__(working_dir_path, short_form)
 
         self.data_module = neonate_pre_symptom_data
 
@@ -41,4 +41,5 @@ class NeonatePreSymptomPrep(PreSymptomPrep):
             row['c1_26'] = 1
 
     def post_processing_step(self, row):
+        self.fix_rash_length(row)
         self.process_weight_sd_vars(row, self.data_module.EXAM_DATE_VARS, self.data_module.WEIGHT_SD_DATA)

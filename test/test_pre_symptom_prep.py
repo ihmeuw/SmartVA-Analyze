@@ -1,8 +1,15 @@
+import pytest
+
 from smartva.pre_symptom_prep import PreSymptomPrep
 
 
+@pytest.fixture
+def prep():
+    return PreSymptomPrep('', True)
+
+
 class TestPreSymptomPrep(object):
-    def test_rename_odk_headers(self):
+    def test_rename_odk_headers(self, prep):
         headers = ['test1', 'test2', 'test3']
 
         conversion_map = {
@@ -10,19 +17,19 @@ class TestPreSymptomPrep(object):
             'test2': 't1_02',
         }
 
-        PreSymptomPrep.rename_headers(headers, conversion_map)
+        prep.rename_headers(headers, conversion_map)
 
         assert headers == ['t1_01', 't1_02', 'test3']
 
-    def test_drop_from_list(self):
+    def test_drop_from_list(self, prep):
         headers = ['pre_test1', 'test1', 'test2', 'test3', 'post_test1']
         drop_index_list = [1, 2, 3]
 
-        headers = PreSymptomPrep.drop_from_list(headers, drop_index_list)
+        headers = prep.drop_from_list(headers, drop_index_list)
 
         assert headers == ['pre_test1', 'post_test1']
 
-    def test_verify_answers_for_row(self):
+    def test_verify_answers_for_row(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3']
         row = dict(zip(headers, ['0', 1, 2, 2015]))
 
@@ -32,14 +39,14 @@ class TestPreSymptomPrep(object):
             'test3': range(1900, 2016) + [9999]
         }
 
-        PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
+        prep.verify_answers_for_row(row, valid_range_data)
 
         # TODO - Break this out into own test and test warning logger.
         valid_range_data['test1'] = [0]
 
-        PreSymptomPrep.verify_answers_for_row(row, valid_range_data)
+        prep.verify_answers_for_row(row, valid_range_data)
 
-    def test_convert_free_text_words(self):
+    def test_convert_free_text_words(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3']
         row = dict(zip(headers, ['0', 0, 0, 0]))
 
@@ -52,11 +59,11 @@ class TestPreSymptomPrep(object):
             'watermelon': 'test4'
         }
 
-        PreSymptomPrep.convert_free_text_words(row, word_list, word_map)
+        prep.convert_free_text_words(row, word_list, word_map)
 
         assert row == dict(zip(headers + ['test4'], ['0', 1, 0, 1, 1]))
 
-    def test_convert_free_text_headers(self):
+    def test_convert_free_text_headers(self, prep):
         headers = ['sid', 'test_words', 'test1', 'test2', 'test3']
         row = dict(zip(headers, ['0', 'pencil eraser watermelon', 0, 0, 0]))
 
@@ -69,11 +76,11 @@ class TestPreSymptomPrep(object):
             'watermelon': 'test4'
         }
 
-        PreSymptomPrep.convert_free_text_vars(row, data_headers, word_map)
+        prep.convert_free_text_vars(row, data_headers, word_map)
 
         assert row == dict(zip(headers + ['test4'], ['0', 'pencil eraser watermelon', 1, 0, 1, 1]))
 
-    def test_consolidate_answers(self):
+    def test_consolidate_answers(self, prep):
         headers = ['sid', 'test_a', 'test_b', 'test1', 'test2', 'test3']
         row = dict(zip(headers, ['0', 13, 0, 1, 2, 3]))
 
@@ -85,11 +92,11 @@ class TestPreSymptomPrep(object):
             }
         }
 
-        PreSymptomPrep.recode_answers(row, consolidation_map)
+        prep.recode_answers(row, consolidation_map)
 
         assert row == dict(zip(headers, ['0', 13, 3, 1, 2, 3]))
 
-    def test_fill_missing_data(self):
+    def test_fill_missing_data(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, ['0', '', '', 3, 4]))
 
@@ -99,11 +106,11 @@ class TestPreSymptomPrep(object):
             'test3': 0
         }
 
-        PreSymptomPrep.fill_missing_data(row, default_fill)
+        prep.fill_missing_data(row, default_fill)
 
         assert row == dict(zip(headers, ['0', 1, 9, 3, 4]))
 
-    def test_calculate_duration_variables(self):
+    def test_calculate_duration_variables(self, prep):
         headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b']
         row = dict(zip(headers, ['0', '', 1, 1, '', '', '']))
 
@@ -112,6 +119,6 @@ class TestPreSymptomPrep(object):
             'test2': 999
         }
 
-        PreSymptomPrep.calculate_duration_vars(row, duration_vars, special_case_vars)
+        prep.calculate_duration_vars(row, duration_vars, special_case_vars)
 
         assert row == dict(zip(headers, ['0', 365.0, 1, 1, 999, '', '']))
