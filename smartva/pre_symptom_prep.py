@@ -268,9 +268,14 @@ class PreSymptomPrep(DataPrep):
             word_map (dict): Dictionary of words and variables.
         """
         for data_header in data_headers:
-            if row[data_header]:
-                word_list = row[data_header].split(' ')
-                self.convert_free_text_words(row, word_list, word_map)
+            try:
+                if row[data_header]:
+                    word_list = row[data_header].split(' ')
+                    self.convert_free_text_words(row, word_list, word_map)
+            except KeyError as e:
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. convert_free_text_vars'
+                                     .format(row['sid'], e.message))
+                continue
 
     def fill_missing_data(self, row, default_fill):
         """Fill missing data with default fill values.
@@ -296,12 +301,17 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
         """
         for age_var in AGE_VARS:
-            years = value_or_default(row['{:s}a'.format(age_var)], float, [999, 9999])
-            months = value_or_default(row['{:s}b'.format(age_var)], float, 99)
-            days = value_or_default(row['{:s}c'.format(age_var)], float, 99)
-            row['{:s}a'.format(age_var)] = years + (months / 12.0) + (days / 365.0)
-            row['{:s}b'.format(age_var)] = (12.0 * years) + months + (days / 30.0)
-            row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
+            try:
+                years = value_or_default(row['{:s}a'.format(age_var)], float, [999, 9999])
+                months = value_or_default(row['{:s}b'.format(age_var)], float, 99)
+                days = value_or_default(row['{:s}c'.format(age_var)], float, 99)
+                row['{:s}a'.format(age_var)] = years + (months / 12.0) + (days / 365.0)
+                row['{:s}b'.format(age_var)] = (12.0 * years) + months + (days / 30.0)
+                row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
+            except KeyError as e:
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. process_age_vars'
+                                     .format(row['sid'], e.message))
+                continue
 
     def validate_weight_vars(self, row, weight_vars):
         """Replace invalid weight data with a default value.
@@ -311,7 +321,12 @@ class PreSymptomPrep(DataPrep):
             weight_vars (list): Answers which contain weight data.
         """
         for var in weight_vars:
-            row[var] = value_or_default(row[var], int, [0, 9999], '')
+            try:
+                row[var] = value_or_default(row[var], int, [0, 9999], '')
+            except KeyError as e:
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_weight_vars'
+                                     .format(row['sid'], e.message))
+                continue
 
     def validate_date_vars(self, row, date_vars):
         """Try to get an approximate date by replacing invalid values with defaults.
@@ -331,8 +346,13 @@ class PreSymptomPrep(DataPrep):
             for val, val_data in date_invalid.items():
                 var_name = var + val
                 invalid_data, default = val_data
-                if row[var_name] in invalid_data:
-                    row[var_name] = default
+                try:
+                    if row[var_name] in invalid_data:
+                        row[var_name] = default
+                except KeyError as e:
+                    warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_date_vars'
+                                         .format(row['sid'], e.message))
+                    continue
 
     def process_weight_sd_vars(self, row, exam_date_vars, weight_sd_data):
         # Get most recent weight from medical records
@@ -348,7 +368,7 @@ class PreSymptomPrep(DataPrep):
             exam_date_vars (dict): Answers which contain exam dates.
             weight_sd_data (dict): Map of variable to store and applicable SD data.
         """
-        if int(row['{:s}y'.format(DOB_VAR)]):
+        if int(row.get('{:s}y'.format(DOB_VAR), False)):
             try:
                 dob = make_date(row, DOB_VAR)
             except ValueError:
@@ -385,5 +405,11 @@ class PreSymptomPrep(DataPrep):
         Args:
             row: Row of VA data.
         """
-        if int(row['c4_33a']) != 4:
-            row['c4_33b'] = 0
+        try:
+            if int(row['c4_33a']) != 4:
+                row['c4_33b'] = 0
+        except ValueError:
+            pass
+        except KeyError as e:
+            warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_length'
+                                 .format(row['sid'], e.message))

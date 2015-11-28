@@ -1,4 +1,5 @@
 from smartva.data import child_pre_symptom_data
+from smartva.loggers.application import warning_logger
 from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.utils.conversion_utils import value_or_default
 
@@ -25,8 +26,12 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         Args:
             row: Row of VA data.
         """
-        if row['child_4_50b'] == '':
-            row['child_4_50b'] = 1000
+        try:
+            if row['child_4_50b'] == '':
+                row['child_4_50b'] = 1000
+        except KeyError as e:
+            warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_child_injury_length'
+                                 .format(row['sid'], e.message))
 
     def fix_agedays(self, row):
         """Fix child agedays.  If it's blank give it a 0, if it's not, give it a 4.
@@ -34,11 +39,15 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         Args:
             row (dict): Row of VA data.
         """
-        value = value_or_default(row['c1_25b'], int, default=None)
-        if value is None:
-            row['c1_25a'] = 0
-        else:
-            row['c1_25a'] = 4
+        try:
+            value = value_or_default(row['c1_25b'], int, default=None)
+            if value is None:
+                row['c1_25a'] = 0
+            else:
+                row['c1_25a'] = 4
+        except KeyError as e:
+            warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_agedays'
+                                 .format(row['sid'], e.message))
 
     def calculate_age_at_death_value(self, row):
         """Write age at death value to the appropriate variable.
