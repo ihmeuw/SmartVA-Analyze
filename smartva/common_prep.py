@@ -5,8 +5,8 @@ from smartva.data.common_data import (
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
     AGE_VARS,
-    ADULT_RASH_DATA,
-    CHILD_WEIGHT_CONVERSION_DATA,
+    RASH_DATA,
+    WEIGHT_CONVERSION_DATA,
     FREE_TEXT_VARS,
     WORD_SUBS,
     ADULT, CHILD, NEONATE,
@@ -29,9 +29,7 @@ def int_value(x):
 
 
 class CommonPrep(DataPrep):
-    """
-    This file cleans up input and converts from ODK collected data to VA variables.
-    """
+    """This file cleans up input and converts from ODK collected data to VA variables."""
 
     def __init__(self, working_dir_path, short_form):
         super(CommonPrep, self).__init__(working_dir_path, short_form)
@@ -49,11 +47,10 @@ class CommonPrep(DataPrep):
         }
 
     def run(self):
-        """
-        Perform initial processing step for preparing input data.
+        """Perform initial processing step for preparing input data.
 
-        :return: True if processing was successful, False if aborted.
-        :rtype : bool
+        Returns:
+            tuple(bool): Tuple of bool values if VAs are present for Adult, Child, and Neonate.
         """
         super(CommonPrep, self).run()
 
@@ -83,9 +80,9 @@ class CommonPrep(DataPrep):
 
             self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
-            self.convert_rash_data(row, ADULT_RASH_DATA)
+            self.convert_rash_data(row, RASH_DATA)
 
-            self.convert_weight_data(row, CHILD_WEIGHT_CONVERSION_DATA)
+            self.convert_weight_data(row, WEIGHT_CONVERSION_DATA)
 
             self.convert_free_text(row, FREE_TEXT_VARS, WORD_SUBS)
 
@@ -99,11 +96,14 @@ class CommonPrep(DataPrep):
 
     @staticmethod
     def convert_cell_to_int(row, conversion_data):
-        """
-        Convert specified cells to int value or 0 if cell is empty.
+        """Convert specified cells to int value or 0 if cell is empty.
 
-        :param row: Data from a single report.
-        :param conversion_data: Headers of cells to convert.
+        Conversion data format:
+            [quoted list of variable names]
+
+        Args:
+            row (dict): Row of VA data.
+            conversion_data (list): Variable names of cells to convert.
         """
         # TODO: Eliminate this step in favor more robust future cell processing.
         for header in conversion_data:
@@ -111,11 +111,26 @@ class CommonPrep(DataPrep):
 
     @staticmethod
     def convert_rash_data(row, conversion_data):
-        """
-        Convert rash data into variables based on multiple choice questions.
+        """Specialized method to convert rash data into variables based on multiple choice questions.
+        Split and store values from a space delimited list of integers in intermediate variables.
+        If the three locations [1 (face), 2 (trunk), 3 (extremities)] values are specified, change answer to 4 (Everywhere).
 
-        :param row: Data from a single report.
-        :param conversion_data: Data structure with header and rash specific variable mapping.
+        Conversion data format:
+            {
+                '#read_var': {
+                    'vars': [quoted list of write vars],
+                    'locations': {
+                        'loc1': 1,
+                        'loc2': 2,
+                        'loc3': 3,
+                    },
+                    'everywhere': 4
+                }
+            }
+
+        Args:
+            row (dict): Row of VA data.
+            conversion_data (dict): Data structure with header and rash specific variable mapping.
         """
         for variable, mapping in conversion_data.items():
             try:
@@ -129,27 +144,38 @@ class CommonPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
             else:
-                if set(mapping['list']).issubset(set(rash_values)):
+                if set(mapping['locations'].values()).issubset(set(rash_values)):
                     # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                    rash_values = [mapping['value']]
+                    rash_values = [mapping['everywhere']]
                 # set adult rash to the other selected values
-                for rash_index in range(min(len(rash_values), len(mapping['headers']))):
-                    row[mapping['headers'][rash_index]] = rash_values[rash_index]
+                for index, value in enumerate(rash_values):
+                    row[mapping['vars'][index]] = value
 
     @staticmethod
     def convert_weight_data(row, conversion_data):
-        """
-        Convert weights from kg to g.
+        """Convert weights from kg to g.
 
-        :param row: Data from a single report.
-        :param conversion_data: Data structure with header and weight variable mapping.
+        Conversion data format:
+            {
+                'units var': {
+                    1: 'grams var',
+                    2: 'kilograms var'
+                },
+            }
+
+        Args:
+            row (dict): Row of VA data.
+            conversion_data (dict): Data structure with header and weight variable mapping.
         """
         for variable, mapping in conversion_data.items():
             try:
                 units = int(row[variable])
             except ValueError:
                 # No weight data. Skip.
-                pass
+                continue
+            except KeyError:
+                # Variable does not exist.
+                continue
             else:
                 if units == 2:
                     weight = float(row[mapping[units]]) * 1000
@@ -158,12 +184,12 @@ class CommonPrep(DataPrep):
 
     @staticmethod
     def convert_free_text(row, free_text_vars, word_subs):
-        """
-        Substitute words in the word subs list (mostly misspellings, etc..)
+        """Substitute words in the word subs list (mostly misspellings, etc..)
 
-        :param row: Data from a single report.
-        :param free_text_vars: List of headers to process.
-        :param word_subs: Dictionary of substitution words.
+        Args:
+            row (dict): Row of VA data.
+            free_text_vars (list): Variables to process.
+            word_subs (dict): Dictionary of substitution words.
         """
         # warning_logger.debug('Free text column "{}" does not exist.'.format(question))
         for variable in free_text_vars:
@@ -179,12 +205,13 @@ class CommonPrep(DataPrep):
 
     @staticmethod
     def get_age_data(row):
-        """
-        Return age data in years, months, days, and module type.
+        """Return age data in years, months, days, and module type.
 
-        :param row: Data from a single report.
-        :return: Age data in years, months, days, and module type.
-        :rtype : dict
+        Args:
+            row (dict): Row of VA data.
+
+        Returns:
+            dict: Age data in years, months, days, and module type.
         """
         age_data = {}
         for age_group, variable in AGE_VARS.items():
@@ -194,21 +221,22 @@ class CommonPrep(DataPrep):
 
     @staticmethod
     def get_matrix(matrix_data, years=0, months=0, days=0, module=0):
-        """
-        Returns the appropriate age range matrix for extending.
+        """Returns the appropriate age range matrix for extending.
 
         Adult = 12 years or older
         Child = 29 days to 12 years
         Neonate = 28 days or younger
         Module is used if age data are not used.
 
-        :param matrix_data: Dictionary of age range matrices.
-        :param years: Age in years
-        :param months: Age in months
-        :param days: Age in days
-        :param module: Module, if specified
-        :return: Specific age range matrix.
-        :rtype : list
+        Args:
+            matrix_data (dict): Dictionary of age range matrices.
+            years (int): Age in years.
+            months (int): Age in months.
+            days (int): Age in days.
+            module (int): Module, if specified.
+
+        Returns:
+            list: Specific age range matrix.
         """
         if years >= 12 or (not years and not months and not days and module == 3):
             return matrix_data[ADULT]
@@ -217,19 +245,19 @@ class CommonPrep(DataPrep):
         return matrix_data[NEONATE]
 
     def save_row(self, row):
-        """
-        Save row of data in appropriate age matrix.
+        """Save row of data in appropriate age matrix.
 
-        :param row: Data from a single report.
+        Args:
+            row (dict): Row of VA data.
         """
         self.get_matrix(self._matrix_data, **self.get_age_data(row)).extend([row])
 
     def write_data(self, headers, matrix_data):
-        """
-        Write intermediate prepped csv files.
+        """Write intermediate prepped csv files.
 
-        :param headers: Data headers.
-        :param matrix_data: Data from a all reports.
+        Args:
+            headers (list): Data headers.
+            matrix_data (dict): Data from a all reports.
         """
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 

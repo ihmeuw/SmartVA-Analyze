@@ -49,9 +49,13 @@ class TestCommonPrep(object):
 
         conversion_data = {
             'test': {
-                'headers': ['test1', 'test2', 'test3'],
-                'list': [1, 2, 3],
-                'value': 4
+                'vars': ['test1', 'test2', 'test3'],
+                'locations': {
+                    'one': 1,
+                    'two': 2,
+                    'three': 3
+                },
+                'everywhere': 4
             }
         }
 
@@ -65,9 +69,13 @@ class TestCommonPrep(object):
 
         conversion_data = {
             'test': {
-                'headers': ['test1', 'test2', 'test3'],
-                'list': [1, 2, 3],
-                'value': 4
+                'vars': ['test1', 'test2', 'test3'],
+                'locations': {
+                    'one': 1,
+                    'two': 2,
+                    'three': 3
+                },
+                'everywhere': 4
             }
         }
 

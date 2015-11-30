@@ -557,15 +557,19 @@ AGE_VARS = {
     'module': 'gen_5_4d'
 }
 
-ADULT_RASH_DATA = {
+RASH_DATA = {
     'adult_2_9': {
-        'headers': ['adultrash1', 'adultrash2', 'adultrash3'],
-        'list': [1, 2, 3],
-        'value': 4
+        'vars': ['adultrash1', 'adultrash2', 'adultrash3'],
+        'locations': {
+            'face': 1,
+            'trunk': 2,
+            'extremities': 3,
+        },
+        'everywhere': 4
     }
 }
 
-CHILD_WEIGHT_CONVERSION_DATA = {
+WEIGHT_CONVERSION_DATA = {
     'child_1_8': {
         1: 'child_1_8a',
         2: 'child_1_8b'
