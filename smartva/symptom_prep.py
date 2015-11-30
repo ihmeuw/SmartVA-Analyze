@@ -106,12 +106,13 @@ class SymptomPrep(DataPrep):
 
         return True
 
-    @staticmethod
-    def copy_variables(row, copy_variables_map):
+    def copy_variables(self, row, copy_variables_map):
         """Copy data from one variable to another.
 
         Copy Variables Map Format:
-            'read variable': 'write variable'
+            {
+                'read variable': 'write variable'
+            }
 
         Args:
             row (dict): Row of VA data.
@@ -124,12 +125,14 @@ class SymptomPrep(DataPrep):
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. copy_variables'
                                      .format(row['sid'], e.message))
 
-    @staticmethod
-    def process_cutoff_data(row, cutoff_data_map):
+    def process_cutoff_data(self, row, cutoff_data_map):
         """Change read variable to 1/0 if value is greater/less or equal to cutoff, respectively.
 
         Cutoff data map Format:
-            variable: cutoff
+            {
+                'read variable': cutoff value
+            }
+
         Args:
             row (dict): Row of VA data.
             cutoff_data_map (dict): Cutoff data in specified format.
@@ -143,12 +146,13 @@ class SymptomPrep(DataPrep):
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_cutoff_data'
                                      .format(row['sid'], e.message))
 
-    @staticmethod
-    def process_injury_data(row, injury_variable_map):
+    def process_injury_data(self, row, injury_variable_map):
         """Cut off injuries occurring more than 30 days from death, set variable to 0.
 
         Injury variable map Format:
-            'read variable': [list of injury variables]
+            {
+                'read variable': [quoted list of injury variables]
+            }
 
         Args:
             row (dict): Row of VA data.
@@ -166,8 +170,7 @@ class SymptomPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
 
-    @staticmethod
-    def post_process_binary_variables(row, binary_variables):
+    def post_process_binary_variables(self, row, binary_variables):
         """Ensure all binary variables are actually 1 or 0.
 
         Binary variables Format:
