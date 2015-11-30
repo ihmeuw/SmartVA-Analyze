@@ -94,8 +94,7 @@ class CommonPrep(DataPrep):
 
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
-    @staticmethod
-    def convert_cell_to_int(row, conversion_data):
+    def convert_cell_to_int(self, row, conversion_data):
         """Convert specified cells to int value or 0 if cell is empty.
 
         Conversion data format:
@@ -109,8 +108,7 @@ class CommonPrep(DataPrep):
         for header in conversion_data:
             row[header] = int_value(row[header])
 
-    @staticmethod
-    def convert_rash_data(row, conversion_data):
+    def convert_rash_data(self, row, conversion_data):
         """Specialized method to convert rash data into variables based on multiple choice questions.
         Split and store values from a space delimited list of integers in intermediate variables.
         If the three locations [1 (face), 2 (trunk), 3 (extremities)] values are specified, change answer to 4 (Everywhere).
@@ -151,8 +149,7 @@ class CommonPrep(DataPrep):
                 for index, value in enumerate(rash_values):
                     row[mapping['vars'][index]] = value
 
-    @staticmethod
-    def convert_weight_data(row, conversion_data):
+    def convert_weight_data(self, row, conversion_data):
         """Convert weights from kg to g.
 
         Conversion data format:
@@ -182,8 +179,7 @@ class CommonPrep(DataPrep):
                     row[variable] = 1
                     row[mapping[1]] = int(weight)
 
-    @staticmethod
-    def convert_free_text(row, free_text_vars, word_subs):
+    def convert_free_text(self, row, free_text_vars, word_subs):
         """Substitute words in the word subs list (mostly misspellings, etc..)
 
         Args:
@@ -203,8 +199,7 @@ class CommonPrep(DataPrep):
 
             row[variable] = ' '.join(new_answer_array)
 
-    @staticmethod
-    def get_age_data(row):
+    def get_age_data(self, row):
         """Return age data in years, months, days, and module type.
 
         Args:
@@ -219,8 +214,7 @@ class CommonPrep(DataPrep):
 
         return age_data
 
-    @staticmethod
-    def get_matrix(matrix_data, years=0, months=0, days=0, module=0):
+    def get_matrix(self, matrix_data, years=0, months=0, days=0, module=0):
         """Returns the appropriate age range matrix for extending.
 
         Adult = 12 years or older
