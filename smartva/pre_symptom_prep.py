@@ -5,6 +5,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from stemming.porter2 import stem
 
+from smartva.data.answer_ranges import RANGE_LIST
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
@@ -126,7 +127,7 @@ class PreSymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
-            self.verify_answers_for_row(row, self.data_module.RANGE_LIST)
+            self.verify_answers_for_row(row, RANGE_LIST)
 
             self.pre_processing_step(row)
 
@@ -163,54 +164,28 @@ class PreSymptomPrep(DataPrep):
 
         return True
 
-    @abc.abstractmethod
-    def pre_processing_step(self, row):
-        """Pipeline specific pre-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
-    @abc.abstractmethod
-    def post_processing_step(self, row):
-        """Pipeline specific post-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
     @staticmethod
     def verify_answers_for_row(row, valid_range_data):
-        """Verify answers in a row of data are valid.
+        """Verify answers in a row of data are valid. Log a warning when an invalid answer has been identified.
 
         Args:
             row (dict): Row of VA data.
             valid_range_data (dict): Map of answers and valid ranges.
-
-        Returns:
-            bool: True if any warnings were logged.
         """
-        warnings = False
         for variable, range_list in valid_range_data.items():
             try:
                 value = row[variable]
             except KeyError:
                 pass  # Header not in data set.
             else:
-                if value != '' and range_list:
+                for answer in str(value).split():
                     try:
-                        answer_array = value.split()
-                    except AttributeError:
-                        answer_array = [value]
-                    for answer in answer_array:
                         if int(answer) not in range_list:
                             warning_logger.warning(
-                                'SID: {} variable {} has an illegal value {}. '
+                                'SID: {} variable \'{}\' has an illegal value {}. '
                                 'Please see code book for legal values.'.format(row['sid'], variable, value))
-                            warnings = True
-        return warnings
+                    except ValueError:
+                        continue
 
     @staticmethod
     def recode_answers(row, consolidation_map):
@@ -233,7 +208,7 @@ class PreSymptomPrep(DataPrep):
                 pass
             except KeyError:
                 warning_logger.warning(
-                    'SID: {} Variable \'{}\' does not exist.'.format(row['sid'], read_header))
+                    'SID: {} variable \'{}\' does not exist.'.format(row['sid'], read_header))
             else:
                 # Changed to allow arbitrary values to be used.
                 # TODO - Maybe use '#' before var to indicate lookup.
@@ -257,8 +232,10 @@ class PreSymptomPrep(DataPrep):
             try:
                 code_value = value_or_default(row[code_var])
                 length_value = value_or_default(row[length_var])
-            except KeyError:
+            except KeyError as e:
                 # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_duration_vars'
+                                     .format(row['sid'], e.message))
                 continue
 
             if var in special_case_vars and row[length_var] == '':
@@ -308,9 +285,15 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
             default_fill (dict): Dictionary of headers and default values.
         """
-        for variable, value in row.items():
-            if value == '':
-                row[variable] = default_fill.get(variable, '')
+        for variable, value in default_fill.items():
+            try:
+                if row[variable] == '':
+                    row[variable] = value
+            except KeyError as e:
+                # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. fill_missing_data'
+                                     .format(row['sid'], e.message))
+                continue
 
     @staticmethod
     def process_age_vars(row):

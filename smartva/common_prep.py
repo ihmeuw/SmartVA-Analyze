@@ -1,6 +1,6 @@
 import re
 
-from smartva.common_data import (
+from smartva.data.common_data import (
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
@@ -13,6 +13,7 @@ from smartva.common_data import (
 )
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
+from smartva.loggers.application import warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
@@ -120,11 +121,13 @@ class CommonPrep(DataPrep):
             try:
                 rash_values = map(int, row[variable].split(' '))
             except ValueError:
-                # No rash data. Skip.
-                pass
-            except KeyError:
-                # Variable doesn't exist.
-                pass
+                # No rash data. Continue.
+                continue
+            except KeyError as e:
+                # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. convert_rash_data'
+                                     .format(row['sid'], e.message))
+                continue
             else:
                 if set(mapping['list']).issubset(set(rash_values)):
                     # if 1, 2, and 3 are selected, then change the value to 4 (all)

@@ -1,5 +1,5 @@
 from smartva import common_prep
-from smartva import common_data
+from smartva.data import common_data
 
 
 class TestCommonPrep(object):

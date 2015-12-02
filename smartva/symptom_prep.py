@@ -2,7 +2,7 @@ import abc
 import re
 
 from smartva.data_prep import DataPrep
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
@@ -81,6 +81,8 @@ class SymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
+            self.pre_processing_step(row)
+
             self.copy_variables(row, self.data_module.COPY_VARS)
 
             # Compute age quartiles.
@@ -95,6 +97,8 @@ class SymptomPrep(DataPrep):
 
             # Ensure all binary variables actually ARE 0 or 1:
             self.post_process_binary_variables(row, self.data_module.BINARY_VARS)
+
+            self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
 
@@ -145,9 +149,15 @@ class SymptomPrep(DataPrep):
         """
         for read_data, injury_list in injury_variable_map:
             read_header, cutoff = read_data
-            if float(row[read_header]) > cutoff:
-                for injury in injury_list:
-                    row[injury] = 0
+            try:
+                if float(row[read_header]) > cutoff:
+                    for injury in injury_list:
+                        row[injury] = 0
+            except KeyError as e:
+                # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. process_injury_data'
+                                     .format(row['sid'], e.message))
+                continue
 
     @staticmethod
     def post_process_binary_variables(row, binary_variables):
@@ -165,7 +175,9 @@ class SymptomPrep(DataPrep):
                 value = int(row[read_header])
             except ValueError:
                 value = 0
-            except KeyError:
+            except KeyError as e:
                 # Variable does not exist.
+                warning_logger.debug('SID: {} variable \'{}\' does not exist. post_process_binary_variables'
+                                     .format(row['sid'], e.message))
                 continue
             row[read_header] = int(value == 1)

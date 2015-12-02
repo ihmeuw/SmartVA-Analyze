@@ -1,4 +1,4 @@
-from smartva import neonate_symptom_data
+from smartva.data import neonate_symptom_data
 from smartva.symptom_prep import SymptomPrep
 
 
