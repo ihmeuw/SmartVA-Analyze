@@ -157,13 +157,18 @@ class DataPrep(Prep):
         """
         for read_header, conversion_data in progressive_data:
             for value, write_header in conversion_data:
-                if float(row[read_header]) > value:
-                    if isinstance(write_header, tuple):
-                        write_header, write_value = write_header
-                    else:
-                        write_value = 1
-                    row[write_header] = write_value
-                    break
+                try:
+                    if float(row[read_header]) > value:
+                        if isinstance(write_header, tuple):
+                            write_header, write_value = write_header
+                        else:
+                            write_value = 1
+                        row[write_header] = write_value
+                        break
+                except KeyError as e:
+                    warning_logger.debug('SID: {} variable \'{}\' does not exist. process_progressive_value_data'
+                                         .format(row['sid'], e.message))
+                    continue
 
     @staticmethod
     def read_input_file(input_file_path, mode='rb'):

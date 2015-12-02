@@ -1,8 +1,15 @@
+import pytest
+
 from smartva.symptom_prep import SymptomPrep
 
 
+@pytest.fixture
+def prep():
+    return SymptomPrep('', True)
+
+
 class TestSymptomPrep(object):
-    def test_copy_variables(self):
+    def test_copy_variables(self, prep):
         headers = ['test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, [2, 37, 0, 0]))
 
@@ -11,11 +18,11 @@ class TestSymptomPrep(object):
             'test2': 'test4',
         }
 
-        SymptomPrep.copy_variables(row, conversion_map)
+        prep.copy_variables(row, conversion_map)
 
         assert row == dict(zip(headers, [2, 37, 2, 37]))
 
-    def test_process_progressive_data(self):
+    def test_process_progressive_data(self, prep):
         headers = ['test0', 'test1', 'test2', 'test3', 'test4']
         rows = [
             dict(zip(headers, [72, 0, 0, 0, 0])),
@@ -41,11 +48,11 @@ class TestSymptomPrep(object):
         }
 
         for i, row in enumerate(rows):
-            SymptomPrep.process_progressive_value_data(row, conversion_map.items())
+            prep.process_progressive_value_data(row, conversion_map.items())
 
             assert row == valid_results[i]
 
-    def test_process_cutoff_data(self):
+    def test_process_cutoff_data(self, prep):
         headers = ['test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, [0.12345, 40, 20, '']))
 
@@ -56,11 +63,11 @@ class TestSymptomPrep(object):
             'test4': 1
         }
 
-        SymptomPrep.process_cutoff_data(row, conversion_map.items())
+        prep.process_cutoff_data(row, conversion_map.items())
 
         assert row == dict(zip(headers, [1, 0, 1, 0]))
 
-    def test_process_injury_data(self):
+    def test_process_injury_data(self, prep):
         headers = ['test0', 'test1', 'test2', 'test3', 'test4']
         rows = [
             dict(zip(headers, [999, 1, 0, 1, 0])),
@@ -79,16 +86,16 @@ class TestSymptomPrep(object):
         }
 
         for i, row in enumerate(rows):
-            SymptomPrep.process_injury_data(row, conversion_map.items())
+            prep.process_injury_data(row, conversion_map.items())
 
             assert row == valid_results[i]
 
-    def test_post_process_binary_variables(self):
+    def test_post_process_binary_variables(self, prep):
         headers = ['test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, [1, 2, 0, '']))
 
         conversion_map = ['test1', 'test2', 'test3', 'test4']
 
-        SymptomPrep.post_process_binary_variables(row, conversion_map)
+        prep.post_process_binary_variables(row, conversion_map)
 
         assert row == dict(zip(headers, [1, 0, 0, 0]))
