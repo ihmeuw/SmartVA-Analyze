@@ -222,14 +222,14 @@ class vaUI(wx.Frame):
         options_menu = wx.Menu()
         menu_bar.Append(options_menu, title='&Options')
 
-        hce_menu_item = wx.MenuItem(options_menu, id=OPT_HCE, text='Use &Health Care Experience (HCE) variables',
+        hce_menu_item = wx.MenuItem(options_menu, id=OPT_HCE, text='Use &health care experience (HCE) variables',
                                     kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self.toggle_hce, id=hce_menu_item.GetId())
         options_menu.AppendItem(hce_menu_item)
         hce_menu_item.Check(check=self.hce)
         self.enabled_widgets.append(hce_menu_item)
 
-        free_text_menu_item = wx.MenuItem(options_menu, id=OPT_FREE_TEXT, text='Use &Free text variables',
+        free_text_menu_item = wx.MenuItem(options_menu, id=OPT_FREE_TEXT, text='Use &free text variables',
                                           kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self.toggle_free_text, id=free_text_menu_item.GetId())
         options_menu.AppendItem(free_text_menu_item)
