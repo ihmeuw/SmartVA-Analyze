@@ -122,3 +122,32 @@ class TestPreSymptomPrep(object):
         prep.calculate_duration_vars(row, duration_vars, special_case_vars)
 
         assert row == dict(zip(headers, ['0', 365.0, 1, 1, 999, '', '']))
+
+    def test_process_age_vars(self, prep):
+
+        # AGE_VARS = ['g5_04'] means year, months, days in g5_04a,b,c
+        # are converted to float values of age in years, months, and days
+
+        row = dict(sid='test', g5_04a='1', g5_04b='', g5_04c='')
+        prep.process_age_vars(row)
+        assert row['g5_04a'] == 1
+        assert row['g5_04b'] == 12
+        assert row['g5_04c'] == 365
+
+        row = dict(sid='test', g5_04a='1', g5_04b='6', g5_04c='')
+        prep.process_age_vars(row)
+        assert row['g5_04a'] == 1.5
+        assert row['g5_04b'] == 18.
+        assert row['g5_04c'] <= 365 + 365/2.
+
+        row = dict(sid='test', g5_04a='', g5_04b='', g5_04c='364')
+        prep.process_age_vars(row)
+        assert row['g5_04a'] < 1.
+        assert row['g5_04b'] < 13.  # FIXME: a little funny to get months wrong-ish
+        assert row['g5_04c'] == 364
+
+        row = dict(sid='test', g5_04a='1', g5_04b='.', g5_04c='')
+        prep.process_age_vars(row)
+        assert row['g5_04a'] == 1.
+        assert row['g5_04b'] == 12.
+        assert row['g5_04c'] == 365.
