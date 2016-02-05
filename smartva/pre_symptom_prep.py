@@ -16,7 +16,7 @@ OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 
 DOB_VAR = 'g5_01'
 SEX_VAR = 'g5_02'
-AGE_VARS = ['g5_04']
+AGE_VARS = ['g5_04']  # NOTE: this will have a,b,c appended to find years, months, and days
 
 TIME_FACTORS = {
     1: 365.0,
