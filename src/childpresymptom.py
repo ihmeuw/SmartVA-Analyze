@@ -1268,24 +1268,21 @@ class PreSymptomPrep():
                 if row[headers_old.index('child_6_2')] == '1':
                     self.processFreeText('cancer', row, headers)
                 if row[headers_old.index('child_6_3')] == '1':
-                    self.processFreeText('pox', row, headers)
-                if row[headers_old.index('child_6_4')] == '1':
                     self.processFreeText('deyhdration', row, headers)
-                if row[headers_old.index('child_6_5')] == '1':
+                if row[headers_old.index('child_6_4')] == '1':
                     self.processFreeText('dengue', row, headers)
-                if row[headers_old.index('child_6_6')] == '1':
+                if row[headers_old.index('child_6_5')] == '1':
                     self.processFreeText('diarrhea', row, headers)
-                if row[headers_old.index('child_6_7')] == '1':
+                if row[headers_old.index('child_6_6')] == '1':
                     self.processFreeText('fever', row, headers)
-                if row[headers_old.index('child_6_8')] == '1':
+                if row[headers_old.index('child_6_7')] == '1':
                     self.processFreeText('heart', row, headers)
-                if row[headers_old.index('child_6_9')] == '1':
+                if row[headers_old.index('child_6_8')] == '1':
                     self.processFreeText('jaundice', row, headers)
-                if row[headers_old.index('child_6_10')] == '1':
+                if row[headers_old.index('child_6_9')] == '1':
                     self.processFreeText('pneumonia', row, headers)
-                if 'child_6_11' in headers_old:
-                    if row[headers_old.index('child_6_11')] == '1':
-                        self.processFreeText('rash', row, headers)
+                if row[headers_old.index('child_6_10')] == '1':
+                    self.processFreeText('rash', row, headers)
 
         
         freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
