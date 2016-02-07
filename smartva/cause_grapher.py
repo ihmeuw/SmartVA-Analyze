@@ -94,7 +94,7 @@ def make_graph(graph_data, cause_key, output_dir):
     ax.yaxis.grid()
     ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-    ax.set_xticklabels(reversed(AGE_DATA.values()), rotation=90)
+    ax.set_xticklabels(list(reversed(AGE_DATA.values())), rotation=90)
     ax.set_xticks(xlocations + bar_width / 2)
 
     # Push legend outside of the plot.
