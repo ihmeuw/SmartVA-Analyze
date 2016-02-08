@@ -36,7 +36,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 515
+WINDOW_HEIGHT = 516
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -374,7 +374,7 @@ class vaUI(wx.Frame):
         """
         menu_item = wx.MenuItem(parent, id=id, text=text, kind=wx.ITEM_CHECK)
         self.Bind(wx.EVT_MENU, self.set_option_for_key(key), id=menu_item.GetId())
-        menu_item.Check(check=self.options[key])
+        wx.CallAfter(menu_item.Check, check=self.options[key])
         self.enabled_widgets.append(menu_item)
 
         return menu_item
