@@ -36,6 +36,7 @@ def check_country(ctx, param, value):
 @click.command()
 @click.option('--country', default=COUNTRY_DEFAULT, callback=check_country,
               help='Data origin country abbreviation. "LIST" displays all. Default is "{}".'.format(COUNTRY_DEFAULT))
+@click.option('--hiv', default=True, type=click.BOOL, help='Data is a from HIV region.')
 @click.option('--malaria', default=True, type=click.BOOL, help='Data is a from Malaria region.')
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables.')
@@ -52,6 +53,7 @@ def main(*args, **kwargs):
     status_logger.info('- Input file: {}'.format(kwargs['input']))
     status_logger.info('- Output folder: {}'.format(kwargs['output']))
     status_logger.info('- Country: {}'.format(kwargs['country']))
+    status_logger.info('- HIV Region: {}'.format(kwargs['hiv']))
     status_logger.info('- Malaria Region: {}'.format(kwargs['malaria']))
     status_logger.info('- HCE variables: {}'.format(kwargs['hce']))
     status_logger.info('- Free text variables: {}'.format(kwargs['freetext']))
@@ -62,9 +64,15 @@ def main(*args, **kwargs):
 
     status_notifier.register(CommandLineNotificationHandler())
 
+    options = {
+        'hce': kwargs.pop('hce'),
+        'free_text': kwargs.pop('freetext'),
+        'hiv': kwargs.pop('hiv'),
+        'malaria': kwargs.pop('malaria'),
+    }
+
     global worker
-    worker = workerthread.WorkerThread(kwargs['input'], kwargs['hce'], kwargs['output'],
-                                       kwargs['freetext'], kwargs['malaria'], kwargs['country'],
+    worker = workerthread.WorkerThread(kwargs['input'], kwargs['output'], options, kwargs['country'],
                                        completion_callback=_completion_handler)
 
 
