@@ -69,16 +69,17 @@ class TariffPrep(DataPrep):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, working_dir_path, short_form, hce, free_text, malaria, country):
+    def __init__(self, working_dir_path, short_form, options, country):
         super(TariffPrep, self).__init__(working_dir_path, short_form)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
 
         self.input_dir_path = self.intermediate_dir
 
-        self.hce = hce
-        self.free_text = free_text
-        self.malaria = malaria
+        self.hce = options['hce']
+        self.free_text = options['free_text']
+        self.hiv_region = options['hiv']
+        self.malaria_region = options['malaria']
         self.iso3 = country
 
         self.cause_list = []
@@ -376,7 +377,10 @@ class TariffPrep(DataPrep):
                 if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
                     lowest_cause_list.update(causes)
 
-            if not self.malaria:
+            if not self.hiv_region:
+                lowest_cause_list.update(self.data_module.HIV_CAUSES)
+
+            if not self.malaria_region:
                 lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
 
             for cause_num in self.cause_list:

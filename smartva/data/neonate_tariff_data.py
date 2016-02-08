@@ -140,6 +140,8 @@ CAUSES46 = CAUSES
 
 CAUSE_CONDITIONS = {}
 
+HIV_CAUSES = []
+
 MALARIA_CAUSES = []
 
 # changing 46 causes to 34 causes:

@@ -5,8 +5,8 @@ from smartva.tariff_prep import TariffPrep
 class AdultTariff(TariffPrep):
     """Process Adult VA Tariff data."""
 
-    def __init__(self, working_dir_path, short_form, hce, free_text, malaria, country):
-        super(AdultTariff, self).__init__(working_dir_path, short_form, hce, free_text, malaria, country)
+    def __init__(self, working_dir_path, short_form, options, country):
+        super(AdultTariff, self).__init__(working_dir_path, short_form, options, country)
 
         self.data_module = adult_tariff_data
 

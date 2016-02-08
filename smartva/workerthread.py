@@ -43,14 +43,20 @@ class WorkerThread(threading.Thread):
           completion and to reset the progress bar..
     """
 
-    def __init__(self, input_file, hce, output_dir, free_text, malaria, country, completion_callback):
+    def __init__(self, input_file, output_dir, options, country, completion_callback):
         """
         Init Worker Thread Class.
+
+        :param options: Dictionary of application options.
+                        Must contain:
+                            'hce': (bool),
+                            'free_text': (bool),
+                            'hiv': (bool),
+                            'malaria': (bool)
+
         :type input_file: str
-        :type hce: bool
+        :type options: dict
         :type output_dir: str
-        :type free_text: bool
-        :type malaria: bool
         :type country: str
         :type completion_callback: callable
         """
@@ -59,9 +65,7 @@ class WorkerThread(threading.Thread):
         self._want_abort = False
         self._abort_list = []
 
-        self.hce = hce
-        self.free_text = free_text
-        self.malaria = malaria
+        self.options = options
         self.country = country
 
         self.input_file_path = input_file
@@ -134,13 +138,13 @@ class WorkerThread(threading.Thread):
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(self.output_dir_path, self.short_form)
         adult_symptom = AdultSymptomPrep(self.output_dir_path, self.short_form)
-        adult_results = AdultTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        adult_results = AdultTariff(self.output_dir_path, self.short_form, self.options, self.country)
         child_pre_symptom = ChildPreSymptomPrep(self.output_dir_path, self.short_form)
         child_symptom = ChildSymptomPrep(self.output_dir_path, self.short_form)
-        child_results = ChildTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        child_results = ChildTariff(self.output_dir_path, self.short_form, self.options, self.country)
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
         neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
-        neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.hce, self.free_text, self.malaria, self.country)
+        neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.options, self.country)
         cause_grapher = CauseGrapher(self.output_dir_path)
         csmf_grapher = CSMFGrapher(self.output_dir_path)
 
