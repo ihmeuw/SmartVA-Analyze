@@ -36,8 +36,8 @@ def check_country(ctx, param, value):
 @click.command()
 @click.option('--country', default=COUNTRY_DEFAULT, callback=check_country,
               help='Data origin country abbreviation. "LIST" displays all. Default is "{}".'.format(COUNTRY_DEFAULT))
-@click.option('--hiv', default=True, type=click.BOOL, help='Data is a from HIV region.')
-@click.option('--malaria', default=True, type=click.BOOL, help='Data is a from Malaria region.')
+@click.option('--hiv', default=True, type=click.BOOL, help='Data is from an HIV region.')
+@click.option('--malaria', default=True, type=click.BOOL, help='Data is from a Malaria region.')
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables.')
 @click.version_option(version=version, prog_name=prog_name)
