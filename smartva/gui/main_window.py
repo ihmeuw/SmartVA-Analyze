@@ -36,7 +36,7 @@ APP_TITLE = prog_name
 MAX_PATH_LENGTH = 55
 
 WINDOW_WIDTH = 560
-WINDOW_HEIGHT = 500
+WINDOW_HEIGHT = 516
 
 # OS dependant configuration.
 if platform.system().lower() == 'windows':
@@ -175,9 +175,12 @@ class vaUI(wx.Frame):
 
         self.input_file_path = ''
         self.output_folder_path = ''
-        self.hce = True
-        self.free_text = True
-        self.malaria = True
+        self.options = {
+            'hce': True,
+            'free_text': True,
+            'hiv': True,
+            'malaria': True,
+        }
         self.country = None
         self.running = False
         self.worker = None
@@ -222,18 +225,14 @@ class vaUI(wx.Frame):
         options_menu = wx.Menu()
         menu_bar.Append(options_menu, title='&Options')
 
-        hce_menu_item = wx.MenuItem(options_menu, id=OPT_HCE, text='Use &health care experience (HCE) variables',
-                                    kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self.toggle_hce, id=hce_menu_item.GetId())
-        options_menu.AppendItem(hce_menu_item)
-        hce_menu_item.Check(check=self.hce)
-        self.enabled_widgets.append(hce_menu_item)
-
-        free_text_menu_item = wx.MenuItem(options_menu, id=OPT_FREE_TEXT, text='Use &free text variables',
-                                          kind=wx.ITEM_CHECK)
-        self.Bind(wx.EVT_MENU, self.toggle_free_text, id=free_text_menu_item.GetId())
-        options_menu.AppendItem(free_text_menu_item)
-        free_text_menu_item.Check(self.free_text)
+        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+                                                            OPT_HCE,
+                                                            'Use &health care experience (HCE) variables',
+                                                            'hce'))
+        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+                                                            OPT_FREE_TEXT,
+                                                            'Use &free text variables',
+                                                            'free_text'))
 
         # Help Menu
         help_menu = wx.Menu()
@@ -246,8 +245,6 @@ class vaUI(wx.Frame):
         docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
         self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
         help_menu.AppendItem(docs_menu_item)
-
-        self.enabled_widgets.append(free_text_menu_item)
 
     def _init_ui(self):
         self.Bind(wx.EVT_CLOSE, self.on_quit)
@@ -314,14 +311,14 @@ class vaUI(wx.Frame):
         country_box_sizer.Add(country_label, flag=wx.TOP | wx.RIGHT | wx.LEFT, border=5)
         country_box_sizer.Add(country_combo_box)
 
-        malaria_check_box = wx.CheckBox(parent_panel, label='Malaria region')
-        malaria_check_box.SetValue(self.malaria)
-        self.Bind(wx.EVT_CHECKBOX, self.toggle_malaria, id=malaria_check_box.GetId())
-        self.enabled_widgets.append(malaria_check_box)
-
         set_options_static_box_sizer.Add(country_box_sizer)
         set_options_static_box_sizer.AddSpacer(5)
-        set_options_static_box_sizer.Add(malaria_check_box, flag=wx.LEFT | wx.TOP, border=5)
+        set_options_static_box_sizer.Add(self.create_check_box(parent_panel,
+                                                               'HIV region',
+                                                               'hiv'), flag=wx.LEFT | wx.TOP, border=5)
+        set_options_static_box_sizer.Add(self.create_check_box(parent_panel,
+                                                               'Malaria region',
+                                                               'malaria'), flag=wx.LEFT | wx.TOP, border=5)
         set_options_static_box_sizer.AddSpacer(3)
 
         # start analysis
@@ -363,6 +360,43 @@ class vaUI(wx.Frame):
 
         parent_panel.SetSizer(parent_box_sizer)
 
+    def create_menu_item_check(self, parent, id, text, key):
+        """Create a menu item check option which stores its value in the application `options` dictionary.
+
+        Args:
+            parent (wx.Menu): Parent menu in which to add the new menu item.
+            id (int): Id to assign the new menu item.
+            text (str): Text to display for the new menu item.
+            key (str): Application options dict key to store value.
+
+        Returns:
+            wx.MenuItem: Newly created menu item.
+        """
+        menu_item = wx.MenuItem(parent, id=id, text=text, kind=wx.ITEM_CHECK)
+        self.Bind(wx.EVT_MENU, self.set_option_for_key(key), id=menu_item.GetId())
+        wx.CallAfter(menu_item.Check, check=self.options[key])
+        self.enabled_widgets.append(menu_item)
+
+        return menu_item
+
+    def create_check_box(self, parent, label, key):
+        """Create a check box item which stores its value in the application `options` dictionary.
+
+        Args:
+            parent (wx.Panel): Parent panel in which to add the new check box item.
+            label (str): Text to display for the check box item.
+            key (str): Application options dict key to store value.
+
+        Returns:
+            wx.CheckBox: Newly created check box item.
+        """
+        check_box = wx.CheckBox(parent, label=label)
+        self.Bind(wx.EVT_CHECKBOX, self.set_option_for_key(key), id=check_box.GetId())
+        check_box.SetValue(self.options[key])
+        self.enabled_widgets.append(check_box)
+
+        return check_box
+
     def on_open_file(self, event):
         """
         Create and show the Open FileDialog
@@ -403,8 +437,8 @@ class vaUI(wx.Frame):
             else:
                 self.action_button.SetLabel('Stop')
                 self.running = True
-                self.worker = workerthread.WorkerThread(self.input_file_path, self.hce, self.output_folder_path,
-                                                        self.free_text, self.malaria, self.country,
+                self.worker = workerthread.WorkerThread(self.input_file_path, self.output_folder_path,
+                                                        self.options, self.country,
                                                         completion_callback=self._completion_handler)
                 self.enable_ui(False)
 
@@ -412,29 +446,15 @@ class vaUI(wx.Frame):
             self.action_button.SetLabel('Start')
             self.on_abort()
 
-    def toggle_hce(self, event):
-        """
-        :type event: wx.CommandEvent
-        """
-        if isinstance(event.EventObject, wx.Menu):
-            self.hce = event.EventObject.IsChecked(id=event.GetId())
-        elif isinstance(event.EventObject, wx.CheckBox):
-            self.hce = event.EventObject.IsChecked()
+    def set_option_for_key(self, key):
+        def fn_wrap(event):
+            kwargs = {}
+            if isinstance(event.EventObject, wx.Menu):
+                kwargs.update({'id': event.GetId()})
 
-    def toggle_free_text(self, event):
-        """
-        :type event: wx.CommandEvent
-        """
-        if isinstance(event.EventObject, wx.Menu):
-            self.free_text = event.EventObject.IsChecked(id=event.GetId())
-        elif isinstance(event.EventObject, wx.CheckBox):
-            self.free_text = event.EventObject.IsChecked()
+            self.options[key] = event.EventObject.IsChecked(**kwargs)
 
-    def toggle_malaria(self, event):
-        """
-        :type event: wx.CommandEvent
-        """
-        self.malaria = event.EventObject.IsChecked()
+        return fn_wrap
 
     def change_country(self, event):
         value = event.EventObject.Value

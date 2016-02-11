@@ -533,6 +533,11 @@ CANCER_CAUSES = [
     43
 ]
 
+HIV_CAUSES = [
+    1,
+    2
+]
+
 MALARIA_CAUSES = [29]
 
 CAUSE_CONDITIONS = {
