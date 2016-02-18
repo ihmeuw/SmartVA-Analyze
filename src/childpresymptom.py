@@ -231,7 +231,9 @@ class PreSymptomPrep():
 
             # added for shortform
             if self.shortform:
-                if 'c1_22a' in headers:
+                if 'c1_22a' in headers:  # this whole block of code is
+                                         # unnecessary, but I think it
+                                         # is easiest to leave it in
                     index = headers.index('c1_22a')
                     temp = row[headers_old.index('child_1_22')]
                     if temp == '1':
@@ -239,11 +241,11 @@ class PreSymptomPrep():
                     if temp == '2':
                         row[index] = '2'
                     if temp == '3':
-                        row[index] = '4'
+                        row[index] = '3'
                     if temp == '4':
-                        row[index] = '5'
+                        row[index] = '4'
                     if temp == '5':
-                        row[index] = '6'
+                        row[index] = '5'
                     if temp == '8':
                         row[index] = '8'
                     if temp == '9':
