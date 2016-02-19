@@ -193,7 +193,7 @@ class CommonPrep(DataPrep):
             new_answer_array = []
             for word in re.sub('[^a-z ]', '', row[variable].lower()).split(' '):
                 if word in word_subs:
-                    new_answer_array.append(WORD_SUBS[word])
+                    new_answer_array.append(word_subs[word])
                 elif word:
                     new_answer_array.append(word)
 
