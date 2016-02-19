@@ -434,7 +434,7 @@ SHORT_FORM_FREE_TEXT_CONVERSION = {
     'c_6_1': 'abdomen',
     'c_6_2': 'cancer',
     'c_6_3': 'pox',
-    'c_6_4': 'deyhdration',
+    'c_6_4': 'dehydration',
     'c_6_5': 'dengue',
     'c_6_6': 'diarrhea',
     'c_6_7': 'fever',
