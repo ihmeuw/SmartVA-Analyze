@@ -593,6 +593,7 @@ FREE_TEXT_VARS = [
     'adult_6_14',
     'adult_6_15',
     'adult_7_c',
+    'child_5_0b',
     'child_5_9',
     'child_5_12',
     'child_5_13',
