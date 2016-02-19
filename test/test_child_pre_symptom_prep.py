@@ -8,16 +8,18 @@ headers = ['sid']
 # Rash variables
 headers.extend(['child_4_30', 'child_4_31', 'child_4_32', 'child_4_33', 'child_4_33a'])
 # Free text variables
-headers.extend(['child_5_0b'])
+headers.extend(['child_5_0b', 'child_6_1'])
 
 data = [
     {'sid': 'rash1', 'child_4_30': '1', 'child_4_31': '1 2 3', 'child_4_32': '2', 'child_4_33': '4', 'child_4_33a': '10'},
-    {'sid': 'freetext1', 'child_5_0b': 'malaria'}
+    {'sid': 'freetext1', 'child_5_0b': 'malaria'},
+    {'sid': 'freetext_6_1', 'child_6_1': '1'}
 ]
 
 expected_results = [
     {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'},
-    {'sid': 'freetext1', 's999930': '1'}
+    {'sid': 'freetext1', 's999930': '1'},
+    {'sid': 'freetext_6_1', 'c_6_1': '1', 's99991': '1'},
 ]
 
 
