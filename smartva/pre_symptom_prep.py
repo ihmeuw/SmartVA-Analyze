@@ -105,6 +105,7 @@ class PreSymptomPrep(DataPrep):
         # Identify new headers and data to be included.
         additional_data = {k: '' for k in self.data_module.DURATION_VARS}
         additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
+        additional_data.update({k: 0 for k in sorted(self.data_module.WORDS_TO_VARS.values())})
         additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
 
         headers.extend(additional_headers)
