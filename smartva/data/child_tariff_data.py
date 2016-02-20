@@ -1,4 +1,7 @@
 from smartva.data.common_data import CHILD
+from smartva.data.word_conversions import CHILD_WORDS_TO_VARS
+
+FREE_TEXT = CHILD_WORDS_TO_VARS.values()
 
 AGE_GROUP = CHILD
 
