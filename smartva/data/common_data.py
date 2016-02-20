@@ -332,14 +332,6 @@ BINARY_CONVERSION_MAP = {
         11: 'childabnorm4',
         8: 'childabnorm5',
     },
-    'child_1_19a': {
-        # This should match child_1_19. Note: this appears to be a text field.
-        1: 'childabnorm1',
-        2: 'childabnorm2',
-        3: 'childabnorm3',
-        11: 'childabnorm4',
-        8: 'childabnorm5',
-    },
     'child_3_3': {
         1: 'childabnorm31',
         2: 'childabnorm32',
@@ -415,6 +407,7 @@ WEIGHT_CONVERSION_DATA = {
 
 FREE_TEXT_VARS = [
     'adult_5_2a',
+    'adult_6_3b',
     'adult_6_8',
     'adult_6_11',
     'adult_6_12',
@@ -422,6 +415,8 @@ FREE_TEXT_VARS = [
     'adult_6_14',
     'adult_6_15',
     'adult_7_c',
+    'child_1_19a',
+    'child_3_3a',
     'child_5_0b',
     'child_5_9',
     'child_5_12',
