@@ -254,6 +254,7 @@ VAR_CONVERSION_MAP = {
     'adult_6_1': 'a6_01',
     'adult_6_2': 'adult_6_2',
     'adult_6_3': 'a6_03',
+    'adult_6_3b': 'a6_03b',
     'adult_6_4': 'a6_04',
     'adult_6_5': 'a6_05',
     'adult_6_6d': 'a6_06_1d',
@@ -514,6 +515,7 @@ Variables that contain free text.
 """
 FREE_TEXT_VARS = [
     'a5_01_9b',
+    'a6_03b',
     'a6_08',
     'a6_11',
     'a6_12',
