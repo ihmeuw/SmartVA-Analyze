@@ -445,6 +445,8 @@ SHORT_FORM_FREE_TEXT_CONVERSION = {
 }
 
 FREE_TEXT_VARS = [
+    'c1_19_4b',
+    'c3_03_4b',
     'c5_0b',
     'c5_09',
     'c5_12',
