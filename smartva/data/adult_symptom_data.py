@@ -1,5 +1,4 @@
 from smartva.data.common_data import ADULT
-from smartva.data.freetext_vars import ADULT_FREE_TEXT as FREE_TEXT_VARIABLES
 
 AGE_GROUP = ADULT
 KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'

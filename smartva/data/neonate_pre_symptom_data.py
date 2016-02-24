@@ -239,6 +239,7 @@ VAR_CONVERSION_MAP = {
     'provider12': 'c5_02_12',
     'provider13': 'c5_02_13',
     'provider14': 'c5_02_14',
+    'child_5_0b': 'c5_0b',
     'child_5_3': 'c5_03',
     'child_5_4': 'c5_04',
     'child_5_5': 'c5_05',
@@ -401,6 +402,9 @@ SHORT_FORM_FREE_TEXT_CONVERSION = {
 }
 
 FREE_TEXT_VARS = [
+    'c1_19_4b',
+    'c3_03_4b',
+    'c5_0b',
     'c5_09',
     'c5_12',
     'c5_13',

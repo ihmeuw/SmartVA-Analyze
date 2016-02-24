@@ -190,14 +190,13 @@ class CommonPrep(DataPrep):
         # warning_logger.debug('Free text column "{}" does not exist.'.format(question))
         for variable in free_text_vars:
             # check to see if any of the keys exist in the free text (keys can be multiple words like 'dog bite')
-            new_answer_array = []
-            for word in re.sub('[^a-z ]', '', row[variable].lower()).split(' '):
-                if word in word_subs:
-                    new_answer_array.append(WORD_SUBS[word])
-                elif word:
-                    new_answer_array.append(word)
+            if variable in row:
+                new_answer_array = []
+                for word in re.sub('[^a-z ]', '', row[variable].lower()).split(' '):
+                    if word:
+                        new_answer_array.append(word_subs.get(word, word))
 
-            row[variable] = ' '.join(new_answer_array)
+                row[variable] = ' '.join(new_answer_array)
 
     def get_age_data(self, row):
         """Return age data in years, months, days, and module type.

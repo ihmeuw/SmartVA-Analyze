@@ -1,4 +1,7 @@
 from smartva.data.common_data import NEONATE
+from smartva.data.word_conversions import NEONATE_WORDS_TO_VARS
+
+FREE_TEXT = NEONATE_WORDS_TO_VARS.values()
 
 AGE_GROUP = NEONATE
 

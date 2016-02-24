@@ -7,12 +7,39 @@ from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
 headers = ['sid']
 # Rash variables
 headers.extend(['child_4_30', 'child_4_31', 'child_4_32', 'child_4_33', 'child_4_33a'])
+# Free text variables
+headers.extend(['child_1_19a', 'child_3_3a', 'child_5_0b', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'child_6_c'])
+headers.extend(['child_1_15', 'child_1_18', 'child_3_2', 'child_5_4', 'child_5_5', 'child_5_10', 'child_5_11'])
+headers.extend(['child_6_1'])
+
 data = [
-    {'sid': 'rash1', 'child_4_30': '1', 'child_4_31': '1 2 3', 'child_4_32': '2', 'child_4_33': '4', 'child_4_33a': '10'}
+    {'sid': 'rash1', 'child_4_30': '1', 'child_4_31': '1 2 3', 'child_4_32': '2', 'child_4_33': '4', 'child_4_33a': '10'},
+    {'sid': 'freetext_1_19a', 'child_1_15': 1, 'child_1_18': 1, 'child_1_19a': 'malaria'},
+    {'sid': 'freetext_3_3a', 'child_3_2': 1, 'child_3_3a': 'malaria'},
+    {'sid': 'freetext_5_0b', 'child_5_0b': 'malaria'},  # validation: child_5_4,5=1?
+    {'sid': 'freetext_5_9', 'child_5_4': 1, 'child_5_5': 1, 'child_5_9': 'malaria'},
+    {'sid': 'freetext_5_12', 'child_5_10': 1, 'child_5_11': 1, 'child_5_12': 'malaria'},
+    {'sid': 'freetext_5_13', 'child_5_10': 1, 'child_5_11': 1, 'child_5_13': 'malaria'},
+    {'sid': 'freetext_5_14', 'child_5_10': 1, 'child_5_11': 1, 'child_5_14': 'malaria'},
+    {'sid': 'freetext_5_15', 'child_5_10': 1, 'child_5_11': 1, 'child_5_15': 'malaria'},
+    {'sid': 'freetext_5_16', 'child_5_10': 1, 'child_5_11': 1, 'child_5_16': 'malaria'},
+    {'sid': 'freetext_6_c', 'child_6_c': 'malaria'},
+    {'sid': 'freetext_6_1', 'child_6_1': '1'}
 ]
 
 expected_results = [
-    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'}
+    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'},
+    {'sid': 'freetext_1_19a', 's999930': '1'},
+    {'sid': 'freetext_3_3a', 's999930': '1'},
+    {'sid': 'freetext_5_0b', 's999930': '1'},
+    {'sid': 'freetext_5_9', 's999930': '1'},
+    {'sid': 'freetext_5_12', 's999930': '1'},
+    {'sid': 'freetext_5_13', 's999930': '1'},
+    {'sid': 'freetext_5_14', 's999930': '1'},
+    {'sid': 'freetext_5_15', 's999930': '1'},
+    {'sid': 'freetext_5_16', 's999930': '1'},
+    {'sid': 'freetext_6_c', 's999930': '1'},
+    {'sid': 'freetext_6_1', 'c_6_1': '1', 's99991': '1'},
 ]
 
 

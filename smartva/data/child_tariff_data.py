@@ -1,4 +1,7 @@
 from smartva.data.common_data import CHILD
+from smartva.data.word_conversions import CHILD_WORDS_TO_VARS
+
+FREE_TEXT = CHILD_WORDS_TO_VARS.values()
 
 AGE_GROUP = CHILD
 
@@ -80,7 +83,6 @@ SHORT_FORM_DROP_LIST = [
     's999928',
     's999929',
     's99993',
-    's999930',
     's999931',
     's999932',
     's999934',
