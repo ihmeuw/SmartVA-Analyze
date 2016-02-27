@@ -75,6 +75,11 @@ class TestChildPreSymptomPrep(object):
 
         assert (row == {'c4_31_1': 1, 'c4_32': 0})
 
+    def test_recodes(self, prep):
+        row = dict(sid='', c1_22a=4)
+        prep.recode_answers(row, prep.data_module.RECODE_MAP)
+        assert row == dict(sid='', c1_22a=4)
+
     def test_input_data(self, prep, input_file, output_file):
         prep.run()
         assert output_file.check()
