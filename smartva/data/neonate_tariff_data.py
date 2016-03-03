@@ -15,6 +15,8 @@ DEFINITIVE_SYMPTOMS = {
     's20': 6
 }
 
+SPURIOUS_ASSOCIATIONS = {}
+
 HCE_DROP_LIST = [
     's180',
     's181',
