@@ -52,6 +52,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# IPython
+.ipynb_checkpoints
+
 # C extensions
 *.so
 
