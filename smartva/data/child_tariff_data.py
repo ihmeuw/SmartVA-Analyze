@@ -11,14 +11,26 @@ UNIFORM_LIST_POS = 0.17
 
 MIN_CAUSE_SCORE = 3.0
 
-DEFINITIVE_SYMPTOMS = {}
+DEFINITIVE_SYMPTOMS = {
+    's155' : 19,  # Decedent suffered road traffic injury => Road Traffic
+    's99999' : 12, # word_cancer => Other Cancers
+}
 
 SPURIOUS_ASSOCIATIONS = {
+  1: # AIDS
+    ['sex',     # sex
+     's11991'   # not born in a hospital
+     's17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     ],
+
   9: # Malaria
     ['s11991',  # not born in a hospital
      's17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
+     's188',    # (biological) mother ever tested for HIV?
      ],
 
   10: # Measles
@@ -26,6 +38,8 @@ SPURIOUS_ASSOCIATIONS = {
      's17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
+     's11991',  # not born in a hospital
+     's30991',  # didn't die in a hospital
      ],
 
   11: # Meningitis
@@ -46,6 +60,14 @@ SPURIOUS_ASSOCIATIONS = {
     ['s17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
+     ],
+
+  20: # Sepsis
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's164',    # Decedent did not suffer accident
+     's188',    # (biological) mother ever tested for HIV?
      ],
 
   21: # Violent Death
