@@ -509,6 +509,7 @@ WORD_SUBS = {
     'msb': 'stillbirth',
     'oxygenated': 'oxygen',
     'paralysis': 'paralyze',
+    'pnuemonia': 'pneumonia',
     'poisoning': 'poison',
     'poisonous': 'poison',
     'pregnant': 'pregnancy',
