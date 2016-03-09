@@ -74,6 +74,7 @@ SPURIOUS_ASSOCIATIONS = {
     ['s17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
+     's8992',   # mother died after delivery
      ],
 }
 
