@@ -140,6 +140,8 @@ class CauseGrapher(GrapherPrep):
                         try:
                             age_key = get_age_key(float(row['age']))
                             sex_key = int(row['sex'])
+                            if sex_key not in [1,2]:
+                                raise ValueError('Cannot yet plot when sex is not M/F')
                         except ValueError as e:
                             # Age or sex is invalid. Log warning and skip this item.
                             warning_logger.warning('Cause Grapher :: SID {} value for age or sex is invalid.'
