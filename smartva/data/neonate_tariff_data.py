@@ -15,7 +15,11 @@ DEFINITIVE_SYMPTOMS = {
     's20': 6
 }
 
-SPURIOUS_ASSOCIATIONS = {}
+SPURIOUS_ASSOCIATIONS = {
+  6: # Stillbirth
+    ['s73',     # Did the baby ever suckle in a normal way?
+     ],
+}
 
 HCE_DROP_LIST = [
     's180',
