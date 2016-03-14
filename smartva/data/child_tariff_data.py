@@ -38,6 +38,8 @@ SPURIOUS_ASSOCIATIONS = {
      's17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
+     's28',     # How old was the baby/child when the fatal illness started?
+     's31',     # How old was the deceased at the time of death?
      's11991',  # not born in a hospital
      's30991',  # didn't die in a hospital
      ],
