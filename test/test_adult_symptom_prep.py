@@ -5,12 +5,13 @@ from smartva.adult_symptom_prep import AdultSymptomPrep
 
 headers = ['sid']
 headers.extend(['a4_06']) # alcohol amount
+headers.extend(['a2_63_1'])
 data = [
-    
+    {'sid': 'lower_belly_pain', 'a2_63_1': '2'},
 ]
 
 expected_results = [
-    
+    {'sid': 'lower_belly_pain',  's82991' : '1'},
 ]
 
 
