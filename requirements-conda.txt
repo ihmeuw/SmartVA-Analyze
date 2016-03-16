@@ -16,3 +16,4 @@ six
 tornado
 wheel
 progressbar
+wxpython
