@@ -7,12 +7,15 @@ from smartva.child_symptom_prep import ChildSymptomPrep
 headers = ['sid']
 # Rash variables
 headers.extend(['c4_31_1', 'c4_32', 'c4_33'])
+headers.extend(['c1_22a'])
 data = [
-    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'}
+    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'},
+    {'sid': 'hosp_death_5', 'c1_22a': '5'},
 ]
 
 expected_results = [
-    {'sid': 'rash1', 's139991': '1', 's141991': '0'}
+    {'sid': 'rash1', 's139991': '1', 's141991': '0'},
+    {'sid': 'hosp_death_5', 's30991': '1'},
 ]
 
 
