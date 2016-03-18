@@ -13,7 +13,11 @@ MIN_CAUSE_SCORE = 6.0
 
 DEFINITIVE_SYMPTOMS = {}
 
-SPURIOUS_ASSOCIATIONS = {}
+SPURIOUS_ASSOCIATIONS = {
+  41: # Road Traffic
+    ['s9999112', # word_motorcycl
+     ],
+}
 
 HCE_DROP_LIST = [
     's1',
