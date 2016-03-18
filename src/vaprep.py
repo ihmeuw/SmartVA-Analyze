@@ -259,29 +259,27 @@ class VaPrep():
                     row[adultrash2index] = words[1]
                     row[adultrash3index] = words[2]
 
-            
+
             #set child abnormality values
             index = headers.index("child119")
             first = row[index].split(' ')
-            index = headers.index("child119a")
-            second = row[index].split(' ')
-            
-            if '1' in first or '1' in second:
+
+            if '1' in first:
                 subindex = headers.index("childabnorm1")
                 row[subindex] = 1
-            if '2' in first or '2' in second:
+            if '2' in first:
                 subindex = headers.index("childabnorm2")
                 row[subindex] = 1
-            if '3' in first or '3' in second:
+            if '3' in first:
                 subindex = headers.index("childabnorm3")
                 row[subindex] = 1
-            if '11' in first or '11' in second:
+            if '11' in first:
                 subindex = headers.index("childabnorm4")
                 row[subindex] = 1
-            if '8' in first or '8' in second:
+            if '8' in first:
                 subindex = headers.index("childabnorm5")
                 row[subindex] = 1
-                
+
             #set child abnormality values
             index = headers.index("orgchild33")
             val = row[index].split(' ')
