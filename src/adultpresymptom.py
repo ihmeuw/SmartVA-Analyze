@@ -1035,7 +1035,7 @@ class PreSymptomPrep():
                 if row[headers_old.index('adult_7_11')] == '1':
                     self.processFreeText('suicide', row, headers)
 
-        freeText = ['a5_01_9b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
+        freeText = ['a5_01_9b', 'a6_03b', 'a6_08',  'a6_11', 'a6_12', 'a6_13', 'a6_14', 'a6_15', 'a7_01']
 
         # we've already lowercased and removed numbers at this point
         for question in freeText:

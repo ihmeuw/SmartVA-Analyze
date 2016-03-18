@@ -1286,11 +1286,8 @@ class PreSymptomPrep():
                 if row[headers_old.index('child_6_10')] == '1':
                     self.processFreeText('rash', row, headers)
 
-        
-        freeText = ['c5_09',  'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
-        
-        
-        
+        freeText = ['c1_19_4b', 'c3_03_4b', 'c5_09', 'c5_12', 'c5_13', 'c5_14', 'c5_15', 'c5_16', 'c6_01']
+
         keyWords = child_wordsToVars.keys()
         
        # we've already lowercased and removed numbers at this point
