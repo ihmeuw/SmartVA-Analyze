@@ -5,13 +5,14 @@ import pytest
 from smartva.neonate_symptom_prep import NeonateSymptomPrep
 
 headers = ['sid']
+headers.extend(['c1_22a'])
 
 data = [
-  
+    {'sid': 'hosp_death_5', 'c1_22a': '5'},
 ]
 
 expected_results = [
-  
+    {'sid': 'hosp_death_5', 's30991': '1'},
 ]
 
 
