@@ -1270,7 +1270,7 @@ class PreSymptomPrep():
                 if row[headers_old.index('child_6_2')] == '1':
                     self.processFreeText('cancer', row, headers)
                 if row[headers_old.index('child_6_3')] == '1':
-                    self.processFreeText('deyhdration', row, headers)
+                    self.processFreeText('dehydration', row, headers)
                 if row[headers_old.index('child_6_4')] == '1':
                     self.processFreeText('dengue', row, headers)
                 if row[headers_old.index('child_6_5')] == '1':
