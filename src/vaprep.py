@@ -111,11 +111,7 @@ class VaPrep():
         #rename child_1_19 to child119
         index = headers.index("child_1_19")
         headers[index] = "child119"
-        
-        #rename child_1_19a to child119a
-        index = headers.index("child_1_19a")
-        headers[index] = "child119a"
-       
+
         #rename child_3_3 child33
         index = headers.index("child_3_3")
         headers[index] = "orgchild33"
@@ -263,29 +259,27 @@ class VaPrep():
                     row[adultrash2index] = words[1]
                     row[adultrash3index] = words[2]
 
-            
+
             #set child abnormality values
             index = headers.index("child119")
             first = row[index].split(' ')
-            index = headers.index("child119a")
-            second = row[index].split(' ')
-            
-            if '1' in first or '1' in second:
+
+            if '1' in first:
                 subindex = headers.index("childabnorm1")
                 row[subindex] = 1
-            if '2' in first or '2' in second:
+            if '2' in first:
                 subindex = headers.index("childabnorm2")
                 row[subindex] = 1
-            if '3' in first or '3' in second:
+            if '3' in first:
                 subindex = headers.index("childabnorm3")
                 row[subindex] = 1
-            if '11' in first or '11' in second:
+            if '11' in first:
                 subindex = headers.index("childabnorm4")
                 row[subindex] = 1
-            if '8' in first or '8' in second:
+            if '8' in first:
                 subindex = headers.index("childabnorm5")
                 row[subindex] = 1
-                
+
             #set child abnormality values
             index = headers.index("orgchild33")
             val = row[index].split(' ')
@@ -464,8 +458,28 @@ class VaPrep():
         wx.PostEvent(self._notify_window, workerthread.ResultEvent(updatestr))
         wordSubs = {'abdomin':'abdomen', 'abdominal':'abdomen', 'accidentally':'accident', 'accidently':'accident', 'accidental':'accident', 'accidently':'accident', 'acute myocardial infarction':'ami', 'aids':'hiv', 'anaemia':'anemia', 'anemic':'anemia', 'baby\'s':'babi', 'babies':'babi', 'baby':'babi', 'bit':'bite', 'bitten':'bite', 'bleed':'blood', 'bleeding':'blood', 'blood pressure':'hypertension', 'burn':'fire', 'burns':'fire', 'burnt':'fire', 'burned':'fire', 'burning':'fire', 'burnings':'fire', 'c section':'csection', 'caesarean':'cesarean', 'caesarian':'cesarean', 'cancerous':'cancer', 'carcinoma':'cancer', 'cardiac':'cardio', 'cardiogenic':'cardio', 'cerebrovascular':'cerebral', 'cervical':'cervix', 'cesarian':'cesarean', 'comatose':'coma', 'convulsions':'convulsion', 'death':'dead', 'dehydrated':'dehydrate', 'dehydration':'dehydrate', 'delivered':'deliver', 'deliveries':'deliver', 'delivery':'deliver', 'diarrheal':'diarrhea', 'difficult breath':'dyspnea', 'difficult breathing':'dyspnea', 'difficulty ':'difficult', 'digestion':'digest', 'digestive':'digest', 'dog bite':'dogbite', 'drank':'drink', 'drawn':'drown', 'drowned':'drown', 'drowning':'drown', 'drunk':'drink', 'dysentary':'diarrhea', 'dyspneic':'dyspnea', 'eclaupsia':'eclampsia', 'edemata':'edema', 'edematous':'edema', 'edoema':'edema', 'ekg':'ecg', 'esophageal':'esophag', 'esophagus':'esophag', 'fallen':'fall', 'falling':'fall', 'feet':'foot', 'fell':'fall', 'heart attack':'ami', 'herniation':'hernia', 'hypertensive':'hypertension', 'incubator':'incubate', 'infected':'infect', 'infectious':'infect', 'injured':'injury', 'injures':'injury', 'injuries':'injury', 'ischemic':'ischemia', 'labour':'labor', 'maternity':'maternal', 'msb':'stillbirth', 'oxygenated':'oxygen', 'paralysis':'paralyze', 'poisoning':'poison', 'poisonous':'poison', 'pregnant':'pregnancy', 'premature':'preterm', 'prematurity':'preterm', 'septic':'sepsis', 'septicaemia':'septicemia', 'septicaemia':'sepsis', 'septicemia':'sepsis', 'smoker':'smoke', 'stroked':'stroke', 'swollen':'swell', 'tb':'tb', 't.b':'tb', 't.b.':'tb', 'transfussed':'transfuse', 'transfussion':'transfuse', 'tuberculosis':'tb', 'urinary':'urine', 'venomous':'venom', 'violent':'violence', 'vomits':'vomit', 'vomitting':'vomit', 'yellowish':'yellow'}
         
-        freeText = ['adult_5_2a', 'adult_6_8',  'adult_6_11', 'adult_6_12', 'adult_6_13', 'adult_6_14', 'adult_6_15', 'adult_7_c', 'child_5_9',  'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'child_6_c']
-        
+        freeText = [
+            'adult_5_2a',
+            'adult_6_3b',
+            'adult_6_8',
+            'adult_6_11',
+            'adult_6_12',
+            'adult_6_13',
+            'adult_6_14',
+            'adult_6_15',
+            'adult_7_c',
+            'child_1_19a',
+            'child_3_3a',
+            'child_5_9',
+            'child_5_12',
+            'child_5_13',
+            'child_5_14',
+            'child_5_15',
+            'child_5_16',
+            'child_6_c',
+            'child_5_0b'
+        ]
+
         # this just does a substituion of words in the above list (mostly misspellings, etc..)
         for question in freeText:
             index = headers.index(question)
