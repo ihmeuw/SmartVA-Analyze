@@ -80,4 +80,4 @@ class TestNeonatePreSymptomPrep(object):
         for t in t_matrix:
             v = v_matrix.next()
             for var in v:
-                assert t[var] == v[var]
+                assert t[var] == v[var], "SID: '{}' does not produce expected result".format(t['sid'])
