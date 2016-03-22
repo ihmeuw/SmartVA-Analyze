@@ -28,7 +28,6 @@ EXAM_DATE_VARS = {
 GENERATED_VARS_DATA = {
     'g4_03b': 0,
     'c1_05b': 0,
-    'c1_08num': 0,
     'c1_20b': 0,
     'c1_21b': 0,
     'c2_05b': 0,
