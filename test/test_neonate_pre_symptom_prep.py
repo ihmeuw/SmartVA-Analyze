@@ -13,6 +13,7 @@ headers.extend(['child_5_4', 'child_5_5'])
 headers.extend(['child_5_10', 'child_5_11'])
 headers.extend(['neonate_6_1'])
 headers.extend(['child_3_11', 'child_3_12', 'child_3_13'])
+headers.extend(['child_1_22'])
 
 data = [
     {'sid': 'freetext_1_19a', 'child_1_15': 1, 'child_1_18': 1, 'child_1_19a': 'cry'},
@@ -27,6 +28,7 @@ data = [
     {'sid': 'freetext_6_c', 'child_6_c': 'cry'},
     {'sid': 'freetext_6_1', 'neonate_6_1': '1'},
     {'sid': 'c3_13_skipped', 'child_3_11': '1', 'child_3_12': '0', 'child_3_13': '1'},
+    {'sid': 'not_in_hosp', 'child_1_22': '4'},
 ]
 
 expected_results = [
@@ -42,6 +44,7 @@ expected_results = [
     {'sid': 'freetext_6_c', 's999910': '1'},
     {'sid': 'freetext_6_1', 'n_6_1': '1', 's99993': '1'},
     {'sid': 'c3_13_skipped', 'c3_13': '1'},
+    {'sid': 'not_in_hosp', 'c1_22a': '4'}
 ]
 
 
