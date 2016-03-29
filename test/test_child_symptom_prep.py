@@ -8,12 +8,19 @@ headers = ['sid']
 # Rash variables
 headers.extend(['c4_31_1', 'c4_32', 'c4_33'])
 headers.extend(['c1_22a'])
+headers.extend(['c4_07b'])
+
 data = [
-    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0'},
-    {'sid': 'hosp_death_5', 'c1_22a': '5'},
+    {'sid': 'multiple_stools', 'c4_07b': 2}, # two loose stools
+    # The method which checks loose stool will throw a value error
+    # if c4_07b is not in each row as a number (not string)
+    # The value needs to be larger than 2 to pass the broken test
+    {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0', 'c4_07b': 9 },
+    {'sid': 'hosp_death_5', 'c1_22a': '5', 'c4_07b': 9},
 ]
 
 expected_results = [
+    {'sid': 'multiple_stools', 's116991': '1'},
     {'sid': 'rash1', 's139991': '1', 's141991': '0'},
     {'sid': 'hosp_death_5', 's30991': '1'},
 ]
