@@ -10,7 +10,7 @@ headers.extend(['child_4_30', 'child_4_31', 'child_4_32', 'child_4_33', 'child_4
 # Free text variables
 headers.extend(['child_1_19a', 'child_3_3a', 'child_5_0b', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'child_6_c'])
 headers.extend(['child_1_15', 'child_1_18', 'child_3_2', 'child_5_4', 'child_5_5', 'child_5_10', 'child_5_11'])
-headers.extend(['child_6_1'])
+headers.extend(['child_6_1', 'child_6_3'])
 
 data = [
     {'sid': 'rash1', 'child_4_30': '1', 'child_4_31': '1 2 3', 'child_4_32': '2', 'child_4_33': '4', 'child_4_33a': '10'},
@@ -24,7 +24,8 @@ data = [
     {'sid': 'freetext_5_15', 'child_5_10': 1, 'child_5_11': 1, 'child_5_15': 'malaria'},
     {'sid': 'freetext_5_16', 'child_5_10': 1, 'child_5_11': 1, 'child_5_16': 'malaria'},
     {'sid': 'freetext_6_c', 'child_6_c': 'malaria'},
-    {'sid': 'freetext_6_1', 'child_6_1': '1'}
+    {'sid': 'freetext_6_1', 'child_6_1': '1'},
+    {'sid': 'freetext_dehydration_checked', 'child_6_3': '1'},
 ]
 
 expected_results = [
@@ -40,6 +41,10 @@ expected_results = [
     {'sid': 'freetext_5_16', 's999930': '1'},
     {'sid': 'freetext_6_c', 's999930': '1'},
     {'sid': 'freetext_6_1', 'c_6_1': '1', 's99991': '1'},
+    {'sid': 'freetext_dehydration_checked', 'c_6_3': '1',
+     's999935': '0', # word_pox
+     's999914': '1', # word_dehydr
+    },
 ]
 
 

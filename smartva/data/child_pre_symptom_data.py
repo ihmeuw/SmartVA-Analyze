@@ -423,15 +423,14 @@ SKIP_PATTERN_DATA = [
 SHORT_FORM_FREE_TEXT_CONVERSION = {
     'c_6_1': 'abdomen',
     'c_6_2': 'cancer',
-    'c_6_3': 'pox',
-    'c_6_4': 'dehydration',
-    'c_6_5': 'dengue',
-    'c_6_6': 'diarrhea',
-    'c_6_7': 'fever',
-    'c_6_8': 'heart',
-    'c_6_9': 'jaundice',
-    'c_6_10': 'pneumonia',
-    'c_6_11': 'rash',
+    'c_6_3': 'dehydration',
+    'c_6_4': 'dengue',
+    'c_6_5': 'diarrhea',
+    'c_6_6': 'fever',
+    'c_6_7': 'heart',
+    'c_6_8': 'jaundice',
+    'c_6_9': 'pneumonia',
+    'c_6_10': 'rash',
 }
 
 FREE_TEXT_VARS = [
