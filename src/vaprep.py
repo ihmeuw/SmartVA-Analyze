@@ -443,10 +443,10 @@ class VaPrep():
                     row[index18a] = float(row[index18b]) * 1000
                 except ValueError:
                     row[index18a] = 0
+                row[index] = 1
+                row[index18b] = ''
             else:
                 row[index18a] = 0
-            row[index] = 1
-            row[index18b] = ''
 
             index = headers.index("child_5_6e")
             val = row[index]    
