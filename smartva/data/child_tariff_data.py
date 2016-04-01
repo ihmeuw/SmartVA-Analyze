@@ -9,9 +9,76 @@ CUTOFF_POS = 0.95
 
 UNIFORM_LIST_POS = 0.17
 
-MIN_CAUSE_SCORE = 6.0
+MIN_CAUSE_SCORE = 3.0
 
-DEFINITIVE_SYMPTOMS = {}
+DEFINITIVE_SYMPTOMS = {
+    's155' : 19,  # Decedent suffered road traffic injury => Road Traffic
+    's99999' : 12, # word_cancer => Other Cancers
+}
+
+SPURIOUS_ASSOCIATIONS = {
+  1: # AIDS
+    ['sex',     # sex
+     's11991'   # not born in a hospital
+     's17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     ],
+
+  9: # Malaria
+    ['s11991',  # not born in a hospital
+     's17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's188',    # (biological) mother ever tested for HIV?
+     ],
+
+  10: # Measles
+    ['s999935', # word_pox
+     's17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's28',     # How old was the baby/child when the fatal illness started?
+     's31',     # How old was the deceased at the time of death?
+     's11991',  # not born in a hospital
+     's30991',  # didn't die in a hospital
+     ],
+
+  11: # Meningitis
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     ],
+
+
+  16: # Other Infectious Diseases
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's999926', # word_jaundic
+     ],
+
+  18: # Poisonings
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     ],
+
+  20: # Sepsis
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's164',    # Decedent did not suffer accident
+     's188',    # (biological) mother ever tested for HIV?
+     ],
+
+  21: # Violent Death
+    ['s17',     # Did the baby ever cry?
+     's18',     # Did the baby ever move?
+     's19',     # Did the baby ever breathe?
+     's8992',   # mother died after delivery
+     ],
+}
 
 HCE_DROP_LIST = [
     's180',
