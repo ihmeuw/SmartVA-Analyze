@@ -9,51 +9,9 @@ CUTOFF_POS = 0.95
 
 UNIFORM_LIST_POS = 0.17
 
-MIN_CAUSE_SCORE = 3.0
+MIN_CAUSE_SCORE = 6.0
 
 DEFINITIVE_SYMPTOMS = {}
-
-SPURIOUS_ASSOCIATIONS = {
-  9: # Malaria
-    ['s11991',  # not born in a hospital
-     's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  10: # Measles
-    ['s999935', # word_pox
-     's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  11: # Meningitis
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-
-  16: # Other Infectious Diseases
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's999926', # word_jaundic
-     ],
-
-  18: # Poisonings
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  21: # Violent Death
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-}
 
 HCE_DROP_LIST = [
     's180',

@@ -31,30 +31,6 @@ SEX_KEY = 'real_gender'
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
-def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
-    """remove all keys from tariff_dict that appear in the list
-    corresponding to cause_num in the spurious_assoc_dict
-
-    Parameters
-    ----------
-
-    tariff_dict : dict, keyed by symptoms
-    cause_num : int
-    spurious_assoc_dict : dict, keyed by cause_nums, with s_a_d[j] ==
-      lists of symptoms (see SPURIOUS_ASSOCIATIONS in
-      data/{module}_tariff_data.py for lists)
-
-    Results
-    -------
-    remove all spurious associations from tariff dict
-
-    """
-    if cause_num in spurious_assoc_dict:
-        for symp in spurious_assoc_dict[cause_num]:
-            if symp in tariff_dict:
-                tariff_dict.pop(symp)
-
-
 
 class ScoredVA(object):
     def __init__(self, cause_scores, cause, sid, age, sex):
@@ -213,13 +189,7 @@ class TariffPrep(DataPrep):
             for row in reader:
                 cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
 
-                tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
-
-                # exclude spurious associations
-                exclude_spurious_associations(tariff_dict, cause_num, self.data_module.SPURIOUS_ASSOCIATIONS)
-
-                items = tariff_dict.items()
-
+                items = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}.items()
                 cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
                                       :MAX_CAUSE_SYMPTOMS]
         return cause40s
