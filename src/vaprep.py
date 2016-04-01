@@ -427,16 +427,27 @@ class VaPrep():
             else:
                 subindex = headers.index("provider14")
                 row[subindex] = 0
-                
-            #weights
+
+            # Ensure weight is in grams
             index = headers.index("child_1_8")
-            val = row[index]   
+            val = row[index]
             index18a = headers.index("child_1_8a")
-            index18b = headers.index("child_1_8b") 
-            if val == '2':
-                row[index18a] = float(row[index18b]) * 1000
-                row[index] = 1
-            
+            index18b = headers.index("child_1_8b")
+            if val == '1':
+                try:
+                    row[index18a] = float(row[index18a])
+                except ValueError:
+                    row[index18a] = 0
+            elif val == '2':
+                try:
+                    row[index18a] = float(row[index18b]) * 1000
+                except ValueError:
+                    row[index18a] = 0
+            else:
+                row[index18a] = 0
+            row[index] = 1
+            row[index18b] = ''
+
             index = headers.index("child_5_6e")
             val = row[index]    
             if val == '2':
