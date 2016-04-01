@@ -15,6 +15,15 @@ DEFINITIVE_SYMPTOMS = {
     's20': 6
 }
 
+SPURIOUS_ASSOCIATIONS = {
+  2: # Congenital malformation
+    ['s58994',     # c-section
+     ],
+  6: # Stillbirth
+    ['s73',     # Did the baby ever suckle in a normal way?
+     ],
+}
+
 HCE_DROP_LIST = [
     's180',
     's181',
