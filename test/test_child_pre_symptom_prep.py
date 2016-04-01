@@ -11,6 +11,7 @@ headers.extend(['child_4_30', 'child_4_31', 'child_4_32', 'child_4_33', 'child_4
 headers.extend(['child_1_19a', 'child_3_3a', 'child_5_0b', 'child_5_9', 'child_5_12', 'child_5_13', 'child_5_14', 'child_5_15', 'child_5_16', 'child_6_c'])
 headers.extend(['child_1_15', 'child_1_18', 'child_3_2', 'child_5_4', 'child_5_5', 'child_5_10', 'child_5_11'])
 headers.extend(['child_6_1', 'child_6_3'])
+headers.extend(['child_4_6', 'child_4_8', 'child_4_9', 'child_4_11']) # loos stool
 
 data = [
     {'sid': 'rash1', 'child_4_30': '1', 'child_4_31': '1 2 3', 'child_4_32': '2', 'child_4_33': '4', 'child_4_33a': '10'},
@@ -26,6 +27,12 @@ data = [
     {'sid': 'freetext_6_c', 'child_6_c': 'malaria'},
     {'sid': 'freetext_6_1', 'child_6_1': '1'},
     {'sid': 'freetext_dehydration_checked', 'child_6_3': '1'},
+    {'sid': 'loose_stool',
+            'child_4_6': '1', # had loose stool
+            'child_4_8': '4', # started some number of days before death
+            'child_4_9': '1', # continued until death
+            'child_4_11': '1' # visible blood in loose stool
+    },
 ]
 
 expected_results = [
@@ -45,6 +52,7 @@ expected_results = [
      's999935': '0', # word_pox
      's999914': '1', # word_dehydr
     },
+    {'sid': 'loose_stool', 'c4_09': '1', 'c4_11': '1'},
 ]
 
 
