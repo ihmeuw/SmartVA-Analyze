@@ -206,19 +206,7 @@ class PreSymptomPrep():
 #            if temp == '5':
 #                row[index] = '6'
 
-            child_1_8a = row[headers_old.index('child_1_8a')]
-            child_1_8b = row[headers_old.index('child_1_8b')]
-            if child_1_8a == '' or child_1_8a is None:
-                child_1_8a = '0'
-            if child_1_8b == '' or child_1_8b is None:
-                child_1_8b = '0'
-            if child_1_8b != 0:
-                child_1_8b = int(child_1_8b) * 1000
-            row[headers.index('child_1_8num')] = float(child_1_8a) + float(child_1_8b)
-
-            child_1_8 = row[headers_old.index('child_1_8')]
-            if child_1_8 == '2':
-                row[headers_old.index('child_1_8')] = '1'
+            row[headers.index('child_1_8num')] = float(row[headers_old.index('child_1_8a')])
 
             index = headers.index('c4_33b')
             temp = row[headers.index('c4_33a')]
