@@ -14,8 +14,32 @@ MIN_CAUSE_SCORE = 6.0
 DEFINITIVE_SYMPTOMS = {}
 
 SPURIOUS_ASSOCIATIONS = {
+  13: # Diabetes with Skin Infection/Sepsis
+    ['s999917', # word_bite
+     's9999146', # word_stroke
+     's999990', # word_inflam
+     's9999157', # word_tumor
+     's99994', # word_ami
+     's159', # Decedent suffered other injury
+     's9999101', # word_knee
+     's99992', # word_accid
+     's999948', # word_cut
+
+     ],
+  21: # Homicide
+    ['s9999100', # word_kills - does not come up for suicide, leads to weird results
+     ],
+  29: # Malaria
+    ['s158', # Decedent did not suffer any injuries
+     ],
   41: # Road Traffic
     ['s9999112', # word_motorcycl
+     ],
+  45: # Suicide
+    ['s999998', # word_kerosen
+     's154',    # Decedent suffered poisoning
+     's156',    # Decedent suffered burn
+     's999971', # word_fire
      ],
 }
 
