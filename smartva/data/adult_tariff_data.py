@@ -26,12 +26,41 @@ SPURIOUS_ASSOCIATIONS = {
      's999948', # word_cut
 
      ],
+  15: # Drowning
+    ['s9999156', # word_tree
+     's999968',  # word_fall
+     ],
+  18: # Falls
+    ['s9999156', # word_tree
+     's999968',  # word_fall
+     ],
+  19: # Fires
+    ['s999971', # word_fire - too simple, captures heart burn, etc.
+     ],
   21: # Homicide
     ['s9999100', # word_kills - does not come up for suicide, leads to weird results
+     's999971',  # word_fire
+     's9999137', # word_shot
      ],
   29: # Malaria
     ['s158', # Decedent did not suffer any injuries
      ],
+  34: # Other Injuries
+    ['s9999100', # word_kills
+     's999971', # word_fire
+     's999968',  # word_fall 
+    ],
+  38: # Poisionings
+    ['s9999148',   # word_suicid
+     's9999123',   # word_poison
+     's9999150',   # word_suspect
+     's9999145',   # word_stress
+     's9999111',   # word_mental
+     's999956',    # word_drink
+     's99993',      # word_alcohol
+     's999971', # word_fire
+     's999968',  # word_fall 
+    ],
   41: # Road Traffic
     ['s9999112', # word_motorcycl
      ],

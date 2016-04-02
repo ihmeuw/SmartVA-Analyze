@@ -31,6 +31,7 @@ SPURIOUS_ASSOCIATIONS = {
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
      's188',    # (biological) mother ever tested for HIV?
+     's999919', # word_fever (somehow negative!)
      ],
 
   10: # Measles
