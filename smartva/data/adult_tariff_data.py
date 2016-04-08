@@ -11,11 +11,211 @@ UNIFORM_LIST_POS = 0.18
 
 MIN_CAUSE_SCORE = 6.0
 
-DEFINITIVE_SYMPTOMS = {}
+DEFINITIVE_SYMPTOMS = {
+    's151' : 41,  # Decedent suffered road traffic injury => Road Traffic
+    #'s159' : 34,  # Decedent suffered other injury => Other Injury
+}
 
 SPURIOUS_ASSOCIATIONS = {
+  5: # Bite
+    ['s9999148',   # word_suicid
+     's9999123',   # word_poison
+     's9999150',   # word_suspect
+     's9999145',   # word_stress
+     's9999111',   # word_mental
+     's999956',    # word_drink
+     's99993',      # word_alcohol
+     's999971', # word_fire
+     's999968',  # word_fall 
+    ],
+  7: # 'Cervical Cancer',
+    ['s999932', # word_cervix
+    ],
+  10: # 'COPD',
+    ['s9999117', # word_obstruct
+    ],
+  13: # Diabetes with Skin Infection/Sepsis
+    ['s999917',  # word_bite
+     's9999146', # word_stroke
+     's999990',  # word_inflam
+     's9999157', # word_tumor
+     's99994',   # word_ami
+     's9999169', # word_wound
+     's159',     # Decedent suffered other injury
+     's9999101', # word_knee
+     's99992',   # word_accid
+     's999948',  # word_cut
+     's99995',   # word_amput
+     ],
+  15: # Drowning
+    ['s9999156', # word_tree
+     's999968',  # word_fall
+     ],
+  17: # 'Esophageal Cancer',
+    ['s999965', # word_esophag
+     ],
+  18: # Falls
+    ['s9999156', # word_tree
+     's999968',  # word_fall
+     's99992', # word_accid
+     's999977', # word_head
+     ],
+  19: # Fires
+    ['s999971', # word_fire - too simple, captures heart burn, etc.
+     's999998', # word_kerosen
+     's999961', # word_electr
+     ],
+  21: # Homicide
+    ['s9999100', # word_kills - does not come up for suicide, leads to weird results
+     's999971',  # word_fire
+     's9999137', # word_shot
+     's9999169', # word_wound
+     's999977',  # word_head
+     's9999124',  # word_polic
+     ],
+  29: # Malaria
+    ['s158', # Decedent did not suffer any injuries
+      's999997', # word_jaundic
+      's999969', # word_fever
+     's9999104', # word_liver
+      's999950', # word_depress
+     's9999139', # word_smoke
+      's999973', # word_foot
+      's999943', # word_conscious
+     's9999134', # word_sepsi
+      's999960', # word_edema
+       's99992', # word_accid
+      's999927', # word_cancer
+     's9999169', # word_wound
+      's999966', # word_failur
+       's19991', # Pattern of fever was continuous
+       's18992', # Severity of fever was moderate to large
+         's104', # Did the person become unconscious immediately after the convulsions?
+          's17', # How many days did the fever last? [days]
+          's16', # Did [name] have a fever?
+          's97', # Did it continue until death?
+          's38', # Did [name] have yellow discoloration of the eyes?
+          's89', # Did [name] have headaches?
+       's19992', # Pattern of fever was on-and-off
+          's20', # Did [name] have sweating with the fever?
+         's158', # Decedent did not suffer any injuries
+
+     ],
+  32: # Other Digestive
+    [
+    's9999117', # word_obstruct
+    's9999110', # word_mellitus
+    's9999171', # word_yellow
+    's9999149', # word_surgeri
+    's9999132', # word_ruptur
+    's9999158', # word_ulcer
+    's9999159', # word_ultrasound
+    's9999134', # word_sepsi
+    's9999136', # word_shock
+    's9999144', # word_stool
+      's99993', # word_alcohol
+    's9999104', # word_liver
+     's999936', # word_chronic
+    's9999119', # word_pain
+     's999956', # word_drink
+     's999951', # word_diabet
+    's9999166', # word_vomit
+    's9999135', # word_sever
+    's9999167', # word_water
+    ],
+  32: # Other Infectious
+    [
+        's999978', # word_headach
+       's9999171', # word_yellow
+        's999923', # word_brain
+        's999969', # word_fever
+           's135', # Did she die within 6 weeks of childbirth?
+        's999917', # word_bite
+        's999944', # word_convuls
+        's999997', # word_jaundic
+        's999930', # word_cathet
+        's999993', # word_intestin
+           's127', # Was [name] pregnant at the time of death?
+        's999955', # word_dizzi
+        's999973', # word_foot
+        's999918', # word_black
+         's99991', # word_abdomen
+       's9999167', # word_water
+       's9999155', # word_transfus
+       's9999145', # word_stress
+    ],
+  34: # Other Injuries
+    ['s9999100', # word_kills
+     's999971', # word_fire
+     's999968',  # word_fall 
+     's999961', # word_electr
+     's9999124', # word_polic
+     's99992', # word_accid
+    ],
+  35: # Other Non-communicable Diseases
+    ['s999975', # word_goiter
+     's999958', # word_dyspnea
+    's9999134', # word_sepsi
+     's999979', # word_heart
+     's999946', # word_cough
+    's9999158', # word_ulcer
+     's999985', # word_hypertens
+      's99993', # word_alcohol
+     's999956', # word_drink
+    's9999147', # word_sugar
+     's999969', # word_fever
+    ],
+  37: # Pneumonia
+    ['s9999117', # word_obstruct
+     's999958',  # word_dyspnea
+     's999911',  # word_asthma
+     's9999170', # word_xray
+     's999974',  # word_fractur
+     's9999110', # word_mellitus
+     's999995',  # word_intub
+     's99997',   # word_antibiot
+     's9999133', # word_seizur
+     's999925',  # word_breath
+     's9999134', # word_sepsi
+     's9999146', # word_stroke
+      's999931', # word_cerebr
+     's9999131', # word_respiratori
+     's9999126', # word_prostat
+      's999959', # word_ecg
+     's9999139', # word_smoke
+     's9999109', # word_mass
+      's999985', # word_hypertens
+      's999910', # word_arteri
+      's999978', # word_headach
+     's9999128', # word_pulmonari
+      's999979', # word_heart
+    ],
+  38: # Poisonings
+    ['s9999148',   # word_suicid
+     's9999123',   # word_poison
+     's9999150',   # word_suspect
+     's9999145',   # word_stress
+     's9999111',   # word_mental
+     's999956',    # word_drink
+     's99993',     # word_alcohol
+     's9999141', # word_stomach
+     's9999166', # word_vomit
+     's9999119', # word_pain
+     's999971',  # word_fire
+     's999968',  # word_fall 
+    ],
   41: # Road Traffic
     ['s9999112', # word_motorcycl
+     's99992',   # word_accid
+     's999977',  # word_head
+     's999980',  # word_hematoma
+     ],
+  45: # Suicide
+    ['s999998', # word_kerosen
+     's154',    # Decedent suffered poisoning
+     's156',    # Decedent suffered burn
+     's999971', # word_fire
+     's9999123',   # word_poison
      ],
 }
 
