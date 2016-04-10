@@ -493,6 +493,8 @@ class VaPrep():
 
         # this just does a substituion of words in the above list (mostly misspellings, etc..)
         for question in freeText:
+            if question not in headers:  # do not require the free text columns
+                continue
             index = headers.index(question)
             for row in matrix:
                 answer = row[index]
