@@ -12,7 +12,7 @@ UNIFORM_LIST_POS = 0.18
 MIN_CAUSE_SCORE = 6.0
 
 DEFINITIVE_SYMPTOMS = {
-    's151' : 41,  # Decedent suffered road traffic injury => Road Traffic
+    's151' : 30,  # Decedent suffered road traffic injury => Road Traffic
     #'s159' : 34,  # Decedent suffered other injury => Other Injury
 }
 
