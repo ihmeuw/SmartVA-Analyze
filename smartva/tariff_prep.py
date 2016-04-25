@@ -31,6 +31,7 @@ SEX_KEY = 'real_gender'
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
+
 def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
     """remove all keys from tariff_dict that appear in the list
     corresponding to cause_num in the spurious_assoc_dict
@@ -53,7 +54,6 @@ def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
         for symp in spurious_assoc_dict[cause_num]:
             if symp in tariff_dict:
                 tariff_dict.pop(symp)
-
 
 
 class ScoredVA(object):
