@@ -57,19 +57,25 @@ def exclude_spurious_associations(spurious_assoc_dict):
 
     Parameters
     ----------
-
-    tariff_dict : dict, keyed by symptoms
-    cause_num : int
     spurious_assoc_dict : dict, keyed by cause_nums, with s_a_d[j] ==
       lists of symptoms (see SPURIOUS_ASSOCIATIONS in
       data/{module}_tariff_data.py for lists)
 
     Returns
     -------
-    remove all spurious associations from tariff dict
-
+    filter function with access to spurious associations dict.
     """
     def fn_wrap(tariff_dict, cause_num):
+        """
+        Parameters
+        ----------
+        tariff_dict : dict, keyed by symptoms
+        cause_num : int
+
+        Returns
+        -------
+        dict with all spurious associations removed from tariff dict
+        """
         return {symptom: value for symptom, value in tariff_dict.items()
                 if symptom not in spurious_assoc_dict.get(cause_num, [])}
 
