@@ -31,7 +31,27 @@ def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
 
-def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
+def get_cause40s(filename, drop_headers, filter=None):
+    cause40s = {}
+    with open(filename, 'rU') as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
+
+            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
+
+            if callable(filter):
+                tariff_dict = filter(tariff_dict, cause_num)
+
+            items = tariff_dict.items()
+
+            cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:MAX_CAUSE_SYMPTOMS]
+
+    return cause40s
+
+
+def exclude_spurious_associations(spurious_assoc_dict):
     """remove all keys from tariff_dict that appear in the list
     corresponding to cause_num in the spurious_assoc_dict
 
@@ -49,8 +69,11 @@ def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
     remove all spurious associations from tariff dict
 
     """
-    return {symptom: value for symptom, value in tariff_dict.items()
-            if symptom not in spurious_assoc_dict.get(cause_num, [])}
+    def fn_wrap(tariff_dict, cause_num):
+        return {symptom: value for symptom, value in tariff_dict.items()
+                if symptom not in spurious_assoc_dict.get(cause_num, [])}
+
+    return fn_wrap
 
 
 class ScoredVA(object):
@@ -150,7 +173,8 @@ class TariffPrep(DataPrep):
 
         undetermined_matrix = self._get_undetermined_matrix()
 
-        cause40s = self.get_cause40s(drop_headers)
+        cause40s = get_cause40s(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
+                                drop_headers, exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
         self.cause_list = sorted(cause40s.keys())
 
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
@@ -185,25 +209,6 @@ class TariffPrep(DataPrep):
         self.write_tariff_scores(va_cause_list)
 
         return True
-
-    def get_cause40s(self, drop_headers):
-        cause40s = {}
-        with open(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            reader = csv.DictReader(f)
-
-            for row in reader:
-                cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
-
-                tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
-
-                # exclude spurious associations
-                tariff_dict = exclude_spurious_associations(tariff_dict, cause_num, self.data_module.SPURIOUS_ASSOCIATIONS)
-
-                items = tariff_dict.items()
-
-                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
-                                      :MAX_CAUSE_SYMPTOMS]
-        return cause40s
 
     def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
         """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
