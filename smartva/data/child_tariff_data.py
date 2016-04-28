@@ -90,7 +90,7 @@ SPURIOUS_ASSOCIATIONS = {
      's19',     # Did the baby ever breathe?
      ],
 
-  16: # Other Digestive Diseases
+  15: # Other Digestive Diseases
     ['s17',     # Did the baby ever cry?
      's18',     # Did the baby ever move?
      's19',     # Did the baby ever breathe?
