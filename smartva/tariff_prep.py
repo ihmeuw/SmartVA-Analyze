@@ -3,7 +3,6 @@ import collections
 import csv
 import math
 import os
-import pickle
 from decimal import Decimal
 
 import numpy as np
@@ -156,35 +155,19 @@ class TariffPrep(DataPrep):
         cause40s = self.get_cause40s(drop_headers)
         self.cause_list = sorted(cause40s.keys())
 
-        # """ # Uncomment this line to read from the pickle.
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
-
-        """
-        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
-            pickle.dump(va_validated_cause_list, f)
-        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
-            va_validated_cause_list = pickle.load(f)
-        """
 
         uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
 
         status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
-        # """ # Uncomment this line to read from the pickle. (For testing purposes.)
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
-
-        """
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
-            pickle.dump(va_cause_list, f)
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
-            va_cause_list = pickle.load(f)
-        """
 
         self.write_external_ranks(va_cause_list)
 
