@@ -44,15 +44,13 @@ def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
       lists of symptoms (see SPURIOUS_ASSOCIATIONS in
       data/{module}_tariff_data.py for lists)
 
-    Results
+    Returns
     -------
     remove all spurious associations from tariff dict
 
     """
-    if cause_num in spurious_assoc_dict:
-        for symp in spurious_assoc_dict[cause_num]:
-            if symp in tariff_dict:
-                tariff_dict.pop(symp)
+    return {symptom: value for symptom, value in tariff_dict.items()
+            if symptom not in spurious_assoc_dict.get(cause_num, [])}
 
 
 class ScoredVA(object):
@@ -199,7 +197,7 @@ class TariffPrep(DataPrep):
                 tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
 
                 # exclude spurious associations
-                exclude_spurious_associations(tariff_dict, cause_num, self.data_module.SPURIOUS_ASSOCIATIONS)
+                tariff_dict = exclude_spurious_associations(tariff_dict, cause_num, self.data_module.SPURIOUS_ASSOCIATIONS)
 
                 items = tariff_dict.items()
 
