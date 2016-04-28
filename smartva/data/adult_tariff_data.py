@@ -123,7 +123,7 @@ SPURIOUS_ASSOCIATIONS = {
     's9999135', # word_sever
     's9999167', # word_water
     ],
-  32: # Other Infectious
+  33: # Other Infectious
     [
         's999978', # word_headach
        's9999171', # word_yellow
