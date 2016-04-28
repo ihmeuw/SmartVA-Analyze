@@ -31,7 +31,7 @@ def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
 
-def get_cause40s(filename, drop_headers, filter=None):
+def get_cause40s(filename, drop_headers, filter_fn=None):
     cause40s = {}
     with open(filename, 'rU') as f:
         reader = csv.DictReader(f)
@@ -41,8 +41,8 @@ def get_cause40s(filename, drop_headers, filter=None):
 
             tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
 
-            if callable(filter):
-                tariff_dict = filter(tariff_dict, cause_num)
+            if callable(filter_fn):
+                tariff_dict = filter_fn(tariff_dict, cause_num)
 
             items = tariff_dict.items()
 
