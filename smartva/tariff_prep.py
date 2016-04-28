@@ -31,8 +31,8 @@ def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
 
-def get_cause40s(filename, drop_headers, filter_fn=None):
-    cause40s = {}
+def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
+    cause_symptoms = {}
     with open(filename, 'rU') as f:
         reader = csv.DictReader(f)
 
@@ -46,9 +46,9 @@ def get_cause40s(filename, drop_headers, filter_fn=None):
 
             items = tariff_dict.items()
 
-            cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:MAX_CAUSE_SYMPTOMS]
+            cause_symptoms[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:max_symptoms]
 
-    return cause40s
+    return cause_symptoms
 
 
 def exclude_spurious_associations(spurious_assoc_dict):
@@ -179,8 +179,9 @@ class TariffPrep(DataPrep):
 
         undetermined_matrix = self._get_undetermined_matrix()
 
-        cause40s = get_cause40s(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
-                                drop_headers, exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
+        cause40s = get_cause_symptoms(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
+                                      drop_headers, MAX_CAUSE_SYMPTOMS,
+                                      exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
         self.cause_list = sorted(cause40s.keys())
 
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
