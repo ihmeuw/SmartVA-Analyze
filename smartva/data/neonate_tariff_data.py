@@ -16,54 +16,52 @@ DEFINITIVE_SYMPTOMS = {
 }
 
 SPURIOUS_ASSOCIATIONS = {
-  2: # Congenital malformation
-    ['s58994',     # c-section
-     #'s999913',    # word_head
-     
-     ],
-  3: # Meningitis/Sepsis
-    ['s999926', # word_oxygen
-     's99994',  # word_blood
-     ],
-  4: # Pneumonia
-    [
-        's14', # What was the weight of the deceased at birth?
-        's70', # Did the baby stop being able to cry?
-        's91', # At what age did the baby start feeling cold to touch? [days]
-        's19', # Did the baby ever breathe?
-        's32', # Mark the baby's age at the time of death.
-        's53', # How much time did the labor and delivery take? [days]
-        's87', # During the illness that led to death, did the baby have fever?
-        's28', # How old was the baby/child when the fatal illness started? [days]
-        's74', # Did the baby stop being able to suckle in a normal way?
-        's75', # How long after birth did the baby stop suckling? [days]
-        's42', # Complications: No complications
-        's88', # At what age did the fever start? [days]
-        's89', # How many days did the fever last? [days]
-        's79', # At what age did the difficult breathing start? [days]
-        's77', # Was the baby able to open his/her mouth at the time he/she stopped sucking?
-        's31', # How old was the deceased at the time of death? [days]
-        's72', # Was the baby able to suckle in a normal way during the first day of life?
-     's58992', # pregnancy: vaginal without forceps
-        's17', # Did the baby ever cry?
-        's29', # How long did the illness last? [days]
-        's38', # Complications: Cord delivered first
-    's999916', # word_hemorrhag
-      's4991', # age quartile 1
-    's999918', # word_incub
-        's96', # During the illness that led to death, did the baby have pus drainage from the um
-     's46991', # early pregnancy
-    's999928', # word_pneumothorax
-        's20', # Decedent never cried, moved or breathed
-        's16', # Baby was born dead
-     's58991', # pregancy: vaginal with forceps
-     's46992', # late pregnancy
-        's37', # Complications: Child delivered non-headfirst
-        's36', # Complications: Mother had diabetes
-     ],
-  6: # Stillbirth
-    ['s73',     # Did the baby ever suckle in a normal way?
-     ],
+    2: [  # Congenital malformation
+        's58994',  # c-section
+        # 's999913',  # word_head
+    ],
+    3: [  # Meningitis/Sepsis
+        's999926',  # word_oxygen
+        's99994',  # word_blood
+    ],
+    4: [  # Pneumonia
+        's14',  # What was the weight of the deceased at birth?
+        's70',  # Did the baby stop being able to cry?
+        's91',  # At what age did the baby start feeling cold to touch? [days]
+        's19',  # Did the baby ever breathe?
+        's32',  # Mark the baby's age at the time of death.
+        's53',  # How much time did the labor and delivery take? [days]
+        's87',  # During the illness that led to death, did the baby have fever?
+        's28',  # How old was the baby/child when the fatal illness started? [days]
+        's74',  # Did the baby stop being able to suckle in a normal way?
+        's75',  # How long after birth did the baby stop suckling? [days]
+        's42',  # Complications: No complications
+        's88',  # At what age did the fever start? [days]
+        's89',  # How many days did the fever last? [days]
+        's79',  # At what age did the difficult breathing start? [days]
+        's77',  # Was the baby able to open his/her mouth at the time he/she stopped sucking?
+        's31',  # How old was the deceased at the time of death? [days]
+        's72',  # Was the baby able to suckle in a normal way during the first day of life?
+        's58992',  # pregnancy: vaginal without forceps
+        's17',  # Did the baby ever cry?
+        's29',  # How long did the illness last? [days]
+        's38',  # Complications: Cord delivered first
+        's999916',  # word_hemorrhag
+        's4991',  # age quartile 1
+        's999918',  # word_incub
+        's96',  # During the illness that led to death, did the baby have pus drainage from the um
+        's46991',  # early pregnancy
+        's999928',  # word_pneumothorax
+        's20',  # Decedent never cried, moved or breathed
+        's16',  # Baby was born dead
+        's58991',  # pregancy: vaginal with forceps
+        's46992',  # late pregnancy
+        's37',  # Complications: Child delivered non-headfirst
+        's36',  # Complications: Mother had diabetes
+    ],
+    6: [  # Stillbirth
+        's73',  # Did the baby ever suckle in a normal way?
+    ],
 }
 
 HCE_DROP_LIST = [
