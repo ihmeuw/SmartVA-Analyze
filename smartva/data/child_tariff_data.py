@@ -12,153 +12,117 @@ UNIFORM_LIST_POS = 0.17
 MIN_CAUSE_SCORE = 3.0
 
 DEFINITIVE_SYMPTOMS = {
-    's155' : 19,  # Decedent suffered road traffic injury => Road Traffic
-    's99999' : 12, # word_cancer => Other Cancers
+    's155': 19,  # Decedent suffered road traffic injury => Road Traffic
+    's99999': 12,  # word_cancer => Other Cancers
 }
 
 SPURIOUS_ASSOCIATIONS = {
-  1: # AIDS
-    ['sex',     # sex
-     's11991'   # not born in a hospital
-     's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's190',    # Has the deceased's (biological) mother ever been told she had AIDS by a health worker
-     ],
-
-  6: # Falls
-    ['s999922', # word_head
-     ],
-
-  8: # Hemorrhagic Fever
-    ['s999924', # word_icu
-     ],
-
-  9: # Malaria
-    ['s11991',  # not born in a hospital
-     's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's188',    # (biological) mother ever tested for HIV?
-     's999919', # word_fever (somehow negative!)
-     ],
-
-  10: # Measles
-    [
-        's999935', # word_pox
-        's999937', # word_rash
-        's999910', # word_chest
-         's11991', # not born in a hospital
-         's30991', # didn't die in a hospital
-          's2994', # quintile 4 of age
-            's28', # How old was the baby/child when the fatal illness started? [days]
-        's999919', # word_fever
-            's31', # How old was the deceased at the time of death? [days]
-            's14', # What was the weight of the deceased at birth?
-        's113991', # severe fever
-           's112', # Did the fever continue until death?
-            's17', # Did the baby ever cry?
-            's18', # Did the baby ever move?
-            's19', # Did the baby ever breathe?
-           's110', # During the illness that led to death, did [name] have a fever?
-           's132', # Breathing: Wheezing
-           's124', # Did the child vomit after he/she coughed?
-           's122', # For how many days did the cough last? [days]
-           's123', # Was the cough very severe?
-           's144', # During the illness that led to death, did [name]'s limbs (legs, arms) become ver
-           's150', # During the illness that led to death, did [name] suffer from 'lack of blood' or
-           's153', # During the illness that led to death, did [name] bleed from anywhere?
-           's136', # Did [name] have a stiff neck during the illness that led to death?
-           's188', # Has the deceased's (biological) mother ever been tested for HIV?
-
-        's999935', # word_pox
-     's999937', # word_rash
-     's999919', # word_fever
-     's999910', # word_chest
-     's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's28',     # How old was the baby/child when the fatal illness started?
-     's31',     # How old was the deceased at the time of death?
-     's11991',  # not born in a hospital
-     's30991',  # didn't die in a hospital
-     ],
-
-  11: # Meningitis
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  15: # Other Digestive Diseases
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  16: # Other Infectious Diseases
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's999926', # word_jaundic
-     ],
-
-  17: # Pneumonia
-    ['s999931', # word_malnutrit
-     ],
-
-  18: # Poisonings
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     ],
-
-  19: # Road Traffic
-    ['s99992',  # word_accid
-     ],
-
-  20: # Sepsis
-    [
-        's999924', # word_icu
-          's2991', # quintile 1 of age
-        's999923', # word_heart
-        's999911', # word_cold
-        's999929', # word_lung
-         's13991', # decedent was small or very small
-        's999947', # word_swell
-        's999933', # word_pneumonia
-          's2992', # quintile 2 of age
-           's164', # Decedent did not suffer accident
-            's14', # What was the weight of the deceased at birth?
-           's188', # Has the deceased's (biological) mother ever been tested for HIV?
-         's99998', # word_breath
-           's125', # During the illness that led to death, did [name] have difficult breathing?
-           's117', # How many days before death did the frequent loose or liquid stools start? [days]
-            's28', # How old was the baby/child when the fatal illness started? [days]
-            's31', # How old was the deceased at the time of death? [days]
-          's2994', # quintile 4 of age
-          's2995', # quintile 5 of age
-
-        's17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's164',    # Decedent did not suffer accident
-     's188',    # (biological) mother ever tested for HIV?
-     's999924', # word_icu
-     's999923', # word_heart
-     's999911', # word_cold
-     's999929', # word_lung
-     's999947', # word_swell
-     's999933', # word_pneumonia
-     's99998',  # word_breath
-     ],
-
-  21: # Violent Death
-    ['s17',     # Did the baby ever cry?
-     's18',     # Did the baby ever move?
-     's19',     # Did the baby ever breathe?
-     's8992',   # mother died after delivery
-     ],
+    1: [  # AIDS
+        'sex',  # sex
+        's11991'  # not born in a hospital
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+        's190',  # Has the deceased's (biological) mother ever been told she had AIDS by a health worker
+    ],
+    6: [  # Falls
+        's999922',  # word_head
+    ],
+    8: [  # Hemorrhagic Fever
+        's999924',  # word_icu
+    ],
+    9: [  # Malaria
+        's11991',  # not born in a hospital
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+        's188',  # (biological) mother ever tested for HIV?
+        's999919',  # word_fever (somehow negative!)
+    ],
+    10: [  # Measles
+        's999935',  # word_pox
+        's999937',  # word_rash
+        's999910',  # word_chest
+        's11991',  # not born in a hospital
+        's30991',  # didn't die in a hospital
+        's2994',  # quintile 4 of age
+        's28',  # How old was the baby/child when the fatal illness started? [days]
+        's999919',  # word_fever
+        's31',  # How old was the deceased at the time of death? [days]
+        's14',  # What was the weight of the deceased at birth?
+        's113991',  # severe fever
+        's112',  # Did the fever continue until death?
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+        's110',  # During the illness that led to death, did [name] have a fever?
+        's132',  # Breathing: Wheezing
+        's124',  # Did the child vomit after he/she coughed?
+        's122',  # For how many days did the cough last? [days]
+        's123',  # Was the cough very severe?
+        's144',  # During the illness that led to death, did [name]'s limbs (legs, arms) become ver
+        's150',  # During the illness that led to death, did [name] suffer from 'lack of blood' or
+        's153',  # During the illness that led to death, did [name] bleed from anywhere?
+        's136',  # Did [name] have a stiff neck during the illness that led to death?
+        's188',  # Has the deceased's (biological) mother ever been tested for HIV?
+    ],
+    11: [  # Meningitis
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+    ],
+    15: [  # Other Digestive Diseases
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+    ],
+    16: [  # Other Infectious Diseases
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+        's999926',  # word_jaundic
+    ],
+    17: [  # Pneumonia
+        's999931',  # word_malnutrit
+    ],
+    18: [  # Poisonings
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+    ],
+    19: [  # Road Traffic
+        's99992',  # word_accid
+    ],
+    20: [  # Sepsis
+        's999924',  # word_icu
+        's2991',  # quintile 1 of age
+        's999923',  # word_heart
+        's999911',  # word_cold
+        's999929',  # word_lung
+        's13991',  # decedent was small or very small
+        's999947',  # word_swell
+        's999933',  # word_pneumonia
+        's2992',  # quintile 2 of age
+        's164',  # Decedent did not suffer accident
+        's14',  # What was the weight of the deceased at birth?
+        's188',  # Has the deceased's (biological) mother ever been tested for HIV?
+        's99998',  # word_breath
+        's125',  # During the illness that led to death, did [name] have difficult breathing?
+        's117',  # How many days before death did the frequent loose or liquid stools start? [days]
+        's28',  # How old was the baby/child when the fatal illness started? [days]
+        's31',  # How old was the deceased at the time of death? [days]
+        's2994',  # quintile 4 of age
+        's2995',  # quintile 5 of age
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+    ],
+    21: [  # Violent Death
+        's17',  # Did the baby ever cry?
+        's18',  # Did the baby ever move?
+        's19',  # Did the baby ever breathe?
+        's8992',  # mother died after delivery
+    ],
 }
 
 HCE_DROP_LIST = [

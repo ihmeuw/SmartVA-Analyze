@@ -3,7 +3,6 @@ import collections
 import csv
 import math
 import os
-import pickle
 from decimal import Decimal
 
 import numpy as np
@@ -31,29 +30,56 @@ SEX_KEY = 'real_gender'
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
-def exclude_spurious_associations(tariff_dict, cause_num, spurious_assoc_dict):
+
+def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
+    cause_symptoms = {}
+    with open(filename, 'rU') as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
+
+            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
+
+            if callable(filter_fn):
+                tariff_dict = filter_fn(tariff_dict, cause_num)
+
+            items = tariff_dict.items()
+
+            cause_symptoms[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:max_symptoms]
+
+    return cause_symptoms
+
+
+def exclude_spurious_associations(spurious_assoc_dict):
     """remove all keys from tariff_dict that appear in the list
     corresponding to cause_num in the spurious_assoc_dict
 
     Parameters
     ----------
-
-    tariff_dict : dict, keyed by symptoms
-    cause_num : int
     spurious_assoc_dict : dict, keyed by cause_nums, with s_a_d[j] ==
       lists of symptoms (see SPURIOUS_ASSOCIATIONS in
       data/{module}_tariff_data.py for lists)
 
-    Results
+    Returns
     -------
-    remove all spurious associations from tariff dict
-
+    filter function with access to spurious associations dict.
     """
-    if cause_num in spurious_assoc_dict:
-        for symp in spurious_assoc_dict[cause_num]:
-            if symp in tariff_dict:
-                tariff_dict.pop(symp)
+    def fn_wrap(tariff_dict, cause_num):
+        """
+        Parameters
+        ----------
+        tariff_dict : dict, keyed by symptoms
+        cause_num : int
 
+        Returns
+        -------
+        dict with all spurious associations removed from tariff dict
+        """
+        return {symptom: value for symptom, value in tariff_dict.items()
+                if symptom not in spurious_assoc_dict.get(cause_num, [])}
+
+    return fn_wrap
 
 
 class ScoredVA(object):
@@ -153,38 +179,24 @@ class TariffPrep(DataPrep):
 
         undetermined_matrix = self._get_undetermined_matrix()
 
-        cause40s = self.get_cause40s(drop_headers)
+        cause40s = get_cause_symptoms(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
+                                      drop_headers, MAX_CAUSE_SYMPTOMS,
+                                      exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
         self.cause_list = sorted(cause40s.keys())
 
-        # """ # Uncomment this line to read from the pickle.
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
-
-        """
-        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
-            pickle.dump(va_validated_cause_list, f)
-        with open(os.path.join(config.basedir, 'validated-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
-            va_validated_cause_list = pickle.load(f)
-        """
 
         uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
 
         status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
-        # """ # Uncomment this line to read from the pickle. (For testing purposes.)
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
         va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
-
-        """
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'wb') as f:
-            pickle.dump(va_cause_list, f)
-        with open(os.path.join(self.intermediate_dir, 'rank_list-{:s}.pkl'.format(self.AGE_GROUP)), 'rb') as f:
-            va_cause_list = pickle.load(f)
-        """
 
         self.write_external_ranks(va_cause_list)
 
@@ -204,25 +216,6 @@ class TariffPrep(DataPrep):
         self.write_tariff_scores(va_cause_list)
 
         return True
-
-    def get_cause40s(self, drop_headers):
-        cause40s = {}
-        with open(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)), 'rU') as f:
-            reader = csv.DictReader(f)
-
-            for row in reader:
-                cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
-
-                tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
-
-                # exclude spurious associations
-                exclude_spurious_associations(tariff_dict, cause_num, self.data_module.SPURIOUS_ASSOCIATIONS)
-
-                items = tariff_dict.items()
-
-                cause40s[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[
-                                      :MAX_CAUSE_SYMPTOMS]
-        return cause40s
 
     def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
         """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
