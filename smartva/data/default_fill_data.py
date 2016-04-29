@@ -127,6 +127,7 @@ ADULT_DEFAULT_FILL = {
     'a5_02': '0',
     'a5_03': '0',
     'a5_04a': '1',
+    'a5_04b': '',
     'a6_02_1': '0',
     'a6_02_2': '0',
     'a6_02_3': '0',
@@ -366,8 +367,10 @@ CHILD_DEFAULT_FILL = {
     'c5_06_2d ': '99',
     'c5_06_2m': '99',
     'c5_06_2y': '9999',
-    'c5_07_1a': '0',
-    'c5_07_2a': '0',
+    'c5_07_1a': '9',
+    'c5_07_1b': '',
+    'c5_07_2a': '9',
+    'c5_07_2b': '',
     'c5_08d': '99',
     'c5_08m': '99',
     'c5_08y': '9999',
@@ -377,18 +380,8 @@ CHILD_DEFAULT_FILL = {
 
 NEONATE_DEFAULT_FILL = CHILD_DEFAULT_FILL
 
-ADULT_DEFAULT_FILL_SHORT = ADULT_DEFAULT_FILL.copy()
-ADULT_DEFAULT_FILL_SHORT.update({
-    'a2_39_3': '9',
-})
+ADULT_DEFAULT_FILL_SHORT = ADULT_DEFAULT_FILL
 
-CHILD_DEFAULT_FILL_SHORT = CHILD_DEFAULT_FILL.copy()
-CHILD_DEFAULT_FILL_SHORT.update({
-    'c1_25a': '1',
-    'c5_07_1a': '9',
-    'c5_07_1b': '0',
-    'c5_07_2a': '9',
-    'c5_07_2b': '0',
-})
+CHILD_DEFAULT_FILL_SHORT = CHILD_DEFAULT_FILL
 
 NEONATE_DEFAULT_FILL_SHORT = CHILD_DEFAULT_FILL_SHORT
