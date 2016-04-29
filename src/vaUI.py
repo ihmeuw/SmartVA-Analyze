@@ -47,7 +47,7 @@ class vaDocs(wx.Frame):
 class wxHTML(wx.html.HtmlWindow):
      
      def OnLinkClicked(self, link):
-        LaunchDefaultBrowser(link.GetHref())
+        wx.LaunchDefaultBrowser(link.GetHref())
 
 class vaUI(wx.Frame):
 
