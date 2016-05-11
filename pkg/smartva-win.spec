@@ -2,7 +2,7 @@
 
 a = Analysis(['src/vaUI.py'],
 	hiddenimports=None,
-	hookspath=None,
+	hookspath=['pkg/hooks'],
 	runtime_hooks=None)
 for d in a.datas:
   if 'pyconfig' in d[0]:
