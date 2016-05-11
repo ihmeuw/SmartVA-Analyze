@@ -1,7 +1,7 @@
 <project>
     <shortName>SmartVA</shortName>
     <fullName>Smart VA</fullName>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <componentList>
         <component>
             <name>default</name>
