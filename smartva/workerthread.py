@@ -55,8 +55,8 @@ class WorkerThread(threading.Thread):
                             'malaria': (bool)
 
         :type input_file: str
-        :type options: dict
         :type output_dir: str
+        :type options: dict
         :type country: str
         :type completion_callback: callable
         """
@@ -83,7 +83,14 @@ class WorkerThread(threading.Thread):
 
     @classmethod
     def _format_header(cls, header):
-        return header.replace(':','-').split('-')[-1]
+        # ODK aggregate uses colons as column delimiters, briefcase
+        # uses dashes
+        header_wo_colon = header.replace(':','-')  
+
+        # SmartVA-Analyze only uses "name" from survey page of xls
+        # file run through XLSForms
+        header_list = header_wo_colon.split('-')
+        return header_list[-1]  
 
     @classmethod
     def format_headers(cls, source_path, dest_path):
@@ -111,7 +118,10 @@ class WorkerThread(threading.Thread):
     def make_dir(*args):
         path = os.path.join(*args)
         if not os.path.exists(path):
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except OSError:
+                warning_logger.warning('Could not create directory {}'.format(path))
 
     def run(self):
         status_logger.info('Preparing variable headers.')
