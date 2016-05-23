@@ -32,7 +32,7 @@ class Headers():
                 for col in row:
                     newcolname = ""
                     try:
-                        lastindex = string.rindex(col, "-")
+                        lastindex = string.rindex(col.replace(":","-"), "-")
                         newcolname = col[lastindex+1:]
                     except ValueError:
                         newcolname = col
