@@ -83,7 +83,7 @@ class WorkerThread(threading.Thread):
 
     @classmethod
     def _format_header(cls, header):
-        return header.split('-')[-1]
+        return header.replace(':','-').split('-')[-1]
 
     @classmethod
     def format_headers(cls, source_path, dest_path):
