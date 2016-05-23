@@ -3,8 +3,8 @@ import pytest
 from smartva import workerthread
 
 @pytest.fixture
-def prep():
-    return workerthread.WorkerThread('in', 'out', {}, '', False)
+def prep(tmpdir):
+    return workerthread.WorkerThread('in', str(tmpdir.mkdir('out')), {}, '', False)
     
 class TestWorkerThread(object):
     def test_format_headers(self, prep):
@@ -12,4 +12,4 @@ class TestWorkerThread(object):
         
         for h in headers:
             assert prep._format_header(h) == 'header', '{} is not a clean header'.format(h)
-            
+
