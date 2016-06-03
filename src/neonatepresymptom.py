@@ -809,9 +809,10 @@ class PreSymptomPrep():
                     self.printWarning( 'c3_09', i, row, headers, neonate_defaultFill)
             c3_09 = row[headers.index('c3_09')]
             if c1_15 == '1' or c1_26 == '2' or c3_08 == '4' or c3_09 != '1':
-                c3_10 = row[headers.index('c3_10')]
-                if not (c3_10 is None or c3_10 == ''):
-                    self.printWarning( 'c3_10', i, row, headers, neonate_defaultFill)
+                if 'c3_10' in headers:
+                    c3_10 = row[headers.index('c3_10')]
+                    if not (c3_10 is None or c3_10 == ''):
+                        self.printWarning( 'c3_10', i, row, headers, neonate_defaultFill)
             c3_11 = row[headers.index('c3_11')]
             # This is a unique case because c3_12 can have different 'default' values depending on other variables
             if c1_15 == '1':
