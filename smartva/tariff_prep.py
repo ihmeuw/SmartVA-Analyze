@@ -13,6 +13,7 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
 from smartva.utils.utils import round5, int_or_float
+from smartva.rules_prep import CAUSE_RULES_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
@@ -250,6 +251,10 @@ class TariffPrep(DataPrep):
             for cause, symptoms in cause40s.items():
                 cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if safe_float(row.get(k)) == 1)
 
+            if row.get(CAUSE_RULES_KEY, '') != '':
+                row[CAUSE_NUM_KEY] = int(row[CAUSE_RULES_KEY])
+
+            # TODO - consider refactor this into RULES ENGINE
             # This is added for pipelines with symptoms that clearly indicate a cause.
             # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
             if definitive_symptoms:
