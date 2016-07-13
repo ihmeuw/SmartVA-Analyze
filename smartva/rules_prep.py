@@ -6,7 +6,7 @@ from smartva.utils import status_notifier
 import smartva.rules
 
 INPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
-OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom-rules.csv'
+OUTPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 
 CAUSE_RULES_KEY = 'cause'
 
