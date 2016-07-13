@@ -6,7 +6,7 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
-INPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
 
