@@ -14,6 +14,7 @@ from smartva.child_tariff import ChildTariff
 from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
 from smartva.neonate_symptom_prep import NeonateSymptomPrep
 from smartva.neonate_tariff import NeonateTariff
+from smartva.rules_prep import RulesPrep
 from smartva.cause_grapher import CauseGrapher
 from smartva.csmf_grapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
@@ -147,12 +148,15 @@ class WorkerThread(threading.Thread):
 
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(self.output_dir_path, self.short_form)
+        adult_rules = RulesPrep(self.output_dir_path, self.short_form, 'adult')
         adult_symptom = AdultSymptomPrep(self.output_dir_path, self.short_form)
         adult_results = AdultTariff(self.output_dir_path, self.short_form, self.options, self.country)
         child_pre_symptom = ChildPreSymptomPrep(self.output_dir_path, self.short_form)
+        child_rules = RulesPrep(self.output_dir_path, self.short_form, 'child')
         child_symptom = ChildSymptomPrep(self.output_dir_path, self.short_form)
         child_results = ChildTariff(self.output_dir_path, self.short_form, self.options, self.country)
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
+        neonate_rules = RulesPrep(self.output_dir_path, self.short_form, 'neonate')
         neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
         neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.options, self.country)
         cause_grapher = CauseGrapher(self.output_dir_path)
@@ -161,12 +165,15 @@ class WorkerThread(threading.Thread):
         self._abort_list.extend([
             common_prep,
             adult_pre_symptom,
+            adult_rules,
             adult_symptom,
             adult_results,
             child_pre_symptom,
+            child_rules,
             child_symptom,
             child_results,
             neonate_pre_symptom,
+            neonate_rules,
             neonate_symptom,
             neonate_results,
             cause_grapher,
@@ -180,6 +187,8 @@ class WorkerThread(threading.Thread):
             if adult_data:
                 # makes adult-presymptom.csv
                 adult_pre_symptom.run()
+                # makes adult-logic-rules.csv
+                adult_rules.run()
                 # makes adult-symptom.csv
                 adult_symptom.run()
                 # creates adult output files
@@ -188,6 +197,8 @@ class WorkerThread(threading.Thread):
             if child_data:
                 # makes child-presymptom.csv
                 child_pre_symptom.run()
+                # makes child-logic-rules.csv
+                child_rules.run()
                 # makes child-symptom.csv
                 child_symptom.run()
                 # creates child output files
@@ -196,6 +207,8 @@ class WorkerThread(threading.Thread):
             if neonate_data:
                 # makes neonate-presymptom.csv
                 neonate_pre_symptom.run()
+                # makes neonate-logic-rules.csv
+                neonate_rules.run()
                 # makes neonate-symptom.csv
                 neonate_symptom.run()
                 # creates neonate output files
