@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 import smartva.rules_prep
-from . import always_false, always_true, conditional, sometimes_true
+from . import always_exception, always_false, always_true, conditional, sometimes_true
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -44,7 +44,7 @@ def input_file(tmpdir):
 
 
 RulesPrep = smartva.rules_prep.RulesPrep
-all_rules = [conditional, sometimes_true, always_false, always_true]
+all_rules = [always_exception, conditional, sometimes_true, always_false, always_true]
 
 
 @pytest.fixture
