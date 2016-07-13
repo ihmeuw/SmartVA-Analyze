@@ -17,4 +17,4 @@ def logic_rule(row):
         symptom_value += int(row['a2_43'] == 1)  # chest_pain
         symptom_value += int(row['a2_69'] == 1)  # headaches
 
-    return symptom_value >= 3
+    return symptom_value >= 3 and CAUSE_ID

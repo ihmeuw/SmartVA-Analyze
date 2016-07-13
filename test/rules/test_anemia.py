@@ -17,7 +17,7 @@ BASE_ROW = {
 
 
 def test_logic_pass():
-    assert anemia.logic_rule(BASE_ROW) is True
+    assert anemia.logic_rule(BASE_ROW) == anemia.CAUSE_ID
 
 
 def test_logic_fail_age():
@@ -72,7 +72,7 @@ def test_logic_pass_postpartum1():
         'a3_18': 0.0,
     })
 
-    assert anemia.logic_rule(row) is True
+    assert anemia.logic_rule(row) == anemia.CAUSE_ID
 
 
 def test_logic_pass_postpartum2():
@@ -82,7 +82,7 @@ def test_logic_pass_postpartum2():
         'a3_18': 1.0,
     })
 
-    assert anemia.logic_rule(row) is True
+    assert anemia.logic_rule(row) == anemia.CAUSE_ID
 
 
 def test_logic_fail_postpartum1():
@@ -105,7 +105,7 @@ def test_logic_pass_symptoms1():
         'a2_69': 0.0,
     })
 
-    assert anemia.logic_rule(row) is True
+    assert anemia.logic_rule(row) == anemia.CAUSE_ID
 
 
 def test_logic_fail_symptoms1():

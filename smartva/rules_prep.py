@@ -54,8 +54,9 @@ class RulesPrep(DataPrep):
 
             for rule in self.RULES:
                 try:
-                    if rule.logic_rule(row):
-                        row[CAUSE_RULES_KEY] = rule.CAUSE_ID
+                    cause_id = rule.logic_rule(row)
+                    if cause_id is not False:
+                        row[CAUSE_RULES_KEY] = cause_id
                         break
                 except Exception as e:
                     warning_logger.warning(e.message)
