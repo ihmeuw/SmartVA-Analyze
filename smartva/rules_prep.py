@@ -59,7 +59,7 @@ class RulesPrep(DataPrep):
                         row[CAUSE_RULES_KEY] = cause_id
                         break
                 except Exception as e:
-                    warning_logger.warning(e.message)
+                    warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
 
             self.post_processing_step(row)
 
