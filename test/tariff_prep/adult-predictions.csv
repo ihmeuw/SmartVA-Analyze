@@ -136,12 +136,12 @@ sid,cause,cause34,age,sex
 135,14,Falls,12,1
 136,11,Drowning,12,1
 137,27,Poisonings,12,1
-138,3,Bite of Venomous Animal,12,1
+138,,Undetermined,12,1
 139,15,Fires,12,1
 140,16,Homicide,12,1
 141,,Undetermined,12,1
 142,24,Other Injuries,12,1
-143,33,Suicide,12,1
+143,11,Drowning,12,1
 144,16,Homicide,12,1
 145,,Undetermined,12,1
 146,,Undetermined,12,1
@@ -271,7 +271,7 @@ sid,cause,cause34,age,sex
 270,,Undetermined,12,1
 271,,Undetermined,12,1
 272,,Undetermined,12,1
-273,6,Cirrhosis,12,1
+273,,Undetermined,12,1
 274,,Undetermined,12,1
 275,,Undetermined,12,1
 276,,Undetermined,12,1
