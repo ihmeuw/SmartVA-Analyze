@@ -222,7 +222,7 @@ class TariffPrep(DataPrep):
 
         self.write_tariff_scores(va_cause_list)
 
-        return True
+        return va_cause_list
 
     def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
         """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.

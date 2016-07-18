@@ -104,7 +104,7 @@ class SymptomPrep(DataPrep):
 
         DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
-        return True
+        return matrix
 
     def copy_variables(self, row, copy_variables_map):
         """Copy data from one variable to another.

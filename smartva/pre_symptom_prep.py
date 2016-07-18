@@ -163,7 +163,7 @@ class PreSymptomPrep(DataPrep):
 
         DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
-        return True
+        return matrix
 
     def verify_answers_for_row(self, row, valid_range_data):
         """Verify answers in a row of data are valid. Log a warning when an invalid answer has been identified.
