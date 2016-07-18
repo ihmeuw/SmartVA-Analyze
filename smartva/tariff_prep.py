@@ -27,6 +27,13 @@ AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
 
 
+def safe_float(x):
+    try:
+        return float(x)
+    except (ValueError, TypeError):
+        return 0.0
+
+
 def get_cause_num(cause):
     return int(cause.lstrip('cause'))
 
@@ -39,7 +46,7 @@ def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
         for row in reader:
             cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
 
-            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and not v == '0.0'}
+            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and safe_float(v)}
 
             if callable(filter_fn):
                 tariff_dict = filter_fn(tariff_dict, cause_num)
@@ -241,7 +248,7 @@ class TariffPrep(DataPrep):
             cause_dict = {}
 
             for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if row.get(k) == '1')
+                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if safe_float(row.get(k)) == 1)
 
             # This is added for pipelines with symptoms that clearly indicate a cause.
             # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
