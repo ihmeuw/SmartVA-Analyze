@@ -4,4 +4,20 @@ FEMALE = 2
 NO = 0
 YES = 1
 REFUSED_TO_ANSWER = 8
-DONT_KNOW = 9
+UNKNOWN = 9
+
+SEX = 'g5_02'
+AGE = 'g5_04a'
+
+
+class Adult(object):
+    PALE = 'a2_20'
+    BREATHING_DIFFICULT = 'a2_37'
+    BREATHING_FAST = 'a2_40'
+    CHEST_PAIN = 'a2_43'
+    HEADACHES = 'a2_69'
+    PERIOD_OVERDUE = 'a3_07'
+    PERIOD_OVERDUE_DAYS = 'a3_08'
+    PREGNANT = 'a3_10'
+    AFTER_ABORTION = 'a3_17'
+    AFTER_CHILDBIRTH = 'a3_18'

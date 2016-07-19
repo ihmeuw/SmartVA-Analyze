@@ -1,20 +1,32 @@
-RULE_NAME = 'Anemia'
+# https://stash.ihme.washington.edu/projects/VA/repos/business_rules/browse/doc/md/anemia.md
+from smartva.data.constants import *
+from smartva.utils.utils import value_from_row, int_or_float
 
 CAUSE_ID = 3
 
 
 def logic_rule(row):
-    symptom_value = 0
+    value_of = value_from_row(row, int_or_float)
 
-    if (row['g5_02'] == 2  # sex
-            and 12 < row['g5_04a'] <= 49  # age
-            and row['a3_10'] == 1  # pregnant
-            and (row['a3_07'] == 1 and row['a3_08'] > 90)  # overdue
-            and (row['a3_17'] == 1 or row['a3_18'] == 1)):  # postpartum
+    female = value_of(SEX) == FEMALE
 
-        symptom_value += int(row['a2_20'] == 1)  # pale
-        symptom_value += int(row['a2_37'] == 1 or row['a2_40'] == 1)  # breathing
-        symptom_value += int(row['a2_43'] == 1)  # chest_pain
-        symptom_value += int(row['a2_69'] == 1)  # headaches
+    age = 12 < value_of(AGE) <= 49
 
-    return symptom_value >= 3 and CAUSE_ID
+    pregnant = value_of(Adult.PREGNANT) == YES
+
+    period_overdue = value_of(Adult.PERIOD_OVERDUE) == YES and value_of(Adult.PERIOD_OVERDUE_DAYS) > 90
+
+    postpartum = value_of(Adult.AFTER_ABORTION) == YES or value_of(Adult.AFTER_CHILDBIRTH) == YES
+
+    # Symptoms
+    pale = value_of(Adult.PALE) == YES
+
+    breathing = value_of(Adult.BREATHING_DIFFICULT) == YES or value_of(Adult.BREATHING_FAST) == YES
+
+    chest_pain = value_of(Adult.CHEST_PAIN) == YES
+
+    headaches = value_of(Adult.HEADACHES) == YES
+
+    symptoms = pale + breathing + chest_pain + headaches
+
+    return female and age and (pregnant or period_overdue or postpartum) and symptoms >= 3
