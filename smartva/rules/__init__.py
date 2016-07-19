@@ -1,12 +1,4 @@
-def module_names():
-    from os.path import dirname, basename, isfile
-    import glob
-
-    modules = glob.glob(dirname(__file__) + "/*.py")
-    return [basename(f).replace('.py', '') for f in modules if isfile(f) and not basename(f).startswith('_')]
-
-
-__all__ = module_names()
+__all__ = ['anemia']
 
 from . import *
 
