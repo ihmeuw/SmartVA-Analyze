@@ -1,18 +1,19 @@
 from smartva.rules import anemia
+from smartva.data.constants import *
 
 BASE_ROW = {
-    'g5_02': 2.0,
+    'g5_02': FEMALE,
     'g5_04a': 13.0,
-    'a3_07': 1.0,
+    'a3_07': YES,
     'a3_08': 91.0,
-    'a3_10': 1.0,
-    'a3_17': 1.0,
-    'a3_18': 1.0,
-    'a2_20': 1.0,
-    'a2_37': 1.0,
-    'a2_40': 1.0,
-    'a2_43': 1.0,
-    'a2_69': 1.0,
+    'a3_10': YES,
+    'a3_17': YES,
+    'a3_18': YES,
+    'a2_20': YES,
+    'a2_37': YES,
+    'a2_40': YES,
+    'a2_43': YES,
+    'a2_69': YES,
 }
 
 
@@ -32,7 +33,7 @@ def test_logic_fail_age():
 def test_logic_fail_gender():
     row = BASE_ROW.copy()
     row.update({
-        'g5_02': 1.0,
+        'g5_02': YES,
     })
 
     assert anemia.logic_rule(row) is False
@@ -41,7 +42,7 @@ def test_logic_fail_gender():
 def test_logic_fail_pregnant():
     row = BASE_ROW.copy()
     row.update({
-        'a3_10': 0.0,
+        'a3_10': NO,
     })
 
     assert anemia.logic_rule(row) is False
@@ -50,7 +51,7 @@ def test_logic_fail_pregnant():
 def test_logic_fail_period1():
     row = BASE_ROW.copy()
     row.update({
-        'a3_07': 0.0,
+        'a3_07': NO,
     })
 
     assert anemia.logic_rule(row) is False
@@ -68,8 +69,8 @@ def test_logic_fail_period2():
 def test_logic_pass_postpartum1():
     row = BASE_ROW.copy()
     row.update({
-        'a3_17': 1.0,
-        'a3_18': 0.0,
+        'a3_17': YES,
+        'a3_18': NO,
     })
 
     assert anemia.logic_rule(row) == anemia.CAUSE_ID
@@ -78,8 +79,8 @@ def test_logic_pass_postpartum1():
 def test_logic_pass_postpartum2():
     row = BASE_ROW.copy()
     row.update({
-        'a3_17': 0.0,
-        'a3_18': 1.0,
+        'a3_17': NO,
+        'a3_18': YES,
     })
 
     assert anemia.logic_rule(row) == anemia.CAUSE_ID
@@ -88,8 +89,8 @@ def test_logic_pass_postpartum2():
 def test_logic_fail_postpartum1():
     row = BASE_ROW.copy()
     row.update({
-        'a3_17': 0.0,
-        'a3_18': 0.0,
+        'a3_17': NO,
+        'a3_18': NO,
     })
 
     assert anemia.logic_rule(row) is False
@@ -98,11 +99,11 @@ def test_logic_fail_postpartum1():
 def test_logic_pass_symptoms1():
     row = BASE_ROW.copy()
     row.update({
-        'a2_20': 1.0,
-        'a2_37': 1.0,
-        'a2_40': 0.0,
-        'a2_43': 1.0,
-        'a2_69': 0.0,
+        'a2_20': YES,
+        'a2_37': YES,
+        'a2_40': NO,
+        'a2_43': YES,
+        'a2_69': NO,
     })
 
     assert anemia.logic_rule(row) == anemia.CAUSE_ID
@@ -111,11 +112,11 @@ def test_logic_pass_symptoms1():
 def test_logic_fail_symptoms1():
     row = BASE_ROW.copy()
     row.update({
-        'a2_20': 0.0,
-        'a2_37': 0.0,
-        'a2_40': 0.0,
-        'a2_43': 0.0,
-        'a2_69': 0.0,
+        'a2_20': NO,
+        'a2_37': NO,
+        'a2_40': NO,
+        'a2_43': NO,
+        'a2_69': NO,
     })
 
     assert anemia.logic_rule(row) is False
@@ -124,11 +125,11 @@ def test_logic_fail_symptoms1():
 def test_logic_fail_symptoms2():
     row = BASE_ROW.copy()
     row.update({
-        'a2_20': 1.0,
-        'a2_37': 0.0,
-        'a2_40': 0.0,
-        'a2_43': 0.0,
-        'a2_69': 0.0,
+        'a2_20': YES,
+        'a2_37': NO,
+        'a2_40': NO,
+        'a2_43': NO,
+        'a2_69': NO,
     })
 
     assert anemia.logic_rule(row) is False
@@ -137,11 +138,11 @@ def test_logic_fail_symptoms2():
 def test_logic_fail_symptoms3():
     row = BASE_ROW.copy()
     row.update({
-        'a2_20': 1.0,
-        'a2_37': 1.0,
-        'a2_40': 0.0,
-        'a2_43': 0.0,
-        'a2_69': 0.0,
+        'a2_20': YES,
+        'a2_37': YES,
+        'a2_40': NO,
+        'a2_43': NO,
+        'a2_69': NO,
     })
 
     assert anemia.logic_rule(row) is False
