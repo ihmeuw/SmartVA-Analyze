@@ -16,6 +16,7 @@ __all__ = [
     'measles',
     'other_injury_adult',
     'other_injury_child',
+    'other_pregnancy',
     'poisoning_adult',
     'poisoning_child',
     'road_traffic_adult',
