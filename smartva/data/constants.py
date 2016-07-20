@@ -10,6 +10,13 @@ SEX = 'g5_02'
 AGE = 'g5_04a'
 
 
+class Rash(object):
+    FACE = 1
+    TRUNK = 2
+    EXTREMITIES = 3
+    EVERYWHERE = 4
+
+
 class Adult(object):
     EPILEPSY = 'a1_01_8'
     PALE = 'a2_20'
@@ -39,6 +46,15 @@ class Adult(object):
 
 
 class Child(object):
+    ILLNESS_DAYS = 'c1_21'
+    FEVER = 'c4_01'
+    LOOSE_STOOL = 'c4_06'
+    COUGH = 'c4_12'
+    BREATHING_DIFFICULT = 'c4_16'
+    RASH = 'c4_30'
+    RASH_LOCATION1 = 'c4_31_1'
+    RASH_LOCATION2 = 'c4_31_2'
+    RASH_COLOR_WHITISH = 'c4_43'
     FALL = 'c4_47_2'
     DROWNING = 'c4_47_3'
     BITE = 'c4_47_5'
@@ -48,3 +64,6 @@ class Child(object):
     INFLICTED_BY_OTHER = 'c4_48'
     INJURY_DAYS = 'c4_49'
     FREE_TEXT_CANCER = 'c_6_2'
+    FREE_TEXT_DIARRHEA = 'c_6_5'
+    FREE_TEXT_FEVER = 'c_6_6'
+    FREE_TEXT_PNEUMONIA = 'c_6_9'
