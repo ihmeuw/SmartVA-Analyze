@@ -7,6 +7,8 @@ __all__ = [
     'drowning_child',
     'falls_adult',
     'falls_child',
+    'fires_adult',
+    'fires_child',
 ]
 
 from . import *
