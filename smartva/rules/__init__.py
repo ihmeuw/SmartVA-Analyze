@@ -2,6 +2,7 @@ __all__ = [
     'anemia',
     'bite_adult',
     'bite_child',
+    'cancer_child',
 ]
 
 from . import *
