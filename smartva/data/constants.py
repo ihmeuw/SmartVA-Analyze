@@ -28,3 +28,4 @@ class Adult(object):
 class Child(object):
     BITE = 'c4_47_5'
     INJURY_DAYS = 'c4_49'
+    FREE_TEXT_CANCER = 'c_6_2'
