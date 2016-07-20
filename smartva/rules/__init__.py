@@ -3,6 +3,8 @@ __all__ = [
     'bite_adult',
     'bite_child',
     'cancer_child',
+    'drowning_adult',
+    'drowning_child',
 ]
 
 from . import *
