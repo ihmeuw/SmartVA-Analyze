@@ -1,4 +1,8 @@
-__all__ = ['anemia']
+__all__ = [
+    'anemia',
+    'bite_adult',
+    'bite_child',
+]
 
 from . import *
 

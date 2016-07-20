@@ -21,3 +21,10 @@ class Adult(object):
     PREGNANT = 'a3_10'
     AFTER_ABORTION = 'a3_17'
     AFTER_CHILDBIRTH = 'a3_18'
+    BITE = 'a5_01_5'
+    INJURY_DAYS = 'a5_04'
+
+
+class Child(object):
+    BITE = 'c4_47_5'
+    INJURY_DAYS = 'c4_49'
