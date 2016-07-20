@@ -5,6 +5,8 @@ __all__ = [
     'cancer_child',
     'drowning_adult',
     'drowning_child',
+    'falls_adult',
+    'falls_child',
 ]
 
 from . import *
