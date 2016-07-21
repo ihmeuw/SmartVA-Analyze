@@ -11,11 +11,13 @@ AGE = 'g5_04a'
 
 
 class Adult(object):
+    EPILEPSY = 'a1_01_8'
     PALE = 'a2_20'
     BREATHING_DIFFICULT = 'a2_37'
     BREATHING_FAST = 'a2_40'
     CHEST_PAIN = 'a2_43'
     HEADACHES = 'a2_69'
+    CONVULSIONS = 'a2_82'
     EXCESSIVE_VAGINAL_BLEEDING_1_WEEK = 'a3_06'
     PERIOD_OVERDUE = 'a3_07'
     PERIOD_OVERDUE_DAYS = 'a3_08'
