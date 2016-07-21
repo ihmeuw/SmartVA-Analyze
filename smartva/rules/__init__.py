@@ -16,6 +16,7 @@ __all__ = [
     'measles',
     'other_injury_adult',
     'other_injury_child',
+    'suicide',
 ]
 
 from . import *
