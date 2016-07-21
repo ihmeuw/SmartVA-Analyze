@@ -73,3 +73,13 @@ class Child(object):
     FREE_TEXT_DIARRHEA = 'c_6_5'
     FREE_TEXT_FEVER = 'c_6_6'
     FREE_TEXT_PNEUMONIA = 'c_6_9'
+
+
+class Neonate(object):
+    NORMAL_SUCKLING = 'c3_12'
+    STOPPED_NORMAL_SUCKLING = 'c3_13'
+    NORMAL_SUCKLING_DAYS = 'c3_14'
+    STOPPED_NORMAL_SUCKLING_DAYS = 'c3_15'
+    OPEN_MOUTH = 'c3_16'
+    CONVULSIONS = 'c3_25'
+    UNRESPONSIVE = 'c3_33'

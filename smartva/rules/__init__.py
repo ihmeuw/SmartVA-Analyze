@@ -21,6 +21,7 @@ __all__ = [
     'road_traffic_adult',
     'road_traffic_child',
     'suicide',
+    'tetanus_neonate',
 ]
 
 from . import *
