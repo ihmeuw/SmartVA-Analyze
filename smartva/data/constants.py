@@ -17,12 +17,21 @@ class Rash(object):
     EVERYWHERE = 4
 
 
+class BellyPain(object):
+    UPPER_BELLY = 1
+    LOWER_BELLY = 2
+
+
 class Adult(object):
     EPILEPSY = 'a1_01_8'
+    FEVER = 'a2_02'
     PALE = 'a2_20'
     BREATHING_DIFFICULT = 'a2_37'
     BREATHING_FAST = 'a2_40'
     CHEST_PAIN = 'a2_43'
+    BELLY_PAIN = 'a2_61'
+    BELLY_PAIN_LOCATION1 = 'a2_63_1'
+    BELLY_PAIN_LOCATION2 = 'a2_63_2'
     HEADACHES = 'a2_69'
     CONVULSIONS = 'a2_82'
     EXCESSIVE_VAGINAL_BLEEDING_1_WEEK = 'a3_06'
@@ -35,6 +44,7 @@ class Adult(object):
     LABOR_HOURS = 'a3_16'
     AFTER_ABORTION = 'a3_17'
     AFTER_CHILDBIRTH = 'a3_18'
+    OFFENSIVE_VAGINAL_DISCHARGE = 'a3_20'
     EXCESSIVE_BLEEDING_AFTER = 'a3_19'
     ROAD_TRAFFIC = 'a5_01_1'
     FALL = 'a5_01_2'
