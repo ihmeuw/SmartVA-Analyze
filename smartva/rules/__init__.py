@@ -13,6 +13,7 @@ __all__ = [
     'homicide_adult',
     'homicide_child',
     'hypertensive',
+    'malnutrition',
     'measles',
     'other_injury_adult',
     'other_injury_child',
