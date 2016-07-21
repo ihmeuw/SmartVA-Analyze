@@ -30,6 +30,8 @@ class Adult(object):
     DROWNING = 'a5_01_3'
     BITE = 'a5_01_5'
     BURN = 'a5_01_6'
+    NO_INJURY = 'a5_01_8'
+    INFLICTED_BY_OTHER = 'a5_03'
     INJURY_DAYS = 'a5_04'
 
 
@@ -38,5 +40,7 @@ class Child(object):
     DROWNING = 'c4_47_3'
     BITE = 'c4_47_5'
     BURN = 'c4_47_6'
+    NO_INJURY = 'c4_47_11'
+    INFLICTED_BY_OTHER = 'c4_48'
     INJURY_DAYS = 'c4_49'
     FREE_TEXT_CANCER = 'c_6_2'
