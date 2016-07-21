@@ -22,6 +22,7 @@ __all__ = [
     'poisoning_child',
     'road_traffic_adult',
     'road_traffic_child',
+    'sepsis',
     'suicide',
     'tetanus_neonate',
 ]
