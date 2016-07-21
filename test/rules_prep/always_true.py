@@ -4,4 +4,4 @@ CAUSE_ID = 1001
 
 
 def logic_rule(row):
-    return True and CAUSE_ID
+    return True
