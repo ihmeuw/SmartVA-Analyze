@@ -41,8 +41,10 @@ class Adult(object):
     BURN = 'a5_01_6'
     NO_INJURY = 'a5_01_8'
     OTHER_INJURY = 'a5_01_9a'
+    SELF_INFLICTED = 'a5_02'
     INFLICTED_BY_OTHER = 'a5_03'
     INJURY_DAYS = 'a5_04'
+    FREE_TEXT_SUICIDE = 'a_7_11'
 
 
 class Child(object):
