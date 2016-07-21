@@ -13,6 +13,8 @@ __all__ = [
     'homicide_adult',
     'homicide_child',
     'hypertensive',
+    'other_injury_adult',
+    'other_injury_child',
 ]
 
 from . import *
