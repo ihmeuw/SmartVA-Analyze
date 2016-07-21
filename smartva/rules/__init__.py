@@ -18,6 +18,8 @@ __all__ = [
     'other_injury_child',
     'poisoning_adult',
     'poisoning_child',
+    'road_traffic_adult',
+    'road_traffic_child',
     'suicide',
 ]
 
