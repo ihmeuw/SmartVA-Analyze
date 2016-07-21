@@ -1,5 +1,6 @@
 import abc
 
+import smartva.data.common_data as common_data
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
@@ -54,9 +55,8 @@ class RulesPrep(DataPrep):
 
             for rule in self.RULES:
                 try:
-                    cause_id = rule.logic_rule(row)
-                    if cause_id is not False:
-                        row[CAUSE_RULES_KEY] = cause_id
+                    if rule.logic_rule(row) is True:
+                        row[CAUSE_RULES_KEY] = rule.CAUSE_ID
                         break
                 except Exception as e:
                     warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
