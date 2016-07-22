@@ -255,14 +255,6 @@ class TariffPrep(DataPrep):
             if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
                 row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
 
-            # TODO - consider refactor this into RULES ENGINE
-            # This is added for pipelines with symptoms that clearly indicate a cause.
-            # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
-            if definitive_symptoms:
-                for symptom, cause in definitive_symptoms.items():
-                    if row[symptom] == '1':
-                        row[CAUSE_NUM_KEY] = cause
-
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
                                           row.get(AGE_KEY), row.get(SEX_KEY)))
 
