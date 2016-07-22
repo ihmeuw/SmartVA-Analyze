@@ -14,7 +14,7 @@ from smartva.child_tariff import ChildTariff
 from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
 from smartva.neonate_symptom_prep import NeonateSymptomPrep
 from smartva.neonate_tariff import NeonateTariff
-from smartva.rules_prep import RulesPrep
+from smartva.rules_prep import AdultRulesPrep, ChildRulesPrep, NeonateRulesPrep
 from smartva.cause_grapher import CauseGrapher
 from smartva.csmf_grapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
@@ -148,15 +148,15 @@ class WorkerThread(threading.Thread):
 
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(self.output_dir_path, self.short_form)
-        adult_rules = RulesPrep(self.output_dir_path, self.short_form, 'adult')
+        adult_rules = AdultRulesPrep(self.output_dir_path, self.short_form)
         adult_symptom = AdultSymptomPrep(self.output_dir_path, self.short_form)
         adult_results = AdultTariff(self.output_dir_path, self.short_form, self.options, self.country)
         child_pre_symptom = ChildPreSymptomPrep(self.output_dir_path, self.short_form)
-        child_rules = RulesPrep(self.output_dir_path, self.short_form, 'child')
+        child_rules = ChildRulesPrep(self.output_dir_path, self.short_form)
         child_symptom = ChildSymptomPrep(self.output_dir_path, self.short_form)
         child_results = ChildTariff(self.output_dir_path, self.short_form, self.options, self.country)
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
-        neonate_rules = RulesPrep(self.output_dir_path, self.short_form, 'neonate')
+        neonate_rules = NeonateRulesPrep(self.output_dir_path, self.short_form)
         neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
         neonate_results = NeonateTariff(self.output_dir_path, self.short_form, self.options, self.country)
         cause_grapher = CauseGrapher(self.output_dir_path)
