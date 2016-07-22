@@ -6,7 +6,12 @@ import subprocess
 
 import smartva.rules_prep
 from smartva.rules import *
-from . import always_exception, always_false, always_true, conditional, sometimes_true
+
+import always_exception
+import always_false
+import always_true
+import conditional
+import sometimes_true
 
 path = os.path.dirname(os.path.abspath(__file__))
 
