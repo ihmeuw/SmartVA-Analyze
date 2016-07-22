@@ -5,6 +5,7 @@ import shutil
 import subprocess
 
 import smartva.rules_prep
+from smartva.rules import *
 from . import always_exception, always_false, always_true, conditional, sometimes_true
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +50,7 @@ all_rules = [always_exception, conditional, sometimes_true, always_false, always
 
 @pytest.fixture
 def prep(tmpdir):
-    return RulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
+    return RulesPrep(working_dir_path=tmpdir.strpath, short_form=True, age_group='none', rules=all_rules)
 
 
 class TestRulesPrep(object):
@@ -58,7 +59,6 @@ class TestRulesPrep(object):
 
     def test_run(self, prep, input_file, tmpdir):
         # subprocess.call(['open', prep.output_dir_path])
-        prep.RULES = all_rules
         prep.run()
 
         validate_predictions(tmpdir.join('intermediate-files', 'none-logic-rules.csv'))
