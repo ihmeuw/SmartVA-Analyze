@@ -451,11 +451,11 @@ class TariffPrep(DataPrep):
                 self.check_abort()
 
                 # Record causes already determined.
-                cause34 = va.cause
+                cause34 = cause_reduction.get(safe_float(va.cause))
 
                 # If a cause is not yet determined and any cause is higher than the lowest rank:
                 va_lowest_rank = min(va.rank_list.values())
-                if va_lowest_rank < lowest_rank and not cause34:
+                if not cause34 and va_lowest_rank < lowest_rank:
                     # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
                     causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
                     cause34 = cause_reduction[int(causes[0])]
