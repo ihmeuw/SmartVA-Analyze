@@ -66,3 +66,51 @@ class RulesPrep(DataPrep):
         DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
         return True
+
+
+class AdultRulesPrep(RulesPrep):
+    RULES = [
+        anemia,
+        bite_adult,
+        drowning_adult,
+        falls_adult,
+        fires_adult,
+        hemorrhage,
+        homicide_adult,
+        hypertensive,
+        other_injury_adult,
+        other_pregnancy,
+        poisoning_adult,
+        road_traffic_adult,
+        sepsis,
+        suicide,
+    ]
+
+    def __init__(self, working_dir_path, short_form):
+        super(AdultRulesPrep, self).__init__(working_dir_path, short_form, common_data.ADULT, self.RULES)
+
+
+class ChildRulesPrep(RulesPrep):
+    RULES = [
+        bite_child,
+        cancer_child,
+        drowning_child,
+        falls_child,
+        fires_child,
+        homicide_child,
+        other_injury_child,
+        poisoning_child,
+        road_traffic_child,
+    ]
+
+    def __init__(self, working_dir_path, short_form):
+        super(ChildRulesPrep, self).__init__(working_dir_path, short_form, common_data.CHILD, self.RULES)
+
+
+class NeonateRulesPrep(RulesPrep):
+    RULES = [
+        tetanus_neonate
+    ]
+
+    def __init__(self, working_dir_path, short_form):
+        super(NeonateRulesPrep, self).__init__(working_dir_path, short_form, common_data.NEONATE, self.RULES)
