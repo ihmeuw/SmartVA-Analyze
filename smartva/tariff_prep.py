@@ -452,7 +452,13 @@ class TariffPrep(DataPrep):
                 self.check_abort()
 
                 # Record causes already determined.
-                cause34 = cause_reduction.get(safe_float(va.cause))
+                cause46 = safe_float(va.cause)
+                cause34 = cause_reduction.get(cause46)
+                if cause46 and cause34 is None:
+                    warning_logger.info(
+                        '{group:s} :: SID: {sid:s} was assigned an invalid cause: {cause}'
+                        .format(group=self.AGE_GROUP.capitalize(), sid=va.sid, cause=cause46)
+                    )
 
                 # If a cause is not yet determined and any cause is higher than the lowest rank:
                 va_lowest_rank = min(va.rank_list.values())
