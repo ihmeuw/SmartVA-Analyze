@@ -9,9 +9,9 @@ import smartva.rules
 INPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 
-CAUSE_RULES_KEY = 'cause'
+RULES_CAUSE_NUM_KEY = 'cause'
 
-ADDITIONAL_DATA = {CAUSE_RULES_KEY: ''}
+ADDITIONAL_DATA = {RULES_CAUSE_NUM_KEY: ''}
 
 ALL_RULES = smartva.rules.modules()
 
@@ -56,7 +56,7 @@ class RulesPrep(DataPrep):
             for rule in self.RULES:
                 try:
                     if rule.logic_rule(row) is True:
-                        row[CAUSE_RULES_KEY] = rule.CAUSE_ID
+                        row[RULES_CAUSE_NUM_KEY] = rule.CAUSE_ID
                         break
                 except Exception as e:
                     warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
