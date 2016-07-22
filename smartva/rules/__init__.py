@@ -26,9 +26,3 @@ __all__ = [
     'suicide',
     'tetanus_neonate',
 ]
-
-from . import *
-
-
-def modules():
-    return [globals().get(name) for name in __all__]
