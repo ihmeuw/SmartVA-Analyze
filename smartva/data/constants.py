@@ -92,6 +92,7 @@ class Child(object):
 
 
 class Neonate(object):
+    NEVER_CRIED_MOVED_BREATHED = 'c1_15'
     NORMAL_SUCKLING = 'c3_12'
     STOPPED_NORMAL_SUCKLING = 'c3_13'
     NORMAL_SUCKLING_DAYS = 'c3_14'
