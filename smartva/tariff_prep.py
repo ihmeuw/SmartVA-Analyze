@@ -201,7 +201,7 @@ class TariffPrep(DataPrep):
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
+        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
@@ -225,7 +225,7 @@ class TariffPrep(DataPrep):
 
         return True
 
-    def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
+    def get_va_cause_list(self, input_file, cause40s):
         """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
 
         Args:
