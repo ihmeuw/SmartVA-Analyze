@@ -231,7 +231,6 @@ class TariffPrep(DataPrep):
         Args:
             input_file (str): Path of input file.
             cause40s (dict):
-            definitive_symptoms (dict):
 
         Returns:
             list: List of Scored VAs.
