@@ -116,5 +116,6 @@ class TestNeonateRulesPrep(object):
 
         assert rules_prep.AGE_GROUP == 'neonate'
         assert rules_prep.rules == [
-            tetanus_neonate
+            stillbirth,
+            tetanus_neonate,
         ]

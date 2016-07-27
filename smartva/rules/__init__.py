@@ -23,6 +23,7 @@ __all__ = [
     'road_traffic_adult',
     'road_traffic_child',
     'sepsis',
+    'stillbirth',
     'suicide',
     'tetanus_neonate',
 ]

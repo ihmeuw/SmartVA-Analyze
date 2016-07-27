@@ -109,7 +109,8 @@ class ChildRulesPrep(RulesPrep):
 
 class NeonateRulesPrep(RulesPrep):
     RULES = [
-        tetanus_neonate
+        stillbirth,
+        tetanus_neonate,
     ]
 
     def __init__(self, working_dir_path, short_form):
