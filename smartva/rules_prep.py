@@ -126,6 +126,8 @@ class ChildRulesPrep(RulesPrep):
         falls_child,
         fires_child,
         homicide_child,
+        malnutrition,
+        measles,
         other_injury_child,
         poisoning_child,
         road_traffic_child,
