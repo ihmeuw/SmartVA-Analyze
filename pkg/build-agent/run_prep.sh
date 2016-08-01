@@ -1,11 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -e
 
-cd ~/build-agent/smartva
+cd ../smartva
 
 git fetch
-git checkout $1
+
+if [[ -n $1 ]]; then
+    git checkout $1
+fi
+
 git pull
-
-# env/Scripts/pip install -r requirements-win.txt
-

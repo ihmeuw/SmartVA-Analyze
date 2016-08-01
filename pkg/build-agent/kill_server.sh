@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 if [[ -f server.pid ]]; then
   kill `cat server.pid`
