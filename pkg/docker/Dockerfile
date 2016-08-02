@@ -45,7 +45,9 @@ RUN groupadd -r smartva \
     && cp -R /etc/skel/. /home/smartva \
     && chown -R smartva:smartva /home/smartva \
     && chpasswd -e < smartva-password.md5 \
-    && mkdir /var/run/sshd
+    && mkdir /var/run/sshd \
+    && mkdir /tmp/.X11-unix \
+    && chmod a+rwxt /tmp/.X11-unix \
 
 USER smartva
 
