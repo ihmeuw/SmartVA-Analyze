@@ -34,12 +34,14 @@ EXPOSE 8000
 
 WORKDIR /home/smartva
 
-ADD ssh.tar /home/smartva/
-ADD run_tests_and_build_in_wine.patch /home/smartva/
-ADD smartva-password.md5 /home/smartva/
+# Use COPY here because Jenkins appears to have an old version of docker and can't expand .tar files.
+COPY ssh.tar /home/smartva/
+COPY run_tests_and_build_in_wine.patch /home/smartva/
+COPY smartva-password.md5 /home/smartva/
 
 RUN groupadd -r smartva \
     && useradd -r -g smartva smartva -s /bin/bash \
+    && tar -xf ssh.tar \
     && cp -R /etc/skel/. /home/smartva \
     && chown -R smartva:smartva /home/smartva \
     && chpasswd -e < smartva-password.md5 \
