@@ -47,7 +47,7 @@ RUN groupadd -r smartva \
     && chpasswd -e < smartva-password.md5 \
     && mkdir /var/run/sshd \
     && mkdir /tmp/.X11-unix \
-    && chmod a+rwxt /tmp/.X11-unix \
+    && chmod a+rwxt /tmp/.X11-unix
 
 USER smartva
 
