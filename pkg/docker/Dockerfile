@@ -34,7 +34,7 @@ EXPOSE 8000
 
 WORKDIR /home/smartva
 
-ADD ssh.tar run_tests_and_build_in_wine.patch smartva-password.md5 ./
+ADD ssh.tar run_tests_and_build_in_wine.patch smartva-password.md5 /home/smartva/
 
 RUN groupadd -r smartva \
     && useradd -r -g smartva smartva -s /bin/bash \
