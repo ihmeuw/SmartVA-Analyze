@@ -27,23 +27,23 @@ RUN dpkg --add-architecture i386 \
 
 ENV PYTHON2_VERSION 2.7.12
 ENV WINEARCH win32
-ENV WINEPREFIX /root/.wine
+ENV WINEPREFIX /home/smartva/.wine
 
 EXPOSE 22
 EXPOSE 8000
 
-WORKDIR /root
+WORKDIR /home/smartva
 
 ADD ssh.tar run_tests_and_build_in_wine.patch smartva-password.md5 ./
 
 RUN groupadd -r smartva \
-    && useradd -r -g smartva smartva \
+    && useradd -r -g smartva smartva -s /bin/bash \
     && cp -R /etc/skel/. /home/smartva \
     && chown -R smartva:smartva /home/smartva \
     && chpasswd -e < smartva-password.md5 \
-    && sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/' /etc/ssh/sshd_config
+    && mkdir /var/run/sshd
 
-# USER smartva
+USER smartva
 
 RUN wine wineboot --init \
     && git clone -b develop ssh://git@stash.ihme.washington.edu:7999/va/smartva.git \
@@ -58,4 +58,10 @@ RUN wine wineboot --init \
     && export DISPLAY=:0.0 \
     && wine wxPython3.0-win32-3.0.2.0-py27.exe /sp- /verysilent /norestart /SUPPRESSMSGBOXES \
     && wine python -m pip install -r smartva/requirements.txt \
+    && echo "export WINEDEBUG=$WINEDEBUG" >> ~/.profile \
+    && ln -s ~/smartva ~/build-agent/smartva \
     && rm * | true
+
+USER root
+
+CMD ["/usr/sbin/sshd", "-D"]
