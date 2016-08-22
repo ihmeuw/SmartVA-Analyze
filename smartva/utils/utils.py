@@ -118,3 +118,17 @@ def int_or_float(x):
             return float(x)
         except ValueError:
             raise ValueError('invalid literal for int_or_float(): \'{}\''.format(x))
+
+
+def identity(arg):
+    return arg
+
+
+def value_from_row(row, fn=identity, default=None):
+    def fn_wrap(var):
+        try:
+            return fn(row[var])
+        except Exception:  # unknown function can raise unpredictable exception
+            return default
+
+    return fn_wrap

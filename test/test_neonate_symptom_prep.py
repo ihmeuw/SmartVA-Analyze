@@ -18,7 +18,7 @@ expected_results = [
 
 @pytest.fixture
 def input_file(tmpdir):
-    f_path = tmpdir.mkdir('intermediate-files').join('neonate-presymptom.csv')
+    f_path = tmpdir.mkdir('intermediate-files').join('neonate-logic-rules.csv')
     with f_path.open('wb') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
