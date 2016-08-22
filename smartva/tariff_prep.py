@@ -13,6 +13,7 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
 from smartva.utils.utils import round5, int_or_float
+from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
@@ -200,7 +201,7 @@ class TariffPrep(DataPrep):
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s, self.data_module.DEFINITIVE_SYMPTOMS)
+        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
@@ -224,13 +225,12 @@ class TariffPrep(DataPrep):
 
         return True
 
-    def get_va_cause_list(self, input_file, cause40s, definitive_symptoms=None):
+    def get_va_cause_list(self, input_file, cause40s):
         """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
 
         Args:
             input_file (str): Path of input file.
             cause40s (dict):
-            definitive_symptoms (dict):
 
         Returns:
             list: List of Scored VAs.
@@ -250,12 +250,9 @@ class TariffPrep(DataPrep):
             for cause, symptoms in cause40s.items():
                 cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if safe_float(row.get(k)) == 1)
 
-            # This is added for pipelines with symptoms that clearly indicate a cause.
-            # e.g. Neonate would be 'stillbirth' if 's20' is '1'.
-            if definitive_symptoms:
-                for symptom, cause in definitive_symptoms.items():
-                    if row[symptom] == '1':
-                        row[CAUSE_NUM_KEY] = cause
+            # Rule engine injected cause
+            if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
+                row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
 
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
                                           row.get(AGE_KEY), row.get(SEX_KEY)))
@@ -446,11 +443,17 @@ class TariffPrep(DataPrep):
                 self.check_abort()
 
                 # Record causes already determined.
-                cause34 = va.cause
+                cause46 = safe_float(va.cause)
+                cause34 = cause_reduction.get(cause46)
+                if cause46 and cause34 is None:
+                    warning_logger.info(
+                        '{group:s} :: SID: {sid:s} was assigned an invalid cause: {cause}'
+                        .format(group=self.AGE_GROUP.capitalize(), sid=va.sid, cause=cause46)
+                    )
 
                 # If a cause is not yet determined and any cause is higher than the lowest rank:
                 va_lowest_rank = min(va.rank_list.values())
-                if va_lowest_rank < lowest_rank and not cause34:
+                if not cause34 and va_lowest_rank < lowest_rank:
                     # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
                     causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
                     cause34 = cause_reduction[int(causes[0])]

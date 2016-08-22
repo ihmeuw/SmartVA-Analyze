@@ -11,11 +11,6 @@ UNIFORM_LIST_POS = 0.17
 
 MIN_CAUSE_SCORE = 3.0
 
-DEFINITIVE_SYMPTOMS = {
-    's155': 19,  # Decedent suffered road traffic injury => Road Traffic
-    's99999': 12,  # word_cancer => Other Cancers
-}
-
 SPURIOUS_ASSOCIATIONS = {
     1: [  # AIDS
         'sex',  # sex
