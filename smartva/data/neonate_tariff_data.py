@@ -181,7 +181,8 @@ CAUSES = {
     3: 'Meningitis/Sepsis',
     4: 'Pneumonia',
     5: 'Preterm Delivery',
-    6: 'Stillbirth'
+    6: 'Stillbirth',
+    7: 'Neonatal tetanus'
 }
 
 CAUSES46 = CAUSES

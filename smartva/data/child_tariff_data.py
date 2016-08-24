@@ -252,7 +252,8 @@ CAUSES = {
     18: 'Poisonings',
     19: 'Road Traffic',
     20: 'Sepsis',
-    21: 'Violent Death'
+    21: 'Violent Death',
+    22: 'Protein-energy malnutrition'
 }
 
 CAUSES46 = CAUSES
