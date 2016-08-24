@@ -93,7 +93,7 @@ class RulesPrep(DataPrep):
 
         DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
-        return True
+        return matrix
 
 
 class AdultRulesPrep(RulesPrep):
