@@ -2,7 +2,7 @@
 from smartva.data.constants import *
 from smartva.utils.utils import value_from_row, int_or_float
 
-CAUSE_ID = -1  # Cause ID is not defined
+CAUSE_ID = 14
 
 
 def logic_rule(row):
