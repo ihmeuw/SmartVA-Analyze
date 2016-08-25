@@ -3,7 +3,6 @@ from smartva.data.constants import *
 from smartva.utils.utils import value_from_row, int_or_float
 
 CAUSE_ID = 45
-# child = 21
 
 
 def logic_rule(row):
