@@ -98,20 +98,20 @@ class RulesPrep(DataPrep):
 
 class AdultRulesPrep(RulesPrep):
     RULES = [
-        anemia,
         bite_adult,
         drowning_adult,
-        falls_adult,
-        fires_adult,
-        hemorrhage,
-        homicide_adult,
-        hypertensive,
-        other_injury_adult,
-        other_pregnancy,
-        poisoning_adult,
         road_traffic_adult,
-        sepsis,
+        fires_adult,
+        falls_adult,
+        poisoning_adult,
+        homicide_adult,
         suicide,
+        other_injury_adult,
+        hemorrhage,
+        hypertensive,
+        other_pregnancy,
+        sepsis,
+        anemia,
     ]
 
     def __init__(self, working_dir_path, short_form):
@@ -121,16 +121,16 @@ class AdultRulesPrep(RulesPrep):
 class ChildRulesPrep(RulesPrep):
     RULES = [
         bite_child,
-        cancer_child,
         drowning_child,
-        falls_child,
-        fires_child,
-        homicide_child,
-        malnutrition,
-        measles,
-        other_injury_child,
-        poisoning_child,
         road_traffic_child,
+        fires_child,
+        falls_child,
+        poisoning_child,
+        homicide_child,
+        other_injury_child,
+        measles,
+        cancer_child,
+        malnutrition,
     ]
 
     def __init__(self, working_dir_path, short_form):
