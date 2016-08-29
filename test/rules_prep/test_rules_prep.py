@@ -41,6 +41,10 @@ import always_true
 import conditional
 import sometimes_true
 
+import smartva.data.adult_tariff_data as adult_tariff_data
+import smartva.data.child_tariff_data as child_tariff_data
+import smartva.data.neonate_tariff_data as neonate_tariff_data
+
 path = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -98,54 +102,80 @@ class TestRulesPrep(object):
 
 
 class TestAdultRulesPrep(object):
+    RULE_LIST = [
+        anemia,
+        bite_adult,
+        drowning_adult,
+        falls_adult,
+        fires_adult,
+        hemorrhage,
+        homicide_adult,
+        hypertensive,
+        other_injury_adult,
+        other_pregnancy,
+        poisoning_adult,
+        road_traffic_adult,
+        sepsis,
+        suicide,
+    ]
+
     def test_instance(self, tmpdir):
         adult_rules_prep = smartva.rules_prep.AdultRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
 
         assert adult_rules_prep.AGE_GROUP == 'adult'
-        assert adult_rules_prep.rules == [
-            anemia,
-            bite_adult,
-            drowning_adult,
-            falls_adult,
-            fires_adult,
-            hemorrhage,
-            homicide_adult,
-            hypertensive,
-            other_injury_adult,
-            other_pregnancy,
-            poisoning_adult,
-            road_traffic_adult,
-            sepsis,
-            suicide,
-        ]
+        assert adult_rules_prep.rules == self.RULE_LIST
 
+    @pytest.mark.parametrize("rule", RULE_LIST)
+    def test_prediction_exists(self, rule):
+        assert rule.CAUSE_ID in adult_tariff_data.CAUSES46
+        assert rule.CAUSE_ID in adult_tariff_data.CAUSE_REDUCTION
+        reduced_cause = adult_tariff_data.CAUSE_REDUCTION.get(rule.CAUSE_ID)
+        assert reduced_cause in adult_tariff_data.CAUSES
 
 class TestChildRulesPrep(object):
+    RULE_LIST = [
+        bite_child,
+        cancer_child,
+        drowning_child,
+        falls_child,
+        fires_child,
+        homicide_child,
+        malnutrition,
+        measles,
+        other_injury_child,
+        poisoning_child,
+        road_traffic_child,
+    ]
+
     def test_instance(self, tmpdir):
         rules_prep = smartva.rules_prep.ChildRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
 
         assert rules_prep.AGE_GROUP == 'child'
-        assert rules_prep.rules == [
-            bite_child,
-            cancer_child,
-            drowning_child,
-            falls_child,
-            fires_child,
-            homicide_child,
-            malnutrition,
-            measles,
-            other_injury_child,
-            poisoning_child,
-            road_traffic_child,
-        ]
+        assert rules_prep.rules == self.RULE_LIST
+
+    @pytest.mark.parametrize("rule", RULE_LIST)
+    def test_prediction_exists(self, rule):
+        assert rule.CAUSE_ID in child_tariff_data.CAUSES46
+        assert rule.CAUSE_ID in child_tariff_data.CAUSE_REDUCTION
+        reduced_cause = child_tariff_data.CAUSE_REDUCTION.get(rule.CAUSE_ID)
+        assert reduced_cause in child_tariff_data.CAUSES
 
 
 class TestNeonateRulesPrep(object):
+    RULE_LIST = [
+        stillbirth,
+        tetanus_neonate,
+    ]
+
     def test_instance(self, tmpdir):
         rules_prep = smartva.rules_prep.NeonateRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
 
         assert rules_prep.AGE_GROUP == 'neonate'
-        assert rules_prep.rules == [
-            stillbirth,
-            tetanus_neonate,
-        ]
+        assert rules_prep.rules == self.RULE_LIST
+
+    @pytest.mark.parametrize("rule", RULE_LIST)
+    def test_prediction_exists(self, rule):
+        assert rule.CAUSE_ID in neonate_tariff_data.CAUSES46
+        assert rule.CAUSE_ID in neonate_tariff_data.CAUSE_REDUCTION
+        reduced_cause = neonate_tariff_data.CAUSE_REDUCTION.get(rule.CAUSE_ID)
+        assert reduced_cause in neonate_tariff_data.CAUSES
