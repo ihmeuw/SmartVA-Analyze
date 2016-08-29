@@ -103,20 +103,20 @@ class TestAdultRulesPrep(object):
 
         assert adult_rules_prep.AGE_GROUP == 'adult'
         assert adult_rules_prep.rules == [
-            anemia,
             bite_adult,
             drowning_adult,
-            falls_adult,
-            fires_adult,
-            hemorrhage,
-            homicide_adult,
-            hypertensive,
-            other_injury_adult,
-            other_pregnancy,
-            poisoning_adult,
             road_traffic_adult,
-            sepsis,
+            fires_adult,
+            falls_adult,
+            poisoning_adult,
+            homicide_adult,
             suicide,
+            other_injury_adult,
+            hemorrhage,
+            hypertensive,
+            other_pregnancy,
+            sepsis,
+            anemia,
         ]
 
 
@@ -127,16 +127,16 @@ class TestChildRulesPrep(object):
         assert rules_prep.AGE_GROUP == 'child'
         assert rules_prep.rules == [
             bite_child,
-            cancer_child,
             drowning_child,
-            falls_child,
-            fires_child,
-            homicide_child,
-            malnutrition,
-            measles,
-            other_injury_child,
-            poisoning_child,
             road_traffic_child,
+            fires_child,
+            falls_child,
+            poisoning_child,
+            homicide_child,
+            other_injury_child,
+            measles,
+            cancer_child,
+            malnutrition,
         ]
 
 
