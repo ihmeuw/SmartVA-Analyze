@@ -10,14 +10,12 @@ def logic_rule(row):
 
     female = value_of(SEX) == FEMALE
 
-    age = 12 < value_of(AGE) <= 49
+    age = MATERNAL_AGE_LOWER < value_of(AGE) <= MATERNAL_AGE_UPPER
 
     pregnant = value_of(Adult.PREGNANT) == YES
 
-    period_overdue = value_of(Adult.PERIOD_OVERDUE) == YES and value_of(Adult.PERIOD_OVERDUE_DAYS) > 90
+    period_overdue = value_of(Adult.PERIOD_OVERDUE) == YES and value_of(Adult.PERIOD_OVERDUE_DAYS) > PERIOD_OVERDUE_CUTTOFF
 
-    convulsions = value_of(Adult.CONVULSIONS) == YES
+    convulsions = value_of(Adult.CONVULSIONS) == YES and  value_of(Adult.EPILEPSY) == YES
 
-    non_epileptic = value_of(Adult.EPILEPSY) == NO
-
-    return female and age and (pregnant or period_overdue) and convulsions and non_epileptic
+    return female and age and (pregnant or period_overdue) and convulsions
