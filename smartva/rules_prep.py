@@ -98,19 +98,19 @@ class RulesPrep(DataPrep):
 
 class AdultRulesPrep(RulesPrep):
     RULES = [
+        road_traffic_adult,
+        homicide_adult,
+        suicide,
         bite_adult,
         drowning_adult,
-        road_traffic_adult,
         fires_adult,
         falls_adult,
         poisoning_adult,
-        homicide_adult,
-        suicide,
         other_injury_adult,
-        hemorrhage,
         hypertensive,
         other_pregnancy,
         sepsis,
+        hemorrhage,
         anemia,
     ]
 
@@ -120,13 +120,13 @@ class AdultRulesPrep(RulesPrep):
 
 class ChildRulesPrep(RulesPrep):
     RULES = [
+        road_traffic_child,
+        homicide_child,
         bite_child,
         drowning_child,
-        road_traffic_child,
         fires_child,
         falls_child,
         poisoning_child,
-        homicide_child,
         other_injury_child,
         measles,
         cancer_child,

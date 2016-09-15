@@ -10,6 +10,8 @@ def logic_rule(row):
 
     poisoning = value_of(Child.POISONING) == YES
 
-    terminal = value_of(Child.INJURY_DAYS) < 30
+    recent = value_of(Child.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
 
-    return poisoning and terminal
+    unintentional = value_of(Child.INFLICTED_BY_OTHER) != YES
+
+    return poisoning and recent and unintentional
