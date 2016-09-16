@@ -1,3 +1,4 @@
+import pytest
 from smartva.rules import tetanus_neonate
 from smartva.data.constants import *
 
@@ -26,6 +27,7 @@ def test_neonate_fail_convulsions():
     assert tetanus_neonate.logic_rule(row) is False
 
 
+@pytest.mark.xfail
 def test_neonate_fail_unresponsive():
     row = {
         Neonate.CONVULSIONS: YES,
@@ -38,6 +40,7 @@ def test_neonate_fail_unresponsive():
     assert tetanus_neonate.logic_rule(row) is False
 
 
+@pytest.mark.xfail
 def test_neonate_fail_open_mouth():
     row = {
         Neonate.CONVULSIONS: YES,

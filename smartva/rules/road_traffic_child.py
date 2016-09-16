@@ -10,6 +10,6 @@ def logic_rule(row):
 
     road_traffic = value_of(Child.ROAD_TRAFFIC) == YES
 
-    terminal = value_of(Child.INJURY_DAYS) < 30
+    recent = value_of(Child.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
 
-    return road_traffic and terminal
+    return road_traffic and recent

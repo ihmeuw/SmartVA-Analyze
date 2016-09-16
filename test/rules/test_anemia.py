@@ -22,8 +22,7 @@ def test_logic_fail_age_min():
     row.update({
         Adult.PREGNANT: YES,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is False
@@ -35,8 +34,7 @@ def test_logic_fail_age_max():
         AGE: 50,
         Adult.PREGNANT: YES,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is False
@@ -49,11 +47,11 @@ def test_logic_fail_gender():
         AGE: 13.0,
         Adult.PREGNANT: YES,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is False
+
 
 
 def test_logic_pass_period():
@@ -63,8 +61,7 @@ def test_logic_pass_period():
         Adult.PERIOD_OVERDUE: YES,
         Adult.PERIOD_OVERDUE_DAYS: 91.0,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is True
@@ -77,24 +74,10 @@ def test_logic_fail_period():
         Adult.PERIOD_OVERDUE: YES,
         Adult.PERIOD_OVERDUE_DAYS: 90.0,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is False
-
-
-def test_logic_pass_postpartum1():
-    row = BASE_ROW.copy()
-    row.update({
-        AGE: 13.0,
-        Adult.AFTER_ABORTION: YES,
-        Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
-    })
-
-    assert anemia.logic_rule(row) is True
 
 
 def test_logic_pass_postpartum2():
@@ -103,8 +86,7 @@ def test_logic_pass_postpartum2():
         AGE: 13.0,
         Adult.AFTER_CHILDBIRTH: YES,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
+        Adult.BREATHING_DIFFICULT: YES,
     })
 
     assert anemia.logic_rule(row) is True
@@ -116,34 +98,7 @@ def test_logic_pass_symptoms1():
         AGE: 13.0,
         Adult.PREGNANT: YES,
         Adult.PALE: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
-    })
-
-    assert anemia.logic_rule(row) is True
-
-
-def test_logic_pass_symptoms2():
-    row = BASE_ROW.copy()
-    row.update({
-        AGE: 13.0,
-        Adult.PREGNANT: YES,
         Adult.BREATHING_DIFFICULT: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
-    })
-
-    assert anemia.logic_rule(row) is True
-
-
-def test_logic_pass_symptoms3():
-    row = BASE_ROW.copy()
-    row.update({
-        AGE: 13.0,
-        Adult.PREGNANT: YES,
-        Adult.BREATHING_FAST: YES,
-        Adult.CHEST_PAIN: YES,
-        Adult.HEADACHES: YES,
     })
 
     assert anemia.logic_rule(row) is True

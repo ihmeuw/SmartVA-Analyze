@@ -10,23 +10,16 @@ def logic_rule(row):
 
     female = value_of(SEX) == FEMALE
 
-    age = 12 < value_of(AGE) <= 49
+    age = MATERNAL_AGE_LOWER < value_of(AGE) <= MATERNAL_AGE_UPPER
 
     pregnant = value_of(Adult.PREGNANT) == YES
 
-    period_overdue = value_of(Adult.PERIOD_OVERDUE) == YES and value_of(Adult.PERIOD_OVERDUE_DAYS) > 90
+    period_overdue = value_of(Adult.PERIOD_OVERDUE) == YES and value_of(Adult.PERIOD_OVERDUE_DAYS) > PERIOD_OVERDUE_CUTTOFF
 
-    postpartum = value_of(Adult.AFTER_ABORTION) == YES or value_of(Adult.AFTER_CHILDBIRTH) == YES
+    postpartum = value_of(Adult.AFTER_CHILDBIRTH) == YES
 
-    # Symptoms
     pale = value_of(Adult.PALE) == YES
 
     breathing = value_of(Adult.BREATHING_DIFFICULT) == YES or value_of(Adult.BREATHING_FAST) == YES
 
-    chest_pain = value_of(Adult.CHEST_PAIN) == YES
-
-    headaches = value_of(Adult.HEADACHES) == YES
-
-    symptoms = pale + breathing + chest_pain + headaches
-
-    return female and age and (pregnant or period_overdue or postpartum) and symptoms >= 3
+    return female and age and (pregnant or period_overdue or postpartum) and pale and breathing
