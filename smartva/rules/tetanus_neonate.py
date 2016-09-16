@@ -10,10 +10,6 @@ def logic_rule(row):
 
     convulsions = value_of(Neonate.CONVULSIONS) == YES
 
-    unresponsive = value_of(Neonate.UNRESPONSIVE) == YES
-
-    not_open_mouth = value_of(Neonate.OPEN_MOUTH) == NO
-
     stop_suckling = value_of(Neonate.NORMAL_SUCKLING) == YES and value_of(Neonate.STOPPED_NORMAL_SUCKLING) == YES
 
-    return convulsions and unresponsive and not_open_mouth and stop_suckling
+    return convulsions and stop_suckling

@@ -14,10 +14,8 @@ def logic_rule(row):
 
     hair_color = value_of(Child.HAIR_COLOR_CHANGE_RED_YELLOW) == YES
 
-    protruding_belly = value_of(Child.PROTRUDING_BELLY) == YES
-
     pallor = value_of(Child.LACK_OF_BLOOD) == YES
 
-    symptoms = thin_limbs + flaking_skin + hair_color + protruding_belly + pallor
+    symptoms = thin_limbs + flaking_skin + hair_color + pallor
 
     return symptoms >= 3
