@@ -10,10 +10,10 @@ def logic_rule(row):
     
     female = value_of(SEX) == FEMALE
 
-    age = 12 < value_of(AGE) <= 49
+    age = MATERNAL_AGE_LOWER < value_of(AGE) <= MATERNAL_AGE_UPPER
 
-    delivering = value_of(Adult.DURING_ABORTION) == YES or value_of(Adult.DURING_CHILDBIRTH) == YES
+    delivering = value_of(Adult.DURING_CHILDBIRTH) == YES
 
-    long_delivery = value_of(Adult.LABOR_HOURS) > 12
+    long_delivery = value_of(Adult.LABOR_DURATION) >= PROLONGED_DELIVERY_CUTTOFF
 
     return female and age and delivering and long_delivery
