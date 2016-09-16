@@ -8,4 +8,10 @@ CAUSE_ID = 2
 def logic_rule(row):
     value_of = value_from_row(row, int_or_float)
 
-    return value_of(Child.BITE) == YES and value_of(Child.INJURY_DAYS) < 30
+    bite = value_of(Child.BITE) == YES
+
+    recent = value_of(Child.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
+
+    unintentional = value_of(Child.INFLICTED_BY_OTHER) != YES
+
+    return bite and recent and unintentional

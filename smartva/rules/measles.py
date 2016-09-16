@@ -11,19 +11,15 @@ def logic_rule(row):
     acute = value_of(Child.ILLNESS_DAYS) < 30
 
     face_rash = (value_of(Child.RASH) == YES
-                 and (value_of(Child.RASH_LOCATION1) == Rash.FACE
-                      or value_of(Child.RASH_LOCATION2) == Rash.FACE))
+                 and value_of(Child.RASH_LOCATION) == Rash.FACE)
 
     measles_rash = value_of(Child.RASH_COLOR_WHITISH) == YES
 
-    fever = value_of(Child.FEVER) == YES or value_of(Child.FREE_TEXT_FEVER) == YES
-
-    cough = value_of(Child.COUGH) == YES
-
-    diff_breathing = value_of(Child.BREATHING_DIFFICULT) == YES
+    diff_breathing = value_of(Child.COUGH) == YES and (
+        (value_of(Child.FAST_BREATHING) == YES) or (value_of(Child.INDRAWN_CHEST) == YES))
 
     loose_stool = value_of(Child.LOOSE_STOOL) == YES or value_of(Child.FREE_TEXT_DIARRHEA) == YES
 
     pneumonia = value_of(Child.FREE_TEXT_PNEUMONIA) == YES
 
-    return acute and (face_rash or measles_rash) and fever and (cough or diff_breathing) and (loose_stool or pneumonia)
+    return acute and (face_rash or measles_rash) and (diff_breathing or loose_stool or pneumonia)

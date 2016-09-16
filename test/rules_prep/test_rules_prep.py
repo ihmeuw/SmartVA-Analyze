@@ -103,20 +103,20 @@ class TestRulesPrep(object):
 
 class TestAdultRulesPrep(object):
     RULE_LIST = [
-        anemia,
+        road_traffic_adult,
+        homicide_adult,
+        suicide,
         bite_adult,
         drowning_adult,
-        falls_adult,
         fires_adult,
-        hemorrhage,
-        homicide_adult,
-        hypertensive,
-        other_injury_adult,
-        other_pregnancy,
+        falls_adult,
         poisoning_adult,
-        road_traffic_adult,
+        other_injury_adult,
+        hypertensive,
+        other_pregnancy,
         sepsis,
-        suicide,
+        hemorrhage,
+        anemia,
     ]
 
     def test_instance(self, tmpdir):
@@ -132,19 +132,20 @@ class TestAdultRulesPrep(object):
         reduced_cause = adult_tariff_data.CAUSE_REDUCTION.get(rule.CAUSE_ID)
         assert reduced_cause in adult_tariff_data.CAUSES
 
+
 class TestChildRulesPrep(object):
     RULE_LIST = [
-        bite_child,
-        cancer_child,
-        drowning_child,
-        falls_child,
-        fires_child,
-        homicide_child,
-        malnutrition,
-        measles,
-        other_injury_child,
-        poisoning_child,
         road_traffic_child,
+        homicide_child,
+        bite_child,
+        drowning_child,
+        fires_child,
+        falls_child,
+        poisoning_child,
+        other_injury_child,
+        measles,
+        cancer_child,
+        malnutrition,
     ]
 
     def test_instance(self, tmpdir):

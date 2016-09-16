@@ -10,22 +10,24 @@ def logic_rule(row):
 
     female = value_of(SEX) == FEMALE
 
-    age = 12 < value_of(AGE) <= 49
+    age = MATERNAL_AGE_LOWER < value_of(AGE) <= MATERNAL_AGE_UPPER
 
     pregnant = value_of(Adult.PREGNANT) == YES
 
-    period_overdue = value_of(Adult.PERIOD_OVERDUE) and value_of(Adult.PERIOD_OVERDUE_DAYS) > 90
+    period_overdue = value_of(Adult.PERIOD_OVERDUE) and value_of(Adult.PERIOD_OVERDUE_DAYS) > PERIOD_OVERDUE_CUTTOFF
 
-    postpartum = value_of(Adult.AFTER_ABORTION) == YES or value_of(Adult.AFTER_CHILDBIRTH) == YES
+    abortion = value_of(Adult.AFTER_ABORTION) == YES
 
-    belly_pain = value_of(Adult.BELLY_PAIN) == YES
+    postpartum = value_of(Adult.AFTER_CHILDBIRTH) == YES
 
-    in_lower_belly = (value_of(Adult.BELLY_PAIN_LOCATION1) == BellyPain.LOWER_BELLY
-                      or value_of(Adult.BELLY_PAIN_LOCATION2) == BellyPain.LOWER_BELLY)
+    lower_belly_pain = (value_of(Adult.BELLY_PAIN) == YES and 
+        (value_of(Adult.BELLY_PAIN_LOCATION1) == BellyPain.LOWER_BELLY
+         or value_of(Adult.BELLY_PAIN_LOCATION2) == BellyPain.LOWER_BELLY))
 
     fever = value_of(Adult.FEVER) == YES
 
     discharge = value_of(Adult.OFFENSIVE_VAGINAL_DISCHARGE) == YES
 
-    return (female and age and (pregnant or period_overdue or postpartum)
-            and fever and belly_pain and in_lower_belly and discharge)
+    sepsis_symptoms = fever & lower_belly_pain & discharge
+
+    return female and age and (abortion or (postpartum and sepsis_symptoms))
