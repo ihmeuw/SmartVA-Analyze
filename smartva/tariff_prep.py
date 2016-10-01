@@ -106,7 +106,7 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
+        return 'sid={sid} age={age} sex={sex} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
 
     def __str__(self):
         return self.__repr__()
