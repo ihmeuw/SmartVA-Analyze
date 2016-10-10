@@ -11,7 +11,7 @@ from smartva import config
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
-from smartva.utils.conversion_utils import value_or_default
+from smartva.utils.conversion_utils import value_or_default, safe_int, safe_float
 from smartva.utils.utils import round5, int_or_float
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
@@ -28,15 +28,8 @@ AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
 
 
-def safe_float(x):
-    try:
-        return float(x)
-    except (ValueError, TypeError):
-        return 0.0
-
-
 def get_cause_num(cause):
-    return int(cause.lstrip('cause'))
+    return safe_int(cause.lstrip('cause'))
 
 
 def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
@@ -106,7 +99,7 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return 'sid={sid} age={age} sex={sex} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
+        return 'sid={sid} age={age} gender={gender} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
 
     def __str__(self):
         return self.__repr__()
@@ -252,7 +245,7 @@ class TariffPrep(DataPrep):
 
             # Rule engine injected cause
             if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
-                row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
+                row[CAUSE_NUM_KEY] = safe_int(row[RULES_CAUSE_NUM_KEY])
 
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
                                           row.get(AGE_KEY), row.get(SEX_KEY)))
@@ -303,10 +296,10 @@ class TariffPrep(DataPrep):
                 # Create a list of indexes from the sorted cause list for each cause.
                 # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
                 # numbers as the original stata tool
-                local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if int(va.cause) == cause_num]
+                local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if safe_int(va.cause) == cause_num]
 
                 # Find the index of the item at cutoff position.
-                cutoffs[cause_num] = local_list[int(len(local_list) * cutoff_pos)]
+                cutoffs[cause_num] = local_list[safe_int(len(local_list) * cutoff_pos)]
 
                 f.write('{} : {}\n'.format(cause_num, cutoffs[cause_num]))
 
@@ -401,7 +394,7 @@ class TariffPrep(DataPrep):
             lowest_cause_list = set()
 
             for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
+                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), safe_int).evaluate():
                     lowest_cause_list.update(causes)
 
             if not self.hiv_region:
@@ -456,11 +449,11 @@ class TariffPrep(DataPrep):
                 if not cause34 and va_lowest_rank < lowest_rank:
                     # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
                     causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
-                    cause34 = cause_reduction[int(causes[0])]
+                    cause34 = cause_reduction[safe_int(causes[0])]
 
                     # Warn user if multiple causes are equally likely and which will be chosen.
                     if len(causes) > 1:
-                        multiple_cause_list = [cause46_names[int(_)] for _ in causes]
+                        multiple_cause_list = [cause46_names[safe_int(_)] for _ in causes]
                         warning_logger.info(
                             '{group:s} :: SID: {sid:s} had multiple causes {causes} predicted to be equally likely, '
                             'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,

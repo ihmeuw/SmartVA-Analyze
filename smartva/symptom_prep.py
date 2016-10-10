@@ -4,7 +4,7 @@ import re
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import additional_headers_and_values
+from smartva.utils.conversion_utils import additional_headers_and_values, safe_int, safe_float
 
 INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
@@ -139,7 +139,7 @@ class SymptomPrep(DataPrep):
         """
         for read_header, cutoff_data in cutoff_data_map:
             try:
-                row[read_header] = int(float(row[read_header]) >= cutoff_data)
+                row[read_header] = safe_float(row[read_header]) >= cutoff_data
             except ValueError:
                 row[read_header] = 0
             except KeyError as e:
@@ -182,7 +182,7 @@ class SymptomPrep(DataPrep):
         """
         for read_header in binary_variables:
             try:
-                value = int(row[read_header])
+                value = safe_int(row[read_header])
             except ValueError:
                 value = 0
             except KeyError as e:
