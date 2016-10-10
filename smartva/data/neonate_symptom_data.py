@@ -241,6 +241,10 @@ BINARY_CONVERSION_MAP = {
         1: 's55991',
         2: 's55991',
     },
+    's56': {
+        1: 's56991', # hospital
+        2: 's56991', # other health facility
+    },
     's57': {
         # [3, 4, 5, 6, 8, 9]
         3: 's57991',
