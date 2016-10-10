@@ -168,7 +168,7 @@ class TariffPrep(DataPrep):
 
     @property
     def va_validated_filename(self):
-        return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
+        return self._va_validated_filename
 
     @va_validated_filename.setter
     def va_validated_filename(self, value):
