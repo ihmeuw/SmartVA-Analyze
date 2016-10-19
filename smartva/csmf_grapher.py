@@ -2,6 +2,8 @@ import csv
 import os
 from collections import OrderedDict, defaultdict
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 
