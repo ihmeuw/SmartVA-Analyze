@@ -12,9 +12,6 @@ UNIFORM_LIST_POS = 0.18
 MIN_CAUSE_SCORE = 6.0
 
 SPURIOUS_ASSOCIATIONS = {
-    4: [  # Asthma
-        's1', # Did Decedent Have Asthma?
-    ],
     5: [  # Bite
         's9999148',  # word_suicid
         's9999123',  # word_poison
@@ -31,7 +28,6 @@ SPURIOUS_ASSOCIATIONS = {
     ],
     10: [  # 'COPD',
         's9999117',  # word_obstruct
-        's1', # Did Decedent Have Asthma?
     ],
     13: [  # Diabetes with Skin Infection/Sepsis
         's999917',   # word_bite
@@ -72,18 +68,6 @@ SPURIOUS_ASSOCIATIONS = {
         's999977',   # word_head
         's9999124',  # word_polic
     ],
-    23: [  # Acute Myocardial Infarction
-        's1', # Did Decedent Have Asthma?
-    ],
-    24: [  # Congestive Heart Failure
-        's1', # Did Decedent Have Asthma?
-    ],
-    26: [  # Leukemia
-        's1', # Did Decedent Have Asthma?
-    ],
-    27: [  # Lung Cancer
-        's1', # Did Decedent Have Asthma?
-    ],
     29: [  # Malaria
         's158',      # Decedent did not suffer any injuries
         's999997',   # word_jaundic
@@ -110,9 +94,6 @@ SPURIOUS_ASSOCIATIONS = {
         's19992',    # Pattern of fever was on-and-off
         's20',       # Did [name] have sweating with the fever?
         's158',      # Decedent did not suffer any injuries
-    ],
-    31: [  # Other Cardiovascular Diseases
-        's1', # Did Decedent Have Asthma?
     ],
     32: [  # Other Digestive
         's9999117',  # word_obstruct
@@ -177,7 +158,6 @@ SPURIOUS_ASSOCIATIONS = {
         's999969',   # word_fever
     ],
     37: [  # Pneumonia
-        's1', # Did Decedent Have Asthma?
         's9999117',  # word_obstruct
         's999958',   # word_dyspnea
         's999911',   # word_asthma
@@ -228,9 +208,6 @@ SPURIOUS_ASSOCIATIONS = {
         's156',     # Decedent suffered burn
         's999971',  # word_fire
         's9999123',  # word_poison
-    ],
-    46: [  # TB
-        's1', # Did Decedent Have Asthma?
     ],
 }
 
