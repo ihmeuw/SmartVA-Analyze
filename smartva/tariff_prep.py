@@ -149,12 +149,37 @@ class TariffPrep(DataPrep):
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
     @property
+    def tariff_matrix_filename(self):
+        return self._tariff_matrix_filename
+
+    @tariff_matrix_filename.setter
+    def tariff_matrix_filename(self, value):
+        if value is None:
+            self._tariff_matrix_filename = os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+        else:
+            self._tariff_matrix_filename = value
+
+    @property
     def va_validated_filename(self):
-        return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
+        return self._va_validated_filename
+
+    @va_validated_filename.setter
+    def va_validated_filename(self, value):
+        if value is None:
+            self._va_validated_filename = os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+        else:
+            self._va_validated_filename = value
 
     @property
     def undetermined_matrix_filename(self):
         return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
+
+    @undetermined_matrix_filename.setter
+    def undetermined_matrix_filename(self, value):
+        if value is None:
+            self._undetermined_matrix_filename = os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+        else:
+            self._undetermined_matrix_filename = value
 
     @property
     def external_ranks_filename(self):
@@ -180,7 +205,7 @@ class TariffPrep(DataPrep):
 
         undetermined_matrix = self._get_undetermined_matrix()
 
-        cause40s = get_cause_symptoms(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
+        cause40s = get_cause_symptoms(self.tariff_matrix_filename,
                                       drop_headers, MAX_CAUSE_SYMPTOMS,
                                       exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
         self.cause_list = sorted(cause40s.keys())

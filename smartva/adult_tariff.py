@@ -9,6 +9,9 @@ class AdultTariff(TariffPrep):
         super(AdultTariff, self).__init__(working_dir_path, short_form, options, country)
 
         self.data_module = adult_tariff_data
+        self.tariff_matrix_filename = None # take the default
+        self.va_validated_filename = None # take the default
+        self.undetermined_matrix_filename = None # take the default
 
     def run(self):
         return super(AdultTariff, self).run()
