@@ -1,7 +1,7 @@
 from smartva.data import child_pre_symptom_data
 from smartva.loggers.application import warning_logger
 from smartva.pre_symptom_prep import PreSymptomPrep
-from smartva.utils.conversion_utils import value_or_default, safe_int
+from smartva.utils.conversion_utils import value_or_default
 
 
 class ChildPreSymptomPrep(PreSymptomPrep):
@@ -40,7 +40,7 @@ class ChildPreSymptomPrep(PreSymptomPrep):
             row (dict): Row of VA data.
         """
         try:
-            value = value_or_default(row['c1_25b'], safe_int, default=None)
+            value = value_or_default(row['c1_25b'], int, default=None)
             if value is None:
                 row['c1_25a'] = 0
             else:
@@ -70,7 +70,7 @@ class ChildPreSymptomPrep(PreSymptomPrep):
         """
         try:
             for var in ['c4_31_1', 'c4_32']:
-                row[var] = int(1 in map(safe_int, (str(row[var]).split())))
+                row[var] = int('1' in str(row[var]).split())
         except KeyError as e:
             warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_location'
                                  .format(row['sid'], e.message))

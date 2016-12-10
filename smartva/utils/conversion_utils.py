@@ -16,17 +16,6 @@ def value_or_default(x, fn=int, invalid=None, default=0):
     return default
 
 
-def safe_int(x):
-    return int(float(x))
-
-
-def safe_float(x):
-    try:
-        return float(x)
-    except (ValueError, TypeError):
-        return 0.0
-
-
 def additional_headers_and_values(headers, additional_headers_data):
     """
     Calculate necessary additional headers and values based on comparing existing headers to additional header data.
@@ -66,7 +55,7 @@ def convert_binary_variable(row, data_header, data_map):
     :param data_map: Map of the values to binary value headers
     """
     try:
-        for value in map(safe_int, str(row[data_header]).strip().split(' ')):
+        for value in map(int, str(row[data_header]).strip().split(' ')):
             if isinstance(data_map, dict):
                 if value in data_map:
                     row[data_map[value]] = 1
@@ -86,7 +75,7 @@ def check_skip_patterns(row, skip_pattern_data, default_values=None):
     warnings = False
     for skip_pattern_item in skip_pattern_data:
         skip_condition, skip_list = skip_pattern_item
-        condition_value = LdapNotationParser(skip_condition, get_cell(row), safe_int).evaluate()
+        condition_value = LdapNotationParser(skip_condition, get_cell(row), int).evaluate()
         if not condition_value:
             for skip_list_item in skip_list:
                 if str(row.get(skip_list_item, '')) not in ['', '0']:
@@ -101,7 +90,7 @@ def check_skip_patterns(row, skip_pattern_data, default_values=None):
 def get_cell(row):
     def fn(var):
         try:
-            return safe_int(row[var])
+            return int(row[var])
         except (KeyError, ValueError):
             # Variable doesn't exist or is not valid. This is OK.
             pass

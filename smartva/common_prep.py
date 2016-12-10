@@ -15,7 +15,7 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger
 from smartva.loggers.application import warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import additional_headers_and_values, safe_int
+from smartva.utils.conversion_utils import additional_headers_and_values
 
 INPUT_FILENAME_TEMPLATE = 'cleanheaders.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
@@ -23,7 +23,7 @@ OUTPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 
 def int_value(x):
     try:
-        return safe_int(x)
+        return int(x)
     except ValueError:
         return 0
 
@@ -132,7 +132,7 @@ class CommonPrep(DataPrep):
         """
         for variable, mapping in conversion_data.items():
             try:
-                rash_values = map(safe_int, row[variable].split(' '))
+                rash_values = map(int, row[variable].split(' '))
             except ValueError:
                 # No rash data. Continue.
                 continue
@@ -166,7 +166,7 @@ class CommonPrep(DataPrep):
         """
         for variable, mapping in conversion_data.items():
             try:
-                units = safe_int(row[variable])
+                units = int(row[variable])
             except ValueError:
                 # No weight data. Skip.
                 continue
@@ -209,7 +209,7 @@ class CommonPrep(DataPrep):
         """
         age_data = {}
         for age_group, variable in AGE_VARS.items():
-            age_data[age_group] = safe_int(row[variable])
+            age_data[age_group] = int(row[variable])
 
         return age_data
 
