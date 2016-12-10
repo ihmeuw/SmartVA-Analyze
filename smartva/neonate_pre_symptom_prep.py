@@ -1,7 +1,7 @@
 from smartva.data import neonate_pre_symptom_data
 from smartva.loggers import warning_logger
 from smartva.pre_symptom_prep import PreSymptomPrep
-from smartva.utils.conversion_utils import value_or_default, safe_int
+from smartva.utils.conversion_utils import value_or_default
 
 
 class NeonatePreSymptomPrep(PreSymptomPrep):
@@ -26,7 +26,7 @@ class NeonatePreSymptomPrep(PreSymptomPrep):
             row (dict): Row of VA data.
         """
         try:
-            value = value_or_default(row['c1_25b'], safe_int, default=None)
+            value = value_or_default(row['c1_25b'], int, default=None)
             if value is None:
                 row['c1_25a'] = 0
             else:
@@ -43,7 +43,7 @@ class NeonatePreSymptomPrep(PreSymptomPrep):
             row (dict): Row of VA data.
         """
         try:
-            value = value_or_default(row['c1_25b'], safe_int, default=None)
+            value = value_or_default(row['c1_25b'], int, default=None)
             if 1 <= value <= 28:
                 row['c1_26'] = 1
         except KeyError as e:

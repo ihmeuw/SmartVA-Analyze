@@ -9,7 +9,7 @@ from smartva.data.answer_ranges import RANGE_LIST
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values, check_skip_patterns, safe_int
+from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values, check_skip_patterns
 
 INPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -29,9 +29,9 @@ TIME_FACTORS = {
 
 
 def make_date(row, key):
-    return date(safe_int(row['{:s}y'.format(key)]),
-                safe_int(row['{:s}m'.format(key)]),
-                safe_int(row['{:s}d'.format(key)]))
+    return date(int(row['{:s}y'.format(key)]),
+                int(row['{:s}m'.format(key)]),
+                int(row['{:s}d'.format(key)]))
 
 
 def months_delta(date1, date2):
@@ -180,7 +180,7 @@ class PreSymptomPrep(DataPrep):
             else:
                 for answer in str(value).split():
                     try:
-                        if safe_int(answer) not in range_list:
+                        if int(answer) not in range_list:
                             warning_logger.warning(
                                 'SID: {} variable \'{}\' has an illegal value {}. '
                                 'Please see code book for legal values.'.format(row['sid'], variable, value))
@@ -202,7 +202,7 @@ class PreSymptomPrep(DataPrep):
         for data_headers, data_map in consolidation_map.items():
             read_header, write_header = data_headers
             try:
-                value = safe_int(row[read_header])
+                value = int(row[read_header])
             except ValueError:
                 pass
             except KeyError:
@@ -228,8 +228,8 @@ class PreSymptomPrep(DataPrep):
         for var in duration_vars:
             code_var, length_var = '{}a'.format(var), '{}b'.format(var)
             try:
-                code_value = value_or_default(row[code_var], safe_int)
-                length_value = value_or_default(row[length_var], float)
+                code_value = value_or_default(row[code_var])
+                length_value = value_or_default(row[length_var])
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_duration_vars'
@@ -323,7 +323,7 @@ class PreSymptomPrep(DataPrep):
         """
         for var in weight_vars:
             try:
-                row[var] = value_or_default(row[var], safe_int, [0, 9999], '')
+                row[var] = value_or_default(row[var], int, [0, 9999], '')
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_weight_vars'
                                      .format(row['sid'], e.message))
@@ -369,7 +369,7 @@ class PreSymptomPrep(DataPrep):
             exam_date_vars (dict): Answers which contain exam dates.
             weight_sd_data (dict): Map of variable to store and applicable SD data.
         """
-        if safe_int(row.get('{:s}y'.format(DOB_VAR), False)):
+        if int(row.get('{:s}y'.format(DOB_VAR), False)):
             try:
                 dob = make_date(row, DOB_VAR)
             except ValueError:
@@ -393,7 +393,7 @@ class PreSymptomPrep(DataPrep):
                         age_at_exam_months = months_delta(latest_exam, dob)
 
                         if age_at_exam_months <= 60:
-                            sex = safe_int(row[SEX_VAR])
+                            sex = int(row[SEX_VAR])
                             weight_kg = latest_weight / 1000
 
                             for sd_var, sd_data in weight_sd_data.items():
@@ -407,7 +407,7 @@ class PreSymptomPrep(DataPrep):
             row: Row of VA data.
         """
         try:
-            if safe_int(row['c4_33a']) != 4:
+            if int(row['c4_33a']) != 4:
                 row['c4_33b'] = 0
         except ValueError:
             pass
