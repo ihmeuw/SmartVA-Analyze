@@ -339,9 +339,12 @@ class TariffPrep(DataPrep):
                 highest_rank = len(cause_scores[cause]) - np.sum(np.array(cause_scores[cause]) < death_score)
                 avg_rank = (lowest_rank + highest_rank) / 2.
 
-                # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
+                # add .5 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
-                va.rank_list[cause] = avg_rank + 1
+                # If an observation is scored higher than any observation in the training data it is ranked 0.5
+                # If an observation is scored lower than any observation in the training data
+                # it is ranked len(training) + 0.5
+                va.rank_list[cause] = avg_rank + .5
 
         status_notifier.update({'sub_progress': None})
 
