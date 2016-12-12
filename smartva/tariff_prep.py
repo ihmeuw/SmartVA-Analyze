@@ -208,7 +208,7 @@ class TariffPrep(DataPrep):
 
         self.write_external_ranks(va_cause_list)
 
-        lowest_rank = len(uniform_list)
+        lowest_rank = len(uniform_list) + 0.5
 
         self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
                                            lowest_rank, self.data_module.UNIFORM_LIST_POS,
