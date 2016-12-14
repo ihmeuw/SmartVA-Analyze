@@ -40,6 +40,7 @@ def check_country(ctx, param, value):
 @click.option('--malaria', default=True, type=click.BOOL, help='Data is from a Malaria region.')
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables.')
+@click.option('--figures', default=True, type=click.BOOL, help='Generate charts and figures output. Default is True.')
 @click.version_option(version=version, prog_name=prog_name)
 @click.argument('input', type=click.Path(file_okay=True, dir_okay=False, readable=True, exists=True))
 @click.argument('output', type=click.Path(file_okay=False, dir_okay=True, writable=True, exists=True))
@@ -57,6 +58,7 @@ def main(*args, **kwargs):
     status_logger.info('- Malaria Region: {}'.format(kwargs['malaria']))
     status_logger.info('- HCE variables: {}'.format(kwargs['hce']))
     status_logger.info('- Free text variables: {}'.format(kwargs['freetext']))
+    status_logger.info('- Generate figures: {}'.format(kwargs['figures']))
     status_logger.info('')
 
     # Note - does not work on Windows with Python 2.7, does work elsewhere.
@@ -69,6 +71,7 @@ def main(*args, **kwargs):
         'free_text': kwargs.pop('freetext'),
         'hiv': kwargs.pop('hiv'),
         'malaria': kwargs.pop('malaria'),
+        'figures': kwargs.pop('figures'),
     }
 
     global worker
