@@ -1,6 +1,7 @@
 import re
 
 from smartva.data.common_data import (
+    CONSENT_HEADER,
     ADDITIONAL_HEADERS,
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
@@ -74,6 +75,10 @@ class CommonPrep(DataPrep):
 
             status_notifier.update({'sub_progress': (index,)})
 
+            if not self.check_consent(row, CONSENT_HEADER):
+                warning_logger.info('SID: {} Refused consent.'.format(row['sid']))
+                continue
+
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
 
             self.convert_cell_to_int(row, AGE_VARS.values())
@@ -93,6 +98,9 @@ class CommonPrep(DataPrep):
         self.write_data(headers, self._matrix_data)
 
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
+
+    def check_consent(self, row, header):
+        return bool(int_value(row[header]))
 
     def convert_cell_to_int(self, row, conversion_data):
         """Convert specified cells to int value or 0 if cell is empty.
