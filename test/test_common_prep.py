@@ -145,3 +145,19 @@ class TestCommonPrep(object):
         prep.convert_free_text(row, free_text_headers, common_data.WORD_SUBS)
 
         assert row == dict(zip(headers, ['pencil bite', 'eraser fire']))
+
+    def test_consent(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '1']))
+
+        consent = prep.check_consent(row, 'consent')
+
+        assert consent is True
+
+    def test_consent_refusal(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '0']))
+
+        consent = prep.check_consent(row, 'consent')
+
+        assert consent is False
