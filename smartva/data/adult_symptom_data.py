@@ -1,7 +1,7 @@
 from smartva.data.common_data import ADULT
 
 AGE_GROUP = ADULT
-KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
+KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|s\d+)'
 
 GENERATED_VARS_DATA = {
     's88881': 0,

@@ -6,7 +6,7 @@ from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
-INPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
+INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
 
@@ -104,7 +104,7 @@ class SymptomPrep(DataPrep):
 
         DataPrep.write_output_file(headers, matrix, self.output_file_path())
 
-        return True
+        return matrix
 
     def copy_variables(self, row, copy_variables_map):
         """Copy data from one variable to another.

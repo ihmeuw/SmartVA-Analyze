@@ -111,17 +111,17 @@ class TestPreSymptomPrep(object):
         assert row == dict(zip(headers, ['0', 1, 9, 3, 4]))
 
     def test_calculate_duration_variables(self, prep):
-        headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b']
-        row = dict(zip(headers, ['0', '', 1, 1, '', '', '']))
+        headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b', 'test3', 'test3a', 'test3b']
+        row = dict(zip(headers, ['0', '', 1, 1, '', '', '', '', 2, 4]))
 
-        duration_vars = ['test1', 'test2']
+        duration_vars = ['test1', 'test2', 'test3']
         special_case_vars = {
             'test2': 999
         }
 
         prep.calculate_duration_vars(row, duration_vars, special_case_vars)
 
-        assert row == dict(zip(headers, ['0', 365.0, 1, 1, 999, '', '']))
+        assert row == dict(zip(headers, ['0', 365.0, 1, 1, 999, '', '', 120.0, 2, 4]))
 
     def test_process_age_vars(self, prep):
 
