@@ -25,7 +25,7 @@ RUN dpkg --add-architecture i386 \
         Xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PYTHON2_VERSION 2.7.12
+ENV PYTHON2_VERSION 2.7.13
 ENV WINEARCH win32
 ENV WINEPREFIX /home/smartva/.wine
 
@@ -35,9 +35,8 @@ EXPOSE 8000
 WORKDIR /home/smartva
 
 # Use COPY here because Jenkins appears to have an old version of docker and can't expand .tar files.
-COPY ssh.tar /home/smartva/
-COPY run_tests_and_build_in_wine.patch /home/smartva/
-COPY smartva-password.md5 /home/smartva/
+COPY pkg/docker/ssh.tar \
+     pkg/docker/smartva-password.md5 /home/smartva/
 
 RUN groupadd -r smartva \
     && useradd -r -g smartva smartva -s /bin/bash \
@@ -52,9 +51,6 @@ RUN groupadd -r smartva \
 USER smartva
 
 RUN wine wineboot --init \
-    && git clone -b develop ssh://git@stash.ihme.washington.edu:7999/va/smartva.git \
-    && cp -r smartva/pkg/build-agent/ build-agent/ \
-    && git apply run_tests_and_build_in_wine.patch \
     && wget https://www.python.org/ftp/python/${PYTHON2_VERSION}/python-${PYTHON2_VERSION}.msi \
     && wine msiexec /i python-${PYTHON2_VERSION}.msi ALLUSERS=1 \
     && wget https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi \
@@ -63,11 +59,9 @@ RUN wine wineboot --init \
     && ( Xvfb :0 -screen 0 1024x768x16 & ) \
     && export DISPLAY=:0.0 \
     && wine wxPython3.0-win32-3.0.2.0-py27.exe /sp- /verysilent /norestart /SUPPRESSMSGBOXES \
-    && wine python -m pip install -r smartva/requirements.txt \
     && echo "export WINEDEBUG=$WINEDEBUG" >> ~/.profile \
-    && ln -s ~/smartva ~/build-agent/smartva \
     && rm * | true
 
-USER root
+VOLUME ["/home/smartva/smartva"]
 
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/home/smartva/smartva/pkg/docker/run_docker_build.sh"]

@@ -4,6 +4,8 @@ set -e
 
 cd ../smartva
 
+find -name "*.pyc" -exec rm {} \;
+
 git fetch
 
 if [[ -n $1 ]]; then
