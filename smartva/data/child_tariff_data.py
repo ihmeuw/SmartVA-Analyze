@@ -11,15 +11,10 @@ UNIFORM_LIST_POS = 0.17
 
 MIN_CAUSE_SCORE = 3.0
 
-DEFINITIVE_SYMPTOMS = {
-    's155': 19,  # Decedent suffered road traffic injury => Road Traffic
-    's99999': 12,  # word_cancer => Other Cancers
-}
-
 SPURIOUS_ASSOCIATIONS = {
     1: [  # AIDS
         'sex',  # sex
-        's11991'  # not born in a hospital
+        's11991',  # not born in a hospital
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
@@ -257,7 +252,8 @@ CAUSES = {
     18: 'Poisonings',
     19: 'Road Traffic',
     20: 'Sepsis',
-    21: 'Violent Death'
+    21: 'Violent Death',
+    22: 'Protein-energy malnutrition'
 }
 
 CAUSES46 = CAUSES
@@ -291,6 +287,7 @@ CAUSE_REDUCTION = {
     19: 19,
     20: 20,
     21: 21,
+    22: 22,
 }
 
 FREQUENCIES = {

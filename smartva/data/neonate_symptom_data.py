@@ -1,7 +1,7 @@
 from smartva.data.common_data import NEONATE
 
 AGE_GROUP = NEONATE
-KEEP_PATTERN = r'(sid$|real|age$|sex$|s\d+)'
+KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|s\d+)'
 
 GENERATED_VARS_DATA = {
     'age': 0,
@@ -46,7 +46,6 @@ VAR_CONVERSION_MAP = {
     'c1_03': 's7',
     'c1_04': 's8',
     'c1_05': 's9',
-    'c1_05b': 's10',
     'c1_06a': 's11',
     'c1_07': 's13_1',
     'c1_08b': 's14',
@@ -240,6 +239,10 @@ BINARY_CONVERSION_MAP = {
     's55': {
         1: 's55991',
         2: 's55991',
+    },
+    's56': {
+        1: 's56991', # hospital
+        2: 's56991', # other health facility
     },
     's57': {
         # [3, 4, 5, 6, 8, 9]
