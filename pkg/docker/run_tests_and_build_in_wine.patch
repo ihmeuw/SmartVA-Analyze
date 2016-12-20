@@ -22,8 +22,8 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 --- pkg/build-agent/run_build.sh	(date 1470023051000)
 +++ pkg/build-agent/run_build.sh	(revision )
 @@ -8,8 +8,8 @@
+ rm -rf build
  rm -rf dist
- find ./smartva -name "*.pyc" -exec rm {} \;
  
 -env/Scripts/pyinstaller.exe smartva-win.spec --onefile --windowed --clean
 -env/Scripts/pyinstaller.exe smartva-win-cli.spec --onefile --clean
