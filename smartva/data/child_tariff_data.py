@@ -14,7 +14,7 @@ MIN_CAUSE_SCORE = 3.0
 SPURIOUS_ASSOCIATIONS = {
     1: [  # AIDS
         'sex',  # sex
-        's11991'  # not born in a hospital
+        's11991',  # not born in a hospital
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
