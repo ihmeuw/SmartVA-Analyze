@@ -1,0 +1,34 @@
+Index: pkg/build-agent/run_tests.sh
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pkg/build-agent/run_tests.sh	(date 1470023051000)
++++ pkg/build-agent/run_tests.sh	(revision )
+@@ -10,7 +10,7 @@
+     rm $TEST_FILE
+ fi
+ 
+-PYTHONPATH=. env/Scripts/py.test --junitxml=$TEST_FILE test
++wine cmd /C "set PYTHONPATH=.&&py.test.exe --junitxml=$TEST_FILE test"
+ 
+ if [[ -f $TEST_FILE ]]; then
+   exit 0
+Index: pkg/build-agent/run_build.sh
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pkg/build-agent/run_build.sh	(date 1470023051000)
++++ pkg/build-agent/run_build.sh	(revision )
+@@ -8,8 +8,8 @@
+ rm -rf build
+ rm -rf dist
+ 
+-env/Scripts/pyinstaller.exe smartva-win.spec --onefile --windowed --clean
+-env/Scripts/pyinstaller.exe smartva-win-cli.spec --onefile --clean
++wine pyinstaller.exe smartva-win.spec --onefile --windowed --clean
++wine pyinstaller.exe smartva-win-cli.spec --onefile --clean
+ 
+ if [[ -f dist/SmartVA.exe && -f dist/SmartVA-cli.exe ]]; then
+   exit 0
