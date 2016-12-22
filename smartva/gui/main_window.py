@@ -30,6 +30,7 @@ APP_ABOUT = wx.ID_ABOUT
 APP_DOCS = wx.NewId()
 OPT_HCE = wx.NewId()
 OPT_FREE_TEXT = wx.NewId()
+OPT_FIGURES = wx.NewId()
 
 APP_TITLE = prog_name
 
@@ -180,6 +181,7 @@ class vaUI(wx.Frame):
             'free_text': True,
             'hiv': True,
             'malaria': True,
+            'figures': True,
         }
         self.country = None
         self.running = False
@@ -233,6 +235,10 @@ class vaUI(wx.Frame):
                                                             OPT_FREE_TEXT,
                                                             'Use &free text variables',
                                                             'free_text'))
+        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+                                                            OPT_FIGURES,
+                                                            '&Generate figures',
+                                                            'figures'))
 
         # Help Menu
         help_menu = wx.Menu()

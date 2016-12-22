@@ -132,7 +132,6 @@ class WorkerThread(threading.Thread):
         figures_dir = os.path.join(self.output_dir_path, 'figures')
 
         self.make_dir(intermediate_dir_path(self.output_dir_path))
-        self.make_dir(figures_dir)
 
         try:
             self.format_headers(self.input_file_path, os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
@@ -214,7 +213,8 @@ class WorkerThread(threading.Thread):
                 # creates neonate output files
                 neonate_results.run()
 
-            if adult_data or child_data or neonate_data:
+            if self.options.get('figures') and (adult_data or child_data or neonate_data):
+                self.make_dir(figures_dir)
                 # generate all cause graphs
                 cause_grapher.run()
                 # generate all csmf graphs
