@@ -100,7 +100,10 @@ class CommonPrep(DataPrep):
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
     def check_consent(self, row, header):
-        return bool(int_value(row[header]))
+        try:
+            return bool(int(row[header]))
+        except (KeyError, ValueError):
+            return True
 
     def convert_cell_to_int(self, row, conversion_data):
         """Convert specified cells to int value or 0 if cell is empty.

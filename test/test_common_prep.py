@@ -150,14 +150,28 @@ class TestCommonPrep(object):
         headers = ['sid', 'consent']
         row = dict(zip(headers, ['1', '1']))
 
-        consent = prep.check_consent(row, 'consent')
-
-        assert consent is True
+        assert prep.check_consent(row, 'consent') is True
 
     def test_consent_refusal(self, prep):
         headers = ['sid', 'consent']
         row = dict(zip(headers, ['1', '0']))
 
-        consent = prep.check_consent(row, 'consent')
+        assert prep.check_consent(row, 'consent') is False
 
-        assert consent is False
+    def test_consent_empty(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '']))
+
+        assert prep.check_consent(row, 'consent') is True
+
+    def test_consent_garbage(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', 'blah']))
+
+        assert prep.check_consent(row, 'consent') is True
+
+    def test_consent_not_exist(self, prep):
+        headers = ['sid']
+        row = dict(zip(headers, ['1']))
+
+        assert prep.check_consent(row, 'consent') is True
