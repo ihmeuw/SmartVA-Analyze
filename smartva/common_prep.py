@@ -100,10 +100,23 @@ class CommonPrep(DataPrep):
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
     def check_consent(self, row, header):
+        """Check consent. Consent is considered given if value is '1' or '' or the column is missing.
+        A warning is logged if the value is invalid.
+
+        Args:
+            row (dict): Row of VA data.
+            header (str): Consent column header name.
+
+        Returns:
+            bool:
+        """
         try:
-            return bool(int(row[header]))
-        except (KeyError, ValueError):
+            if row[header] in ['', '1', 1]:
+                return True
+        except KeyError:
             return True
+        warning_logger.info('SID: {} Invalid value for consent: {}'.format(row['sid'], row[header]))
+        return False
 
     def convert_cell_to_int(self, row, conversion_data):
         """Convert specified cells to int value or 0 if cell is empty.

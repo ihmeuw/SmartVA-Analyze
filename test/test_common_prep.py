@@ -165,10 +165,12 @@ class TestCommonPrep(object):
         assert prep.check_consent(row, 'consent') is True
 
     def test_consent_garbage(self, prep):
+        garbage = ['blah', '1.0', '0.0']
         headers = ['sid', 'consent']
-        row = dict(zip(headers, ['1', 'blah']))
+        for value in garbage:
+            row = dict(zip(headers, ['1', value]))
 
-        assert prep.check_consent(row, 'consent') is True
+            assert prep.check_consent(row, 'consent') is False
 
     def test_consent_not_exist(self, prep):
         headers = ['sid']
