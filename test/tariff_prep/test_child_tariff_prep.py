@@ -2,6 +2,8 @@ import csv
 import os
 import shutil
 
+import pandas as pd
+import numpy as np
 import pytest
 
 from smartva.child_tariff import ChildTariff
@@ -57,3 +59,12 @@ def test_tariff_prep(prep, input_file, tmpdir):
     prep.run()
 
     validate_predictions(tmpdir.join('child-predictions.csv'))
+
+
+def test_uniform_frequencies(prep):
+    df = pd.read_csv(prep.va_validated_filename, index_col=0)
+    df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
+
+    # The cause list for 46 and 34 are the same for the child module
+    counts = df.gs_text46.value_counts()
+    assert len(counts.unique()) == 1
