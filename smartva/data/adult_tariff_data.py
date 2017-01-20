@@ -649,7 +649,8 @@ CAUSES = {
     31: 'Stomach Cancer',
     32: 'Stroke',
     33: 'Suicide',
-    34: 'TB'
+    34: 'TB',
+    35: 'Chronic Respiratory',
 }
 
 CAUSES46 = {
@@ -755,13 +756,13 @@ CAUSE_REDUCTION = {
     1: 1,
     2: 1,
     3: 21,
-    4: 2,
+    4: 35,
     5: 3,
     6: 4,
     7: 5,
     8: 6,
     9: 7,
-    10: 8,
+    10: 35,
     11: 9,
     12: 9,
     13: 9,
