@@ -651,6 +651,7 @@ CAUSES = {
     33: 'Suicide',
     34: 'TB',
     35: 'Chronic Respiratory',
+    36: 'Ischemic Heart Disease',
 }
 
 CAUSES46 = {
@@ -775,8 +776,8 @@ CAUSE_REDUCTION = {
     20: 21,
     21: 16,
     22: 21,
-    23: 17,
-    24: 22,
+    23: 36,
+    24: 36,
     25: 22,
     26: 18,
     27: 19,
