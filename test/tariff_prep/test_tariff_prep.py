@@ -2,6 +2,7 @@ import csv
 import pytest
 
 from smartva.tariff_prep import (
+    ScoredVA,
     TariffPrep,
     get_cause_num,
     get_cause_symptoms,
@@ -72,3 +73,44 @@ def test_get_cause_symptoms(tmpdir):
 
     for key in result:
         assert result[key] == expected_result[key]
+
+
+def test_generate_cause_rankings(prep):
+    prep.cause_list = [1]
+
+    train_scores = [
+        100,   # rank 1
+        50,   # rank 2
+        15,   # rank 3 (triplicate)
+        15,   # rank 4 (triplicate)
+        15,   # rank 5 (triplicate)
+        10,   # rank 6 (duplicate positive)
+        10,   # rank 7 (duplicate positive)
+        -2,   # rank 8 (duplicate negative)
+        -2,   # rank 9 (duplicate negative)
+        -3,   # rank 10
+    ]
+    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2) for s in train_scores]
+
+    # Score, Rank within training
+    tests = [
+        (110, 0.5),  # above highest score in train data
+        (100, 1),  # at highest score in train data
+        (90, 1.5),
+        (50, 2),   # at a value which exists in the train data
+        (15, 4),   # at triplicate value in the train data
+        (11, 5.5),
+        (10, 6.5), # at a duplicate value in the train data
+        (0, 7.5),  # zero (just in case)
+        (-1, 7.5), # negative value in range of train scores max to min
+        (-3, 10),   # at lowest score in train data
+        (-5, 10.5),   # below lowest score in train data
+    ]
+    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2) for score, rank in tests]
+
+    # Modifies list of ScoredVAs in place and doesn't return anything
+    prep.generate_cause_rankings(test_data, train_data)
+
+    predicted_test_ranks = [va.rank_list[1] for va in test_data]
+    actual_test_ranks = [float(rank) for score, rank in tests]
+    assert predicted_test_ranks == actual_test_ranks
