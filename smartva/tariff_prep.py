@@ -208,7 +208,7 @@ class TariffPrep(DataPrep):
 
         self.write_external_ranks(va_cause_list)
 
-        lowest_rank = len(uniform_list)
+        lowest_rank = len(uniform_list) + 0.5
 
         self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
                                            lowest_rank, self.data_module.UNIFORM_LIST_POS,
@@ -322,7 +322,6 @@ class TariffPrep(DataPrep):
 
         """
         status_notifier.update({'sub_progress': (0, len(va_cause_list))})
-
         cause_scores = {}
         for cause in self.cause_list:
             cause_scores[cause] = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
@@ -336,11 +335,16 @@ class TariffPrep(DataPrep):
                 # get the tariff score for this cause for this external VA
                 death_score = va.cause_scores[cause]
 
-                tariffs = [math.fabs(_ - death_score) for _ in cause_scores[cause]]
+                lowest_rank = np.sum(np.array(cause_scores[cause]) > death_score)
+                highest_rank = len(cause_scores[cause]) - np.sum(np.array(cause_scores[cause]) < death_score)
+                avg_rank = (lowest_rank + highest_rank) / 2.
 
-                # add 1 because python is zero indexed, and stata is 1 indexed so we get the same
+                # add .5 because python is zero indexed, and stata is 1 indexed so we get the same
                 # answer as the original stata tool
-                va.rank_list[cause] = (np.where(np.array(tariffs) == min(tariffs))[0].mean()) + 1
+                # If an observation is scored higher than any observation in the training data it is ranked 0.5
+                # If an observation is scored lower than any observation in the training data
+                # it is ranked len(training) + 0.5
+                va.rank_list[cause] = avg_rank + .5
 
         status_notifier.update({'sub_progress': None})
 
