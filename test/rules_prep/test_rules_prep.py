@@ -104,8 +104,6 @@ class TestRulesPrep(object):
 class TestAdultRulesPrep(object):
     RULE_LIST = [
         road_traffic_adult,
-        homicide_adult,
-        suicide,
         bite_adult,
         drowning_adult,
         fires_adult,
@@ -117,6 +115,8 @@ class TestAdultRulesPrep(object):
         sepsis,
         hemorrhage,
         anemia,
+        homicide_adult,
+        suicide,
     ]
 
     def test_instance(self, tmpdir):
@@ -136,7 +136,6 @@ class TestAdultRulesPrep(object):
 class TestChildRulesPrep(object):
     RULE_LIST = [
         road_traffic_child,
-        homicide_child,
         bite_child,
         drowning_child,
         fires_child,
@@ -146,6 +145,7 @@ class TestChildRulesPrep(object):
         measles,
         cancer_child,
         malnutrition,
+        homicide_child,
     ]
 
     def test_instance(self, tmpdir):
