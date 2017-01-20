@@ -145,3 +145,35 @@ class TestCommonPrep(object):
         prep.convert_free_text(row, free_text_headers, common_data.WORD_SUBS)
 
         assert row == dict(zip(headers, ['pencil bite', 'eraser fire']))
+
+    def test_consent(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '1']))
+
+        assert prep.check_consent(row, 'consent') is True
+
+    def test_consent_refusal(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '0']))
+
+        assert prep.check_consent(row, 'consent') is False
+
+    def test_consent_empty(self, prep):
+        headers = ['sid', 'consent']
+        row = dict(zip(headers, ['1', '']))
+
+        assert prep.check_consent(row, 'consent') is True
+
+    def test_consent_garbage(self, prep):
+        garbage = ['blah', '1.0', '0.0']
+        headers = ['sid', 'consent']
+        for value in garbage:
+            row = dict(zip(headers, ['1', value]))
+
+            assert prep.check_consent(row, 'consent') is False
+
+    def test_consent_not_exist(self, prep):
+        headers = ['sid']
+        row = dict(zip(headers, ['1']))
+
+        assert prep.check_consent(row, 'consent') is True

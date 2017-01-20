@@ -5,6 +5,8 @@ NEONATE = 'neonate'
 FEMALE = 2
 MALE = 1
 
+CONSENT_HEADER = 'gen_3_1'
+
 ADDITIONAL_HEADERS = [
     'adultparalysis1',
     'adultparalysis2',
