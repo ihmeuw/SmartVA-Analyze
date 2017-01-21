@@ -81,7 +81,12 @@ class CommonPrep(DataPrep):
 
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
 
-            self.convert_cell_to_int(row, AGE_VARS.values())
+            try:
+                self.convert_cell_to_int(row, AGE_VARS.values())
+            except KeyError as e:
+                warning_logger.error('Missing age variable: {}'.format(e.message))
+                status_notifier.update('abort')
+                continue
 
             self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
