@@ -147,6 +147,8 @@ class CommandLineNotificationHandler(object):
         :type data: dict
         :param data: Dictionary of status update metadata.
         """
+        if data == 'abort':
+            _shutdown(None, None)
         if 'sub_progress' in data:
             self._update_gauge(data['sub_progress'], data.get('label', ''))
         if 'message' in data:
