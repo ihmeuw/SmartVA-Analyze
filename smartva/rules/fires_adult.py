@@ -12,6 +12,4 @@ def logic_rule(row):
 
     recent = value_of(Adult.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
 
-    unintentional = value_of(Adult.SELF_INFLICTED) != YES and value_of(Adult.INFLICTED_BY_OTHER) != YES
-
-    return burn and recent and unintentional
+    return burn and recent
