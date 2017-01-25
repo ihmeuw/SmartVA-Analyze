@@ -90,6 +90,34 @@ class TestSymptomPrep(object):
 
             assert row == valid_results[i]
 
+    def test_process_injury_data_missing(self, prep):
+        headers = ['test1', 'test2', 'test3', 'test4']
+        row = dict(zip(headers, [1, 0, 1, 0]))
+
+        valid_result = dict(zip(headers, [0, 0, 0, 0]))
+
+        conversion_map = {
+            ('test0', 30): ['test1', 'test2', 'test3', 'test4']
+        }
+
+        prep.process_injury_data(row, conversion_map.items())
+
+        assert row == valid_result
+
+    def test_process_injury_data_invalid(self, prep):
+        headers = ['test0', 'test1', 'test2', 'test3', 'test4']
+        row = dict(zip(headers, ['', 1, 0, 1, 0]))
+
+        valid_result = dict(zip(headers, ['', 0, 0, 0, 0]))
+
+        conversion_map = {
+            ('test0', 30): ['test1', 'test2', 'test3', 'test4']
+        }
+
+        prep.process_injury_data(row, conversion_map.items())
+
+        assert row == valid_result
+
     def test_post_process_binary_variables(self, prep):
         headers = ['test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, [1, 2, 0, '']))
