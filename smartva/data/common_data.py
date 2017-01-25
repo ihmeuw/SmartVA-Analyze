@@ -383,11 +383,11 @@ AGE_VARS = {
 RASH_DATA = {
     'adult_2_9': {
         'vars': ['adultrash1', 'adultrash2', 'adultrash3'],
-        'locations': {
-            'face': 1,
-            'trunk': 2,
-            'extremities': 3,
-        },
+        'locations': [
+            1,  # face
+            2,  # trunk
+            3,  # extremities
+        ],
         'everywhere': 4
     }
 }
