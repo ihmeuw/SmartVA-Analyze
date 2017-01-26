@@ -141,11 +141,7 @@ class CommonPrep(DataPrep):
             {
                 '#read_var': {
                     'vars': [quoted list of write vars],
-                    'locations': {
-                        'loc1': 1,
-                        'loc2': 2,
-                        'loc3': 3,
-                    },
+                    'locations': [list of location values],
                     'everywhere': 4
                 }
             }
@@ -156,7 +152,7 @@ class CommonPrep(DataPrep):
         """
         for variable, mapping in conversion_data.items():
             try:
-                rash_values = map(int, row[variable].split(' '))
+                rash_values = set(map(int, row[variable].split(' ')))
             except ValueError:
                 # No rash data. Continue.
                 continue
@@ -166,9 +162,14 @@ class CommonPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
             else:
-                if set(mapping['locations'].values()).issubset(set(rash_values)):
-                    # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                    rash_values = [mapping['everywhere']]
+                locations = set(mapping['locations'])
+                if mapping['everywhere'] in rash_values or locations & rash_values == locations:
+                    # if all locations are selected, then change the value to 'everywhere'
+                    rash_values = {mapping['everywhere']}
+                else:
+                    # remove any illegal values
+                    rash_values = locations & rash_values
+
                 # set adult rash to the other selected values
                 for index, value in enumerate(rash_values):
                     row[mapping['vars'][index]] = value
