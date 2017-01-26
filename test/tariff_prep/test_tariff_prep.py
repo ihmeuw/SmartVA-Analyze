@@ -90,7 +90,7 @@ def test_generate_cause_rankings(prep):
         -2,   # rank 9 (duplicate negative)
         -3,   # rank 10
     ]
-    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2) for s in train_scores]
+    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2, []) for s in train_scores]
 
     # Score, Rank within training
     tests = [
@@ -106,7 +106,7 @@ def test_generate_cause_rankings(prep):
         (-3, 10),   # at lowest score in train data
         (-5, 10.5),   # below lowest score in train data
     ]
-    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2) for score, rank in tests]
+    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2, []) for score, rank in tests]
 
     # Modifies list of ScoredVAs in place and doesn't return anything
     prep.generate_cause_rankings(test_data, train_data)

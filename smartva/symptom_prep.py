@@ -98,6 +98,8 @@ class SymptomPrep(DataPrep):
             # Ensure all binary variables actually ARE 0 or 1:
             self.post_process_binary_variables(row, self.data_module.BINARY_VARS)
 
+            self.censor_causes(row, self.data_module.CENSORED_MAP)
+
             self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
@@ -191,3 +193,16 @@ class SymptomPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
             row[read_header] = int(value == 1)
+
+    def censor_causes(self, row, cause_conditions):
+        """Mark causes which should be ranked as lowest based on symptom endorsement
+
+        Args:
+            row (dict): Row of VA data.
+            cause_condtions (dict) cause -> list of symptoms
+        """
+        restricted = []
+        for cause, symptoms in cause_conditions.items():
+            if any([int(row.get(symp, 0)) for symp in symptoms]):
+                restricted.append(cause)
+        row['restricted'] = ' '.join(restricted)
