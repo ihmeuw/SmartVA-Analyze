@@ -57,11 +57,7 @@ class TestCommonPrep(object):
         conversion_data = {
             'test': {
                 'vars': ['test1', 'test2', 'test3'],
-                'locations': {
-                    'one': 1,
-                    'two': 2,
-                    'three': 3
-                },
+                'locations': [1, 2, 3],
                 'everywhere': 4
             }
         }
@@ -70,6 +66,22 @@ class TestCommonPrep(object):
 
         assert row == dict(zip(headers, ['1 2 3', 4, 0, 0]))
 
+    def test_convert_rash_data_all2(self, prep):
+        headers = ['test', 'test1', 'test2', 'test3']
+        row = dict(zip(headers, ['1 2 4 5', 0, 0, 0]))
+
+        conversion_data = {
+            'test': {
+                'vars': ['test1', 'test2', 'test3'],
+                'locations': [1, 2, 3],
+                'everywhere': 4
+            }
+        }
+
+        prep.convert_rash_data(row, conversion_data)
+
+        assert row == dict(zip(headers, ['1 2 4 5', 4, 0, 0]))
+
     def test_convert_rash_data_some(self, prep):
         headers = ['test', 'test1', 'test2', 'test3']
         row = dict(zip(headers, ['1 3', 0, 0, 0]))
@@ -77,11 +89,7 @@ class TestCommonPrep(object):
         conversion_data = {
             'test': {
                 'vars': ['test1', 'test2', 'test3'],
-                'locations': {
-                    'one': 1,
-                    'two': 2,
-                    'three': 3
-                },
+                'locations': [1, 2, 3],
                 'everywhere': 4
             }
         }
@@ -96,9 +104,9 @@ class TestCommonPrep(object):
 
         conversion_data = {
             'test': {
-                'headers': ['test1', 'test2', 'test3'],
-                'list': [1, 2, 3],
-                'value': 4
+                'vars': ['test1', 'test2', 'test3'],
+                'locations': [1, 2, 3],
+                'everywhere': 4
             }
         }
 
