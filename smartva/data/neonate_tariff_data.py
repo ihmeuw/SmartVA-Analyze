@@ -9,7 +9,7 @@ CUTOFF_POS = 0.91
 
 UNIFORM_LIST_POS = 0.35
 
-MIN_CAUSE_SCORE = 0.5
+MIN_CAUSE_SCORE = 0.7
 
 SPURIOUS_ASSOCIATIONS = {
     2: [  # Congenital malformation
