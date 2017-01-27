@@ -44,7 +44,8 @@ class CommonPrep(DataPrep):
         self._matrix_data = {
             ADULT: [],
             CHILD: [],
-            NEONATE: []
+            NEONATE: [],
+            'invalid-age': [],
         }
 
     def run(self):
@@ -80,6 +81,8 @@ class CommonPrep(DataPrep):
                 continue
 
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
+
+            self.correct_missing_age(row)
 
             try:
                 self.convert_cell_to_int(row, AGE_VARS.values())
@@ -123,6 +126,11 @@ class CommonPrep(DataPrep):
         warning_logger.info('SID: {} Invalid value for consent: {}'.format(row['sid'], row[header]))
         return False
 
+    def correct_missing_age(self, row):
+        """Ensure that the age group variable is set to missing if all AGE_VARS are blank"""
+        if all([row.get(var, '') == '' for var in AGE_VARS.values()]):
+            row[AGE_VARS['module']] = '9'  # Don't Know
+
     def convert_cell_to_int(self, row, conversion_data):
         """Convert specified cells to int value or 0 if cell is empty.
 
@@ -146,11 +154,7 @@ class CommonPrep(DataPrep):
             {
                 '#read_var': {
                     'vars': [quoted list of write vars],
-                    'locations': {
-                        'loc1': 1,
-                        'loc2': 2,
-                        'loc3': 3,
-                    },
+                    'locations': [list of location values],
                     'everywhere': 4
                 }
             }
@@ -161,7 +165,7 @@ class CommonPrep(DataPrep):
         """
         for variable, mapping in conversion_data.items():
             try:
-                rash_values = map(int, row[variable].split(' '))
+                rash_values = set(map(int, row[variable].split(' ')))
             except ValueError:
                 # No rash data. Continue.
                 continue
@@ -171,9 +175,14 @@ class CommonPrep(DataPrep):
                                      .format(row['sid'], e.message))
                 continue
             else:
-                if set(mapping['locations'].values()).issubset(set(rash_values)):
-                    # if 1, 2, and 3 are selected, then change the value to 4 (all)
-                    rash_values = [mapping['everywhere']]
+                locations = set(mapping['locations'])
+                if mapping['everywhere'] in rash_values or locations & rash_values == locations:
+                    # if all locations are selected, then change the value to 'everywhere'
+                    rash_values = {mapping['everywhere']}
+                else:
+                    # remove any illegal values
+                    rash_values = locations & rash_values
+
                 # set adult rash to the other selected values
                 for index, value in enumerate(rash_values):
                     row[mapping['vars'][index]] = value
@@ -240,10 +249,14 @@ class CommonPrep(DataPrep):
         for age_group, variable in AGE_VARS.items():
             age_data[age_group] = int(row[variable])
 
+        age_data.update({'sid': row['sid']})
         return age_data
 
-    def get_matrix(self, matrix_data, years=0, months=0, days=0, module=0):
+    def get_matrix(self, matrix_data, years=0, months=0, days=0, module=0, sid=''):
         """Returns the appropriate age range matrix for extending.
+
+        All four age variables are pre-processed and filled with a default
+        value of zero before this method is called.
 
         Adult = 12 years or older
         Child = 29 days to 12 years
@@ -256,10 +269,17 @@ class CommonPrep(DataPrep):
             months (int): Age in months.
             days (int): Age in days.
             module (int): Module, if specified.
+            sid (str): row ID for logger
 
         Returns:
             list: Specific age range matrix.
         """
+        # If there is age data (there is a sum) use it even if the module is
+        # marked as "Refuesd" or "Don't Know"
+        if sum([years, months, days]) == 0 and module in {8, 9}:
+            warning_logger.warning('SID: {} does not have valid age data and is being removed from the analysis.'
+                                     .format(sid))
+            return matrix_data['invalid-age']
         if years >= 12 or (not years and not months and not days and module == 3):
             return matrix_data[ADULT]
         if years or months or days >= 29 or (not years and not months and not days and module == 2):
