@@ -120,24 +120,24 @@ sid,cause,cause34,age,sex
 119,,Undetermined,1,1
 120,,Undetermined,1,1
 121,,Undetermined,1,1
-122,14,Other Defined Causes of Child Deaths,1,1
-123,20,Sepsis,1,1
+122,,Undetermined,1,1
+123,,Undetermined,1,1
 124,,Undetermined,1,1
 125,,Undetermined,1,1
 126,,Undetermined,1,1
 127,,Undetermined,1,1
 128,,Undetermined,1,1
-129,14,Other Defined Causes of Child Deaths,1,1
-130,14,Other Defined Causes of Child Deaths,1,1
-131,14,Other Defined Causes of Child Deaths,1,1
+129,,Undetermined,1,1
+130,,Undetermined,1,1
+131,7,Fires,1,1
 132,,Undetermined,1,1
-133,15,Other Digestive Diseases,1,1
-134,14,Other Defined Causes of Child Deaths,1,1
+133,,Undetermined,1,1
+134,,Undetermined,1,1
 135,,Undetermined,1,1
-136,21,Violent Death,1,1
+136,,Undetermined,1,1
 137,,Undetermined,1,1
 138,19,Road Traffic,1,1
-139,14,Other Defined Causes of Child Deaths,1,1
+139,6,Falls,1,1
 140,4,Drowning,1,1
 141,18,Poisonings,1,1
 142,2,Bite of Venomous Animal,1,1
