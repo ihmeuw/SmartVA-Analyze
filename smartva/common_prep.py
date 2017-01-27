@@ -84,7 +84,14 @@ class CommonPrep(DataPrep):
 
             self.correct_missing_age(row)
 
-            self.convert_cell_to_int(row, AGE_VARS.values())
+            try:
+                self.convert_cell_to_int(row, AGE_VARS.values())
+            except KeyError as e:
+                warning_logger.error('Missing age variable: {}'.format(e.message))
+                missing_vars = [var for var in AGE_VARS.values() if var not in headers]
+                status_logger.info('Cannot process data without: {}'.format(', '.join(missing_vars)))
+                status_notifier.update('abort')
+                continue
 
             self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
