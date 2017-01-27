@@ -12,4 +12,17 @@ def logic_rule(row):
 
     free_text_suicide = value_of(Adult.FREE_TEXT_SUICIDE) == YES
 
-    return self_inflicted or free_text_suicide
+    recent = value_of(Adult.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
+
+    no_injury = all([
+        value_of(Adult.ROAD_TRAFFIC) != YES,
+        value_of(Adult.FALL) != YES,
+        value_of(Adult.DROWNING) != YES,
+        value_of(Adult.POISONING) != YES,
+        value_of(Adult.BITE) != YES,
+        value_of(Adult.BURN) != YES,
+        value_of(Adult.OTHER_INJURY) != YES,
+        value_of(Adult.INFLICTED_BY_OTHER) != YES,   # exclude homicide also
+    ])
+
+    return (self_inflicted or free_text_suicide) and recent and no_injury

@@ -16,3 +16,4 @@ stemming==1.0.1
 tornado==4.4.1
 progressbar==2.3
 wheel==0.29.0
+pandas==0.19.1

@@ -100,6 +100,24 @@ class TestRulesPrep(object):
 
         validate_predictions(tmpdir.join('intermediate-files', 'none-logic-rules.csv'))
 
+@pytest.mark.parametrize('rule_list',[
+        [always_true, conditional],
+        [conditional, always_true],
+    ])
+def test_rule_order(tmpdir, rule_list):
+    intermediate = tmpdir.mkdir('intermediate-files')
+    input_file = intermediate.join('none-presymptom.csv')
+    input_file.write('sid,condition\nfoo,1')
+
+    prep = RulesPrep(working_dir_path=tmpdir.strpath, short_form=True,
+                     age_group='none', rules=rule_list)
+    prep.run()
+
+    output_file = os.path.join(intermediate.strpath, 'none-logic-rules.csv')
+    with open(output_file, 'r') as f:
+        for row in csv.DictReader(f):
+            assert int(row['cause']) == rule_list[0].CAUSE_ID
+
 
 class TestAdultRulesPrep(object):
     RULE_LIST = [

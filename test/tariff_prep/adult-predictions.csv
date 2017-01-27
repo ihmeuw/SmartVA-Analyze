@@ -6,9 +6,9 @@ sid,cause,cause34,age,sex
 5,,Undetermined,12,1
 6,,Undetermined,12,1
 7,,Undetermined,12,1
-8,,Undetermined,12,1
+8,9,Diabetes,12,1
 9,12,Epilepsy,12,1
-10,,Undetermined,12,1
+10,22,Other Cardiovascular Diseases,12,1
 11,,Undetermined,12,1
 12,,Undetermined,12,1
 13,,Undetermined,12,1
@@ -97,7 +97,7 @@ sid,cause,cause34,age,sex
 96,32,Stroke,12,1
 97,,Undetermined,12,1
 98,,Undetermined,12,1
-99,,Undetermined,12,1
+99,25,Other Non-communicable Diseases,12,1
 100,,Undetermined,12,1
 101,,Undetermined,12,1
 102,,Undetermined,12,1
@@ -105,7 +105,7 @@ sid,cause,cause34,age,sex
 104,,Undetermined,12,1
 105,,Undetermined,12,1
 106,,Undetermined,12,1
-107,,Undetermined,12,1
+107,25,Other Non-communicable Diseases,12,1
 108,,Undetermined,12,1
 109,,Undetermined,12,1
 110,,Undetermined,12,1
@@ -162,14 +162,14 @@ sid,cause,cause34,age,sex
 161,,Undetermined,12,1
 162,,Undetermined,12,1
 163,,Undetermined,12,1
-164,,Undetermined,12,1
+164,33,Suicide,12,1
 165,,Undetermined,12,1
 166,,Undetermined,12,1
 167,,Undetermined,12,1
 168,,Undetermined,12,1
 169,,Undetermined,12,1
 170,,Undetermined,12,1
-171,17,IHD - Acute Myocardial Infarction,12,1
+171,36,Ischemic Heart Disease,12,1
 172,,Undetermined,12,1
 173,,Undetermined,12,1
 174,,Undetermined,12,1
