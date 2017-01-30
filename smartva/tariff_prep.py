@@ -257,8 +257,11 @@ class TariffPrep(DataPrep):
             if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
                 row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
 
+            # Censored causes
+            row[RESTRICTED_KEY] = map(int, map(float, row.get(RESTRICTED_KEY, '').split()))
+
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
-                                          row.get(AGE_KEY), row.get(SEX_KEY), row.get(RESTRICTED_KEY, [])))
+                                          row.get(AGE_KEY), row.get(SEX_KEY), row.get(RESTRICTED_KEY)))
 
         status_notifier.update({'sub_progress': None})
 
