@@ -185,3 +185,47 @@ class TestCommonPrep(object):
         row = dict(zip(headers, ['1']))
 
         assert prep.check_consent(row, 'consent') is True
+
+
+@pytest.mark.parametrize('row,module', [
+    (['adult-age', '75', '', '', ''], 'adult'),
+    (['adult-12', '12', '', '', ''], 'adult'),
+    (['adult-module', '', '', '', '3'], 'adult'),
+    (['child-age', '7', '', '', ''], 'child'),
+    (['child-months', '', '100', '', ''], 'child'),
+    (['child-5-years', '5', '', '', ''], 'child'),
+    (['child-11-years', '11', '', '', ''], 'child'),
+    (['child-60-months', '', '60', '', ''], 'child'),
+    (['child-30-days', '', '', '30', ''], 'child'),
+    (['child-1-month', '', '1', '', ''], 'child'),
+    (['child-module', '', '', '', '2'], 'child'),
+    (['neonate-age', '', '', '15', ''], 'neonate'),
+    (['neonate-module', '', '', '', '1'], 'neonate'),
+    (['neonate-28-days', '', '', '28', ''], 'neonate'),
+    (['neonate-1-days', '', '', '1', ''], 'neonate'),
+    (['neonate-0-days', '', '', '0', ''], 'neonate'),
+    (['neonate-module', '', '', '', '1'], 'neonate'),
+    (['no-data', '', '', '', ''], 'invalid-age'),
+    (['refused', '', '', '', '8'], 'invalid-age'),
+    (['dont-know', '', '', '', '9'], 'invalid-age'),
+    (['refused-with-adult-data', '70', '', '', '8'], 'adult'),
+    (['dont-know-with-adult-data', '70', '', '', '9'], 'adult'),
+    (['refused-with-child-data', '', '7', '', '8'], 'child'),
+    (['dont-know-with-child-data', '', '7', '', '9'], 'child'),
+    (['refused-with-neonate-data', '', '', '7', '8'], 'neonate'),
+    (['dont-know-with-neonate-data', '', '', '7', '9'], 'neonate'),
+], ids=lambda x: x['sid'])
+def test_save_row(tmpdir, row, module):
+    prep = common_prep.CommonPrep(tmpdir.strpath, True)
+
+    headers = ['sid', 'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d']
+    lines = [','.join(headers)]
+    lines.append(','.join(row))
+    lines.append('')   # in case the file needs a blank line at the end
+    tmpdir.mkdir('intermediate-files').join('cleanheaders.csv').write('\n'.join(lines))
+
+    prep.run()
+
+    sids = {module: [row['sid'] for row in prep._matrix_data[module]] 
+            for module in prep._matrix_data}
+    assert row[0] in sids[module]

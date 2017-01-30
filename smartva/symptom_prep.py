@@ -163,14 +163,21 @@ class SymptomPrep(DataPrep):
         for read_data, injury_list in injury_variable_map:
             read_header, cutoff = read_data
             try:
-                if float(row[read_header]) > cutoff:
-                    for injury in injury_list:
-                        row[injury] = 0
+                injury_period = float(row[read_header])
+                if injury_period <= cutoff:
+                    continue
+
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_injury_data'
-                                     .format(row['sid'], e.message))
-                continue
+                                     .format(row.get('sid'), e.message))
+            except ValueError:
+                warning_logger.debug('SID: {} variable \'{}\' does not contain valid data. process_injury_data'
+                                     .format(row.get('sid'), read_header))
+
+            # Injury duration is out of range or invalid so we 0 out related variables
+            for injury in injury_list:
+                row[injury] = 0
 
     def post_process_binary_variables(self, row, binary_variables):
         """Ensure all binary variables are actually 1 or 0.
