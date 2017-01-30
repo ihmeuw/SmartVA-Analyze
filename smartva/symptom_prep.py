@@ -199,10 +199,10 @@ class SymptomPrep(DataPrep):
 
         Args:
             row (dict): Row of VA data.
-            cause_condtions (dict) cause -> list of symptoms
+            cause_condtions (dict): cause -> list of symptoms
         """
         restricted = []
         for cause, symptoms in cause_conditions.items():
             if any([int(row.get(symp, 0)) for symp in symptoms]):
                 restricted.append(cause)
-        row['restricted'] = ' '.join(restricted)
+        row['restricted'] = ' '.join(map(str, sorted(restricted)))

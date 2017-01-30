@@ -99,3 +99,19 @@ class TestSymptomPrep(object):
         prep.post_process_binary_variables(row, conversion_map)
 
         assert row == dict(zip(headers, [1, 0, 0, 0]))
+
+    @pytest.mark.parametrize('row,expected', [
+        ({'sid': 'none', 'a': 0, 'b': 0, 'c': 0, 'd': 0}, ''),
+        ({'sid': 'one', 'a': 1, 'b': 0, 'c': 0, 'd': 0}, '1'),
+        ({'sid': 'two', 'a': 1, 'b': 1, 'c': 0, 'd': 0}, '1 2'),
+        ({'sid': 'any', 'a': 0, 'b': 0, 'c': 1, 'd': 0}, '3'),
+    ], ids=lambda x: x['sid'])
+    def test_censor_causes(self, prep, row, expected):
+        censor = {
+            1: ['a'],
+            2: ['b'],
+            3: ['c', 'd']
+        }
+
+        prep.censor_causes(row, censor)
+        assert row.get('restricted') == expected
