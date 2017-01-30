@@ -611,6 +611,9 @@ class vaUI(wx.Frame):
         :type data: dict
         :param data: Dictionary of status update metadata.
         """
+        if data == 'abort':
+            self.action_button.SetLabel('Start')
+            self.on_abort()
         if 'progress' in data:
             wx.CallAfter(self._update_gauge, self.status_gauge, data['progress'])
         if 'sub_progress' in data:
