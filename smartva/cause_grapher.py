@@ -141,6 +141,8 @@ class CauseGrapher(GrapherPrep):
 
                         try:
                             age_key = get_age_key(float(row['age']))
+                            if age_key not in AGE_DATA.values():
+                                raise ValueError('Unknown age group.')
                             sex_key = int(row['sex'])
                             if sex_key not in [1,2]:
                                 raise ValueError('Cannot yet plot when sex is not M/F')
