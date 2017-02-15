@@ -36,25 +36,16 @@ SPURIOUS_ASSOCIATIONS = {
     ],
     10: [  # Measles
         's999935',  # word_pox
-        's999937',  # word_rash
         's999910',  # word_chest
         's11991',  # not born in a hospital
         's30991',  # didn't die in a hospital
         's2994',  # quintile 4 of age
         's28',  # How old was the baby/child when the fatal illness started? [days]
-        's999919',  # word_fever
         's31',  # How old was the deceased at the time of death? [days]
         's14',  # What was the weight of the deceased at birth?
-        's113991',  # severe fever
-        's112',  # Did the fever continue until death?
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
-        's110',  # During the illness that led to death, did [name] have a fever?
-        's132',  # Breathing: Wheezing
-        's124',  # Did the child vomit after he/she coughed?
-        's122',  # For how many days did the cough last? [days]
-        's123',  # Was the cough very severe?
         's144',  # During the illness that led to death, did [name]'s limbs (legs, arms) become ver
         's150',  # During the illness that led to death, did [name] suffer from 'lack of blood' or
         's153',  # During the illness that led to death, did [name] bleed from anywhere?
