@@ -42,6 +42,19 @@ def test_get_cause_num():
     assert get_cause_num('cause0') == 0
 
 
+@pytest.mark.parametrize('row,expected', [
+    ({'sid': 'none', 'restricted': ''}, []),
+    ({'sid': 'one', 'restricted': '1'}, [1]),
+    ({'sid': 'two', 'restricted': '1 2'}, [1, 2]),
+], ids=lambda x: x['sid'])
+def test_get_va_cause_list_restricted(tmpdir, prep, row, expected):
+    f = tmpdir.join('test.csv')
+    f.write('\n'.join([','.join(r) for r in zip(*row.items())]))
+    va = prep.get_va_cause_list(f.strpath, {})[0]
+
+    assert va.restricted == expected
+
+
 def test_get_cause_symptoms(tmpdir):
     input_data = [
         ['xs_name', 'age', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
@@ -90,7 +103,7 @@ def test_generate_cause_rankings(prep):
         -2,   # rank 9 (duplicate negative)
         -3,   # rank 10
     ]
-    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2) for s in train_scores]
+    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2, []) for s in train_scores]
 
     # Score, Rank within training
     tests = [
@@ -106,7 +119,7 @@ def test_generate_cause_rankings(prep):
         (-3, 10),   # at lowest score in train data
         (-5, 10.5),   # below lowest score in train data
     ]
-    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2) for score, rank in tests]
+    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2, []) for score, rank in tests]
 
     # Modifies list of ScoredVAs in place and doesn't return anything
     prep.generate_cause_rankings(test_data, train_data)
@@ -114,3 +127,30 @@ def test_generate_cause_rankings(prep):
     predicted_test_ranks = [va.rank_list[1] for va in test_data]
     actual_test_ranks = [float(rank) for score, rank in tests]
     assert predicted_test_ranks == actual_test_ranks
+
+
+@pytest.mark.parametrize('restrictions,scores,ranks,expected', [
+    ([], {1: 10}, {1: 7}, {1: 7}),
+    ([1], {1: 10}, {1: 7}, {1: 9999}),
+    ([1], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 5}),
+    ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
+])
+def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
+                                                 ranks, expected):
+    prep.cause_list = scores.keys()
+
+    va = ScoredVA(scores, 0, 'sid', 7, 2, restrictions)
+    va.rank_list = ranks
+
+    uniform = range(1000)  # just needs length
+    cutoffs = dict(zip(scores.keys(), [99999] * len(scores)))
+    demog_restrictions = {}
+    lowest_rank = 9999   # value set if restricted
+    uniform_list_pos = 999
+    min_cause_score = 0
+
+    prep.identify_lowest_ranked_causes([va], uniform, cutoffs,
+                                       demog_restrictions, lowest_rank,
+                                       uniform_list_pos, min_cause_score)
+
+    assert va.rank_list == expected
