@@ -449,4 +449,46 @@ DROP_LIST = [
     's108'
 ]
 
-CENSORED_MAP = {}
+CENSORED_MAP = {
+    16: [   # Epilepsy
+        's23992',     # Rash was located on trunk
+        's23993',     # Rash was located on extremities
+        's31',        # Did the ulcer ooze pus?
+        's32',        # For how many days did the ulcer ooze pus? [days]
+        's62',        # Pain greater than 24 hours
+        's70',        # Was there blood in the stool up until death?
+        's74',        # Was there blood in the vomit?
+        's88',        # For how long before death did [name] have a mass in the belly [days]
+        's93',        # For how long before death did [name] have stiff neck? [days]
+        's110',       # Paralyzed upper part of body
+        's111',       # Paralyzed one leg only
+        's115',       # Paralyzed don't know
+        's119',       # Did [name] have any ulcers (pits) in the breast?
+        's124',       # At the time of death was her period overdue?
+        's125',       # For how many weeks was her period overdue? [days]
+        's126',       # Did [name] have a sharp pain in the belly shortly before death?
+        's128',       # For how many months was she pregnant? [days]
+        's130',       # Did bleeding occur while she was pregnant?
+        's131',       # Did she have excessive bleeding during labor or delivery?
+        's132',       # Did she die during labor or delivery?
+        's133',       # For how long was she in labor? [days]
+        's134',       # Did she die within 6 weeks after having an abortion?
+        's135',       # Did she die within 6 weeks of childbirth?
+        's136',       # Did she have excessive bleeding after delivery or abortion?
+        's154',       # Decedent suffered poisoning
+        's159',       # Decedent suffered other injury
+        's161',       # Was the injury or accident self-inflicted?
+        's155',       # Decedent suffered bite/sting
+        's156',       # Decedent suffered burn
+        's157',       # Decedent victim of violence
+        's162',       # Was the injury or accident intentionally inflicted by someone else?
+        's999952',    # word_dialysi
+        's999997',    # word_jaundic
+        's999999',    # word_kidney
+        's9999104',   # word_liver
+        's9999108',   # word_malaria
+        's9999130',   # word_renal
+        's9999148',   # word_suicid
+    ],
+}
+
