@@ -26,6 +26,7 @@ MAX_CAUSE_SYMPTOMS = 40
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
+RESTRICTED_KEY = 'restricted'
 
 
 def safe_float(x):
@@ -91,9 +92,10 @@ def exclude_spurious_associations(spurious_assoc_dict):
 
 
 class ScoredVA(object):
-    def __init__(self, cause_scores, cause, sid, age, sex):
+    def __init__(self, cause_scores, cause, sid, age, sex, restricted):
         self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
         self.cause = cause  # int
+        self.restricted = restricted
         self.rank_list = {}
         self.sid = sid
         self.age = age
@@ -106,7 +108,8 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return 'sid={sid} age={age} sex={sex} cs={cause_scores} cause={cause} rl={rank_list}'.format(**self.__dict__)
+        return ('sid={sid} age={age} sex={sex} cause={cause} restricted={restricted}'
+                'scores={cause_scores} ranks={rank_list}'.format(**self.__dict__))
 
     def __str__(self):
         return self.__repr__()
@@ -254,8 +257,11 @@ class TariffPrep(DataPrep):
             if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
                 row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
 
+            # Censored causes
+            row[RESTRICTED_KEY] = map(int, map(float, row.get(RESTRICTED_KEY, '').split()))
+
             va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
-                                          row.get(AGE_KEY), row.get(SEX_KEY)))
+                                          row.get(AGE_KEY), row.get(SEX_KEY), row.get(RESTRICTED_KEY)))
 
         status_notifier.update({'sub_progress': None})
 
@@ -402,7 +408,7 @@ class TariffPrep(DataPrep):
                 if float(va.cause_scores[cause]) < 0.0:
                     va.rank_list[cause] = lowest_rank
 
-            lowest_cause_list = set()
+            lowest_cause_list = set(va.restricted)
 
             for condition, causes in cause_conditions.items():
                 if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():

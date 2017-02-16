@@ -1,7 +1,7 @@
 from smartva.data.common_data import NEONATE
 
 AGE_GROUP = NEONATE
-KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|s\d+)'
+KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|restricted$|s\d+)'
 
 GENERATED_VARS_DATA = {
     'age': 0,
@@ -33,6 +33,7 @@ GENERATED_VARS_DATA = {
     's69991': 0,
     's71991': 0,
     's76991': 0,
+    'restricted': '',
 }
 
 VAR_CONVERSION_MAP = {
@@ -367,3 +368,5 @@ DROP_LIST = [
     's76',
     's105_1',
 ]
+
+CENSORED_MAP = {}

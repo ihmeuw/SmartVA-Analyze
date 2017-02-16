@@ -1,7 +1,7 @@
 from smartva.data.common_data import CHILD
 
 AGE_GROUP = CHILD
-KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|s\d+)'
+KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|restricted$|s\d+)'
 
 GENERATED_VARS_DATA = {
     's2991': 0,
@@ -24,7 +24,8 @@ GENERATED_VARS_DATA = {
     's139991': 0,
     's141991': 0,
     'age': 0,
-    'sex': 0
+    'sex': 0,
+    'restricted': '',
 }
 
 VAR_CONVERSION_MAP = {
@@ -278,3 +279,5 @@ DROP_LIST = [
     's139',
     's141'
 ]
+
+CENSORED_MAP = {}
