@@ -450,6 +450,65 @@ DROP_LIST = [
 ]
 
 CENSORED_MAP = {
+    4: [   # Asthma
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's114',      # Paralyzed refused
+        's115',      # Paralyzed don't know
+        's116',      # Paralyzed other
+        's119',      # Did [name] have any ulcers (pits) in the breast?
+        's122',      # Did [name] have vaginal bleeding other than her period? (intermenstrual)
+        's123',      # Was there excessive vaginal bleeding in the week prior to death?
+        's125',      # For how many weeks was her period overdue? [days]
+        's126',      # Did [name] have a sharp pain in the belly shortly before death?
+        's127',      # Was [name] pregnant at the time of death?
+        's128',      # For how many months was she pregnant? [days]
+        's129',      # Did [name] die during an abortion?
+        's130',      # Did bleeding occur while she was pregnant?
+        's131',      # Did she have excessive bleeding during labor or delivery?
+        's132',      # Did she die during labor or delivery?
+        's133',      # For how long was she in labor? [days]
+        's134',      # Did she die within 6 weeks after having an abortion?
+        's135',      # Did she die within 6 weeks of childbirth?
+        's136',      # Did she have excessive bleeding after delivery or abortion?
+        's140',      # Type of tobacco used: pipe
+        's143',      # Type of tobacco used: other
+        's145',      # Type of tobacco used: refused
+        's151',      # Decedent suffered road traffic injury
+        's153',      # Decedent suffered drowning
+        's154',      # Decedent suffered poisoning
+        's155',      # Decedent suffered bite/sting
+        's156',      # Decedent suffered burn
+        's157',      # Decedent victim of violence
+        's159',      # Decedent suffered other injury
+        's161',      # Was the injury or accident self-inflicted?
+        's162',      # Was the injury or accident intentionally inflicted by someone else?
+        's23991',    # Rash was located on face
+        's23993',    # Rash was located on extremities
+        's23994',    # Rash was located everywhere
+        's30',       # Did [name] have an ulcer (pit) on the foot?
+        's31',       # Did the ulcer ooze pus?
+        's32',       # For how many days did the ulcer ooze pus? [days]
+        's47',       # Did [name] have a lump in the armpit?
+        's48',       # Did [name] have a lump in the groin?
+        's8',        # Did Decedent Have Epilepsy?
+        's81',       # For how long before death did [name] have belly pain? [days]
+        's85',       # For how long before death did [name] have a protruding belly? [days]
+        's88',       # For how long before death did [name] have a mass in the belly [days]
+        's92',       # Did [name] have a stiff neck?
+        's93',       # For how long before death did [name] have stiff neck? [days]
+        's9999104',  # word_liver
+        's9999148',  # word_suicid
+        's999999',   # word_kidney
+        's3',        # Did Decedent Have Cancer?
+        's12',       # Did Decedent Have Stroke?
+        's13',       # Did Decedent Have TB?
+        's39',       # For how long did [name] have the yellow discoloration? [days]
+        's52',       # Did [name] cough blood?
+        's107',      # Paralyzed on one side (arm and leg)
+    ],
     16: [   # Epilepsy
         's23992',     # Rash was located on trunk
         's23993',     # Rash was located on extremities
