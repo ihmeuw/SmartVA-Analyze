@@ -493,6 +493,11 @@ class TariffPrep(DataPrep):
                 else:
                     cause_counts.update([cause34_name])
 
+                # We filled age with a default value of zero but do not want to
+                # report this value in output files and graphs
+                if float(va.age) == 0 and self.AGE_GROUP in ['adult', 'child']:
+                    va.age = ''
+
                 writer.writerow([va.sid, cause34, cause34_name, va.age, va.sex])
         return cause_counts
 
