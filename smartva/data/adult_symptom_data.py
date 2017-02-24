@@ -548,6 +548,18 @@ CENSORED_MAP = {
         's9999108',   # word_malaria
         's9999130',   # word_renal
         's9999148',   # word_suicid
+        's13',        # Did Decedent Have TB?
+        's3',         # Did Decedent Have Cancer?
+        's31',        # Did the ulcer ooze pus?
+        's32',        # For how many days did the ulcer ooze pus? [days]
+        's62',        # Pain greater than 24 hours
+        's69',        # Was there blood in the stool?
+        's70',        # Was there blood in the stool up until death?
+        's70',        # Was there blood in the stool up until death?
+        's9999108',   # word_malaria
+        's9999130',   # word_renal
+        's999997',    # word_jaundic
+
     ],
 }
 
