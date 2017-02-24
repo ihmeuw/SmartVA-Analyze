@@ -652,6 +652,7 @@ CAUSES = {
     34: 'TB',
     35: 'Chronic Respiratory',
     36: 'Ischemic Heart Disease',
+    37: 'Other Cancers'
 }
 
 CAUSES46 = {
@@ -783,7 +784,7 @@ CAUSE_REDUCTION = {
     27: 19,
     28: 18,
     29: 20,
-    30: 25,
+    30: 37,
     31: 22,
     32: 25,
     33: 23,
