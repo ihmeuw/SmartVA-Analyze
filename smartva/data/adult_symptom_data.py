@@ -519,6 +519,7 @@ CENSORED_MAP = {
         's74',        # Was there blood in the vomit?
         's88',        # For how long before death did [name] have a mass in the belly [days]
         's93',        # For how long before death did [name] have stiff neck? [days]
+        's107',       # Paralyzed on one side (arm and leg)
         's110',       # Paralyzed upper part of body
         's111',       # Paralyzed one leg only
         's115',       # Paralyzed don't know
