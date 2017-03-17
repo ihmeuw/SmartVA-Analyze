@@ -563,3 +563,4 @@ CENSORED_MAP = {
     ],
 }
 
+REQUIRED_MAP = {}

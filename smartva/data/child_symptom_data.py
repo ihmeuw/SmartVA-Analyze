@@ -281,3 +281,5 @@ DROP_LIST = [
 ]
 
 CENSORED_MAP = {}
+
+REQUIRED_MAP = {}
