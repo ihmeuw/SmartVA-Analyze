@@ -6,33 +6,24 @@ import subprocess
 
 import smartva.rules_prep
 from smartva.rules import (
-    anemia,
     bite_adult,
     bite_child,
-    cancer_child,
     drowning_adult,
     drowning_child,
     falls_adult,
     falls_child,
     fires_adult,
     fires_child,
-    hemorrhage,
     homicide_adult,
     homicide_child,
-    hypertensive,
-    malnutrition,
-    measles,
     other_injury_adult,
     other_injury_child,
-    other_pregnancy,
     poisoning_adult,
     poisoning_child,
     road_traffic_adult,
     road_traffic_child,
-    sepsis,
     stillbirth,
     suicide,
-    tetanus_neonate,
 )
 
 import always_exception
@@ -128,11 +119,6 @@ class TestAdultRulesPrep(object):
         falls_adult,
         poisoning_adult,
         other_injury_adult,
-        hypertensive,
-        other_pregnancy,
-        sepsis,
-        hemorrhage,
-        anemia,
         homicide_adult,
         suicide,
     ]
@@ -160,9 +146,6 @@ class TestChildRulesPrep(object):
         falls_child,
         poisoning_child,
         other_injury_child,
-        measles,
-        cancer_child,
-        malnutrition,
         homicide_child,
     ]
 
@@ -183,7 +166,6 @@ class TestChildRulesPrep(object):
 class TestNeonateRulesPrep(object):
     RULE_LIST = [
         stillbirth,
-        tetanus_neonate,
     ]
 
     def test_instance(self, tmpdir):

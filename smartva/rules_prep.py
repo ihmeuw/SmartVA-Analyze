@@ -5,33 +5,24 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.rules import (
-    anemia,
     bite_adult,
     bite_child,
-    cancer_child,
     drowning_adult,
     drowning_child,
     falls_adult,
     falls_child,
     fires_adult,
     fires_child,
-    hemorrhage,
     homicide_adult,
     homicide_child,
-    hypertensive,
-    malnutrition,
-    measles,
     other_injury_adult,
     other_injury_child,
-    other_pregnancy,
     poisoning_adult,
     poisoning_child,
     road_traffic_adult,
     road_traffic_child,
-    sepsis,
     stillbirth,
     suicide,
-    tetanus_neonate,
 )
 
 INPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -105,11 +96,6 @@ class AdultRulesPrep(RulesPrep):
         falls_adult,
         poisoning_adult,
         other_injury_adult,
-        hypertensive,
-        other_pregnancy,
-        sepsis,
-        hemorrhage,
-        anemia,
         homicide_adult,
         suicide,
     ]
@@ -127,9 +113,6 @@ class ChildRulesPrep(RulesPrep):
         falls_child,
         poisoning_child,
         other_injury_child,
-        measles,
-        cancer_child,
-        malnutrition,
         homicide_child,
     ]
 
@@ -140,7 +123,6 @@ class ChildRulesPrep(RulesPrep):
 class NeonateRulesPrep(RulesPrep):
     RULES = [
         stillbirth,
-        tetanus_neonate,
     ]
 
     def __init__(self, working_dir_path, short_form):
