@@ -280,6 +280,10 @@ DROP_LIST = [
     's141'
 ]
 
-CENSORED_MAP = {}
+CENSORED_MAP = {
+    1: [   # AIDS
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+    ],
+}
 
 REQUIRED_MAP = {}
