@@ -8,6 +8,7 @@ import smartva.rules_prep
 from smartva.rules import (
     bite_adult,
     bite_child,
+    cvd_child,
     drowning_adult,
     drowning_child,
     falls_adult,
@@ -147,6 +148,7 @@ class TestChildRulesPrep(object):
         poisoning_child,
         other_injury_child,
         homicide_child,
+        cvd_child,
     ]
 
     def test_instance(self, tmpdir):
