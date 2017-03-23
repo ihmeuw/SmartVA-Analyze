@@ -280,6 +280,30 @@ DROP_LIST = [
     's141'
 ]
 
-CENSORED_MAP = {}
+CENSORED_MAP = {
+    1: [   # AIDS
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+    ],
+    3: [   # Diarrhea/Dysentery
+        's999933',      # word_pneumonia
+    ],
+    5: [   # Encephalitis
+        's999933',      # word_pneumonia
+    ],
+    9: [   # Malaira
+        's999933',      # word_pneumonia
+    ],
+    11: [   # Meningitis
+        's999933',      # word_pneumonia
+    ],
+    15: [   # Other Digestive Diseases
+        's999933',      # word_pneumonia
+    ],
+    17: [   # Pneumonia
+        's99991',       # word_abdomen
+        's999926',      # word_jaundic
+        's99999',       # word_cancer
+    ],
+}
 
 REQUIRED_MAP = {}
