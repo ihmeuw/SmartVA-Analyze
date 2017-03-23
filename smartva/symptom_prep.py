@@ -100,6 +100,8 @@ class SymptomPrep(DataPrep):
 
             self.censor_causes(row, self.data_module.CENSORED_MAP)
 
+            self.require_symptoms(row, self.data_module.REQUIRED_MAP)
+
             self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
@@ -208,8 +210,22 @@ class SymptomPrep(DataPrep):
             row (dict): Row of VA data.
             cause_condtions (dict): cause -> list of symptoms
         """
-        restricted = []
+        restricted = set()
         for cause, symptoms in cause_conditions.items():
             if any([int(row.get(symp, 0)) for symp in symptoms]):
-                restricted.append(cause)
+                restricted.add(cause)
+        row['restricted'] = ' '.join(map(str, sorted(restricted)))
+
+    def require_symptoms(self, row, cause_conditions):
+        """Mark causes which should be ranked as lowested based on the lack
+        of symptom endorsement
+
+        Args:
+            row (dict): Row of VA data.
+            cause_conditions (dict): cause -> list of symptoms
+        """
+        restricted = set(map(int, row.get('restricted', '').split()))
+        for cause, symptoms in cause_conditions.items():
+            if not all([int(row.get(symp, 0)) for symp in symptoms]):
+                restricted.add(cause)
         row['restricted'] = ' '.join(map(str, sorted(restricted)))

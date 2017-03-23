@@ -564,3 +564,8 @@ CENSORED_MAP = {
     ],
 }
 
+REQUIRED_MAP = {
+    17: [   # Esophageal Cancer
+        's76',         # Did [name] have difficulty swallowing?
+    ]
+}
