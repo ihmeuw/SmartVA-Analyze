@@ -6,6 +6,7 @@ import subprocess
 
 import smartva.rules_prep
 from smartva.rules import (
+    aids_child,
     bite_adult,
     bite_child,
     drowning_adult,
@@ -147,6 +148,7 @@ class TestChildRulesPrep(object):
         poisoning_child,
         other_injury_child,
         homicide_child,
+        aids_child,
     ]
 
     def test_instance(self, tmpdir):
