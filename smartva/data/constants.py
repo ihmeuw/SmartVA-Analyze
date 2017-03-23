@@ -94,6 +94,7 @@ class Child(object):
     FREE_TEXT_CANCER = 'c_6_2'
     FREE_TEXT_DIARRHEA = 'c_6_5'
     FREE_TEXT_FEVER = 'c_6_6'
+    FREE_TEXT_HEART = 'c_6_7'
     FREE_TEXT_PNEUMONIA = 'c_6_9'
 
 
