@@ -91,9 +91,12 @@ class Child(object):
     OTHER_INJURY = 'c4_47_8a'
     INFLICTED_BY_OTHER = 'c4_48'
     INJURY_DAYS = 'c4_49'
+    HIV_POSITIVE_TEST = 'c5_18'
+    HIV_POSITIVE_PROFESSIONAL = 'c5_19'
     FREE_TEXT_CANCER = 'c_6_2'
     FREE_TEXT_DIARRHEA = 'c_6_5'
     FREE_TEXT_FEVER = 'c_6_6'
+    FREE_TEXT_HEART = 'c_6_7'
     FREE_TEXT_PNEUMONIA = 'c_6_9'
 
 
