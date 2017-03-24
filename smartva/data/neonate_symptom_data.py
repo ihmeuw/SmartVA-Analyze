@@ -369,6 +369,30 @@ DROP_LIST = [
     's105_1',
 ]
 
-CENSORED_MAP = {}
+CENSORED_MAP = {
+    1: [   #  Birth asphyxia
+        's4994'     # age quartile 4
+    ],
+    3: [   # Meningitis/Sepsis
+        's23',      # Was any part of the baby physically abnormal at time of delivery?
+        's24',      # Abormalities: Head size very small at time of birth?
+        's25',      # Abormalities: Head size very large at time of birth?
+        's26',      # Abormalities: Mass defect on the back of head or spine
+        's61',      # Was any part of the baby physically abnormal at time of delivery?
+        's62',      # Abnormalities: Head size very small at time of birth?
+        's63',      # Abnormalities: Head size very large at time of birth?
+        's64',      # Abnormalities: Mass defect on the back of head or spine
+    ],
+    4: [   # Pneumonia
+        's23',      # Was any part of the baby physically abnormal at time of delivery?
+        's24',      # Abormalities: Head size very small at time of birth?
+        's25',      # Abormalities: Head size very large at time of birth?
+        's26',      # Abormalities: Mass defect on the back of head or spine
+        's61',      # Was any part of the baby physically abnormal at time of delivery?
+        's62',      # Abnormalities: Head size very small at time of birth?
+        's63',      # Abnormalities: Head size very large at time of birth?
+        's64',      # Abnormalities: Mass defect on the back of head or spine
+    ],
+}
 
 REQUIRED_MAP = {}
