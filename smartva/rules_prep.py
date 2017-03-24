@@ -5,6 +5,7 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.rules import (
+    aids_child,
     bite_adult,
     bite_child,
     cvd_child,
@@ -116,6 +117,7 @@ class ChildRulesPrep(RulesPrep):
         other_injury_child,
         homicide_child,
         cvd_child,
+        aids_child,
     ]
 
     def __init__(self, working_dir_path, short_form):
