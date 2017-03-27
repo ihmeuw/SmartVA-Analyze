@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from smartva.data.common_data import CHILD
 from smartva.data.word_conversions import CHILD_WORDS_TO_VARS
 
@@ -9,7 +11,7 @@ CUTOFF_POS = 0.95
 
 UNIFORM_LIST_POS = 0.17
 
-MIN_CAUSE_SCORE = 3.7
+MIN_CAUSE_SCORE = defaultdict(lambda: 3.7)
 
 SPURIOUS_ASSOCIATIONS = {
     1: [  # AIDS

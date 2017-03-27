@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from smartva.data.common_data import NEONATE
 from smartva.data.word_conversions import NEONATE_WORDS_TO_VARS
 
@@ -9,7 +11,7 @@ CUTOFF_POS = 0.91
 
 UNIFORM_LIST_POS = 0.35
 
-MIN_CAUSE_SCORE = 0.7
+MIN_CAUSE_SCORE = defaultdict(lambda: 0.7)
 
 SPURIOUS_ASSOCIATIONS = {
     2: [  # Congenital malformation
