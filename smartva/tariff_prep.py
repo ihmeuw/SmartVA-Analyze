@@ -433,7 +433,7 @@ class TariffPrep(DataPrep):
                 if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
                         (float(va.rank_list[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
                     # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.cause_scores[cause_num]) <= min_cause_score)):
+                        (float(va.cause_scores[cause_num]) <= min_cause_score[cause_num])):
                     lowest_cause_list.add(cause_num)
 
             for cause_num in lowest_cause_list:
