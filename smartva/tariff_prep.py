@@ -417,6 +417,15 @@ class TariffPrep(DataPrep):
             if not self.hiv_region:
                 lowest_cause_list.update(self.data_module.HIV_CAUSES)
 
+                # This a fragile hack to remove rule-based predictions of AIDS
+                # from the child module if the user specifies that the data is
+                # from a low prevalence HIV region. It works because the AIDS
+                # rule is the last listed rule so it is not masking any other
+                # rule-based predictions
+                if va.cause in self.data_module.HIV_CAUSES:
+                    va.cause = None
+
+
             if not self.malaria_region:
                 lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
 
