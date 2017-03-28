@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from smartva.data.common_data import ADULT
 from smartva.data.word_conversions import ADULT_WORDS_TO_VARS
 
@@ -9,7 +11,9 @@ CUTOFF_POS = 0.89
 
 UNIFORM_LIST_POS = 0.18
 
-MIN_CAUSE_SCORE = 0.7
+MIN_CAUSE_SCORE = defaultdict(lambda: 0.7, {
+    14: 9.2,    # diarrhea/dysentry
+})
 
 SPURIOUS_ASSOCIATIONS = {
     5: [  # Bite

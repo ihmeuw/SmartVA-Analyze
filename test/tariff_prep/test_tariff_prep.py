@@ -1,3 +1,4 @@
+from collections import defaultdict
 import csv
 import pytest
 
@@ -147,7 +148,7 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
     demog_restrictions = {}
     lowest_rank = 9999   # value set if restricted
     uniform_list_pos = 999
-    min_cause_score = 0
+    min_cause_score = defaultdict(lambda: 0)
 
     prep.identify_lowest_ranked_causes([va], uniform, cutoffs,
                                        demog_restrictions, lowest_rank,
