@@ -68,3 +68,19 @@ def test_uniform_frequencies(prep):
     # The cause list for 46 and 34 are the same for the child module
     counts = df.gs_text46.value_counts()
     assert len(counts.unique()) == 1
+
+
+@pytest.mark.parametrize('age,expected', [
+    (0, None),
+    (20/365.0, None),
+    (29/365.0, 0),
+    (.99, 0),
+    (1, 1),
+    (4, 1),
+    (7, 5),
+    (11.2, 10),
+    (12, None),
+])
+def test_calc_age_bin(prep, age, expected):
+    age_bin = prep._calc_age_bin(age)
+    assert age_bin == expected
