@@ -498,7 +498,6 @@ class TariffPrep(DataPrep):
                             if (u_row['iso3'] == self.iso3 and u_row['sex'] == va.sex and
                                     self._matches_undetermined_cause(va, u_row)):
                                 cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
-                                break
                 else:
                     cause_counts.update([cause34_name])
 
