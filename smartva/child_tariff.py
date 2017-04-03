@@ -13,10 +13,11 @@ class ChildTariff(TariffPrep):
     def run(self):
         return super(ChildTariff, self).run()
 
-    def _matches_undetermined_cause(self, va, u_row):
-        va_age, u_age = float(va.age), float(u_row['age'])
-
-        return ((u_age == 0.0 and va_age < 1.0) or
-                (u_age == 1.0 and 1.0 <= va_age < 5.0) or
-                (u_age == 5.0 and 5.0 <= va_age < 9.0) or
-                (u_age == 10.0 and 10.0 <= va_age < 15.0))
+    def _calc_age_bin(self, age):
+        age = float(age)
+        # Age may have been filled with the default value of zero
+        # In this case do not return an age value. When looking up
+        # redistribution weights, the lookup should fail and default all-age
+        # both-sex category will be used instead.
+        if 28 / 365.0 < age < 12:
+            return 1 if 1.0 <= age < 5 else int(age / 5) * 5

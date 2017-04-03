@@ -68,3 +68,16 @@ def test_uniform_frequencies(prep):
     # Neonates use the six causes in the 34 cause list
     counts = df.gs_text34.value_counts()
     assert len(counts.unique()) == 1
+
+
+@pytest.mark.parametrize('age,expected', [
+    (0, 0),
+    (4.5, 0),
+    (7, 7),
+    (15, 7),
+    (28, 7),
+    (29, None),
+])
+def test_calc_age_bin(prep, age, expected):
+    age_bin = prep._calc_age_bin(age)
+    assert age_bin == expected

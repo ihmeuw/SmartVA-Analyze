@@ -13,8 +13,11 @@ class AdultTariff(TariffPrep):
     def run(self):
         return super(AdultTariff, self).run()
 
-    def _matches_undetermined_cause(self, va, u_row):
-        va_age, u_age = float(va.age), float(u_row['age'])
-
-        return ((va_age <= u_age < va_age + 5.0) or
-                (u_age == 80.0 and va_age > 80.0))
+    def _calc_age_bin(self, age):
+        age = float(age)
+        # Age may have been filled with the default value of zero
+        # In this case do not return an age value. When looking up
+        # redistribution weights, the lookup should fail and default all-age
+        # both-sex category will be used instead.
+        if age >= 12:
+            return int(age / 5) * 5 if age < 80 else 80

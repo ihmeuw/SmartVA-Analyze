@@ -164,7 +164,7 @@ class TariffPrep(DataPrep):
 
     @property
     def undetermined_matrix_filename(self):
-        return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights-hce{:d}.csv'.format(self.AGE_GROUP, int(self.hce)))
+        return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP))
 
     @property
     def external_ranks_filename(self):
@@ -373,15 +373,42 @@ class TariffPrep(DataPrep):
                                    self.external_ranks_filename)
 
     def _get_undetermined_matrix(self):
-        """Return matrix undetermined weights read from the specified file.
+        """Return mapping of undetermined weights read from the specified file.
+
+        The undetermined weights files are module specific and contains columns
+        for age, sex, iso3 and cause (coded as gs_text34). There are a multiple
+        columns for different weights. The weights vary by the predictive
+        accuracy of a given parameter set on the gold standard data. We vary
+        the instrument (short vs full) and whether HCE columns are used, which
+        gives us four sets of weights
 
         Returns:
-            list: Undetermined weights data.
+            dict: Undetermined weights data. Keys are (age, sex) and values
+                a dict of cause -> weight
         """
-        with open(self.undetermined_matrix_filename, 'rU') as f:
-            reader = csv.DictReader(f)
-            undetermined_matrix = [row for row in reader]
-        return undetermined_matrix
+        # Only read in the csv file if it is going to be used
+        # If self.iso3 is None, Undetermined CMSF is not redistributed
+        weights = {}
+        if self.iso3:
+            # Determine which set of weights to use
+            instrument = 'short' if self.short_form else 'full'
+            weight_key = '{}_hce{}'.format(instrument, int(self.hce))
+
+            with open(self.undetermined_matrix_filename, 'rU') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    # Only use rows for the specified country
+                    if row['iso3'] != self.iso3:
+                        continue
+
+                    age = int(row['age'])
+                    sex = int(row['sex'])
+                    cause = row['gs_text34']
+                    if (age, sex) not in weights:
+                        weights[age, sex] = {}
+                    weights[age, sex][cause] = float(row[weight_key])
+
+        return weights
 
     def identify_lowest_ranked_causes(self, va_cause_list, uniform_list, cutoffs, cause_conditions, lowest_rank,
                                       uniform_list_pos, min_cause_score):
@@ -491,13 +518,16 @@ class TariffPrep(DataPrep):
                     if self.iso3 is None:
                         cause_counts.update([cause34_name])
                     else:
-                        # For undetermined, look up the values for each cause using keys (age, sex, country) and
-                        # add them to the 'count' for that cause
-                        # TODO - What to do if nothing matches?
-                        for u_row in undetermined_matrix:
-                            if (u_row['iso3'] == self.iso3 and u_row['sex'] == va.sex and
-                                    self._matches_undetermined_cause(va, u_row)):
-                                cause_counts.update({u_row['gs_text34']: float(u_row['weight'])})
+                        # For undetermined, look up the weights for the age and sex category which matches this VA
+                        # and add the fractions to the 'count' for all causes. If there is no weight for the
+                        # given age-sex, redistribute based on the proporiton across all ages and both sexes. This
+                        # may occur if the VA lists an age group in gen_5_4d, but lacks a real age data
+                        age = self._calc_age_bin(va.age)
+                        try:
+                            undetermined_weights = undetermined_matrix[age, va.sex]
+                        except KeyError:
+                            undetermined_weights = undetermined_matrix[99, 3]
+                        cause_counts.update(undetermined_weights)
                 else:
                     cause_counts.update([cause34_name])
 
@@ -510,15 +540,18 @@ class TariffPrep(DataPrep):
         return cause_counts
 
     @abc.abstractmethod
-    def _matches_undetermined_cause(self, va, u_row):
-        """Determine if a undetermined cause matches conditions of a given Scored VA.
+    def _calc_age_bin(self, va, u_row):
+        """Determine the GBD age bin for a given age.
+
+        Ages on the ScoredVA for child and adult modules are in years and the
+        ages on the ScoredVA for neonate is in days. Age bins are also not
+        evenly spaced. This should be implemented in a module-specific way.
 
         Args:
-            va (ScoredVA): Verbal Autopsy data.
-            u_row (list): Row of data from the undetermined matrix.
+            age (float)
 
         Returns:
-            bool: True if conditions match.
+            int
         """
         pass
 
