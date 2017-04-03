@@ -184,7 +184,6 @@ CAUSES = {
     4: 'Pneumonia',
     5: 'Preterm Delivery',
     6: 'Stillbirth',
-    7: 'Neonatal tetanus'
 }
 
 CAUSES46 = CAUSES
@@ -203,7 +202,6 @@ CAUSE_REDUCTION = {
     4: 4,
     5: 5,
     6: 6,
-    7: 7,
 }
 
 FREQUENCIES = {

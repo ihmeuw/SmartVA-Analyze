@@ -13,8 +13,6 @@ class NeonateTariff(TariffPrep):
     def run(self):
         return super(NeonateTariff, self).run()
 
-    def _matches_undetermined_cause(self, va, u_row):
-        va_age, u_age = float(va.age), float(u_row['age'])
-
-        return ((u_age == 0.0 and va_age < 7.0) or
-                (u_age == 7.0 and 7.0 <= va_age < 28.0))
+    def _calc_age_bin(self, age):
+        if age <= 28:
+            return 0 if float(age) < 7.0 else 7

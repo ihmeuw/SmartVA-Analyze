@@ -13,8 +13,8 @@ import sample_tariff_data
 
 
 class TariffPrepMock(TariffPrep):
-    def _matches_undetermined_cause(self, va, u_row):
-        return True
+    def _calc_age_bin(self, va, u_row):
+        return int(age / 5) * 5 if age < 80 else 80
 
 
 @pytest.fixture

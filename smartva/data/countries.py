@@ -42,7 +42,7 @@ COUNTRIES = [
     u'Comoros (COM)',
     u'Congo (COG)',
     u'Costa Rica (CRI)',
-    u'Cote d\'Ivoire(CIV)',
+    u'Cote d\'Ivoire (CIV)',
     u'Croatia (HRV)',
     u'Cuba (CUB)',
     u'Cyprus (CYP)',
