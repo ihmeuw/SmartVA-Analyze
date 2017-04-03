@@ -246,7 +246,6 @@ CAUSES = {
     19: 'Road Traffic',
     20: 'Sepsis',
     21: 'Violent Death',
-    22: 'Protein-energy malnutrition'
 }
 
 CAUSES46 = CAUSES
@@ -280,7 +279,6 @@ CAUSE_REDUCTION = {
     19: 19,
     20: 20,
     21: 21,
-    22: 22,
 }
 
 FREQUENCIES = {

@@ -66,3 +66,18 @@ def test_uniform_frequencies(prep):
     df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
     counts = df.gs_text46.value_counts()
     assert len(counts.unique()) == 1
+
+
+@pytest.mark.parametrize('age,expected', [
+    (0, None),
+    (11, None),
+    (12, 10),
+    (15, 15),
+    (34.5, 30),
+    (57, 55),
+    (65, 65),
+    (97, 80),
+])
+def test_calc_age_bin(prep, age, expected):
+    age_bin = prep._calc_age_bin(age)
+    assert age_bin == expected

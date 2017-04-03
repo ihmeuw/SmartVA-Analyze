@@ -621,13 +621,11 @@ SHORT_FORM_DROP_LIST = [
 
 CAUSES = {
     1: 'AIDS',
-    2: 'Asthma',
     3: 'Bite of Venomous Animal',
     4: 'Breast Cancer',
     5: 'Cervical Cancer',
     6: 'Cirrhosis',
     7: 'Colorectal Cancer',
-    8: 'COPD',
     9: 'Diabetes',
     10: 'Diarrhea/Dysentery',
     11: 'Drowning',
@@ -636,7 +634,6 @@ CAUSES = {
     14: 'Falls',
     15: 'Fires',
     16: 'Homicide',
-    17: 'IHD - Acute Myocardial Infarction',
     18: 'Leukemia/Lymphomas',
     19: 'Lung Cancer',
     20: 'Malaria',
