@@ -81,3 +81,18 @@ def test_uniform_frequencies(prep):
 def test_calc_age_bin(prep, age, expected):
     age_bin = prep._calc_age_bin(age)
     assert age_bin == expected
+
+
+@pytest.mark.parametrize('malaria', [True, False])
+@pytest.mark.parametrize('hiv', [True, False])
+def test_csmf_summed_to_one(prep, malaria, hiv):
+    prep.malaria_region = malaria
+    prep.hiv_region = hiv
+    causes = prep.data_module.CAUSES.values()
+    cause_counts = dict(zip(causes, [7 for c in causes]))
+    prep.write_csmf(cause_counts)
+
+    outfile_path = os.path.join(prep.output_dir_path,
+                                '{}-csmf.csv'.format(prep.AGE_GROUP))
+    csmf = pd.read_csv(outfile_path)
+    assert np.allclose(csmf.CSMF.sum(), 1)
