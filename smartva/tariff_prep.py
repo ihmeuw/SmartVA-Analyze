@@ -583,6 +583,18 @@ class TariffPrep(DataPrep):
         Args:
             cause_counts (dict): Map of causes to count.
         """
+        drop_causes = []
+        if not self.hiv_region:
+            drop_causes.extend(self.data_module.HIV_CAUSES)
+        if not self.malaria_region:
+            drop_causes.extend(self.data_module.MALARIA_CAUSES)
+
+        for cause in drop_causes:
+            cause34 = self.data_module.CAUSE_REDUCTION[cause]
+            gs_text34 = self.data_module.CAUSES[cause34]
+            if gs_text34 in cause_counts:
+                cause_counts.pop(gs_text34)
+
         cause_count_values = float(sum(cause_counts.values()))
         with open(os.path.join(self.output_dir_path, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
