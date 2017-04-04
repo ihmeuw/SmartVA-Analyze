@@ -1,6 +1,10 @@
 from collections import defaultdict
 import csv
+import os
+
 import pytest
+import pandas as pd
+import numpy as np
 
 from smartva.tariff_prep import (
     ScoredVA,
@@ -13,7 +17,7 @@ import sample_tariff_data
 
 
 class TariffPrepMock(TariffPrep):
-    def _calc_age_bin(self, va, u_row):
+    def _calc_age_bin(self, age):
         return int(age / 5) * 5 if age < 80 else 80
 
 
@@ -155,3 +159,19 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
                                        uniform_list_pos, min_cause_score)
 
     assert va.rank_list == expected
+
+
+def test_csmf_summed_to_one(tmpdir):
+    options = {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}
+    prep = TariffPrepMock(tmpdir.strpath, True, options, 'USA')
+    prep.data_module = sample_tariff_data
+
+    causes = ['a', 'b', 'c']
+    counts = np.random.randint(10, 100, 3)
+    cause_counts = dict(zip(causes, counts))
+    prep.write_csmf(cause_counts)
+
+    outfile_path = os.path.join(prep.output_dir_path,
+                                '{}-csmf.csv'.format(prep.AGE_GROUP))
+    csmf = pd.read_csv(outfile_path)
+    assert np.allclose(csmf.CSMF.sum(), 1)
