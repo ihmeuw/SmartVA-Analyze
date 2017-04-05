@@ -509,6 +509,36 @@ CENSORED_MAP = {
         's52',       # Did [name] cough blood?
         's107',      # Paralyzed on one side (arm and leg)
     ],
+    11: [   # Diabetes with Coma
+        's107',      # Paralyzed on one side (arm and leg)
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's114',      # Paralyzed refused
+        's115',      # Paralyzed don't know
+        's116',      # Paralyzed other
+    ],
+    12: [   # Diabetes with Renal Failure
+        's107',      # Paralyzed on one side (arm and leg)
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's114',      # Paralyzed refused
+        's115',      # Paralyzed don't know
+        's116',      # Paralyzed other
+    ],
+    13: [   # Diabetes with Skin Infection/Sepsis
+        's107',      # Paralyzed on one side (arm and leg)
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's114',      # Paralyzed refused
+        's115',      # Paralyzed don't know
+        's116',      # Paralyzed other
+    ],
     16: [   # Epilepsy
         's23992',     # Rash was located on trunk
         's23993',     # Rash was located on extremities
