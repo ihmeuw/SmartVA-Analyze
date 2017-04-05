@@ -369,36 +369,35 @@ class PreSymptomPrep(DataPrep):
             exam_date_vars (dict): Answers which contain exam dates.
             weight_sd_data (dict): Map of variable to store and applicable SD data.
         """
-        if int(row.get('{:s}y'.format(DOB_VAR), False)):
-            try:
-                dob = make_date(row, DOB_VAR)
-            except ValueError:
-                pass
-            else:
+        try:
+            dob = make_date(row, DOB_VAR)
+        except (ValueError, KeyError):
+            pass
+        else:
 
-                exam_data = []
-                for date_var, weight_var in exam_date_vars.items():
-                    try:
-                        exam_date = make_date(row, date_var)
-                        exam_weight = float(row['{:s}b'.format(weight_var)])
-                        exam_data.append((exam_date, exam_weight))
-                    except ValueError:
-                        # If the date is invalid or the weight isn't a number, skip this exam.
-                        continue
+            exam_data = []
+            for date_var, weight_var in exam_date_vars.items():
+                try:
+                    exam_date = make_date(row, date_var)
+                    exam_weight = float(row['{:s}b'.format(weight_var)])
+                    exam_data.append((exam_date, exam_weight))
+                except (ValueError, KeyError):
+                    # If the date is invalid or the weight isn't a number, skip this exam.
+                    continue
 
-                if exam_data:
-                    latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
+            if exam_data:
+                latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
 
-                    if latest_exam > dob:
-                        age_at_exam_months = months_delta(latest_exam, dob)
+                if latest_exam > dob:
+                    age_at_exam_months = months_delta(latest_exam, dob)
 
-                        if age_at_exam_months <= 60:
-                            sex = int(row[SEX_VAR])
-                            weight_kg = latest_weight / 1000
+                    if age_at_exam_months <= 60:
+                        sex = int(row[SEX_VAR])
+                        weight_kg = latest_weight / 1000
 
-                            for sd_var, sd_data in weight_sd_data.items():
-                                row[sd_var] = int(
-                                    weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
+                        for sd_var, sd_data in weight_sd_data.items():
+                            row[sd_var] = int(
+                                weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 
     def fix_rash_length(self, row):
         """Only consider values in days for child rash data.
