@@ -151,3 +151,25 @@ class TestPreSymptomPrep(object):
         assert row['g5_04a'] == 1.
         assert row['g5_04b'] == 12.
         assert row['g5_04c'] == 365.
+
+    @pytest.mark.parametrize('row,endorsed', [
+        ({'g5_01y': 2015, 'g5_01m': 1, 'g5_01d': 1, 'g5_02': 1, 'symp': 0,
+          'date1y': 2015, 'date1m': 1, 'date1d': 15, 'weight1b': 700}, 1),
+        ({'g5_01y': 2015, 'g5_01m': 1, 'g5_01d': 1, 'g5_02': 1, 'symp': 0,
+          'date1y': 2015, 'date1m': 1, 'date1d': 15, 'weight1b': 7000}, 0),
+        ({'symp': 0}, 0),
+    ])
+    def test_process_weight_sd_vars(self, prep, row, endorsed):
+        exam_date_vars = {
+            'date1': 'weight1',
+            'date2': 'weight2',
+        }
+        weight_sd_data = {
+            'symp': {
+                1: {0: 2.5},
+                2: {0: 2.5},
+            }
+        }
+        prep.process_weight_sd_vars(row, exam_date_vars, weight_sd_data)
+
+        assert row['symp'] == endorsed
