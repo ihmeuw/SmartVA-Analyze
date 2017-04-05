@@ -510,6 +510,7 @@ CENSORED_MAP = {
         's107',      # Paralyzed on one side (arm and leg)
     ],
     11: [   # Diabetes with Coma
+        's12',       # Did Decedent Have Stroke?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
@@ -520,6 +521,7 @@ CENSORED_MAP = {
         's116',      # Paralyzed other
     ],
     12: [   # Diabetes with Renal Failure
+        's12',       # Did Decedent Have Stroke?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
@@ -530,6 +532,7 @@ CENSORED_MAP = {
         's116',      # Paralyzed other
     ],
     13: [   # Diabetes with Skin Infection/Sepsis
+        's12',       # Did Decedent Have Stroke?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
