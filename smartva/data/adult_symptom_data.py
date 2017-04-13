@@ -542,6 +542,14 @@ CENSORED_MAP = {
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
     ],
+    14: [   # Diarrhea/Dysentery
+        's61',        # Did [name] experience pain in the chest in the month preceding death?
+        's1',         # Did Decedent Have Asthma?
+        's12',        # Did Decedent Have Stroke?
+        's42',        # Did [name] have puffiness of the face?
+        's97',        # Did it continue until death?
+        's86',        # Slowly protruding belly
+    ],
     16: [   # Epilepsy
         's23992',     # Rash was located on trunk
         's23993',     # Rash was located on extremities
@@ -598,6 +606,9 @@ CENSORED_MAP = {
 }
 
 REQUIRED_MAP = {
+    14: [   # Diarrhea/Dysentery
+        's66',        # Did [name] have more frequent loose or liquid stools than usual?
+    ],
     17: [   # Esophageal Cancer
         's76',         # Did [name] have difficulty swallowing?
     ]

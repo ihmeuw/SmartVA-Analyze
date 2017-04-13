@@ -12,7 +12,6 @@ CUTOFF_POS = 0.89
 UNIFORM_LIST_POS = 0.18
 
 MIN_CAUSE_SCORE = defaultdict(lambda: 0.7, {
-    14: 9.2,    # diarrhea/dysentry
 })
 
 SPURIOUS_ASSOCIATIONS = {
