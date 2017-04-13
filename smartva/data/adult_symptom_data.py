@@ -549,6 +549,12 @@ CENSORED_MAP = {
         's42',        # Did [name] have puffiness of the face?
         's97',        # Did it continue until death?
         's86',        # Slowly protruding belly
+        's9',         # Did Decedent Have Heart Disease?
+        's84',        # Did [name] have a more than usual protruding belly?
+        's78',        # Difficulty swallowing both solids and liquids
+        's95',        # Sudden loss of consciousness
+        's105',       # Was [name] in any way paralyzed?
+        's13',        # Did Decedent Have TB?
     ],
     16: [   # Epilepsy
         's23992',     # Rash was located on trunk
