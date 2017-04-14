@@ -198,6 +198,9 @@ class vaUI(wx.Frame):
         self.sub_status_gauge = None
         self.action_button = None
 
+        icon = os.path.join(config.basedir, 'res', 'favicon.ico')
+        self.SetIcon(wx.IconFromBitmap(wx.Bitmap(icon, wx.BITMAP_TYPE_ANY)))
+
         self._init_menu_bar()
         self._init_ui()
 
