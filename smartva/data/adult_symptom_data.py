@@ -555,6 +555,15 @@ CENSORED_MAP = {
         's95',        # Sudden loss of consciousness
         's105',       # Was [name] in any way paralyzed?
         's13',        # Did Decedent Have TB?
+        's14',        # Did Decedent Have AIDS?
+        's9999122',   # word_pneumonia
+        's107',       # Paralyzed on one side (arm and leg)
+        's99994',     # word_ami
+        's9999130',   # word_renal
+        's38',        # Did [name] have yellow discoloration of the eyes?
+        's39',        # For how long did [name] have the yellow discoloration? [days]
+        's51',        # Did the cough produce sputum?
+
     ],
     16: [   # Epilepsy
         's23992',     # Rash was located on trunk
