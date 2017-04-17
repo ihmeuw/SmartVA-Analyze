@@ -29,6 +29,9 @@ class BellyPain(object):
 
 class Adult(object):
     EPILEPSY = 'a1_01_8'
+    DIABETES = 'a1_01_7'
+    HEART_DISEASE = 'a1_01_9'
+    STROKE = 'a1_01_12'
     FEVER = 'a2_02'
     PALE = 'a2_20'
     BREATHING_DIFFICULT = 'a2_36'
@@ -39,6 +42,15 @@ class Adult(object):
     BELLY_PAIN_LOCATION2 = 'a2_63_2'
     HEADACHES = 'a2_69'
     CONVULSIONS = 'a2_82'
+    PARALYSIS = 'a2_85'
+    PARALYSIS_RIGHT = 'a2_87_1'
+    PARALYSIS_LEFT = 'a2_87_2'
+    PARALYSIS_LOWER = 'a2_87_3'
+    PARALYSIS_UPPER = 'a2_87_4'
+    PARALYSIS_ONE_LEG = 'a2_87_5'
+    PARALYSIS_ONE_ARM = 'a2_87_6'
+    PARALYSIS_WHOLE = 'a2_87_7'
+    PARALYSIS_OTHER = 'a2_87_10a'
     EXCESSIVE_VAGINAL_BLEEDING_1_WEEK = 'a3_06'
     PERIOD_OVERDUE = 'a3_07'
     PERIOD_OVERDUE_DAYS = 'a3_08'
@@ -62,6 +74,9 @@ class Adult(object):
     SELF_INFLICTED = 'a5_02'
     INFLICTED_BY_OTHER = 'a5_03'
     INJURY_DAYS = 'a5_04'
+    FREE_TEXT_HEART_ATTACK = 'a_7_4'
+    FREE_TEXT_HEART_PROBLEM = 'a_7_5'
+    FREE_TEXT_PNEUMONIA = 'a_7_9'
     FREE_TEXT_SUICIDE = 'a_7_11'
 
 

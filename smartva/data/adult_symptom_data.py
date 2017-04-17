@@ -509,35 +509,50 @@ CENSORED_MAP = {
         's52',       # Did [name] cough blood?
         's107',      # Paralyzed on one side (arm and leg)
     ],
+    8: [   #Cirrhosis
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
     11: [   # Diabetes with Coma
         's12',       # Did Decedent Have Stroke?
+        's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
         's111',      # Paralyzed one leg only
         's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
     ],
     12: [   # Diabetes with Renal Failure
         's12',       # Did Decedent Have Stroke?
+        's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
         's111',      # Paralyzed one leg only
         's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
     ],
     13: [   # Diabetes with Skin Infection/Sepsis
         's12',       # Did Decedent Have Stroke?
+        's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
         's111',      # Paralyzed one leg only
         's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
@@ -575,10 +590,15 @@ CENSORED_MAP = {
         's74',        # Was there blood in the vomit?
         's88',        # For how long before death did [name] have a mass in the belly [days]
         's93',        # For how long before death did [name] have stiff neck? [days]
+        's105',      # Was [name] in any way paralyzed?
         's107',       # Paralyzed on one side (arm and leg)
+        's109',      # Paralyzed lower part of body
         's110',       # Paralyzed upper part of body
         's111',       # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
         's115',       # Paralyzed don't know
+        's116',      # Paralyzed other
         's119',       # Did [name] have any ulcers (pits) in the breast?
         's124',       # At the time of death was her period overdue?
         's125',       # For how many weeks was her period overdue? [days]
@@ -616,7 +636,69 @@ CENSORED_MAP = {
         's9999108',   # word_malaria
         's9999130',   # word_renal
         's999997',    # word_jaundic
-
+    ],
+    23: [   # Acute Myocardial Infarction
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    24: [   # Congestive Heart Failure
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    31: [   # Other Cardiovascular Diseases
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    33: [   # Other Infectious Diseases
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    35: [   # Other Non-communicable Diseases
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    37: [   # Pneumonia
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
+    ],
+    46: [   # TB
+        's105',      # Was [name] in any way paralyzed?
+        's109',      # Paralyzed lower part of body
+        's110',      # Paralyzed upper part of body
+        's111',      # Paralyzed one leg only
+        's112',      # Paralyzed one arm only
+        's113',      # Paralyzed whole body
+        's116',      # Paralyzed other
     ],
 }
 
