@@ -15,14 +15,12 @@ from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
-CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
 TARIFF_CAUSE_NUM_KEY = 'xs_name'
 
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
-RESTRICTED_KEY = 'restricted'
 
 
 def safe_float(x):
@@ -30,6 +28,10 @@ def safe_float(x):
         return float(x)
     except (ValueError, TypeError):
         return 0.0
+
+
+def safe_int(x):
+    return int(safe_float(x))
 
 
 def clean_tariffs(row, drop_headers=None, spurious=None, max_symptoms=40,
@@ -174,7 +176,7 @@ class TariffPrep(DataPrep):
         return os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
-    def va_validated_filename(self):
+    def validated_filename(self):
         return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
@@ -211,76 +213,81 @@ class TariffPrep(DataPrep):
         self.cause_list = sorted(tariffs.keys())
 
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, tariffs)
+        validated = self.read_input_file(self.validated_filename)[1]
+        validated = self.score_symptom_data(validated, tariffs, 'va46')
 
-        uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
+        uniform_list = self.generate_uniform_list(validated, self.data_module.FREQUENCIES)
 
         status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path(), tariffs)
+        user_data = self.read_input_file(self.input_file_path())[1]
+        user_data = self.score_symptom_data(user_data, tariffs,
+                                            RULES_CAUSE_NUM_KEY)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
-        self.generate_cause_rankings(va_cause_list, uniform_list)
+        self.generate_cause_rankings(user_data, uniform_list)
 
-        self.write_external_ranks(va_cause_list)
+        self.write_external_ranks(user_data)
 
         lowest_rank = len(uniform_list) + 0.5
 
-        self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
+        self.identify_lowest_ranked_causes(user_data, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
                                            lowest_rank, self.data_module.UNIFORM_LIST_POS,
                                            self.data_module.MIN_CAUSE_SCORE)
 
-        cause_counts = self.write_predictions(va_cause_list, undetermined_matrix, lowest_rank,
+        cause_counts = self.write_predictions(user_data, undetermined_matrix, lowest_rank,
                                               self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
 
         self.write_csmf(cause_counts)
 
-        self.write_tariff_ranks(va_cause_list)
+        self.write_tariff_ranks(user_data)
 
-        self.write_tariff_scores(va_cause_list)
+        self.write_tariff_scores(user_data)
 
-        return va_cause_list
+        return user_data
 
-    def get_va_cause_list(self, input_file, cause40s):
-        """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
+    def score_symptom_data(self, symptom_data, tariffs, cause_key=''):
+        """Score symptom data using a tariffs matrix.
+
+        Calculate the tariff score for each cause for every row of symptom
+        data by calculating the sum of the tariffs for endorsed symptoms.
 
         Args:
-            input_file (str): Path of input file.
-            cause40s (dict):
+            symptom_data (list of dict): symptom data from a csv.DictReader
+            tariffs (dict of lists): processed tariffs by cause
+            cause_key (str): name of column with prediction or gold standard
+                cause encoded as an int
 
         Returns:
             list: List of Scored VAs.
         """
-        va_cause_list = []
-        headers, matrix = DataPrep.read_input_file(input_file)
+        scored = []
 
-        status_notifier.update({'sub_progress': (0, len(matrix))})
+        status_notifier.update({'sub_progress': (0, len(symptom_data))})
 
-        for index, row in enumerate(matrix):
+        for index, row in enumerate(symptom_data):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 
-            cause_dict = {}
+            scores = {}
 
-            for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(v for k, v in symptoms if safe_float(row.get(k)) == 1)
+            for cause, symptoms in tariffs.items():
+                scores[cause] = sum(tariff for symptom, tariff in symptoms
+                                    if safe_float(row.get(symptom)) == 1)
 
-            # Rule engine injected cause
-            if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
-                row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
+            restricted = map(safe_int, row.get('restricted', '').split())
+            cause = safe_int(row.get(cause_key))
 
-            # Censored causes
-            row[RESTRICTED_KEY] = map(int, map(float, row.get(RESTRICTED_KEY, '').split()))
-
-            va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
-                                          row.get(AGE_KEY), row.get(SEX_KEY), row.get(RESTRICTED_KEY)))
+            va = ScoredVA(scores, cause, row.get(SID_KEY), row.get(AGE_KEY),
+                          row.get(SEX_KEY), restricted)
+            scored.append(va)
 
         status_notifier.update({'sub_progress': None})
 
-        return va_cause_list
+        return scored
 
     def generate_uniform_list(self, va_cause_list, frequencies):
         """Generate a uniform list of validated Scored VAs from a list of frequencies.
