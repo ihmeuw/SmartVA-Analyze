@@ -1,9 +1,7 @@
 import abc
 import collections
 import csv
-import math
 import os
-from decimal import Decimal
 
 import numpy as np
 
@@ -12,7 +10,7 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
-from smartva.utils.utils import round5, int_or_float
+from smartva.utils.utils import int_or_float
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
@@ -20,8 +18,6 @@ INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
 TARIFF_CAUSE_NUM_KEY = 'xs_name'
-
-MAX_CAUSE_SYMPTOMS = 40
 
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
@@ -36,59 +32,74 @@ def safe_float(x):
         return 0.0
 
 
-def get_cause_num(cause):
-    return int(cause.lstrip('cause'))
+def clean_tariffs(row, drop_headers=None, spurious=None, max_symptoms=40,
+                  precision=0.5):
+    """Process the tariffs for a single cause.
 
+    Symptoms are dropped if they appear in the drop list or are spurious.
+    The first set include short form, HCE or freetext columns. The second
+    set are based on expert review of the tariff matrix. Symptoms with a
+    tariff value of zero are also dropped since they do not contribute to
+    the scoring. Only the tariffs with the highest magnitude, independent
+    of direction are kept. This is done before rounding the tariffs to the
+    specified precision. Both rounding and dropping the lowest magnitude
+    tariffs guards against overfitting by treating the model fit data as
+    a coarse approximation of the results.
 
-def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
-    cause_symptoms = {}
-    with open(filename, 'rU') as f:
-        reader = csv.DictReader(f)
+    Args:
+        row (dict): row of data from tariffs matrix csv
+        drop (list of str): symptom names which should be dropped from the
+            tariff matrix
+        spurious (list of str): cause-specific list of symptom names which
+            should be dropped from the tariff matrix
+        max_symptoms (int): number of symptoms per cause to keep.
+        precision (float): tariffs are rounded to the closest multiple of
+            this value.
 
-        for row in reader:
-            cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
-
-            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and safe_float(v)}
-
-            if callable(filter_fn):
-                tariff_dict = filter_fn(tariff_dict, cause_num)
-
-            items = tariff_dict.items()
-
-            cause_symptoms[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:max_symptoms]
-
-    return cause_symptoms
-
-
-def exclude_spurious_associations(spurious_assoc_dict):
-    """remove all keys from tariff_dict that appear in the list
-    corresponding to cause_num in the spurious_assoc_dict
-
-    Parameters
-    ----------
-    spurious_assoc_dict : dict, keyed by cause_nums, with s_a_d[j] ==
-      lists of symptoms (see SPURIOUS_ASSOCIATIONS in
-      data/{module}_tariff_data.py for lists)
-
-    Returns
-    -------
-    filter function with access to spurious associations dict.
+    Returns:
+        list: tuples of (symptom, tariff)
     """
-    def fn_wrap(tariff_dict, cause_num):
-        """
-        Parameters
-        ----------
-        tariff_dict : dict, keyed by symptoms
-        cause_num : int
+    drop_headers = drop_headers or []
+    spurious = spurious or []
+    items = [(k, float(v)) for k, v in row.items()
+             if k not in drop_headers and k not in spurious and safe_float(v)]
+    topN = sorted(items, key=lambda _: abs(_[1]), reverse=True)[:max_symptoms]
 
-        Returns
-        -------
-        dict with all spurious associations removed from tariff dict
-        """
-        return {symptom: value for symptom, value in tariff_dict.items()
-                if symptom not in spurious_assoc_dict.get(cause_num, [])}
+    # Use np.round. Round has different behavior in py2 vs py3 for X.5 values
+    return [(k, np.round(v / precision) * precision) for k, v in topN]
 
-    return fn_wrap
+
+def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
+                      precision=0.5):
+    """Load the tariff matrix from a csv file.
+
+    Args:
+        filename (str): path to the csv file with module-specific tariffs
+        drop_headers (list): symptom names which should be dropped from the
+            tariff matrix
+        spurious_assoc (dict of lists of str): cause-symptom pairs which
+            should be dropped from the tariff matrix
+        max_symptoms (int): number of symptoms per cause to keep.
+        precision (float): tariffs are rounded to the closest multiple of
+            this value.
+
+    Returns:
+        tariffs (dict): matrix in dict of lists form where keys are causes
+            and the list contain tuples of (symptom, tariff)
+
+    See Also:
+        clean_tariffs
+    """
+    tariffs = {}
+
+    with open(filename, 'rU') as f:
+        for row in csv.DictReader(f):
+            cause_num = int(row[TARIFF_CAUSE_NUM_KEY].lstrip('cause'))
+            spurious = spurious_assoc.get(cause_num, [])
+            tariffs[cause_num] = clean_tariffs(row, drop_headers, spurious,
+                                               max_symptoms, precision)
+
+    return tariffs
 
 
 class ScoredVA(object):
@@ -159,6 +170,10 @@ class TariffPrep(DataPrep):
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
     @property
+    def tariffs_filename(self):
+        return os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+
+    @property
     def va_validated_filename(self):
         return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
 
@@ -190,13 +205,13 @@ class TariffPrep(DataPrep):
 
         undetermined_matrix = self._get_undetermined_matrix()
 
-        cause40s = get_cause_symptoms(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
-                                      drop_headers, MAX_CAUSE_SYMPTOMS,
-                                      exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
-        self.cause_list = sorted(cause40s.keys())
+        tariffs = get_tariff_matrix(self.tariffs_filename, drop_headers,
+                                    self.data_module.SPURIOUS_ASSOCIATIONS)
+
+        self.cause_list = sorted(tariffs.keys())
 
         status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
+        va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, tariffs)
 
         uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
 
@@ -204,7 +219,7 @@ class TariffPrep(DataPrep):
         cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
 
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s)
+        va_cause_list = self.get_va_cause_list(self.input_file_path(), tariffs)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(va_cause_list, uniform_list)
@@ -251,7 +266,7 @@ class TariffPrep(DataPrep):
             cause_dict = {}
 
             for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if safe_float(row.get(k)) == 1)
+                cause_dict[cause] = sum(v for k, v in symptoms if safe_float(row.get(k)) == 1)
 
             # Rule engine injected cause
             if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
