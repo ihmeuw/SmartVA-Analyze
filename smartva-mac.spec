@@ -7,7 +7,7 @@ pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='SmartVA',
+          name='SmartVA-Analyze',
           debug=False,
           strip=None,
           upx=False,
@@ -56,7 +56,7 @@ coll = COLLECT(exe,
                [('data/neonate_undetermined_weights.csv', 'smartva/data/neonate_undetermined_weights.csv', 'DATA')],
                strip=None,
                upx=False,
-               name='SmartVA')
+               name='SmartVA-Analyze')
 app = BUNDLE(coll,
-             name='SmartVA.app',
+             name='SmartVA-Analyze.app',
              icon='pkg/icon.icns')
