@@ -43,19 +43,6 @@ class TestTariffPrep(object):
         assert prep.AGE_GROUP == 'sample'
 
 
-@pytest.mark.parametrize('row,expected', [
-    ({'sid': 'none', 'restricted': ''}, []),
-    ({'sid': 'one', 'restricted': '1'}, [1]),
-    ({'sid': 'two', 'restricted': '1 2'}, [1, 2]),
-], ids=lambda x: x['sid'])
-def test_get_va_cause_list_restricted(tmpdir, prep, row, expected):
-    f = tmpdir.join('test.csv')
-    f.write('\n'.join([','.join(r) for r in zip(*row.items())]))
-    va = prep.get_va_cause_list(f.strpath, {})[0]
-
-    assert va.restricted == expected
-
-
 @pytest.mark.parametrize('row, drop_headers, expected', [
     ({'bad': ''}, ['bad'], []),
     ({'bad': '', 'symp': '1'}, ['bad'], [('symp', 1)]),
@@ -130,6 +117,45 @@ def test_get_tariff_matrix(tmpdir):
 
     for key in result:
         assert result[key] == expected_result[key]
+
+
+@pytest.mark.parametrize('row,expected', [
+    ({'sid': 'none', 'restricted': ''}, []),
+    ({'sid': 'one', 'restricted': '1'}, [1]),
+    ({'sid': 'two', 'restricted': '1 2'}, [1, 2]),
+], ids=lambda x: x['sid'])
+def test_score_symptom_data_restricted(prep, row, expected):
+    va = prep.score_symptom_data([row], {})[0]
+    assert va.restricted == expected
+
+
+@pytest.mark.parametrize('row, key, expected', [
+    ({'va46': '1.0'}, 'va46', 1),
+    ({'cause': '1.0'}, 'cause', 1),
+    ({'cause': '1.0'}, '', 0),
+])
+def test_score_symptom_data_cause_key(prep, row, key, expected):
+    va = prep.score_symptom_data([row], {}, key)[0]
+    assert va.cause == expected
+
+
+@pytest.mark.parametrize('row, expected', [
+    ({'symp1': 0, 'symp2': 0, 'symp3': 0, 'symp4': 0}, {1: 0, 2: 0, 3: 0}),
+    ({'symp1': 1, 'symp2': 1, 'symp3': 1, 'symp4': 1}, {1: 4, 2: 5, 3: 7}),
+    ({'symp1': 1, 'symp2': 0, 'symp3': 0, 'symp4': 0}, {1: 1, 2: 3, 3: 0}),
+    ({'symp1': 0, 'symp2': 1, 'symp3': 0, 'symp4': 0}, {1: 1, 2: 0, 3: 7}),
+    ({'symp1': 0, 'symp2': 0, 'symp3': 1, 'symp4': 0}, {1: 1, 2: 0, 3: 0}),
+    ({'symp1': 0, 'symp2': 0, 'symp3': 0, 'symp4': 1}, {1: 1, 2: 2, 3: 0}),
+])
+def test_score_symptom_data_scoring(prep, row, expected):
+    tariffs = {
+        1: [('symp1', 1), ('symp2', 1), ('symp3', 1), ('symp4', 1)],
+        2: [('symp1', 3), ('symp4', 2)],
+        3: [('symp2', 7)],
+    }
+
+    scored = prep.score_symptom_data([row], tariffs)[0].cause_scores
+    assert scored == expected
 
 
 def test_generate_cause_rankings(prep):

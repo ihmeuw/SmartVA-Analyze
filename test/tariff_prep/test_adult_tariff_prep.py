@@ -62,7 +62,7 @@ def test_tariff_prep(prep, input_file, tmpdir):
 
 
 def test_uniform_frequencies(prep):
-    df = pd.read_csv(prep.va_validated_filename, index_col=0)
+    df = pd.read_csv(prep.validated_filename, index_col=0)
     df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
     counts = df.gs_text46.value_counts()
     assert len(counts.unique()) == 1
