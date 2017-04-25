@@ -2,8 +2,6 @@ import csv
 import os
 import threading
 
-from decimal import Decimal
-
 
 def intermediate_dir_path(output_dir_path):
     return os.path.join(output_dir_path, 'intermediate-files')
@@ -85,18 +83,6 @@ def get_item_count_for_file(f):
         count += 1
     f.seek(0)
     return count
-
-
-def round5(value):
-    """Round value to the nearest 0.5.
-
-    Args:
-        value (Decimal): Value to round.
-
-    Returns:
-        Decimal: Rounded value.
-    """
-    return round(value / Decimal(.5)) * .5
 
 
 def int_or_float(x):

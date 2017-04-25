@@ -9,8 +9,8 @@ import numpy as np
 from smartva.tariff_prep import (
     ScoredVA,
     TariffPrep,
-    get_cause_num,
-    get_cause_symptoms,
+    get_tariff_matrix,
+    clean_tariffs,
 )
 
 import sample_tariff_data
@@ -43,10 +43,6 @@ class TestTariffPrep(object):
         assert prep.AGE_GROUP == 'sample'
 
 
-def test_get_cause_num():
-    assert get_cause_num('cause0') == 0
-
-
 @pytest.mark.parametrize('row,expected', [
     ({'sid': 'none', 'restricted': ''}, []),
     ({'sid': 'one', 'restricted': '1'}, [1]),
@@ -60,7 +56,50 @@ def test_get_va_cause_list_restricted(tmpdir, prep, row, expected):
     assert va.restricted == expected
 
 
-def test_get_cause_symptoms(tmpdir):
+@pytest.mark.parametrize('row, drop_headers, expected', [
+    ({'bad': ''}, ['bad'], []),
+    ({'bad': '', 'symp': '1'}, ['bad'], [('symp', 1)]),
+    ({'bad': '', 'bad2': '', 'symp': '1'}, ['bad', 'bad2'], [('symp', 1)]),
+])
+def test_clean_tariffs_drop_headers(row, drop_headers, expected):
+    cleaned = clean_tariffs(row, drop_headers=drop_headers)
+    assert cleaned == expected
+
+
+@pytest.mark.parametrize('row, spurious, expected', [
+    ({'symp1': 1, 'symp2': 2}, [], [('symp2', 2), ('symp1', 1)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp1'], [('symp2', 2)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp2'], [('symp1', 1)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp1', 'symp2'], []),
+])
+def test_clean_tariffs_spurious(row, spurious, expected):
+    cleaned = clean_tariffs(row, spurious=spurious)
+    assert cleaned == expected
+
+
+@pytest.mark.parametrize('row, max_symptoms, expected', [
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 2, [('symp1', 5), ('symp2', 4)]),
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 1, [('symp1', 5)]),
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 0, []),
+    ({'symp1': 5, 'symp2': -5, 'symp3': 3}, 2, [('symp1', 5), ('symp2', -5)]),
+])
+def test_clean_tariffs_max_symptoms(row, max_symptoms, expected):
+    cleaned = clean_tariffs(row, max_symptoms=max_symptoms)
+    assert cleaned == expected
+
+
+@pytest.mark.parametrize('row, precision, expected', [
+    ({'symp': '1.1'}, 0.5, [('symp', 1.0)]),
+    ({'symp': '1.6'}, 0.5, [('symp', 1.5)]),
+    ({'symp': '1.7499'}, 0.5, [('symp', 1.5)]),
+    ({'symp': '1.75'}, 0.5, [('symp', 2.0)]),
+])
+def test_clean_tariffs_precision(row, precision, expected):
+    cleaned = clean_tariffs(row, precision=precision)
+    assert cleaned == expected
+
+
+def test_get_tariff_matrix(tmpdir):
     input_data = [
         ['xs_name', 'age', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
         ['cause1', '10.0', '8.0', '6.0', '4.0', '2.0', '0.0', '-1.0', '-3.0', '-5.0'],
@@ -85,7 +124,7 @@ def test_get_cause_symptoms(tmpdir):
         w = csv.writer(f)
         w.writerows(input_data)
 
-    result = get_cause_symptoms(f_path.strpath, ['xs_name'], 5)
+    result = get_tariff_matrix(f_path.strpath, ['xs_name'], {}, 5)
 
     print(result)
 
