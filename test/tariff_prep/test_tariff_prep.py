@@ -154,7 +154,7 @@ def test_score_symptom_data_scoring(prep, row, expected):
         3: [('symp2', 7)],
     }
 
-    scored = prep.score_symptom_data([row], tariffs)[0].cause_scores
+    scored = prep.score_symptom_data([row], tariffs)[0].scores
     assert scored == expected
 
 
@@ -174,6 +174,7 @@ def test_generate_cause_rankings(prep):
         -3,   # rank 10
     ]
     train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2, []) for s in train_scores]
+    uniform_scores = {1: np.sort([va.scores[1] for va in train_data])}
 
     # Score, Rank within training
     tests = [
@@ -192,9 +193,9 @@ def test_generate_cause_rankings(prep):
     test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2, []) for score, rank in tests]
 
     # Modifies list of ScoredVAs in place and doesn't return anything
-    prep.generate_cause_rankings(test_data, train_data)
+    prep.generate_cause_rankings(test_data, uniform_scores)
 
-    predicted_test_ranks = [va.rank_list[1] for va in test_data]
+    predicted_test_ranks = [va.ranks[1] for va in test_data]
     actual_test_ranks = [float(rank) for score, rank in tests]
     assert predicted_test_ranks == actual_test_ranks
 
@@ -210,7 +211,7 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
     prep.cause_list = scores.keys()
 
     va = ScoredVA(scores, 0, 'sid', 7, 2, restrictions)
-    va.rank_list = ranks
+    va.ranks = ranks
 
     uniform = range(1000)  # just needs length
     cutoffs = dict(zip(scores.keys(), [99999] * len(scores)))
@@ -223,7 +224,7 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
                                        demog_restrictions, lowest_rank,
                                        uniform_list_pos, min_cause_score)
 
-    assert va.rank_list == expected
+    assert va.ranks == expected
 
 
 def test_csmf_summed_to_one(tmpdir):
