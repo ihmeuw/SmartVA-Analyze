@@ -105,11 +105,11 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
 
 
 class ScoredVA(object):
-    def __init__(self, cause_scores, cause, sid, age, sex, restricted):
-        self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
-        self.cause = cause  # int
+    def __init__(self, scores, cause, sid, age, sex, restricted):
+        self.scores = scores
+        self.cause = cause
         self.restricted = restricted
-        self.rank_list = {}
+        self.ranks = {}
         self.sid = sid
         self.age = age
         self.sex = sex
@@ -121,8 +121,8 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return ('sid={sid} age={age} sex={sex} cause={cause} restricted={restricted}'
-                'scores={cause_scores} ranks={rank_list}'.format(**self.__dict__))
+        return ('sid={sid} age={age} sex={sex} cause={cause} restricted={restricted} '
+                'scores={scores} ranks={ranks}'.format(**self.__dict__))
 
     def __str__(self):
         return self.__repr__()
@@ -216,10 +216,10 @@ class TariffPrep(DataPrep):
         validated = self.read_input_file(self.validated_filename)[1]
         validated = self.score_symptom_data(validated, tariffs, 'va46')
 
-        uniform_list = self.generate_uniform_list(validated, self.data_module.FREQUENCIES)
+        uniform_train = self.generate_uniform_train(validated, self.data_module.FREQUENCIES)
 
         status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
-        cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
+        cutoffs, uniform_scores = self.generate_cutoffs(uniform_train, self.data_module.CUTOFF_POS)
 
         status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
         user_data = self.read_input_file(self.input_file_path())[1]
@@ -227,13 +227,13 @@ class TariffPrep(DataPrep):
                                             RULES_CAUSE_NUM_KEY)
 
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
-        self.generate_cause_rankings(user_data, uniform_list)
+        self.generate_cause_rankings(user_data, uniform_scores)
 
         self.write_external_ranks(user_data)
 
-        lowest_rank = len(uniform_list) + 0.5
+        lowest_rank = len(uniform_train) + 0.5
 
-        self.identify_lowest_ranked_causes(user_data, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
+        self.identify_lowest_ranked_causes(user_data, uniform_train, cutoffs, self.data_module.CAUSE_CONDITIONS,
                                            lowest_rank, self.data_module.UNIFORM_LIST_POS,
                                            self.data_module.MIN_CAUSE_SCORE)
 
@@ -289,90 +289,98 @@ class TariffPrep(DataPrep):
 
         return scored
 
-    def generate_uniform_list(self, va_cause_list, frequencies):
-        """Generate a uniform list of validated Scored VAs from a list of frequencies.
+    def generate_uniform_train(self, scored, frequencies):
+        """Expand a matrix ScoredVAs using predetermined frequencies.
+
+        The validated data is expanded so that the cause distribution across
+        all the observation is uniformly distributed across the causes. The
+        sampling frequencies are determined elsewhere and stored.
 
         Args:
-            va_cause_list (list): List of validated Scored VAs.
-            frequencies (dict): Map of scored VA to frequency.
+            scored (list): List of validated ScoredVAs.
+            frequencies (dict): Map of validated sid to frequency.
 
         Returns:
-            list: Uniform list of validated VAs.
+            list: validated VAs with uniform cause distribution.
         """
-        uniform_list = []
-        for va in va_cause_list:
-            uniform_list.extend([va] * frequencies[va.sid])
+        uniform_train = []
+        for va in scored:
+            uniform_train.extend([va] * frequencies[va.sid])
 
-        for cause in self.cause_list:
-            cause_list = sorted(uniform_list, key=lambda t: t.cause_scores[cause], reverse=True)
-            for i, va in enumerate(cause_list):
-                va.rank_list[cause] = i
+        return uniform_train
 
-        return uniform_list
-
-    def generate_cutoffs(self, uniform_list, cutoff_pos):
-        """Determine cutoff score for each cause. Write scores to a file.
+    def generate_cutoffs(self, uniform_train, cutoff_pos):
+        """Determine cutoff rank for each cause. Write cutoffs to a file.
 
         Args:
-            uniform_list (list): Uniform list of validated VAs.
+            uniform_train (list): Uniform list of validated VAs.
             cutoff_pos (int): Cutoff position.
 
         Returns:
             dict: Cutoff score for each cause.
         """
         cutoffs = {}
-        with open(os.path.join(self.intermediate_dir, '{:s}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
-            for cause_num in self.cause_list:
+        uniform_scores = {}
+        output_file = os.path.join(self.intermediate_dir,
+                                   '{:s}-cutoffs.txt'.format(self.AGE_GROUP))
+        with open(output_file, 'w') as f:
+            for cause in self.cause_list:
                 self.check_abort()
 
-                # Get the uniform list sorted by (reversed) cause_score and sid.
-                sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause_num], va.sid))
+                # Get the uniform training data sorted by (reversed) score and
+                # sid. Sorting by sid ensures the ranks are stable between row
+                # which have the score but different gold standard causes.
+                def sorter(va):
+                    return -va.scores[cause], va.sid
+                uniform_sorted = sorted(uniform_train, key=sorter)
 
-                # Create a list of indexes from the sorted cause list for each cause.
-                # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
-                # numbers as the original stata tool
-                local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if int(va.cause) == cause_num]
+                # Determine the rank within the complete uniform training data
+                # of the subset of VAs whose gold standard cause is the cause
+                # by which the VAs are ranked.
+                ranks = [(i + 1) for i, va in enumerate(uniform_sorted)
+                         if int(va.cause) == cause]
 
                 # Find the index of the item at cutoff position.
-                cutoffs[cause_num] = local_list[int(len(local_list) * cutoff_pos)]
+                cutoffs[cause] = ranks[int(len(ranks) * cutoff_pos)]
 
-                f.write('{} : {}\n'.format(cause_num, cutoffs[cause_num]))
+                f.write('{} : {}\n'.format(cause, cutoffs[cause]))
 
-        return cutoffs
+                # Store the scores from the sorted distribution
+                uniform_scores[cause] = np.array([va.scores[cause]
+                                                  for va in uniform_sorted])
 
-    def generate_cause_rankings(self, va_cause_list, uniform_list):
-        """Determine cause rankings by comparing
+        return cutoffs, uniform_scores
+
+    def generate_cause_rankings(self, scored, uniform_scores):
+        """Determine rank for each cause.
+
+        The scored user data is ranked against the scores from the validation
+        data which has been resampled to a uniform cause distribtuion. If an
+        observation is scored higher than any observation in the training data
+        it is ranked 0.5. If an observation is scored lower than any
+        observation in the training data it is ranked len(training) + 0.5.
+
+        The user_data is modified in place and not returned.
+
         Args:
-            va_cause_list:
-            uniform_list:
-
-        Returns:
-
+            scored (list): list of ScoredVAs from user data
+            uniform_scores (dict of np.array): sorted distribution of scores
+                by cause from uniform training data
         """
-        status_notifier.update({'sub_progress': (0, len(va_cause_list))})
-        cause_scores = {}
-        for cause in self.cause_list:
-            cause_scores[cause] = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
+        status_notifier.update({'sub_progress': (0, len(scored))})
 
-        for index, va in enumerate(va_cause_list):
+        for index, va in enumerate(scored):
             status_notifier.update({'sub_progress': (index,)})
 
             for cause in self.cause_list:
                 self.check_abort()
 
-                # get the tariff score for this cause for this external VA
-                death_score = va.cause_scores[cause]
+                gt = np.sum(uniform_scores[cause] > va.scores[cause])
+                lt = np.sum(uniform_scores[cause] < va.scores[cause])
+                total = uniform_scores[cause].shape[0]
+                avg_rank = (gt + total - lt) / 2.
 
-                lowest_rank = np.sum(np.array(cause_scores[cause]) > death_score)
-                highest_rank = len(cause_scores[cause]) - np.sum(np.array(cause_scores[cause]) < death_score)
-                avg_rank = (lowest_rank + highest_rank) / 2.
-
-                # add .5 because python is zero indexed, and stata is 1 indexed so we get the same
-                # answer as the original stata tool
-                # If an observation is scored higher than any observation in the training data it is ranked 0.5
-                # If an observation is scored lower than any observation in the training data
-                # it is ranked len(training) + 0.5
-                va.rank_list[cause] = avg_rank + .5
+                va.ranks[cause] = avg_rank + .5
 
         status_notifier.update({'sub_progress': None})
 
@@ -387,7 +395,7 @@ class TariffPrep(DataPrep):
             self.check_abort()
 
             rank_dict = {"sid": va.sid}
-            rank_dict.update(va.rank_list)
+            rank_dict.update(va.ranks)
             ranks.append(rank_dict)
 
         DataPrep.write_output_file(sorted(ranks[0].keys(), key=lambda x: (isinstance(x, int), x)),
@@ -453,9 +461,9 @@ class TariffPrep(DataPrep):
 
             # if a VA has a tariff score less than 0 for a certain cause,
             # replace the rank for that cause with the lowest possible rank
-            for cause in va.cause_scores:
-                if float(va.cause_scores[cause]) < 0.0:
-                    va.rank_list[cause] = lowest_rank
+            for cause in va.scores:
+                if float(va.scores[cause]) < 0.0:
+                    va.ranks[cause] = lowest_rank
 
             lowest_cause_list = set(va.restricted)
 
@@ -479,14 +487,14 @@ class TariffPrep(DataPrep):
                 lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
 
             for cause_num in self.cause_list:
-                if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
-                        (float(va.rank_list[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
+                if ((float(va.ranks[cause_num]) > float(cutoffs[cause_num])) or
+                        (float(va.ranks[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
                     # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.cause_scores[cause_num]) <= min_cause_score[cause_num])):
+                        (float(va.scores[cause_num]) <= min_cause_score[cause_num])):
                     lowest_cause_list.add(cause_num)
 
             for cause_num in lowest_cause_list:
-                va.rank_list[cause_num] = lowest_rank
+                va.ranks[cause_num] = lowest_rank
 
     def write_predictions(self, va_cause_list, undetermined_matrix, lowest_rank, cause_reduction, cause34_names, cause46_names):
         """Determine cause predictions and write to a file. Return cause count.
@@ -520,10 +528,10 @@ class TariffPrep(DataPrep):
                     )
 
                 # If a cause is not yet determined and any cause is higher than the lowest rank:
-                va_lowest_rank = min(va.rank_list.values())
+                va_lowest_rank = min(va.ranks.values())
                 if not cause34 and va_lowest_rank < lowest_rank:
                     # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
-                    causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
+                    causes = np.extract(np.array(va.ranks.values()) == va_lowest_rank, va.ranks.keys())
                     cause34 = cause_reduction[int(causes[0])]
 
                     # Warn user if multiple causes are equally likely and which will be chosen.
@@ -586,7 +594,7 @@ class TariffPrep(DataPrep):
         with open(os.path.join(self.intermediate_dir, '{:s}-tariff-scores.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.cause_scores[cause] for cause in self.cause_list] for va in va_cause_list])
+            writer.writerows([[va.sid] + [va.scores[cause] for cause in self.cause_list] for va in va_cause_list])
 
     def write_tariff_ranks(self, va_cause_list):
         """Write Scored VA Tariff ranks.
@@ -597,7 +605,7 @@ class TariffPrep(DataPrep):
         with open(os.path.join(self.intermediate_dir, '{:s}-tariff-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.rank_list[cause] for cause in self.cause_list] for va in va_cause_list])
+            writer.writerows([[va.sid] + [va.ranks[cause] for cause in self.cause_list] for va in va_cause_list])
 
     def write_csmf(self, cause_counts):
         """Write Scored VA cause counts.
