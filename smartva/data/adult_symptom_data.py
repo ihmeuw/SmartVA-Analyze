@@ -509,6 +509,14 @@ CENSORED_MAP = {
         's52',       # Did [name] cough blood?
         's107',      # Paralyzed on one side (arm and leg)
     ],
+    6: [   # Breast Cancer
+        's88',       # For how long before death did [name] have a mass in the belly [days]
+    ],
+    7: [   # Cervical Cancer
+        's47',       # Did [name] have a lump in the armpit?
+        's52',       # Did [name] cough blood?
+        's46',       # Did [name] have a lump in the neck?
+    ],
     8: [   #Cirrhosis
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
@@ -517,6 +525,22 @@ CENSORED_MAP = {
         's112',      # Paralyzed one arm only
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
+    ],
+    9: [   # Colorectal Cancer
+        's118',      # Did [name] have any swelling or lump in the breast?
+        's113',      # Paralyzed whole body
+        's999952',   # word_dialysi
+        's8',        # Did Decedent Have Epilepsy?
+        's114',      # Paralyzed refused
+        's116',      # Paralyzed other
+        's23991',    # Rash was located on face
+        's103',      # For how long before death did the convulsions last? [days]
+        's125',      # For how many weeks was her period overdue? [days]
+        's119',      # Did [name] have any ulcers (pits) in the breast?
+        's47',       # Did [name] have a lump in the armpit?
+        's46',       # Did [name] have a lump in the neck?
+        's121',      # Did [name] have vaginal bleeding after cessation of menstruation? (post menopausal)
+
     ],
     11: [   # Diabetes with Coma
         's12',       # Did Decedent Have Stroke?
@@ -637,6 +661,59 @@ CENSORED_MAP = {
         's9999130',   # word_renal
         's999997',    # word_jaundic
     ],
+    17: [   # Esophageal Cancer
+        's84',        # Did [name] have a more than usual protruding belly?
+        's121',       # Did [name] have vaginal bleeding after cessation of menstruation? (post menopausal)
+        's102',       # Did [name] have convulsions?
+        's9999122',   # word_pneumonia
+        's23994',     # Rash was located everywhere
+        's12',        # Did Decedent Have Stroke?
+        's47',        # Did [name] have a lump in the armpit?
+        's122',       # Did [name] have vaginal bleeding other than her period? (intermenstrual)
+        's118',       # Did [name] have any swelling or lump in the breast?
+        's30',        # Did [name] have an ulcer (pit) on the foot?
+        's104',       # Did the person become unconscious immediately after the convulsions?
+        's23992',     # Rash was located on trunk
+        's109',       # Paralyzed lower part of body
+        's123',       # Was there excessive vaginal bleeding in the week prior to death?
+        's113',       # Paralyzed whole body
+        's126',       # Did [name] have a sharp pain in the belly shortly before death?
+        's152',       # Decedent suffered fall
+        's999952',    # word_dialysi
+        's999997',    # word_jaundic
+        's9999104',   # word_liver
+        's8  Did',    # Decedent Have Epilepsy?
+        's111',       # Paralyzed one leg only
+        's112',       # Paralyzed one arm only
+        's114',       # Paralyzed refused
+        's116',       # Paralyzed other
+        's103',       # For how long before death did the convulsions last? [days]
+        's125',       # For how many weeks was her period overdue? [days]
+        's127',       # Was [name] pregnant at the time of death?
+        's155',       # Decedent suffered bite/sting
+        's157',       # Decedent victim of violence
+        's159',       # Decedent suffered other injury
+        's162',       # Was the injury or accident intentionally inflicted by someone else?
+        's9999108',   # word_malaria
+        's9999130',   # word_renal
+        's9999148',   # word_suicid
+        's31',        # Did the ulcer ooze pus?
+        's32',        # For how many days did the ulcer ooze pus? [days]
+        's110',       # Paralyzed upper part of body
+        's115',       # Paralyzed don't know
+        's119',       # Did [name] have any ulcers (pits) in the breast?
+        's128',       # For how many months was she pregnant? [days]
+        's129',       # Did [name] die during an abortion?
+        's130',       # Did bleeding occur while she was pregnant?
+        's131',       # Did she have excessive bleeding during labor or delivery?
+        's132',       # Did she die during labor or delivery?
+        's133',       # For how long was she in labor? [days]
+        's134',       # Did she die within 6 weeks after having an abortion?
+        's135',       # Did she die within 6 weeks of childbirth?
+        's136',       # Did she have excessive bleeding after delivery or abortion?
+        's999999',    # word_kidney
+
+    ],
     23: [   # Acute Myocardial Infarction
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
@@ -654,6 +731,18 @@ CENSORED_MAP = {
         's112',      # Paralyzed one arm only
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
+    ],
+    26: [   # Leukemia
+        's119',      # Did [name] have any ulcers (pits) in the breast?
+    ],
+    27: [   # Lung Cancer
+        's119',      # Did [name] have any ulcers (pits) in the breast?
+    ],
+    28: [   # Lymphomas
+        's119',      # Did [name] have any ulcers (pits) in the breast?
+    ],
+    30: [   # Other Cancers
+        's119',      # Did [name] have any ulcers (pits) in the breast?
     ],
     31: [   # Other Cardiovascular Diseases
         's105',      # Was [name] in any way paralyzed?
@@ -690,6 +779,16 @@ CENSORED_MAP = {
         's112',      # Paralyzed one arm only
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
+    ],
+    39: [   # Prostate Cancer
+        's88',       # For how long before death did [name] have a mass in the belly [days]
+        's52',       # Did [name] cough blood?
+        's47',       # Did [name] have a lump in the armpit?
+    ],
+    43: [   # Stomach Cancer
+        's119'       # Did [name] have any ulcers (pits) in the breast?
+        's47'        # Did [name] have a lump in the armpit?
+        's118'       # Did [name] have any swelling or lump in the breast?
     ],
     46: [   # TB
         's105',      # Was [name] in any way paralyzed?
