@@ -233,9 +233,10 @@ class TariffPrep(DataPrep):
 
         lowest_rank = len(uniform_train) + 0.5
 
-        self.identify_lowest_ranked_causes(user_data, uniform_train, cutoffs, self.data_module.CAUSE_CONDITIONS,
-                                           lowest_rank, self.data_module.UNIFORM_LIST_POS,
-                                           self.data_module.MIN_CAUSE_SCORE)
+        self.mask_ranks(user_data, len(uniform_train), cutoffs,
+                        self.data_module.CAUSE_CONDITIONS,
+                        lowest_rank, self.data_module.UNIFORM_LIST_POS,
+                        self.data_module.MIN_CAUSE_SCORE)
 
         cause_counts = self.write_predictions(user_data, undetermined_matrix, lowest_rank,
                                               self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
@@ -440,39 +441,63 @@ class TariffPrep(DataPrep):
 
         return weights
 
-    def identify_lowest_ranked_causes(self, va_cause_list, uniform_list, cutoffs, cause_conditions, lowest_rank,
-                                      uniform_list_pos, min_cause_score):
-        """Determine which causes are least likely by testing conditions.
-        Only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis.
-        Only males can have prostate cancer.
-        Eliminate user specified causes (Malaria).
+    def mask_ranks(self, user_data, n_uniform_train, cause_cutoffs,
+                   age_sex_restrictions, lowest_rank, overall_rank_cutoff,
+                   min_cause_score):
+        """Mask the ranks for some causes based on certain criteria.
+
+        Causes may by masked for any of the following reasons:
+        * The is biologically impossible/improbably given the age and sex of
+          the decent. Example: no prostate cancer in females.
+        * User data may come from areas with very low prevalence of certain
+          infectious diseases which are not likely to occur in the sample.
+          These are indicated by the HIV and Malaria options flags.
+        * The tariff score for a cause may be below the minimum score.
+        * The rank for a cause may be below the cause-specific minimum rank.
+        * The rank for a cause may be below the minimum overall rank.
+
+        The last three are information criteria which prevent unstable
+        predictions for VAs with very few endorsements or only endorsements
+        which do not clearly lead to a given prediction.
+
+        This modifies the records in place and does not return anything.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
-            uniform_list (list): Uniform list of validated VAs.
-            cutoffs (dict): Map of cutoff values for each cause.
-            cause_conditions (dict): Conditions necessary for a given list of causes.
+            user_data (list): List of Scored VAs.
+            n_uniform_train (int): number of observations in the validated
+                data which has been resampled to a uniform cause distribution.
+            cause_cutoffs (dict): Map of cutoff ranks for each cause.
+            age_sex_restrictions (dict): Conditions necessary for a given
+                list of causes. Keys are LDAP strings which compare age or
+                sex to a numeric threshold.
             lowest_rank (int): Value to assign to the least likely causes.
-            uniform_list_pos (float): Reject causes above this position in the uniform list.
-            min_cause_score (float): Reject causes under this threshold.
+            overall_rank_cutoff (float): The percentile (between 0 and 1)
+                under which a cause is rejected
+            min_cause_score (dict): Map of cutoff scores for each cause.
         """
-        for va in va_cause_list:
+        overall_rank_cutoff = n_uniform_train * overall_rank_cutoff
+        for va in user_data:
             self.check_abort()
 
-            # if a VA has a tariff score less than 0 for a certain cause,
-            # replace the rank for that cause with the lowest possible rank
+            # Collect a set of causes which should be masked for this VA
+            masked = set(va.restricted)
+
+            # Mask based on cause scores
             for cause in va.scores:
-                if float(va.scores[cause]) < 0.0:
-                    va.ranks[cause] = lowest_rank
+                if va.scores[cause] <= min_cause_score[cause]:
+                    masked.add(cause)
 
-            lowest_cause_list = set(va.restricted)
+            # Mask based on age/sex criteria
+            def lookup(x):
+                return value_or_default(va[x], int_or_float)
 
-            for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
-                    lowest_cause_list.update(causes)
+            for condition, causes in age_sex_restrictions.items():
+                if not LdapNotationParser(condition, lookup, int).evaluate():
+                    masked.update(causes)
 
+            # Mask based on regional prevalence of HIV
             if not self.hiv_region:
-                lowest_cause_list.update(self.data_module.HIV_CAUSES)
+                masked.update(self.data_module.HIV_CAUSES)
 
                 # This a fragile hack to remove rule-based predictions of AIDS
                 # from the child module if the user specifies that the data is
@@ -482,19 +507,22 @@ class TariffPrep(DataPrep):
                 if va.cause in self.data_module.HIV_CAUSES:
                     va.cause = None
 
-
+            # Mask based on regional prevalence of Malaria
             if not self.malaria_region:
-                lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
+                masked.update(self.data_module.MALARIA_CAUSES)
 
-            for cause_num in self.cause_list:
-                if ((float(va.ranks[cause_num]) > float(cutoffs[cause_num])) or
-                        (float(va.ranks[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
-                    # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.scores[cause_num]) <= min_cause_score[cause_num])):
-                    lowest_cause_list.add(cause_num)
+            for cause in self.cause_list:
+                # Mask based on cause-specific rank
+                if va.ranks[cause] > cause_cutoffs[cause]:
+                    masked.add(cause)
 
-            for cause_num in lowest_cause_list:
-                va.ranks[cause_num] = lowest_rank
+                # Mask based on overall rank
+                if va.ranks[cause] > overall_rank_cutoff:
+                    masked.add(cause)
+
+            # Apply the mask
+            for cause in masked:
+                va.ranks[cause] = lowest_rank
 
     def write_predictions(self, va_cause_list, undetermined_matrix, lowest_rank, cause_reduction, cause34_names, cause46_names):
         """Determine cause predictions and write to a file. Return cause count.

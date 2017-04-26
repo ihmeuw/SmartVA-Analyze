@@ -206,8 +206,7 @@ def test_generate_cause_rankings(prep):
     ([1], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 5}),
     ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
 ])
-def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
-                                                 ranks, expected):
+def test_mask_ranks(prep, restrictions, scores, ranks, expected):
     prep.cause_list = scores.keys()
 
     va = ScoredVA(scores, 0, 'sid', 7, 2, restrictions)
@@ -220,9 +219,8 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
     uniform_list_pos = 999
     min_cause_score = defaultdict(lambda: 0)
 
-    prep.identify_lowest_ranked_causes([va], uniform, cutoffs,
-                                       demog_restrictions, lowest_rank,
-                                       uniform_list_pos, min_cause_score)
+    prep.mask_ranks([va], uniform, cutoffs, demog_restrictions, lowest_rank,
+                    uniform_list_pos, min_cause_score)
 
     assert va.ranks == expected
 
