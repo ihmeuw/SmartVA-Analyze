@@ -264,16 +264,12 @@ class vaUI(wx.Frame):
         parent_box_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # logo
-        scale_size = .35
         logo_file_path = os.path.join(config.basedir, 'res' + str(os.path.sep) + 'logo.png')
-        logo = wx.Image(logo_file_path, wx.BITMAP_TYPE_ANY)
-        scaled_image = logo.Scale(logo.GetWidth() * scale_size, logo.GetHeight() * scale_size,
-                                  wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
+        logo = wx.Image(logo_file_path, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
 
         logo_box_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        logo_box_sizer.AddStretchSpacer()
-        logo_box_sizer.Add(wx.StaticBitmap(parent_panel, -1, scaled_image), flag=wx.RIGHT, border=12)
-        logo_box_sizer.AddStretchSpacer()
+        logo_box_sizer.Add((10, 48))
+        logo_box_sizer.Add(wx.StaticBitmap(parent_panel, -1, logo), flag=wx.TOP, border=3)
 
         # choose input file
         choose_input_static_box = wx.StaticBox(parent_panel, label='1. Choose input file')
