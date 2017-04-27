@@ -543,6 +543,7 @@ CENSORED_MAP = {
 
     ],
     11: [   # Diabetes with Coma
+        's9',        # Did Decedent Have Heart Disease?
         's12',       # Did Decedent Have Stroke?
         's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
@@ -554,8 +555,11 @@ CENSORED_MAP = {
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
+        's99994',    # word_ami
+        's999979',   # word_heart
     ],
     12: [   # Diabetes with Renal Failure
+        's9',        # Did Decedent Have Heart Disease?
         's12',       # Did Decedent Have Stroke?
         's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
@@ -567,8 +571,11 @@ CENSORED_MAP = {
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
+        's99994',    # word_ami
+        's999979',   # word_heart
     ],
     13: [   # Diabetes with Skin Infection/Sepsis
+        's9',        # Did Decedent Have Heart Disease?
         's12',       # Did Decedent Have Stroke?
         's105',      # Was [name] in any way paralyzed?
         's107',      # Paralyzed on one side (arm and leg)
@@ -580,6 +587,8 @@ CENSORED_MAP = {
         's114',      # Paralyzed refused
         's115',      # Paralyzed don't know
         's116',      # Paralyzed other
+        's99994',    # word_ami
+        's999979',   # word_heart
     ],
     14: [   # Diarrhea/Dysentery
         's61',        # Did [name] experience pain in the chest in the month preceding death?
@@ -723,6 +732,11 @@ CENSORED_MAP = {
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
     ],
+    25: [   # Inflammatory Heart Disease
+        's9',        # Did Decedent Have Heart Disease?
+        's99994',    # word_ami
+        's999979',   # word_heart
+    ],
     24: [   # Congestive Heart Failure
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
@@ -745,6 +759,7 @@ CENSORED_MAP = {
         's119',      # Did [name] have any ulcers (pits) in the breast?
     ],
     31: [   # Other Cardiovascular Diseases
+        's9',        # Did Decedent Have Heart Disease?
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
@@ -752,6 +767,8 @@ CENSORED_MAP = {
         's112',      # Paralyzed one arm only
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
+        's99994',    # word_ami
+        's999979',   # word_heart
     ],
     33: [   # Other Infectious Diseases
         's105',      # Was [name] in any way paralyzed?
