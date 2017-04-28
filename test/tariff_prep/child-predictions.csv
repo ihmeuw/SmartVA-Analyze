@@ -8,7 +8,7 @@ sid,cause,cause34,age,sex
 7,,Undetermined,1,1
 8,,Undetermined,1,1
 9,,Undetermined,1,1
-10,21,Violent Death,1,1
+10,,Undetermined,1,1
 11,,Undetermined,1,1
 12,,Undetermined,1,1
 13,,Undetermined,1,1
@@ -129,20 +129,20 @@ sid,cause,cause34,age,sex
 128,,Undetermined,1,1
 129,,Undetermined,1,1
 130,,Undetermined,1,1
-131,7,Fires,1,1
+131,,Undetermined,1,1
 132,,Undetermined,1,1
 133,,Undetermined,1,1
 134,,Undetermined,1,1
 135,,Undetermined,1,1
 136,,Undetermined,1,1
 137,,Undetermined,1,1
-138,19,Road Traffic,1,1
-139,6,Falls,1,1
-140,4,Drowning,1,1
-141,18,Poisonings,1,1
-142,2,Bite of Venomous Animal,1,1
-143,21,Violent Death,1,1
-144,14,Other Defined Causes of Child Deaths,1,1
+138,,Undetermined,1,1
+139,,Undetermined,1,1
+140,,Undetermined,1,1
+141,,Undetermined,1,1
+142,,Undetermined,1,1
+143,,Undetermined,1,1
+144,,Undetermined,1,1
 145,,Undetermined,1,1
 146,,Undetermined,1,1
 147,,Undetermined,1,1
