@@ -1,6 +1,6 @@
 <project>
     <shortName>SmartVA</shortName>
-    <fullName>Smart VA</fullName>
+    <fullName>SmartVA-Analyze</fullName>
     <version>1.2.0</version>
     <componentList>
         <component>
@@ -19,9 +19,9 @@
                     <platforms>windows</platforms>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/SmartVA.exe</windowsExec>
+                    <windowsExec>${installdir}/SmartVA-Analyze.exe</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
-                    <windowsIcon>${installdir}/SmartVA.exe</windowsIcon>
+                    <windowsIcon>${installdir}/SmartVA-Analyze.exe</windowsIcon>
                     <windowsPath></windowsPath>
                 </shortcut>
             </desktopShortcutList>
@@ -58,7 +58,7 @@
                             <origin>pkg/Manual Data Entry Forms</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>SmartVA.exe</origin>
+                            <origin>SmartVA-Analyze.exe</origin>
                         </distributionFile>
                     </distributionFileList>
                 </folder>
@@ -85,9 +85,9 @@
                     <name>Run ${product_shortname}</name>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/SmartVA.exe</windowsExec>
+                    <windowsExec>${installdir}/SmartVA-Analyze.exe</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
-                    <windowsIcon>${installdir}/SmartVA.exe</windowsIcon>
+                    <windowsIcon>${installdir}/SmartVA-Analyze.exe</windowsIcon>
                     <windowsPath></windowsPath>
                 </startMenuShortcut>
                 <startMenuFileShortcut>
