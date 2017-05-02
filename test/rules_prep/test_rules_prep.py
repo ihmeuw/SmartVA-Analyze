@@ -25,6 +25,7 @@ from smartva.rules import (
     road_traffic_adult,
     road_traffic_child,
     stillbirth,
+    stroke,
     suicide,
 )
 
@@ -123,6 +124,7 @@ class TestAdultRulesPrep(object):
         other_injury_adult,
         homicide_adult,
         suicide,
+        stroke,
     ]
 
     def test_instance(self, tmpdir):
