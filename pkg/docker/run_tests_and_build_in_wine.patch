@@ -30,5 +30,5 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
 +wine pyinstaller.exe smartva-win.spec --onefile --windowed --clean
 +wine pyinstaller.exe smartva-win-cli.spec --onefile --clean
  
- if [[ -f dist/SmartVA.exe && -f dist/SmartVA-cli.exe ]]; then
+ if [[ -f dist/SmartVA-Analyze.exe && -f dist/SmartVA-Analyze-cli.exe ]]; then
    exit 0
