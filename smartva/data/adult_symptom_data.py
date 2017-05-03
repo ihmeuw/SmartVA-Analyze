@@ -508,6 +508,10 @@ CENSORED_MAP = {
         's39',       # For how long did [name] have the yellow discoloration? [days]
         's52',       # Did [name] cough blood?
         's107',      # Paralyzed on one side (arm and leg)
+        's70',        # Was there blood in the stool up until death?
+        's69',        # Was there blood in the stool?
+        's21',        # Did [name] have a rash?
+        's99994',     # word_ami
     ],
     6: [   # Breast Cancer
         's88',       # For how long before death did [name] have a mass in the belly [days]
@@ -517,7 +521,7 @@ CENSORED_MAP = {
         's52',       # Did [name] cough blood?
         's46',       # Did [name] have a lump in the neck?
     ],
-    8: [   #Cirrhosis
+    8: [   # Cirrhosis
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
@@ -542,6 +546,14 @@ CENSORED_MAP = {
         's121',      # Did [name] have vaginal bleeding after cessation of menstruation? (post menopausal)
 
     ],
+    9: [   # COPD
+        's3',        # Did Decedent Have Cancer?
+        's70',        # Was there blood in the stool up until death?
+        's69',        # Was there blood in the stool?
+        's21',        # Did [name] have a rash?
+        's99994',     # word_ami
+        's48',       # Did [name] have a lump in the groin?
+    ],
     11: [   # Diabetes with Coma
         's9',        # Did Decedent Have Heart Disease?
         's12',       # Did Decedent Have Stroke?
@@ -557,6 +569,7 @@ CENSORED_MAP = {
         's116',      # Paralyzed other
         's99994',    # word_ami
         's999979',   # word_heart
+        's52',       # Did [name] cough blood?
     ],
     12: [   # Diabetes with Renal Failure
         's9',        # Did Decedent Have Heart Disease?
@@ -573,6 +586,7 @@ CENSORED_MAP = {
         's116',      # Paralyzed other
         's99994',    # word_ami
         's999979',   # word_heart
+        's52',       # Did [name] cough blood?
     ],
     13: [   # Diabetes with Skin Infection/Sepsis
         's9',        # Did Decedent Have Heart Disease?
@@ -589,6 +603,7 @@ CENSORED_MAP = {
         's116',      # Paralyzed other
         's99994',    # word_ami
         's999979',   # word_heart
+        's52',       # Did [name] cough blood?
     ],
     14: [   # Diarrhea/Dysentery
         's61',        # Did [name] experience pain in the chest in the month preceding death?
@@ -691,7 +706,7 @@ CENSORED_MAP = {
         's999952',    # word_dialysi
         's999997',    # word_jaundic
         's9999104',   # word_liver
-        's8  Did',    # Decedent Have Epilepsy?
+        's8',         # Did Decedent Have Epilepsy?
         's111',       # Paralyzed one leg only
         's112',       # Paralyzed one arm only
         's114',       # Paralyzed refused
@@ -721,7 +736,15 @@ CENSORED_MAP = {
         's135',       # Did she die within 6 weeks of childbirth?
         's136',       # Did she have excessive bleeding after delivery or abortion?
         's999999',    # word_kidney
-
+        's4',         # Did Decedent Have COPD?
+        's42',        # Did [name] have puffiness of the face?
+        's38',        # Did [name] have yellow discoloration of the eyes?
+        's87',        # Did [name] have any mass in the belly?
+        's14',        # Did Decedent Have AIDS?
+        's69',        # Was there blood in the stool?
+        's21',        # Did [name] have a rash?
+        's99994',     # word_ami
+        's48',       # Did [name] have a lump in the groin?
     ],
     23: [   # Acute Myocardial Infarction
         's105',      # Was [name] in any way paralyzed?
