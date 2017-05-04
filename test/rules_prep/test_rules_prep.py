@@ -9,7 +9,6 @@ from smartva.rules import (
     aids_child,
     bite_adult,
     bite_child,
-    cvd_child,
     drowning_adult,
     drowning_child,
     falls_adult,
@@ -151,7 +150,6 @@ class TestChildRulesPrep(object):
         poisoning_child,
         other_injury_child,
         homicide_child,
-        cvd_child,
         aids_child,
     ]
 
