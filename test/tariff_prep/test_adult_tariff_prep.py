@@ -6,6 +6,11 @@ import pandas as pd
 import numpy as np
 import pytest
 
+from smartva import config
+from smartva.tariff_prep import (
+    get_cause_symptoms,
+    exclude_spurious_associations,
+)
 from smartva.adult_tariff import AdultTariff
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -96,3 +101,34 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
                                 '{}-csmf.csv'.format(prep.AGE_GROUP))
     csmf = pd.read_csv(outfile_path)
     assert np.allclose(csmf.CSMF.sum(), 1)
+
+
+def test_injuries_have_no_positive_scores(tmpdir, prep):
+    """
+    All tariffs scores for injury causes should be negative or zero. Injuries
+    should only be predicted from logic rules, not tariffs.
+    """
+    injuries = [5, 15, 18, 19, 21, 34, 38, 41, 45]
+
+    tariffs_path = os.path.join(config.basedir, 'data', 'tariffs-adult.csv')
+    with open(tariffs_path, 'r') as f:
+        symptoms = next(csv.reader(f))
+    symptoms.remove('xs_name')
+
+    # Single row with every symptom endorsed
+    row = {'sid': 'x'}
+    row.update({symp: 1 for symp in symptoms})
+
+    spurious = exclude_spurious_associations(prep.data_module.SPURIOUS_ASSOCIATIONS)
+    tariffs = get_cause_symptoms(tariffs_path, ['xs_name'], len(symptoms),
+                                 spurious)
+
+    symp_file = os.path.join(tmpdir.strpath, 'symptom.csv')
+    with open(symp_file, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(row.keys())
+        writer.writerow(row.values())
+    scored = prep.get_va_cause_list(symp_file, tariffs)
+
+    assert all([score <= 0 for cause, score in scored[0].cause_scores.items()
+                if cause in injuries])
