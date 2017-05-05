@@ -22,8 +22,56 @@ SPURIOUS_ASSOCIATIONS = {
         's19',  # Did the baby ever breathe?
         's190',  # Has the deceased's (biological) mother ever been told she had AIDS by a health worker
     ],
+    2: [  # Bite of Venomous Animal
+        'age',
+        's134',
+        's159',
+        's18',
+        's19',
+        's2995',
+        's30991',
+        's999921',
+        's999934',
+        's99994',
+        's999944',
+    ],
+    4: [  # Drowning
+        'age',
+        's157',
+        's165',
+        's2995',
+        's30991',
+        's999917',
+        's999918',
+    ],
     6: [  # Falls
+        'age',
+        's153',
+        's156',
+        's162',
+        's28',
+        's2994',
+        's30991',
+        's31',
+        's999918',
+        's999922',
+        's999925',
+        's999940',
+        's99995',
         's999922',  # word_head
+    ],
+    7: [  # Fires
+        's147',
+        's160',
+        's162',
+        's165',
+        's30991',
+        's8992',
+        's9',
+        's999918',
+        's99992',
+        's999920',
+        's999943',
     ],
     8: [  # Hemorrhagic Fever
         's999924',  # word_icu
@@ -59,6 +107,19 @@ SPURIOUS_ASSOCIATIONS = {
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
     ],
+    14: [  # Other Defined Causes of Child Deaths
+        's155',  # Decedent suffered road traffic injury
+        's156',  # Decedent suffered fall
+        's157',  # Decedent suffered drowning
+        's158',  # Decedent suffered poisoning
+        's159',  # Decedent suffered bite/sting
+        's160',  # Decedent suffered burn/fire
+        's161',  # Decedent victim of violence
+        's162',  # Decedent suffered other injury
+        's163',  # Don't know if decedent suffered injury
+        's164',  # Decedent did not suffer accident
+        's165',  # Was the injury or accident intentionally inflicted by someone else?
+    ],
     15: [  # Other Digestive Diseases
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
@@ -74,11 +135,28 @@ SPURIOUS_ASSOCIATIONS = {
         's999931',  # word_malnutrit
     ],
     18: [  # Poisonings
+        's158',
+        's18',
+        's19',
+        's999934',
+        's999948',
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
     ],
     19: [  # Road Traffic
+        'age',
+        's153',
+        's155',
+        's165',
+        's2995',
+        's30991',
+        's99992',
+        's999922',
+        's999925',
+        's999939',
+        's99997',
+        's7',
         's99992',  # word_accid
     ],
     20: [  # Sepsis
@@ -106,6 +184,15 @@ SPURIOUS_ASSOCIATIONS = {
         's19',  # Did the baby ever breathe?
     ],
     21: [  # Violent Death
+        's153',
+        's161',
+        's165',
+        's18',
+        's19',
+        's30991',
+        's8992',
+        's9',
+        's999932',
         's17',  # Did the baby ever cry?
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
