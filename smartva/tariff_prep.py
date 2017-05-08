@@ -106,6 +106,22 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
 
 
 class ScoredVA(object):
+    """Record object for VAs.
+
+    Attributes:
+        scores (dict): tariff score for each cause
+        cause (int): final prediction at cause46 level
+        sid (str): identifier
+        age (float): age in years
+        sex (int): 1=Male 2=Female
+        restricted (str): space separated list of ints which will be removed
+            from list of valid predictions. These are the result of censoring
+            based on symptom endorsements.
+        ranks (dict): rank relative to uniform training data for each cause
+        cause34 (int): final prediction at the cause34 level
+        cause34_name (str): cause name associated with cause34 prediction
+    """
+
     def __init__(self, scores=None, cause=0, sid=None, age=None, sex=None,
                  restricted='', ranks=None, cause34=None, cause34_name=None):
         self.scores = scores or {}
@@ -125,8 +141,9 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return ('sid={sid} age={age} sex={sex} cause={cause} restricted={restricted} '
-                'scores={scores} ranks={ranks}'.format(**self.__dict__))
+        return ('sid={sid} age={age} sex={sex} cause={cause}'
+                ' restricted={restricted} scores={scores} ranks={ranks}'
+                .format(**self.__dict__))
 
     def __str__(self):
         return self.__repr__()
@@ -135,14 +152,20 @@ class ScoredVA(object):
 class TariffPrep(DataPrep):
     """Process prepared answers against validated VA data.
 
-    The main goal of this step is to determine cause of death by comparing symptom scores to those in a uniform list
-    of validated VAs.
-    Steps to accomplish this goal:
-        Read intermediate data file
-        Drop answers based on user flags
+    This step accomplishes two main tasks:
+        1. prepping the serialized data from fitting tariff
+        2. using the model to predict causes for the user data
+
+    The first step includes processing the tariff matrix based on user
+    constraints, expanding the training data to a uniform cause distribution,
+    and calculating cuttoffs relative to the uniform training data.
+
+    The second step involves score the user data with the tariff matrix,
+    ranking it against the training data, removing invalid and improbable
+    prediction possibilies, and predicting.
 
     Notes:
-        Processing pipelines must implement `_matches_undetermined_cause` method.
+        Processing pipelines must implement `_calc_age_bin` method.
     """
 
     __metaclass__ = abc.ABCMeta
@@ -177,24 +200,29 @@ class TariffPrep(DataPrep):
 
     @property
     def tariffs_filename(self):
-        return os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+        return os.path.join(config.basedir, 'data',
+                            'tariffs-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
     def validated_filename(self):
-        return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
+        return os.path.join(config.basedir, 'data',
+                            'validated-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
     def undetermined_matrix_filename(self):
-        return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP))
+        filename = '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP)
+        return os.path.join(config.basedir, 'data', filename)
 
     def run(self):
         super(TariffPrep, self).run()
 
-        status_logger.info('{:s} :: Processing tariffs'.format(self.AGE_GROUP.capitalize()))
+        status_logger.info('{:s} :: Processing tariffs'
+                           .format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
 
-        # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
-        # tariff data. It is unnecessary to drop headers from other matrices.
+        # Headers are being dropped only from tariff matrix now because of the
+        # way we are iterating over the pruned tariff data. It is unnecessary
+        # to drop headers from other matrices.
         drop_headers = {TARIFF_CAUSE_NUM_KEY}
         if not self.hce:
             drop_headers.update(self.data_module.HCE_DROP_LIST)
@@ -208,21 +236,28 @@ class TariffPrep(DataPrep):
 
         self.cause_list = sorted(tariffs.keys())
 
-        status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
+        status_logger.info('{:s} :: Generating validated VA cause list.'
+                           .format(self.AGE_GROUP.capitalize()))
         validated = self.read_input_file(self.validated_filename)[1]
         validated = self.score_symptom_data(validated, tariffs, 'va46')
 
-        uniform_train = self.generate_uniform_train(validated, self.data_module.FREQUENCIES)
+        freqs = self.data_module.FREQUENCIES
+        uniform_train = self.generate_uniform_train(validated, freqs)
 
-        status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
-        cutoffs, uniform_scores = self.generate_cutoffs(uniform_train, self.data_module.CUTOFF_POS)
+        status_logger.debug('{:s} :: Generating cutoffs'
+                            .format(self.AGE_GROUP.capitalize()))
 
-        status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
+        cutoff = self.data_module.CUTOFF_POS
+        cutoffs, uniform_scores = self.generate_cutoffs(uniform_train, cutoff)
+
+        status_logger.info('{:s} :: Generating VA cause list.'
+                           .format(self.AGE_GROUP.capitalize()))
         user_data = self.read_input_file(self.input_file_path())[1]
         user_data = self.score_symptom_data(user_data, tariffs,
                                             RULES_CAUSE_NUM_KEY)
 
-        status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
+        status_logger.info('{:s} :: Generating cause rankings.'
+                           .format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(user_data, uniform_scores)
 
         self.write_intermediate_file(user_data, 'external-ranks', 'ranks')
