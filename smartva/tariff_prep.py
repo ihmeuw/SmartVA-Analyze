@@ -1,3 +1,4 @@
+from __future__ import division
 import abc
 import collections
 import csv
@@ -105,14 +106,17 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
 
 
 class ScoredVA(object):
-    def __init__(self, scores, cause, sid, age, sex, restricted):
-        self.scores = scores
+    def __init__(self, scores=None, cause=0, sid=None, age=None, sex=None,
+                 restricted='', ranks=None, cause34=None, cause34_name=None):
+        self.scores = scores or {}
         self.cause = cause
         self.restricted = restricted
-        self.ranks = {}
+        self.ranks = ranks or {}
         self.sid = sid
         self.age = age
         self.sex = sex
+        self.cause34 = None
+        self.cause34_name = None
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -203,10 +207,6 @@ class TariffPrep(DataPrep):
         if self.short_form:
             drop_headers.update(self.data_module.SHORT_FORM_DROP_LIST)
 
-        cause46_names = self.data_module.CAUSES46
-
-        undetermined_matrix = self._get_undetermined_matrix()
-
         tariffs = get_tariff_matrix(self.tariffs_filename, drop_headers,
                                     self.data_module.SPURIOUS_ASSOCIATIONS)
 
@@ -238,10 +238,15 @@ class TariffPrep(DataPrep):
                         lowest_rank, self.data_module.UNIFORM_LIST_POS,
                         self.data_module.MIN_CAUSE_SCORE)
 
-        cause_counts = self.write_predictions(user_data, undetermined_matrix, lowest_rank,
-                                              self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
+        self.predict(user_data, lowest_rank, self.data_module.CAUSE_REDUCTION,
+                     self.data_module.CAUSES, self.data_module.CAUSES46)
 
-        self.write_csmf(cause_counts)
+        undetermined_weights = self._get_undetermined_matrix()
+        csmf = self.calculate_csmf(user_data, undetermined_weights)
+
+        self.write_predictions(user_data)
+
+        self.write_csmf(csmf)
 
         self.write_tariff_ranks(user_data)
 
@@ -524,78 +529,127 @@ class TariffPrep(DataPrep):
             for cause in masked:
                 va.ranks[cause] = lowest_rank
 
-    def write_predictions(self, va_cause_list, undetermined_matrix, lowest_rank, cause_reduction, cause34_names, cause46_names):
-        """Determine cause predictions and write to a file. Return cause count.
+    def predict(self, user_data, lowest_rank, cause_reduction, cause34_names,
+                cause46_names):
+        """Determine cause predictions.
+
+        First look for causes which are already specified. These are rule
+        based predictions. If this is missing or invalid predictions are
+        based on the tariff ranks.
+
+        This modifies a list in place and adds the cause34 and cause34_name
+        attributes to the ScoredVA objects.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
-            undetermined_matrix (list): Matrix of undetermined cause weights.
-            lowest_rank (int): Lowest possible rank (highest value, length of uniform list).
+            user_data (list): list of ScoredVAs which have been ranked.
+            lowest_rank (int): Lowest possible rank.
             cause_reduction (dict): Map to reduce cause46 values to cause34.
             cause34_names (dict): Cause34 cause names for prediction output.
             cause46_names (dict): Cause46 cause names for warning messages.
-
-        Returns:
-            collections.Counter: Dict of cause counts.
         """
-        cause_counts = collections.Counter()
-        with open(os.path.join(self.output_dir_path, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
+        for va in user_data:
+            self.check_abort()
 
-            for va in va_cause_list:
-                self.check_abort()
+            # Record the cause if it is already determined
+            cause34 = cause_reduction.get(va.cause)
+            if cause34 is None:
+                warning_logger.debug(
+                    '{group:s} :: SID: {sid:s} was assigned an invalid '
+                    'cause: {cause}'.format(group=self.AGE_GROUP.capitalize(),
+                                            sid=va.sid, cause=va.cause)
+                )
 
-                # Record causes already determined.
-                cause46 = safe_float(va.cause)
-                cause34 = cause_reduction.get(cause46)
-                if cause46 and cause34 is None:
+            # Use tariff prediction if the cause is either missing or invalid
+            best_rank_value = min(va.ranks.values() or [0])
+            if not cause34 and best_rank_value < lowest_rank:
+                predictions = [cause for cause, rank in va.ranks.items()
+                               if rank == best_rank_value]
+
+                # Use the first listed cause if there are ties
+                cause34 = cause_reduction[sorted(predictions)[0]]
+
+                if len(predictions) > 1:
+                    names = [cause46_names[cause] for cause in predictions]
                     warning_logger.info(
-                        '{group:s} :: SID: {sid:s} was assigned an invalid cause: {cause}'
-                        .format(group=self.AGE_GROUP.capitalize(), sid=va.sid, cause=cause46)
+                        '{group:s} :: SID: {sid:s} had multiple causes '
+                        '{causes} predicted to be equally likely, using '
+                        '\'{causes[0]:s}\'.'
+                        .format(group=self.AGE_GROUP.capitalize(),
+                                sid=va.sid, causes=names)
                     )
 
-                # If a cause is not yet determined and any cause is higher than the lowest rank:
-                va_lowest_rank = min(va.ranks.values())
-                if not cause34 and va_lowest_rank < lowest_rank:
-                    # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
-                    causes = np.extract(np.array(va.ranks.values()) == va_lowest_rank, va.ranks.keys())
-                    cause34 = cause_reduction[int(causes[0])]
+            va.cause34 = cause34
+            va.cause34_name = cause34_names.get(cause34, 'Undetermined')
 
-                    # Warn user if multiple causes are equally likely and which will be chosen.
-                    if len(causes) > 1:
-                        multiple_cause_list = [cause46_names[int(_)] for _ in causes]
-                        warning_logger.info(
-                            '{group:s} :: SID: {sid:s} had multiple causes {causes} predicted to be equally likely, '
-                            'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,
-                                                              causes=multiple_cause_list))
+    def calculate_csmf(self, user_data, undetermined_weights):
+        """Tabluate predictions into Cause-Specific Mortality Fractions.
 
-                # Count causes, for use in graphs
-                cause34_name = cause34_names.get(cause34, 'Undetermined')
-                if not cause34:
-                    if self.iso3 is None:
-                        cause_counts.update([cause34_name])
-                    else:
-                        # For undetermined, look up the weights for the age and sex category which matches this VA
-                        # and add the fractions to the 'count' for all causes. If there is no weight for the
-                        # given age-sex, redistribute based on the proporiton across all ages and both sexes. This
-                        # may occur if the VA lists an age group in gen_5_4d, but lacks a real age data
-                        age = self._calc_age_bin(va.age)
-                        try:
-                            undetermined_weights = undetermined_matrix[age, va.sex]
-                        except KeyError:
-                            undetermined_weights = undetermined_matrix[99, 3]
-                        cause_counts.update(undetermined_weights)
-                else:
-                    cause_counts.update([cause34_name])
+        If a country is specified the undetermined predictions will be
+        redistributed. The weights are by the Global Burden of Disease age,
+        sex, country and cause34. For each undetermined prediction, a
+        fractions will be added to the 'count' for all relevant causes. If
+        there is no weight for the given age-sex, it will be redistributed
+        based on the proporiton across all ages and both sexes. This
+        may occur if age or sex data is missing such as when the VA lists an
+        age group in gen_5_4d, but lacks a real age data.
 
-                # We filled age with a default value of zero but do not want to
-                # report this value in output files and graphs
-                if float(va.age) == 0 and self.AGE_GROUP in ['adult', 'child']:
-                    va.age = ''
+        Args:
+            user_data (list): list of ScoredVAs with predictions
+            undetermined_weights: redistribution weights by age and sex
+        """
+        cause_counts = collections.Counter()
 
-                writer.writerow([va.sid, cause34, cause34_name, va.age, va.sex])
-        return cause_counts
+        for va in user_data:
+            self.check_abort()
+
+            if va.cause34_name == 'Undetermined' and self.iso3:
+                age = self._calc_age_bin(va.age)
+                try:
+                    redistributed = undetermined_weights[age, va.sex]
+                except KeyError:
+                    redistributed = undetermined_weights[99, 3]
+                cause_counts.update(redistributed)
+            else:
+                cause_counts.update([va.cause34_name])
+
+        # The undetermined weights may have redistributed onto causes which
+        # the user specified as non-existent. These should be removed.
+        drop_causes = []
+        if not self.hiv_region:
+            drop_causes.extend(self.data_module.HIV_CAUSES)
+        if not self.malaria_region:
+            drop_causes.extend(self.data_module.MALARIA_CAUSES)
+
+        for cause in drop_causes:
+            cause34 = self.data_module.CAUSE_REDUCTION[cause]
+            gs_text34 = self.data_module.CAUSES[cause34]
+            if gs_text34 in cause_counts:
+                cause_counts.pop(gs_text34)
+
+        # Convert counts to fractions
+        total_counts = sum(cause_counts.values())
+        csmf = {k: v / total_counts for k, v in cause_counts.items()}
+
+        return csmf
+
+    def write_predictions(self, user_data):
+        """Write the predicted causes.
+
+        Args:
+            user_data (list): List of ScoredVAs with predictions
+        """
+        def format_row(va):
+            # We filled age with a default value of zero but do not want to
+            # report this value in output files and graphs
+            if float(va.age) == 0 and self.AGE_GROUP in ['adult', 'child']:
+                va.age = ''
+            return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
+
+        filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
+        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+            writer = csv.writer(f)
+            writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
+            writer.writerows([format_row(va) for va in user_data])
 
     @abc.abstractmethod
     def _calc_age_bin(self, va, u_row):
@@ -635,26 +689,14 @@ class TariffPrep(DataPrep):
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([[va.sid] + [va.ranks[cause] for cause in self.cause_list] for va in va_cause_list])
 
-    def write_csmf(self, cause_counts):
-        """Write Scored VA cause counts.
+    def write_csmf(self, csmf):
+        """Write Cause-Specific Mortaility Fractions.
 
         Args:
-            cause_counts (dict): Map of causes to count.
+            csmf (dict): Map of causes to count.
         """
-        drop_causes = []
-        if not self.hiv_region:
-            drop_causes.extend(self.data_module.HIV_CAUSES)
-        if not self.malaria_region:
-            drop_causes.extend(self.data_module.MALARIA_CAUSES)
-
-        for cause in drop_causes:
-            cause34 = self.data_module.CAUSE_REDUCTION[cause]
-            gs_text34 = self.data_module.CAUSES[cause34]
-            if gs_text34 in cause_counts:
-                cause_counts.pop(gs_text34)
-
-        cause_count_values = float(sum(cause_counts.values()))
-        with open(os.path.join(self.output_dir_path, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
+        filename = '{:s}-csmf.csv'.format(self.AGE_GROUP)
+        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
-            writer.writerows([[k, (v / cause_count_values)] for k, v in cause_counts.items()])
+            writer.writerows(sorted(csmf.items(), key=lambda _: _[0]))
