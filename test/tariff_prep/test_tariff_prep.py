@@ -225,17 +225,33 @@ def test_mask_ranks(prep, restrictions, scores, ranks, expected):
     assert va.ranks == expected
 
 
-def test_csmf_summed_to_one(tmpdir):
-    options = {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}
-    prep = TariffPrepMock(tmpdir.strpath, True, options, 'USA')
-    prep.data_module = sample_tariff_data
+@pytest.mark.parametrize('va, cause, cause_name', [
+    (ScoredVA(sid='rules', cause=1), 11, 'c11'),
+    (ScoredVA(sid='rules2', cause=2), 12, 'c12'),
+    (ScoredVA(sid='ranks', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (ScoredVA(sid='rules_bad', cause='x', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (ScoredVA(sid='tie', ranks={1: 1, 2: 1, 3: 2}), 11, 'c11'),
+    (ScoredVA(sid='lowest', ranks={1: 999, 2: 999, 3: 999}), None,
+     'Undetermined'),
+])
+def test_predict_with_rule(prep, va, cause, cause_name):
+    user_data = [va]
+    cause_reduction = {1: 11, 2: 12, 3: 13, 4: 14}
+    names34 = {11: 'c11', 12: 'c12', 13: 'c13', 14: 'c14'}
+    names46 = {1: 'c1', 2: 'c2', 3: 'c3', 4: 'c4'}
+    prep.predict(user_data, 999, cause_reduction, names34, names46)
 
+    assert va.cause34 == cause
+    assert va.cause34_name == cause_name
+
+
+def test_csmf_summed_to_one(prep):
     causes = ['a', 'b', 'c']
     counts = np.random.randint(10, 100, 3)
-    cause_counts = dict(zip(causes, counts))
-    prep.write_csmf(cause_counts)
 
-    outfile_path = os.path.join(prep.output_dir_path,
-                                '{}-csmf.csv'.format(prep.AGE_GROUP))
-    csmf = pd.read_csv(outfile_path)
-    assert np.allclose(csmf.CSMF.sum(), 1)
+    user_data = [ScoredVA({}, cause, '', 0, 1, '')
+                 for i, cause in enumerate(causes) for _ in range(counts[i])]
+
+    csmf = prep.calculate_csmf(user_data, [])
+
+    assert np.allclose(sum(csmf.values()), 1)
