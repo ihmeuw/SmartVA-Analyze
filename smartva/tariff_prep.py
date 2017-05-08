@@ -187,10 +187,6 @@ class TariffPrep(DataPrep):
     def undetermined_matrix_filename(self):
         return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP))
 
-    @property
-    def external_ranks_filename(self):
-        return os.path.join(self.intermediate_dir, '{:s}-external-ranks.csv'.format(self.AGE_GROUP))
-
     def run(self):
         super(TariffPrep, self).run()
 
@@ -229,7 +225,7 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
         self.generate_cause_rankings(user_data, uniform_scores)
 
-        self.write_external_ranks(user_data)
+        self.write_intermediate_file(user_data, 'external-ranks', 'ranks')
 
         lowest_rank = len(uniform_train) + 0.5
 
@@ -248,9 +244,9 @@ class TariffPrep(DataPrep):
 
         self.write_csmf(csmf)
 
-        self.write_tariff_ranks(user_data)
+        self.write_intermediate_file(user_data, 'tariff-scores', 'scores')
 
-        self.write_tariff_scores(user_data)
+        self.write_intermediate_file(user_data, 'tariff-ranks', 'ranks')
 
         return user_data
 
@@ -389,24 +385,6 @@ class TariffPrep(DataPrep):
                 va.ranks[cause] = avg_rank + .5
 
         status_notifier.update({'sub_progress': None})
-
-    def write_external_ranks(self, va_cause_list):
-        """Write Scored VA ranks to a file.
-
-        Args:
-            va_cause_list (list): List of Scored VAs.
-        """
-        ranks = []
-        for va in va_cause_list:
-            self.check_abort()
-
-            rank_dict = {"sid": va.sid}
-            rank_dict.update(va.ranks)
-            ranks.append(rank_dict)
-
-        DataPrep.write_output_file(sorted(ranks[0].keys(), key=lambda x: (isinstance(x, int), x)),
-                                   ranks,
-                                   self.external_ranks_filename)
 
     def _get_undetermined_matrix(self):
         """Return mapping of undetermined weights read from the specified file.
@@ -667,27 +645,22 @@ class TariffPrep(DataPrep):
         """
         pass
 
-    def write_tariff_scores(self, va_cause_list):
-        """Write Scored VA Tariff scores.
+    def write_intermediate_file(self, user_data, name, attr):
+        """Write intermediate tariff files.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
+            user_data (list): List of Scored VAs.
         """
-        with open(os.path.join(self.intermediate_dir, '{:s}-tariff-scores.csv'.format(self.AGE_GROUP)), 'wb') as f:
+
+        def format_row(va):
+            vals = [getattr(va, attr).get(cause) for cause in self.cause_list]
+            return [va.sid] + vals
+
+        filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
+        with open(os.path.join(self.intermediate_dir, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.scores[cause] for cause in self.cause_list] for va in va_cause_list])
-
-    def write_tariff_ranks(self, va_cause_list):
-        """Write Scored VA Tariff ranks.
-
-        Args:
-            va_cause_list (list): List of Scored VAs.
-        """
-        with open(os.path.join(self.intermediate_dir, '{:s}-tariff-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.ranks[cause] for cause in self.cause_list] for va in va_cause_list])
+            writer.writerows([format_row(va) for va in user_data])
 
     def write_csmf(self, csmf):
         """Write Cause-Specific Mortaility Fractions.
