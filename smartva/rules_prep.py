@@ -8,7 +8,6 @@ from smartva.rules import (
     aids_child,
     bite_adult,
     bite_child,
-    cvd_child,
     drowning_adult,
     drowning_child,
     falls_adult,
@@ -24,6 +23,7 @@ from smartva.rules import (
     road_traffic_adult,
     road_traffic_child,
     stillbirth,
+    stroke,
     suicide,
 )
 
@@ -100,6 +100,7 @@ class AdultRulesPrep(RulesPrep):
         other_injury_adult,
         homicide_adult,
         suicide,
+        stroke,
     ]
 
     def __init__(self, working_dir_path, short_form):
@@ -116,7 +117,6 @@ class ChildRulesPrep(RulesPrep):
         poisoning_child,
         other_injury_child,
         homicide_child,
-        cvd_child,
         aids_child,
     ]
 

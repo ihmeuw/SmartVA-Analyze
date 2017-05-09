@@ -6,7 +6,7 @@ import threading
 import BaseHTTPServer
 import SimpleHTTPServer
 
-watched_files = ['SmartVA.exe'.lower()]
+watched_files = ['SmartVA-Analyze.exe'.lower()]
 start = time.time()
 run_time = 60
 

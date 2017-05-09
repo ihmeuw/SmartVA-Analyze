@@ -286,18 +286,35 @@ CENSORED_MAP = {
     ],
     3: [   # Diarrhea/Dysentery
         's999933',      # word_pneumonia
+        's135991',      # unconsciousness started >24hrs before death
+        's123',         # Was the cough very severe?
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
     ],
     5: [   # Encephalitis
         's999933',      # word_pneumonia
+        's118',         # Did the frequent loose or liquid stools continue until death?
     ],
     9: [   # Malaira
         's999933',      # word_pneumonia
+        's999914',      # word_dehydr
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+    ],
+    10: [   # Measles
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
     ],
     11: [   # Meningitis
         's999933',      # word_pneumonia
     ],
+    12: [   # Other Cancers
+        's999914',      # word_dehydr
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+    ],
+    13: [   # Other Cardiovascular Diseases
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+    ],
     15: [   # Other Digestive Diseases
         's999933',      # word_pneumonia
+        's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
     ],
     17: [   # Pneumonia
         's99991',       # word_abdomen

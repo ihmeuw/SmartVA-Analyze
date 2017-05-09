@@ -1,3 +1,6 @@
+import csv
+
+
 import pytest
 import pandas as pd
 import numpy as np
@@ -83,3 +86,20 @@ def test_redistribution_weights_no_country(tmpdir, tariff):
     )
     undetermined_weights = prep._get_undetermined_matrix()
     assert undetermined_weights == {}
+
+
+@pytest.mark.parametrize('tariff', tariff_subclasses)
+def test_redistribution_causes_match_reporting_causes(tmpdir, tariff):
+    prep = tariff(
+        working_dir_path=tmpdir.strpath,
+        short_form=True,
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        country=None
+    )
+    with open(prep.undetermined_matrix_filename) as f:
+        undetermined_causes = {row['gs_text34'] for row in csv.DictReader(f)}
+
+    tariff_causes = {prep.data_module.CAUSES[cause]
+                     for cause in prep.data_module.CAUSE_REDUCTION.values()}
+
+    assert undetermined_causes == tariff_causes
