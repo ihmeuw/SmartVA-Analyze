@@ -132,17 +132,17 @@ sid,cause,cause34,age,sex
 131,,Undetermined,12,1
 132,,Undetermined,12,1
 133,,Undetermined,12,1
-134,30,Road Traffic,12,1
-135,14,Falls,12,1
-136,11,Drowning,12,1
-137,27,Poisonings,12,1
+134,,Undetermined,12,1
+135,,Undetermined,12,1
+136,,Undetermined,12,1
+137,,Undetermined,12,1
 138,,Undetermined,12,1
-139,15,Fires,12,1
-140,16,Homicide,12,1
+139,,Undetermined,12,1
+140,,Undetermined,12,1
 141,,Undetermined,12,1
-142,24,Other Injuries,12,1
-143,11,Drowning,12,1
-144,16,Homicide,12,1
+142,,Undetermined,12,1
+143,,Undetermined,12,1
+144,,Undetermined,12,1
 145,,Undetermined,12,1
 146,,Undetermined,12,1
 147,,Undetermined,12,1
@@ -162,7 +162,7 @@ sid,cause,cause34,age,sex
 161,,Undetermined,12,1
 162,,Undetermined,12,1
 163,,Undetermined,12,1
-164,33,Suicide,12,1
+164,,Undetermined,12,1
 165,,Undetermined,12,1
 166,,Undetermined,12,1
 167,,Undetermined,12,1
@@ -315,7 +315,7 @@ sid,cause,cause34,age,sex
 314,,Undetermined,12,1
 315,,Undetermined,12,1
 316,,Undetermined,12,1
-317,33,Suicide,12,1
+317,,Undetermined,12,1
 318,,Undetermined,12,1
 319,,Undetermined,12,1
 320,,Undetermined,12,1

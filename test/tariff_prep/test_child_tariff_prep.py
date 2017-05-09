@@ -7,6 +7,8 @@ import numpy as np
 import pytest
 
 from smartva.tariff_prep import ScoredVA
+from smartva import config
+from smartva.tariff_prep import get_tariff_matrix
 from smartva.child_tariff import ChildTariff
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -101,3 +103,28 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     csmf = prep.calculate_csmf(user_data, undetermined_weights)
 
     assert np.allclose(sum(csmf.values()), 1)
+
+
+def test_injuries_have_no_positive_scores(prep):
+    """
+    All tariffs scores for injury causes should be negative or zero. Injuries
+    should only be predicted from logic rules, not tariffs.
+    """
+    injuries = [2, 4, 6, 7, 18, 19, 21]
+
+    tariffs_path = os.path.join(config.basedir, 'data', 'tariffs-child.csv')
+    with open(tariffs_path, 'r') as f:
+        symptoms = next(csv.reader(f))
+    symptoms.remove('xs_name')
+
+    # Single row with every symptom endorsed
+    row = {'sid': 'x'}
+    row.update({symp: 1 for symp in symptoms})
+
+    tariffs = get_tariff_matrix(tariffs_path, ['xs_name'],
+                                prep.data_module.SPURIOUS_ASSOCIATIONS,
+                                len(symptoms))
+
+    scored = prep.score_symptom_data([row], tariffs)
+    assert all([score <= 0 for cause, score in scored[0].scores.items()
+                if cause in injuries])
