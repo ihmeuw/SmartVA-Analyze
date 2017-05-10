@@ -250,6 +250,8 @@ class TariffPrep(DataPrep):
         cutoff = self.data_module.CUTOFF_POS
         cutoffs, uniform_scores = self.generate_cutoffs(uniform_train, cutoff)
 
+        self.write_cutoffs(cutoffs)
+
         status_logger.info('{:s} :: Generating VA cause list.'
                            .format(self.AGE_GROUP.capitalize()))
         user_data = self.read_input_file(self.input_file_path())[1]
@@ -347,7 +349,7 @@ class TariffPrep(DataPrep):
         return uniform_train
 
     def generate_cutoffs(self, uniform_train, cutoff_pos):
-        """Determine cutoff rank for each cause. Write cutoffs to a file.
+        """Determine cutoff rank for each cause.
 
         Args:
             uniform_train (list): Uniform list of validated VAs.
@@ -355,38 +357,47 @@ class TariffPrep(DataPrep):
 
         Returns:
             dict: Cutoff score for each cause.
+            dict: mapping of causes ordered scores for all observations in the
+                uniform training data
         """
         cutoffs = {}
         uniform_scores = {}
+        for cause in self.cause_list:
+            self.check_abort()
+
+            # Get the uniform training data sorted by (reversed) score and
+            # sid. Sorting by sid ensures the ranks are stable between row
+            # which have the score but different gold standard causes.
+            def sorter(va):
+                return -va.scores[cause], va.sid
+            uniform_sorted = sorted(uniform_train, key=sorter)
+
+            # Determine the rank within the complete uniform training data
+            # of the subset of VAs whose gold standard cause is the cause
+            # by which the VAs are ranked.
+            ranks = [(i + 1) for i, va in enumerate(uniform_sorted)
+                     if int(va.cause) == cause]
+
+            # Find the index of the item at cutoff position.
+            cutoffs[cause] = ranks[int(len(ranks) * cutoff_pos)]
+
+            # Store the scores from the sorted distribution
+            uniform_scores[cause] = np.array([va.scores[cause]
+                                              for va in uniform_sorted])
+
+        return cutoffs, uniform_scores
+
+    def write_cutoffs(self, cutoffs):
+        """Write cutoffs to a file.
+
+        Args:
+            cutoffs (dict): mapping of cause to cutoff ranks
+        """
         output_file = os.path.join(self.intermediate_dir,
                                    '{:s}-cutoffs.txt'.format(self.AGE_GROUP))
         with open(output_file, 'w') as f:
             for cause in self.cause_list:
-                self.check_abort()
-
-                # Get the uniform training data sorted by (reversed) score and
-                # sid. Sorting by sid ensures the ranks are stable between row
-                # which have the score but different gold standard causes.
-                def sorter(va):
-                    return -va.scores[cause], va.sid
-                uniform_sorted = sorted(uniform_train, key=sorter)
-
-                # Determine the rank within the complete uniform training data
-                # of the subset of VAs whose gold standard cause is the cause
-                # by which the VAs are ranked.
-                ranks = [(i + 1) for i, va in enumerate(uniform_sorted)
-                         if int(va.cause) == cause]
-
-                # Find the index of the item at cutoff position.
-                cutoffs[cause] = ranks[int(len(ranks) * cutoff_pos)]
-
                 f.write('{} : {}\n'.format(cause, cutoffs[cause]))
-
-                # Store the scores from the sorted distribution
-                uniform_scores[cause] = np.array([va.scores[cause]
-                                                  for va in uniform_sorted])
-
-        return cutoffs, uniform_scores
 
     def generate_cause_rankings(self, scored, uniform_scores):
         """Determine rank for each cause.
