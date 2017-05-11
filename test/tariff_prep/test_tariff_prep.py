@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 from smartva.tariff_prep import (
-    ScoredVA,
+    Record,
     TariffPrep,
     get_tariff_matrix,
     clean_tariffs,
@@ -120,13 +120,13 @@ def test_get_tariff_matrix(tmpdir):
 
 
 @pytest.mark.parametrize('row,expected', [
-    ({'sid': 'none', 'restricted': ''}, []),
-    ({'sid': 'one', 'restricted': '1'}, [1]),
-    ({'sid': 'two', 'restricted': '1 2'}, [1, 2]),
+    ({'sid': 'none', 'restricted': ''}, set()),
+    ({'sid': 'one', 'restricted': '1'}, {1}),
+    ({'sid': 'two', 'restricted': '1 2'}, {1, 2}),
 ], ids=lambda x: x['sid'])
 def test_score_symptom_data_restricted(prep, row, expected):
     va = prep.score_symptom_data([row], {})[0]
-    assert va.restricted == expected
+    assert va.censored == expected
 
 
 @pytest.mark.parametrize('row, expected', [
@@ -163,7 +163,7 @@ def test_generate_cause_rankings(prep):
         -2,   # rank 9 (duplicate negative)
         -3,   # rank 10
     ]
-    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2, []) for s in train_scores]
+    train_data = [Record(scores={1: s}) for s in train_scores]
     uniform_scores = {1: np.sort([va.scores[1] for va in train_data])}
 
     # Score, Rank within training
@@ -180,9 +180,9 @@ def test_generate_cause_rankings(prep):
         (-3, 10),   # at lowest score in train data
         (-5, 10.5),   # below lowest score in train data
     ]
-    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2, []) for score, rank in tests]
+    test_data = [Record(scores={1: score}) for score, rank in tests]
 
-    # Modifies list of ScoredVAs in place and doesn't return anything
+    # Modifies list of Records in place and doesn't return anything
     prep.generate_cause_rankings(test_data, uniform_scores)
 
     predicted_test_ranks = [va.ranks[1] for va in test_data]
@@ -190,16 +190,16 @@ def test_generate_cause_rankings(prep):
     assert predicted_test_ranks == actual_test_ranks
 
 
-@pytest.mark.parametrize('restrictions,scores,ranks,expected', [
+@pytest.mark.parametrize('censored,scores,ranks,expected', [
     ([], {1: 10}, {1: 7}, {1: 7}),
     ([1], {1: 10}, {1: 7}, {1: 9999}),
     ([1], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 5}),
     ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
 ])
-def test_mask_ranks(prep, restrictions, scores, ranks, expected):
+def test_mask_ranks(prep, censored, scores, ranks, expected):
     prep.cause_list = scores.keys()
 
-    va = ScoredVA(scores, 0, 'sid', 7, 2, restrictions)
+    va = Record(scores=scores, censored=censored)
     va.ranks = ranks
 
     uniform = range(1000)  # just needs length
@@ -216,12 +216,12 @@ def test_mask_ranks(prep, restrictions, scores, ranks, expected):
 
 
 @pytest.mark.parametrize('va, cause, cause_name', [
-    (ScoredVA(sid='rules', cause=1), 11, 'c11'),
-    (ScoredVA(sid='rules2', cause=2), 12, 'c12'),
-    (ScoredVA(sid='ranks', ranks={1: 1, 2: 2}), 11, 'c11'),
-    (ScoredVA(sid='rules_bad', cause='x', ranks={1: 1, 2: 2}), 11, 'c11'),
-    (ScoredVA(sid='tie', ranks={1: 1, 2: 1, 3: 2}), 11, 'c11'),
-    (ScoredVA(sid='lowest', ranks={1: 999, 2: 999, 3: 999}), None,
+    (Record(sid='rules', cause=1), 11, 'c11'),
+    (Record(sid='rules2', cause=2), 12, 'c12'),
+    (Record(sid='ranks', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (Record(sid='rules_bad', cause='x', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (Record(sid='tie', ranks={1: 1, 2: 1, 3: 2}), 11, 'c11'),
+    (Record(sid='lowest', ranks={1: 999, 2: 999, 3: 999}), None,
      'Undetermined'),
 ])
 def test_predict_with_rule(prep, va, cause, cause_name):
@@ -239,7 +239,7 @@ def test_csmf_summed_to_one(prep):
     causes = ['a', 'b', 'c']
     counts = np.random.randint(10, 100, 3)
 
-    user_data = [ScoredVA({}, cause, '', 0, 1, '')
+    user_data = [Record({}, cause, '', 0, 1, '')
                  for i, cause in enumerate(causes) for _ in range(counts[i])]
 
     csmf = prep.calculate_csmf(user_data, [])

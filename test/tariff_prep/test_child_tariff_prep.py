@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from smartva.tariff_prep import ScoredVA
+from smartva.tariff_prep import Record
 from smartva import config
 from smartva.tariff_prep import get_tariff_matrix
 from smartva.child_tariff import ChildTariff
@@ -96,7 +96,7 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.hiv_region = hiv
     causes = prep.data_module.CAUSES.values()
 
-    user_data = [ScoredVA({}, cause, '', 0, 1, '')
+    user_data = [Record({}, cause, '', 0, 1, '')
                  for _ in range(7) for cause in causes]
 
     undetermined_weights = prep._get_undetermined_matrix()
