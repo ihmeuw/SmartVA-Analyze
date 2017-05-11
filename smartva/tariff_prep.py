@@ -285,17 +285,14 @@ class TariffPrep(DataPrep):
 
         self.cause_list = sorted(tariffs.keys())
 
-        status_logger.info('{:s} :: Generating validated VA cause list.'
-                           .format(self.AGE_GROUP.capitalize()))
         validated = self.read_input_file(self.validated_filename)[1]
-        freqs = self.data_module.FREQUENCIES
-        uniform_train = self.generate_uniform_train(validated, tariffs, freqs)
 
-        status_logger.debug('{:s} :: Generating cutoffs'
-                            .format(self.AGE_GROUP.capitalize()))
-
-        cutoff = self.data_module.CUTOFF_POS
-        cutoffs, uniform_scores = self.generate_cutoffs(uniform_train, cutoff)
+        status_logger.info('{:s} :: Processing validation data.'
+                           .format(self.AGE_GROUP.capitalize()))
+        train = self.process_training_data(validated, tariffs,
+                                           self.data_module.FREQUENCIES,
+                                           self.data_module.CUTOFF_POS)
+        uniform_train, uniform_scores, uniform_ranks, cutoffs = train
 
         self.write_cutoffs(cutoffs)
 
@@ -384,54 +381,62 @@ class TariffPrep(DataPrep):
 
         return scored
 
-    def generate_uniform_train(self, train, tariffs, frequencies):
-        """Expand a matrix symptom data using predetermined frequencies.
+    def process_training_data(self, train, tariffs, frequencies, cutoff_pos):
+        """Process the training data.
 
-        The validated data is scored and expanded so that the cause
-        distribution across all the observation is uniformly distributed
-        across the causes. The sampling frequencies are determined elsewhere
-        and stored in the data module.
+        The validated data is expanded so that the cause distribution across
+        all the observation is uniformly distributed across the causes. The
+        sampling frequencies are determined elsewhere and stored in the data
+        module.
+
+        Cause-specific cutoffs are calculated as the rank value at the given
+        cutoff percentile of the subset of observations whose gold standards
+        is the given cause. While the data are sorted also store the
+        distribution of scores by cause. This is used to rank the user data.
 
         Args:
-            scored (list): List of validated ScoredVAs.
+            train (list): List of validated ScoredVAs.
             frequencies (dict): Map of validated sid to frequency.
+            cutoff_pos (float): Percentile cutoff from 0 to 1.
 
         Returns:
-            list: validated VAs with uniform cause distribution.
+            tuple:
+                list: validated VAs with uniform cause distribution.
+                dict: ordered scores by cause for all VAs in the training data
+                dict: mapping of ranks of VAs in the training data for which
+                    the gold standard is the given cause
+                dict: Cutoff score for each cause.
         """
         uniform_train = []
 
-        status_notifier.update({'sub_progress': (0, len(train))})
+        status_notifier.update({'sub_progress': (0, 1)})
 
         for index, row in enumerate(train):
             self.check_abort()
 
-            status_notifier.update({'sub_progress': (index,)})
+            # Assume half the processing time is scoring/expanding
+            # Fill half the status bar based on the number of rows
+            status_notifier.update({
+                'sub_progress': ((index / 2) / len(train),)
+            })
 
             va = self.score_row(row, tariffs)
             va.cause = row.get('va46')
             uniform_train.extend([va] * frequencies[va.sid])
 
-        status_notifier.update({'sub_progress': None})
-
-        return uniform_train
-
-    def generate_cutoffs(self, uniform_train, cutoff_pos):
-        """Determine cutoff rank for each cause.
-
-        Args:
-            uniform_train (list): Uniform list of validated VAs.
-            cutoff_pos (int): Cutoff position.
-
-        Returns:
-            dict: Cutoff score for each cause.
-            dict: mapping of causes ordered scores for all observations in the
-                uniform training data
-        """
+        scores = {}
+        ranks = {}
         cutoffs = {}
-        uniform_scores = {}
-        for cause in self.cause_list:
+
+        n_causes = len(self.cause_list)
+        for index, cause in enumerate(self.cause_list):
             self.check_abort()
+
+            # Assume half the processing time is sorting/ranking
+            # Start at 50% and updated in even increments for each cause
+            status_notifier.update({
+                'sub_progress': (.5 + (index / 2) / n_causes,)
+            })
 
             # Get the uniform training data sorted by (reversed) score and
             # sid. Sorting by sid ensures the ranks are stable between row
@@ -440,20 +445,20 @@ class TariffPrep(DataPrep):
                 return -va.scores[cause], va.sid
             uniform_sorted = sorted(uniform_train, key=sorter)
 
+            # Store the scores from the distribution sorted from low to high
+            scores[cause] = [va.scores[cause] for va in uniform_sorted][::-1]
+
             # Determine the rank within the complete uniform training data
             # of the subset of VAs whose gold standard cause is the cause
             # by which the VAs are ranked.
-            ranks = [(i + 1) for i, va in enumerate(uniform_sorted)
-                     if int(va.cause) == cause]
-
+            ranks[cause] = [(i + 1) for i, va in enumerate(uniform_sorted)
+                            if int(va.cause) == cause]
             # Find the index of the item at cutoff position.
-            cutoffs[cause] = ranks[int(len(ranks) * cutoff_pos)]
+            cutoffs[cause] = ranks[cause][int(len(ranks[cause]) * cutoff_pos)]
 
-            # Store the scores from the sorted distribution
-            scores = [va.scores[cause] for va in uniform_sorted][::-1]
-            uniform_scores[cause] = scores
+        status_notifier.update({'sub_progress': None})
 
-        return cutoffs, uniform_scores
+        return uniform_train, scores, ranks, cutoffs
 
     def write_cutoffs(self, cutoffs):
         """Write cutoffs to a file.
