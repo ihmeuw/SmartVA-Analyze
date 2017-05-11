@@ -312,11 +312,13 @@ class TariffPrep(DataPrep):
 
             status_notifier.update({'sub_progress': (index,)})
 
+            endorsements = {k for k, v in row.items() if safe_float(v)}
+
             scores = {}
 
             for cause, symptoms in tariffs.items():
                 scores[cause] = sum(tariff for symptom, tariff in symptoms
-                                    if safe_float(row.get(symptom)) == 1)
+                                    if symptom in endorsements)
 
             restricted = map(safe_int, row.get('restricted', '').split())
             cause = safe_int(row.get(cause_key))
