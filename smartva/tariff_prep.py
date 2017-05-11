@@ -106,34 +106,66 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
     return tariffs
 
 
-class ScoredVA(object):
+class Masks(object):
+    """Encoding for reason why a cause would be masked.
+
+    CENSORED: causes which are ruled out due to the presence of key symptoms
+    EPI: causes ruled out due to user specified epidemiological profile
+    DEMOG: causes ruled out due to demographic criteria. Some causes do not
+        occur in certain age/sex populations
+    OVERALL: causes ranked under the overall percentile
+    CAUSE_RANk: causes ranked under the cause-specific percentile
+    SCORE: causes scored under the cause-specific minimum score
+    """
+    CENSORED = 1
+    EPI = 2
+    DEMOG = 3
+    OVERALL = 4
+    CAUSE_RANK = 5
+    SCORE = 6
+
+
+class Record(object):
     """Record object for VAs.
 
     Attributes:
-        scores (dict): tariff score for each cause
-        cause (int): final prediction at cause46 level
         sid (str): identifier
         age (float): age in years
         sex (int): 1=Male 2=Female
-        restricted (str): space separated list of ints which will be removed
-            from list of valid predictions. These are the result of censoring
-            based on symptom endorsements.
-        ranks (dict): rank relative to uniform training data for each cause
+        cause (int): final prediction at cause46 level
         cause34 (int): final prediction at the cause34 level
         cause34_name (str): cause name associated with cause34 prediction
+        endorsements (set): names of endorsed symptoms
+        censored (list): list of causes which are removed from possible valid
+            predictions. These are the result of censoring based on symptom
+            endorsements.
+        scores (dict): tariff score for each cause
+        ranks (dict): rank relative to uniform training data for each cause
+        masked (dict): mapping of causes to reason why it is masked
     """
 
-    def __init__(self, scores=None, cause=0, sid=None, age=None, sex=None,
-                 restricted='', ranks=None, cause34=None, cause34_name=None):
-        self.scores = scores or {}
-        self.cause = cause
-        self.restricted = restricted
-        self.ranks = ranks or {}
+    def __init__(self, sid=None, age=None, sex=None, cause=0, cause34=None,
+                 cause34_name=None, endorsements=None, censored=None,
+                 rules=None, scores=None, ranks=None, masked=None):
         self.sid = sid
         self.age = age
         self.sex = sex
+        self.cause = cause
         self.cause34 = None
-        self.cause34_name = None
+        self.cause34_name = cause34_name
+        self.endorsements = endorsements or set()
+        self._censored = censored or set()
+        self.rules = rules
+        self.scores = scores or {}
+        self.ranks = ranks or {}
+        masked_ = collections.defaultdict(set)
+        if censored:
+            for cause in censored:
+                masked_[cause].add(Masks.CENSORED)
+        if masked:
+            for cause, removed in masked.items():
+                masked_[cause].update(removed)
+        self.masked = masked_
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -142,12 +174,28 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return ('sid={sid} age={age} sex={sex} cause={cause}'
-                ' restricted={restricted} scores={scores} ranks={ranks}'
-                .format(**self.__dict__))
+        return ('Record(sid={sid}, age={age}, sex={sex}, cause={cause}, '
+                'cause34={cause34}, cause34_name={cause34_name}, '
+                'censored={_censored}, rules={rules}, scores={scores}, '
+                'ranks={ranks}, masked={masked})'.format(**self.__dict__))
 
-    def __str__(self):
-        return self.__repr__()
+    @property
+    def censored(self):
+        return self._censored
+
+    @censored.setter
+    def censored(self, value):
+        # TODO: implement removing censored flags from masked if censored
+        # is reset and previously censored causes are no longer censored
+        try:
+            iter(value)
+        except TypeError:
+            self._censored = {value}
+            self.masked[value].add(Masks.CENSORED)
+        else:
+            self._censored = {x for x in value}
+            for cause in value:
+                self.masked[cause].add(Masks.CENSORED)
 
 
 class TariffPrep(DataPrep):
@@ -303,8 +351,8 @@ class TariffPrep(DataPrep):
         for cause, symptoms in tariffs.items():
             scores[cause] = sum(tariff for symptom, tariff in symptoms
                                 if symptom in endorsements)
-        return ScoredVA(sid=row.get(SID_KEY), age=row.get(AGE_KEY),
-                        sex=row.get(SEX_KEY), scores=scores)
+        return Record(sid=row.get(SID_KEY), age=row.get(AGE_KEY),
+                      sex=row.get(SEX_KEY), scores=scores)
 
     def score_symptom_data(self, symptom_data, tariffs):
         """Score symptom data using a tariffs matrix.
@@ -327,8 +375,8 @@ class TariffPrep(DataPrep):
 
             va = self.score_row(row, tariffs)
 
-            va.restricted = map(safe_int, row.get('restricted', '').split())
-            va.cause = safe_int(row.get(RULES_CAUSE_NUM_KEY))
+            va.censored = map(safe_int, row.get('restricted', '').split())
+            va.rules = safe_int(row.get(RULES_CAUSE_NUM_KEY))
 
             scored.append(va)
 
@@ -527,13 +575,10 @@ class TariffPrep(DataPrep):
         for va in user_data:
             self.check_abort()
 
-            # Collect a set of causes which should be masked for this VA
-            masked = set(va.restricted)
-
             # Mask based on cause scores
             for cause in va.scores:
                 if va.scores[cause] <= min_cause_score[cause]:
-                    masked.add(cause)
+                    va.masked[cause].add(Masks.SCORE)
 
             # Mask based on age/sex criteria
             def lookup(x):
@@ -541,35 +586,38 @@ class TariffPrep(DataPrep):
 
             for condition, causes in age_sex_restrictions.items():
                 if not LdapNotationParser(condition, lookup, int).evaluate():
-                    masked.update(causes)
+                    for cause in causes:
+                        va.masked[cause].add(Masks.DEMOG)
 
             # Mask based on regional prevalence of HIV
             if not self.hiv_region:
-                masked.update(self.data_module.HIV_CAUSES)
+                for cause in self.data_module.HIV_CAUSES:
+                    va.masked[cause].add(Masks.EPI)
 
                 # This a fragile hack to remove rule-based predictions of AIDS
                 # from the child module if the user specifies that the data is
                 # from a low prevalence HIV region. It works because the AIDS
                 # rule is the last listed rule so it is not masking any other
                 # rule-based predictions
-                if va.cause in self.data_module.HIV_CAUSES:
-                    va.cause = None
+                if va.rules in self.data_module.HIV_CAUSES:
+                    va.rules = None
 
             # Mask based on regional prevalence of Malaria
             if not self.malaria_region:
-                masked.update(self.data_module.MALARIA_CAUSES)
+                for cause in self.data_module.MALARIA_CAUSES:
+                    va.masked[cause].add(Masks.EPI)
 
             for cause in self.cause_list:
                 # Mask based on cause-specific rank
                 if va.ranks[cause] > cause_cutoffs[cause]:
-                    masked.add(cause)
+                    va.masked[cause].add(Masks.CAUSE_RANK)
 
                 # Mask based on overall rank
                 if va.ranks[cause] > overall_rank_cutoff:
-                    masked.add(cause)
+                    va.masked[cause].add(Masks.OVERALL)
 
             # Apply the mask
-            for cause in masked:
+            for cause in va.masked:
                 va.ranks[cause] = lowest_rank
 
     def predict(self, user_data, lowest_rank, cause_reduction, cause34_names,
@@ -593,23 +641,16 @@ class TariffPrep(DataPrep):
         for va in user_data:
             self.check_abort()
 
-            # Record the cause if it is already determined
-            cause34 = cause_reduction.get(va.cause)
-            if cause34 is None:
-                warning_logger.debug(
-                    '{group:s} :: SID: {sid:s} was assigned an invalid '
-                    'cause: {cause}'.format(group=self.AGE_GROUP.capitalize(),
-                                            sid=va.sid, cause=va.cause)
-                )
-
-            # Use tariff prediction if the cause is either missing or invalid
-            best_rank_value = min(va.ranks.values() or [0])
-            if not cause34 and best_rank_value < lowest_rank:
+            if va.rules and va.rules in cause_reduction:
+                va.cause = va.rules
+            elif len(set(va.ranks.values())) > 1:
+                best_rank = min(va.ranks.values())
                 predictions = [cause for cause, rank in va.ranks.items()
-                               if rank == best_rank_value]
+                               if rank == best_rank and cause not in va.masked]
 
                 # Use the first listed cause if there are ties
-                cause34 = cause_reduction[sorted(predictions)[0]]
+                if predictions:
+                    va.cause = sorted(predictions)[0]
 
                 if len(predictions) > 1:
                     names = [cause46_names[cause] for cause in predictions]
@@ -621,8 +662,8 @@ class TariffPrep(DataPrep):
                                 sid=va.sid, causes=names)
                     )
 
-            va.cause34 = cause34
-            va.cause34_name = cause34_names.get(cause34, 'Undetermined')
+            va.cause34 = cause_reduction.get(va.cause)
+            va.cause34_name = cause34_names.get(va.cause34, 'Undetermined')
 
     def calculate_csmf(self, user_data, undetermined_weights):
         """Tabluate predictions into Cause-Specific Mortality Fractions.
