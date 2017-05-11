@@ -240,10 +240,8 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating validated VA cause list.'
                            .format(self.AGE_GROUP.capitalize()))
         validated = self.read_input_file(self.validated_filename)[1]
-        validated = self.score_symptom_data(validated, tariffs, 'va46')
-
         freqs = self.data_module.FREQUENCIES
-        uniform_train = self.generate_uniform_train(validated, freqs)
+        uniform_train = self.generate_uniform_train(validated, tariffs, freqs)
 
         status_logger.debug('{:s} :: Generating cutoffs'
                             .format(self.AGE_GROUP.capitalize()))
@@ -256,8 +254,7 @@ class TariffPrep(DataPrep):
         status_logger.info('{:s} :: Generating VA cause list.'
                            .format(self.AGE_GROUP.capitalize()))
         user_data = self.read_input_file(self.input_file_path())[1]
-        user_data = self.score_symptom_data(user_data, tariffs,
-                                            RULES_CAUSE_NUM_KEY)
+        user_data = self.score_symptom_data(user_data, tariffs)
 
         status_logger.info('{:s} :: Generating cause rankings.'
                            .format(self.AGE_GROUP.capitalize()))
@@ -288,17 +285,33 @@ class TariffPrep(DataPrep):
 
         return user_data
 
-    def score_symptom_data(self, symptom_data, tariffs, cause_key=''):
-        """Score symptom data using a tariffs matrix.
+    def score_row(self, row, tariffs):
+        """Score a single row of symptom data.
 
-        Calculate the tariff score for each cause for every row of symptom
-        data by calculating the sum of the tariffs for endorsed symptoms.
+        Calculate the tariff score for each cause by calculating the sum of
+        the tariffs for endorsed symptoms.
+
+        Args:
+            row (dict): row from symptom data file
+            tariffs (dict of lists): processed tariffs by cause
+
+        Returns:
+            Record
+        """
+        endorsements = {k for k, v in row.items() if safe_float(v)}
+        scores = {}
+        for cause, symptoms in tariffs.items():
+            scores[cause] = sum(tariff for symptom, tariff in symptoms
+                                if symptom in endorsements)
+        return ScoredVA(sid=row.get(SID_KEY), age=row.get(AGE_KEY),
+                        sex=row.get(SEX_KEY), scores=scores)
+
+    def score_symptom_data(self, symptom_data, tariffs):
+        """Score symptom data using a tariffs matrix.
 
         Args:
             symptom_data (list of dict): symptom data from a csv.DictReader
             tariffs (dict of lists): processed tariffs by cause
-            cause_key (str): name of column with prediction or gold standard
-                cause encoded as an int
 
         Returns:
             list: List of Scored VAs.
@@ -312,31 +325,24 @@ class TariffPrep(DataPrep):
 
             status_notifier.update({'sub_progress': (index,)})
 
-            endorsements = {k for k, v in row.items() if safe_float(v)}
+            va = self.score_row(row, tariffs)
 
-            scores = {}
+            va.restricted = map(safe_int, row.get('restricted', '').split())
+            va.cause = safe_int(row.get(RULES_CAUSE_NUM_KEY))
 
-            for cause, symptoms in tariffs.items():
-                scores[cause] = sum(tariff for symptom, tariff in symptoms
-                                    if symptom in endorsements)
-
-            restricted = map(safe_int, row.get('restricted', '').split())
-            cause = safe_int(row.get(cause_key))
-
-            va = ScoredVA(scores, cause, row.get(SID_KEY), row.get(AGE_KEY),
-                          row.get(SEX_KEY), restricted)
             scored.append(va)
 
         status_notifier.update({'sub_progress': None})
 
         return scored
 
-    def generate_uniform_train(self, scored, frequencies):
-        """Expand a matrix ScoredVAs using predetermined frequencies.
+    def generate_uniform_train(self, train, tariffs, frequencies):
+        """Expand a matrix symptom data using predetermined frequencies.
 
-        The validated data is expanded so that the cause distribution across
-        all the observation is uniformly distributed across the causes. The
-        sampling frequencies are determined elsewhere and stored.
+        The validated data is scored and expanded so that the cause
+        distribution across all the observation is uniformly distributed
+        across the causes. The sampling frequencies are determined elsewhere
+        and stored in the data module.
 
         Args:
             scored (list): List of validated ScoredVAs.
@@ -346,8 +352,19 @@ class TariffPrep(DataPrep):
             list: validated VAs with uniform cause distribution.
         """
         uniform_train = []
-        for va in scored:
+
+        status_notifier.update({'sub_progress': (0, len(train))})
+
+        for index, row in enumerate(train):
+            self.check_abort()
+
+            status_notifier.update({'sub_progress': (index,)})
+
+            va = self.score_row(row, tariffs)
+            va.cause = row.get('va46')
             uniform_train.extend([va] * frequencies[va.sid])
+
+        status_notifier.update({'sub_progress': None})
 
         return uniform_train
 

@@ -129,16 +129,6 @@ def test_score_symptom_data_restricted(prep, row, expected):
     assert va.restricted == expected
 
 
-@pytest.mark.parametrize('row, key, expected', [
-    ({'va46': '1.0'}, 'va46', 1),
-    ({'cause': '1.0'}, 'cause', 1),
-    ({'cause': '1.0'}, '', 0),
-])
-def test_score_symptom_data_cause_key(prep, row, key, expected):
-    va = prep.score_symptom_data([row], {}, key)[0]
-    assert va.cause == expected
-
-
 @pytest.mark.parametrize('row, expected', [
     ({'symp1': 0, 'symp2': 0, 'symp3': 0, 'symp4': 0}, {1: 0, 2: 0, 3: 0}),
     ({'symp1': 1, 'symp2': 1, 'symp3': 1, 'symp4': 1}, {1: 4, 2: 5, 3: 7}),
