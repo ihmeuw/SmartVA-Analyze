@@ -1,5 +1,6 @@
 from __future__ import division
 import abc
+from bisect import bisect_left, bisect_right
 import collections
 import csv
 import os
@@ -382,8 +383,8 @@ class TariffPrep(DataPrep):
             cutoffs[cause] = ranks[int(len(ranks) * cutoff_pos)]
 
             # Store the scores from the sorted distribution
-            uniform_scores[cause] = np.array([va.scores[cause]
-                                              for va in uniform_sorted])
+            scores = [va.scores[cause] for va in uniform_sorted][::-1]
+            uniform_scores[cause] = scores
 
         return cutoffs, uniform_scores
 
@@ -412,7 +413,7 @@ class TariffPrep(DataPrep):
 
         Args:
             scored (list): list of ScoredVAs from user data
-            uniform_scores (dict of np.array): sorted distribution of scores
+            uniform_scores (dict of lists): sorted distribution of scores
                 by cause from uniform training data
         """
         status_notifier.update({'sub_progress': (0, len(scored))})
@@ -423,10 +424,9 @@ class TariffPrep(DataPrep):
             for cause in self.cause_list:
                 self.check_abort()
 
-                gt = np.sum(uniform_scores[cause] > va.scores[cause])
-                lt = np.sum(uniform_scores[cause] < va.scores[cause])
-                total = uniform_scores[cause].shape[0]
-                avg_rank = (gt + total - lt) / 2.
+                gt = bisect_left(uniform_scores[cause], va.scores[cause])
+                lt = bisect_right(uniform_scores[cause], va.scores[cause])
+                avg_rank = len(uniform_scores[cause]) - gt + (gt - lt) / 2.
 
                 va.ranks[cause] = avg_rank + .5
 
