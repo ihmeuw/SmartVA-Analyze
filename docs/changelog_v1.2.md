@@ -8,6 +8,7 @@
     * Congestive Heart Failure and Acute Myocaridal Infarction are aggregated
       into Ischemic Heart Disease
     * Asthma and COPD are aggregated into Chroic Respiratory Disease
+    * Epilepsy is aggregated into Other Non-communicable Diseases
 * Add logic rules to predict cases where the endorsement of key symptoms
   definitively leads to a certain prediction.
 * Add logic rule requiring the endorsement of key symptoms for causes. Without

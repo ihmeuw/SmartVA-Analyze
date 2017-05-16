@@ -61,7 +61,8 @@ def test_redistribution_weights(tmpdir, tariff, short_form, hce):
     )
     undetermined_weights = prep._get_undetermined_matrix()
 
-    cause_list = set(prep.data_module.CAUSES.values())
+    cause_list = set(prep.data_module.CAUSES[cause]
+                     for _, cause in prep.data_module.CAUSE_REDUCTION.items())
     for key, weights in undetermined_weights.items():
         age, sex = key
         assert sex in [1, 2, 3]
