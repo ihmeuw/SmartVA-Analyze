@@ -7,7 +7,7 @@ sid,cause,cause34,age,sex
 6,,Undetermined,12,1
 7,,Undetermined,12,1
 8,9,Diabetes,12,1
-9,12,Epilepsy,12,1
+9,25,Other Non-communicable Diseases,12,1
 10,22,Other Cardiovascular Diseases,12,1
 11,,Undetermined,12,1
 12,,Undetermined,12,1
@@ -87,9 +87,9 @@ sid,cause,cause34,age,sex
 86,,Undetermined,12,1
 87,,Undetermined,12,1
 88,,Undetermined,12,1
-89,12,Epilepsy,12,1
-90,12,Epilepsy,12,1
-91,12,Epilepsy,12,1
+89,25,Other Non-communicable Diseases,12,1
+90,25,Other Non-communicable Diseases,12,1
+91,25,Other Non-communicable Diseases,12,1
 92,,Undetermined,12,1
 93,,Undetermined,12,1
 94,32,Stroke,12,1

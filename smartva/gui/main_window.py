@@ -156,7 +156,7 @@ class vaAbout(wx.Frame):
 
 class vaDocs(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(400, 500))
+        wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(800, 500))
         html = wxHTML(self)
         html.SetStandardFonts()
         about = 'res' + str(os.path.sep) + 'documentation.htm'
