@@ -6,11 +6,9 @@ import pandas as pd
 import numpy as np
 import pytest
 
+from smartva.tariff_prep import Record
 from smartva import config
-from smartva.tariff_prep import (
-    get_cause_symptoms,
-    exclude_spurious_associations,
-)
+from smartva.tariff_prep import get_tariff_matrix
 from smartva.adult_tariff import AdultTariff
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -67,7 +65,7 @@ def test_tariff_prep(prep, input_file, tmpdir):
 
 
 def test_uniform_frequencies(prep):
-    df = pd.read_csv(prep.va_validated_filename, index_col=0)
+    df = pd.read_csv(prep.validated_filename, index_col=0)
     df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
     counts = df.gs_text46.value_counts()
     assert len(counts.unique()) == 1
@@ -94,13 +92,14 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.malaria_region = malaria
     prep.hiv_region = hiv
     causes = prep.data_module.CAUSES.values()
-    cause_counts = dict(zip(causes, [7 for c in causes]))
-    prep.write_csmf(cause_counts)
 
-    outfile_path = os.path.join(prep.output_dir_path,
-                                '{}-csmf.csv'.format(prep.AGE_GROUP))
-    csmf = pd.read_csv(outfile_path)
-    assert np.allclose(csmf.CSMF.sum(), 1)
+    user_data = [Record({}, cause, '', 0, 1, '')
+                 for _ in range(7) for cause in causes]
+
+    undetermined_weights = prep._get_undetermined_matrix()
+    csmf = prep.calculate_csmf(user_data, undetermined_weights)
+
+    assert np.allclose(sum(csmf.values()), 1)
 
 
 def test_injuries_have_no_positive_scores(tmpdir, prep):
@@ -119,16 +118,11 @@ def test_injuries_have_no_positive_scores(tmpdir, prep):
     row = {'sid': 'x'}
     row.update({symp: 1 for symp in symptoms})
 
-    spurious = exclude_spurious_associations(prep.data_module.SPURIOUS_ASSOCIATIONS)
-    tariffs = get_cause_symptoms(tariffs_path, ['xs_name'], len(symptoms),
-                                 spurious)
+    tariffs = get_tariff_matrix(tariffs_path, ['xs_name'],
+                                prep.data_module.SPURIOUS_ASSOCIATIONS,
+                                len(symptoms))
 
-    symp_file = os.path.join(tmpdir.strpath, 'symptom.csv')
-    with open(symp_file, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(row.keys())
-        writer.writerow(row.values())
-    scored = prep.get_va_cause_list(symp_file, tariffs)
+    scored = prep.score_symptom_data([row], tariffs)
 
-    assert all([score <= 0 for cause, score in scored[0].cause_scores.items()
+    assert all([score <= 0 for cause, score in scored[0].scores.items()
                 if cause in injuries])

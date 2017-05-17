@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 import pytest
 
 from smartva.utils import utils
@@ -13,13 +11,6 @@ def test_shorten_path():
 def test_find_dupes():
     dupes = ['test1', 'test2', 'test1', 'test3']
     assert utils.find_dupes(dupes) == ['test1']
-
-
-def test_round5():
-    assert utils.round5(Decimal(1.1)) == 1.0
-    assert utils.round5(Decimal(1.6)) == 1.5
-    assert utils.round5(Decimal(1.7499)) == 1.5
-    assert utils.round5(Decimal(1.75)) == 2.0
 
 
 def test_int_or_float():
