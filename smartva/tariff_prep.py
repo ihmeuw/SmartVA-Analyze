@@ -1,9 +1,9 @@
+from __future__ import division
 import abc
+from bisect import bisect_left, bisect_right
 import collections
 import csv
-import math
 import os
-from decimal import Decimal
 
 import numpy as np
 
@@ -12,21 +12,17 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
-from smartva.utils.utils import round5, int_or_float
+from smartva.utils.utils import int_or_float
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
 
-CAUSE_NUM_KEY = 'va46'
 CAUSE_NAME_KEY = 'gs_text46'
 TARIFF_CAUSE_NUM_KEY = 'xs_name'
-
-MAX_CAUSE_SYMPTOMS = 40
 
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
-RESTRICTED_KEY = 'restricted'
 
 
 def safe_float(x):
@@ -36,70 +32,140 @@ def safe_float(x):
         return 0.0
 
 
-def get_cause_num(cause):
-    return int(cause.lstrip('cause'))
+def safe_int(x):
+    return int(safe_float(x))
 
 
-def get_cause_symptoms(filename, drop_headers, max_symptoms, filter_fn=None):
-    cause_symptoms = {}
-    with open(filename, 'rU') as f:
-        reader = csv.DictReader(f)
+def clean_tariffs(row, drop_headers=None, spurious=None, max_symptoms=40,
+                  precision=0.5):
+    """Process the tariffs for a single cause.
 
-        for row in reader:
-            cause_num = get_cause_num(row[TARIFF_CAUSE_NUM_KEY])
+    Symptoms are dropped if they appear in the drop list or are spurious.
+    The first set include short form, HCE or freetext columns. The second
+    set are based on expert review of the tariff matrix. Symptoms with a
+    tariff value of zero are also dropped since they do not contribute to
+    the scoring. Only the tariffs with the highest magnitude, independent
+    of direction are kept. This is done before rounding the tariffs to the
+    specified precision. Both rounding and dropping the lowest magnitude
+    tariffs guards against overfitting by treating the model fit data as
+    a coarse approximation of the results.
 
-            tariff_dict = {k: float(v) for k, v in row.items() if k not in drop_headers and safe_float(v)}
+    Args:
+        row (dict): row of data from tariffs matrix csv
+        drop (list of str): symptom names which should be dropped from the
+            tariff matrix
+        spurious (list of str): cause-specific list of symptom names which
+            should be dropped from the tariff matrix
+        max_symptoms (int): number of symptoms per cause to keep.
+        precision (float): tariffs are rounded to the closest multiple of
+            this value.
 
-            if callable(filter_fn):
-                tariff_dict = filter_fn(tariff_dict, cause_num)
-
-            items = tariff_dict.items()
-
-            cause_symptoms[cause_num] = sorted(items, key=lambda _: math.fabs(float(_[1])), reverse=True)[:max_symptoms]
-
-    return cause_symptoms
-
-
-def exclude_spurious_associations(spurious_assoc_dict):
-    """remove all keys from tariff_dict that appear in the list
-    corresponding to cause_num in the spurious_assoc_dict
-
-    Parameters
-    ----------
-    spurious_assoc_dict : dict, keyed by cause_nums, with s_a_d[j] ==
-      lists of symptoms (see SPURIOUS_ASSOCIATIONS in
-      data/{module}_tariff_data.py for lists)
-
-    Returns
-    -------
-    filter function with access to spurious associations dict.
+    Returns:
+        list: tuples of (symptom, tariff)
     """
-    def fn_wrap(tariff_dict, cause_num):
-        """
-        Parameters
-        ----------
-        tariff_dict : dict, keyed by symptoms
-        cause_num : int
+    drop_headers = drop_headers or []
+    spurious = spurious or []
+    items = [(k, float(v)) for k, v in row.items()
+             if k not in drop_headers and k not in spurious and safe_float(v)]
+    topN = sorted(items, key=lambda _: abs(_[1]), reverse=True)[:max_symptoms]
 
-        Returns
-        -------
-        dict with all spurious associations removed from tariff dict
-        """
-        return {symptom: value for symptom, value in tariff_dict.items()
-                if symptom not in spurious_assoc_dict.get(cause_num, [])}
-
-    return fn_wrap
+    # Use np.round. Round has different behavior in py2 vs py3 for X.5 values
+    return [(k, np.round(v / precision) * precision) for k, v in topN]
 
 
-class ScoredVA(object):
-    def __init__(self, cause_scores, cause, sid, age, sex, restricted):
-        self.cause_scores = cause_scores  # dict of {"cause1" : value, "cause2" :...}
-        self.cause = cause  # int
-        self.restricted = restricted
-        self.rank_list = {}
+def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
+                      precision=0.5):
+    """Load the tariff matrix from a csv file.
+
+    Args:
+        filename (str): path to the csv file with module-specific tariffs
+        drop_headers (list): symptom names which should be dropped from the
+            tariff matrix
+        spurious_assoc (dict of lists of str): cause-symptom pairs which
+            should be dropped from the tariff matrix
+        max_symptoms (int): number of symptoms per cause to keep.
+        precision (float): tariffs are rounded to the closest multiple of
+            this value.
+
+    Returns:
+        tariffs (dict): matrix in dict of lists form where keys are causes
+            and the list contain tuples of (symptom, tariff)
+
+    See Also:
+        clean_tariffs
+    """
+    tariffs = {}
+
+    with open(filename, 'rU') as f:
+        for row in csv.DictReader(f):
+            cause_num = int(row[TARIFF_CAUSE_NUM_KEY].lstrip('cause'))
+            spurious = spurious_assoc.get(cause_num, [])
+            tariffs[cause_num] = clean_tariffs(row, drop_headers, spurious,
+                                               max_symptoms, precision)
+
+    return tariffs
+
+
+class Masks(object):
+    """Encoding for reason why a cause would be masked.
+
+    CENSORED: causes which are ruled out due to the presence of key symptoms
+    EPI: causes ruled out due to user specified epidemiological profile
+    DEMOG: causes ruled out due to demographic criteria. Some causes do not
+        occur in certain age/sex populations
+    OVERALL: causes ranked under the overall percentile
+    CAUSE_RANk: causes ranked under the cause-specific percentile
+    SCORE: causes scored under the cause-specific minimum score
+    """
+    CENSORED = 1
+    EPI = 2
+    DEMOG = 3
+    OVERALL = 4
+    CAUSE_RANK = 5
+    SCORE = 6
+
+
+class Record(object):
+    """Record object for VAs.
+
+    Attributes:
+        sid (str): identifier
+        age (float): age in years
+        sex (int): 1=Male 2=Female
+        cause (int): final prediction at cause46 level
+        cause34 (int): final prediction at the cause34 level
+        cause34_name (str): cause name associated with cause34 prediction
+        endorsements (set): names of endorsed symptoms
+        censored (list): list of causes which are removed from possible valid
+            predictions. These are the result of censoring based on symptom
+            endorsements.
+        scores (dict): tariff score for each cause
+        ranks (dict): rank relative to uniform training data for each cause
+        masked (dict): mapping of causes to reason why it is masked
+    """
+
+    def __init__(self, sid=None, age=None, sex=None, cause=0, cause34=None,
+                 cause34_name=None, endorsements=None, censored=None,
+                 rules=None, scores=None, ranks=None, masked=None):
         self.sid = sid
         self.age = age
         self.sex = sex
+        self.cause = cause
+        self.cause34 = None
+        self.cause34_name = cause34_name
+        self.endorsements = endorsements or set()
+        self._censored = censored or set()
+        self.rules = rules
+        self.scores = scores or {}
+        self.ranks = ranks or {}
+        masked_ = collections.defaultdict(set)
+        if censored:
+            for cause in censored:
+                masked_[cause].add(Masks.CENSORED)
+        if masked:
+            for cause, removed in masked.items():
+                masked_[cause].update(removed)
+        self.masked = masked_
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -108,24 +174,47 @@ class ScoredVA(object):
         self.__dict__[key] = value
 
     def __repr__(self):
-        return ('sid={sid} age={age} sex={sex} cause={cause} restricted={restricted}'
-                'scores={cause_scores} ranks={rank_list}'.format(**self.__dict__))
+        return ('Record(sid={sid}, age={age}, sex={sex}, cause={cause}, '
+                'cause34={cause34}, cause34_name={cause34_name}, '
+                'censored={_censored}, rules={rules}, scores={scores}, '
+                'ranks={ranks}, masked={masked})'.format(**self.__dict__))
 
-    def __str__(self):
-        return self.__repr__()
+    @property
+    def censored(self):
+        return self._censored
+
+    @censored.setter
+    def censored(self, value):
+        # TODO: implement removing censored flags from masked if censored
+        # is reset and previously censored causes are no longer censored
+        try:
+            iter(value)
+        except TypeError:
+            self._censored = {value}
+            self.masked[value].add(Masks.CENSORED)
+        else:
+            self._censored = {x for x in value}
+            for cause in value:
+                self.masked[cause].add(Masks.CENSORED)
 
 
 class TariffPrep(DataPrep):
     """Process prepared answers against validated VA data.
 
-    The main goal of this step is to determine cause of death by comparing symptom scores to those in a uniform list
-    of validated VAs.
-    Steps to accomplish this goal:
-        Read intermediate data file
-        Drop answers based on user flags
+    This step accomplishes two main tasks:
+        1. prepping the serialized data from fitting tariff
+        2. using the model to predict causes for the user data
+
+    The first step includes processing the tariff matrix based on user
+    constraints, expanding the training data to a uniform cause distribution,
+    and calculating cuttoffs relative to the uniform training data.
+
+    The second step involves score the user data with the tariff matrix,
+    ranking it against the training data, removing invalid and improbable
+    prediction possibilies, and predicting.
 
     Notes:
-        Processing pipelines must implement `_matches_undetermined_cause` method.
+        Processing pipelines must implement `_calc_age_bin` method.
     """
 
     __metaclass__ = abc.ABCMeta
@@ -159,25 +248,30 @@ class TariffPrep(DataPrep):
         self.AGE_GROUP = self.data_module.AGE_GROUP
 
     @property
-    def va_validated_filename(self):
-        return os.path.join(config.basedir, 'data', 'validated-{:s}.csv'.format(self.AGE_GROUP))
+    def tariffs_filename(self):
+        return os.path.join(config.basedir, 'data',
+                            'tariffs-{:s}.csv'.format(self.AGE_GROUP))
+
+    @property
+    def validated_filename(self):
+        return os.path.join(config.basedir, 'data',
+                            'validated-{:s}.csv'.format(self.AGE_GROUP))
 
     @property
     def undetermined_matrix_filename(self):
-        return os.path.join(config.basedir, 'data', '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP))
-
-    @property
-    def external_ranks_filename(self):
-        return os.path.join(self.intermediate_dir, '{:s}-external-ranks.csv'.format(self.AGE_GROUP))
+        filename = '{:s}_undetermined_weights.csv'.format(self.AGE_GROUP)
+        return os.path.join(config.basedir, 'data', filename)
 
     def run(self):
         super(TariffPrep, self).run()
 
-        status_logger.info('{:s} :: Processing tariffs'.format(self.AGE_GROUP.capitalize()))
+        status_logger.info('{:s} :: Processing tariffs'
+                           .format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
 
-        # Headers are being dropped only from tariff matrix now because of the way we are iterating over the pruned
-        # tariff data. It is unnecessary to drop headers from other matrices.
+        # Headers are being dropped only from tariff matrix now because of the
+        # way we are iterating over the pruned tariff data. It is unnecessary
+        # to drop headers from other matrices.
         drop_headers = {TARIFF_CAUSE_NUM_KEY}
         if not self.hce:
             drop_headers.update(self.data_module.HCE_DROP_LIST)
@@ -186,191 +280,229 @@ class TariffPrep(DataPrep):
         if self.short_form:
             drop_headers.update(self.data_module.SHORT_FORM_DROP_LIST)
 
-        cause46_names = self.data_module.CAUSES46
+        tariffs = get_tariff_matrix(self.tariffs_filename, drop_headers,
+                                    self.data_module.SPURIOUS_ASSOCIATIONS)
 
-        undetermined_matrix = self._get_undetermined_matrix()
+        self.cause_list = sorted(tariffs.keys())
 
-        cause40s = get_cause_symptoms(os.path.join(config.basedir, 'data', 'tariffs-{:s}.csv'.format(self.AGE_GROUP)),
-                                      drop_headers, MAX_CAUSE_SYMPTOMS,
-                                      exclude_spurious_associations(self.data_module.SPURIOUS_ASSOCIATIONS))
-        self.cause_list = sorted(cause40s.keys())
+        validated = self.read_input_file(self.validated_filename)[1]
 
-        status_logger.info('{:s} :: Generating validated VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_validated_cause_list = self.get_va_cause_list(self.va_validated_filename, cause40s)
+        status_logger.info('{:s} :: Processing validation data.'
+                           .format(self.AGE_GROUP.capitalize()))
+        train = self.process_training_data(validated, tariffs,
+                                           self.data_module.FREQUENCIES,
+                                           self.data_module.CUTOFF_POS)
+        uniform_train, uniform_scores, uniform_ranks, cutoffs = train
 
-        uniform_list = self.generate_uniform_list(va_validated_cause_list, self.data_module.FREQUENCIES)
+        self.write_cutoffs(cutoffs)
 
-        status_logger.debug('{:s} :: Generating cutoffs'.format(self.AGE_GROUP.capitalize()))
-        cutoffs = self.generate_cutoffs(uniform_list, self.data_module.CUTOFF_POS)
+        status_logger.info('{:s} :: Generating VA cause list.'
+                           .format(self.AGE_GROUP.capitalize()))
+        user_data = self.read_input_file(self.input_file_path())[1]
+        user_data = self.score_symptom_data(user_data, tariffs)
 
-        status_logger.info('{:s} :: Generating VA cause list.'.format(self.AGE_GROUP.capitalize()))
-        va_cause_list = self.get_va_cause_list(self.input_file_path(), cause40s)
+        status_logger.info('{:s} :: Generating cause rankings.'
+                           .format(self.AGE_GROUP.capitalize()))
+        self.generate_cause_rankings(user_data, uniform_scores)
 
-        status_logger.info('{:s} :: Generating cause rankings.'.format(self.AGE_GROUP.capitalize()))
-        self.generate_cause_rankings(va_cause_list, uniform_list)
+        self.write_intermediate_file(user_data, 'external-ranks', 'ranks')
 
-        self.write_external_ranks(va_cause_list)
+        lowest_rank = len(uniform_train) + 0.5
 
-        lowest_rank = len(uniform_list) + 0.5
+        self.mask_ranks(user_data, len(uniform_train), cutoffs,
+                        self.data_module.CAUSE_CONDITIONS,
+                        lowest_rank, self.data_module.UNIFORM_LIST_POS,
+                        self.data_module.MIN_CAUSE_SCORE)
 
-        self.identify_lowest_ranked_causes(va_cause_list, uniform_list, cutoffs, self.data_module.CAUSE_CONDITIONS,
-                                           lowest_rank, self.data_module.UNIFORM_LIST_POS,
-                                           self.data_module.MIN_CAUSE_SCORE)
+        self.predict(user_data, lowest_rank, self.data_module.CAUSE_REDUCTION,
+                     self.data_module.CAUSES, self.data_module.CAUSES46)
 
-        cause_counts = self.write_predictions(va_cause_list, undetermined_matrix, lowest_rank,
-                                              self.data_module.CAUSE_REDUCTION, self.data_module.CAUSES, cause46_names)
+        undetermined_weights = self._get_undetermined_matrix()
+        csmf = self.calculate_csmf(user_data, undetermined_weights)
 
-        self.write_csmf(cause_counts)
+        self.write_predictions(user_data)
 
-        self.write_tariff_ranks(va_cause_list)
+        self.write_csmf(csmf)
 
-        self.write_tariff_scores(va_cause_list)
+        self.write_intermediate_file(user_data, 'tariff-scores', 'scores')
 
-        return va_cause_list
+        self.write_intermediate_file(user_data, 'tariff-ranks', 'ranks')
 
-    def get_va_cause_list(self, input_file, cause40s):
-        """Generate list of Scored VAs. Read va data file and calculate cause score for each cause.
+        return user_data
+
+    def score_row(self, row, tariffs):
+        """Score a single row of symptom data.
+
+        Calculate the tariff score for each cause by calculating the sum of
+        the tariffs for endorsed symptoms.
 
         Args:
-            input_file (str): Path of input file.
-            cause40s (dict):
+            row (dict): row from symptom data file
+            tariffs (dict of lists): processed tariffs by cause
+
+        Returns:
+            Record
+        """
+        endorsements = {k for k, v in row.items() if safe_float(v)}
+        scores = {}
+        for cause, symptoms in tariffs.items():
+            scores[cause] = sum(tariff for symptom, tariff in symptoms
+                                if symptom in endorsements)
+        return Record(sid=row.get(SID_KEY), age=row.get(AGE_KEY),
+                      sex=row.get(SEX_KEY), scores=scores)
+
+    def score_symptom_data(self, symptom_data, tariffs):
+        """Score symptom data using a tariffs matrix.
+
+        Args:
+            symptom_data (list of dict): symptom data from a csv.DictReader
+            tariffs (dict of lists): processed tariffs by cause
 
         Returns:
             list: List of Scored VAs.
         """
-        va_cause_list = []
-        headers, matrix = DataPrep.read_input_file(input_file)
+        scored = []
 
-        status_notifier.update({'sub_progress': (0, len(matrix))})
+        status_notifier.update({'sub_progress': (0, len(symptom_data))})
 
-        for index, row in enumerate(matrix):
+        for index, row in enumerate(symptom_data):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
 
-            cause_dict = {}
+            va = self.score_row(row, tariffs)
 
-            for cause, symptoms in cause40s.items():
-                cause_dict[cause] = sum(round5(Decimal(v)) for k, v in symptoms if safe_float(row.get(k)) == 1)
+            va.censored = map(safe_int, row.get('restricted', '').split())
+            va.rules = safe_int(row.get(RULES_CAUSE_NUM_KEY))
 
-            # Rule engine injected cause
-            if safe_float(row.get(RULES_CAUSE_NUM_KEY)):
-                row[CAUSE_NUM_KEY] = int(row[RULES_CAUSE_NUM_KEY])
-
-            # Censored causes
-            row[RESTRICTED_KEY] = map(int, map(float, row.get(RESTRICTED_KEY, '').split()))
-
-            va_cause_list.append(ScoredVA(cause_dict, row.get(CAUSE_NUM_KEY), row[SID_KEY],
-                                          row.get(AGE_KEY), row.get(SEX_KEY), row.get(RESTRICTED_KEY)))
+            scored.append(va)
 
         status_notifier.update({'sub_progress': None})
 
-        return va_cause_list
+        return scored
 
-    def generate_uniform_list(self, va_cause_list, frequencies):
-        """Generate a uniform list of validated Scored VAs from a list of frequencies.
+    def process_training_data(self, train, tariffs, frequencies, cutoff_pos):
+        """Process the training data.
 
-        Args:
-            va_cause_list (list): List of validated Scored VAs.
-            frequencies (dict): Map of scored VA to frequency.
+        The validated data is expanded so that the cause distribution across
+        all the observation is uniformly distributed across the causes. The
+        sampling frequencies are determined elsewhere and stored in the data
+        module.
 
-        Returns:
-            list: Uniform list of validated VAs.
-        """
-        uniform_list = []
-        for va in va_cause_list:
-            uniform_list.extend([va] * frequencies[va.sid])
-
-        for cause in self.cause_list:
-            cause_list = sorted(uniform_list, key=lambda t: t.cause_scores[cause], reverse=True)
-            for i, va in enumerate(cause_list):
-                va.rank_list[cause] = i
-
-        return uniform_list
-
-    def generate_cutoffs(self, uniform_list, cutoff_pos):
-        """Determine cutoff score for each cause. Write scores to a file.
+        Cause-specific cutoffs are calculated as the rank value at the given
+        cutoff percentile of the subset of observations whose gold standards
+        is the given cause. While the data are sorted also store the
+        distribution of scores by cause. This is used to rank the user data.
 
         Args:
-            uniform_list (list): Uniform list of validated VAs.
-            cutoff_pos (int): Cutoff position.
+            train (list): List of validated ScoredVAs.
+            frequencies (dict): Map of validated sid to frequency.
+            cutoff_pos (float): Percentile cutoff from 0 to 1.
 
         Returns:
-            dict: Cutoff score for each cause.
+            tuple:
+                list: validated VAs with uniform cause distribution.
+                dict: ordered scores by cause for all VAs in the training data
+                dict: mapping of ranks of VAs in the training data for which
+                    the gold standard is the given cause
+                dict: Cutoff score for each cause.
         """
+        uniform_train = []
+
+        status_notifier.update({'sub_progress': (0, 1)})
+
+        for index, row in enumerate(train):
+            self.check_abort()
+
+            # Assume half the processing time is scoring/expanding
+            # Fill half the status bar based on the number of rows
+            status_notifier.update({
+                'sub_progress': ((index / 2) / len(train),)
+            })
+
+            va = self.score_row(row, tariffs)
+            va.cause = row.get('va46')
+            uniform_train.extend([va] * frequencies[va.sid])
+
+        scores = {}
+        ranks = {}
         cutoffs = {}
-        with open(os.path.join(self.intermediate_dir, '{:s}-cutoffs.txt'.format(self.AGE_GROUP)), 'w') as f:
-            for cause_num in self.cause_list:
-                self.check_abort()
 
-                # Get the uniform list sorted by (reversed) cause_score and sid.
-                sorted_cause_list = sorted(uniform_list, key=lambda va: (-va.cause_scores[cause_num], va.sid))
+        n_causes = len(self.cause_list)
+        for index, cause in enumerate(self.cause_list):
+            self.check_abort()
 
-                # Create a list of indexes from the sorted cause list for each cause.
-                # we add one because python is 0 indexed and stata is 1 indexed, so this will give us the same
-                # numbers as the original stata tool
-                local_list = [(i + 1) for i, va in enumerate(sorted_cause_list) if int(va.cause) == cause_num]
+            # Assume half the processing time is sorting/ranking
+            # Start at 50% and updated in even increments for each cause
+            status_notifier.update({
+                'sub_progress': (.5 + (index / 2) / n_causes,)
+            })
 
-                # Find the index of the item at cutoff position.
-                cutoffs[cause_num] = local_list[int(len(local_list) * cutoff_pos)]
+            # Get the uniform training data sorted by (reversed) score and
+            # sid. Sorting by sid ensures the ranks are stable between row
+            # which have the score but different gold standard causes.
+            def sorter(va):
+                return -va.scores[cause], va.sid
+            uniform_sorted = sorted(uniform_train, key=sorter)
 
-                f.write('{} : {}\n'.format(cause_num, cutoffs[cause_num]))
+            # Store the scores from the distribution sorted from low to high
+            scores[cause] = [va.scores[cause] for va in uniform_sorted][::-1]
 
-        return cutoffs
+            # Determine the rank within the complete uniform training data
+            # of the subset of VAs whose gold standard cause is the cause
+            # by which the VAs are ranked.
+            ranks[cause] = [(i + 1) for i, va in enumerate(uniform_sorted)
+                            if int(va.cause) == cause]
+            # Find the index of the item at cutoff position.
+            cutoffs[cause] = ranks[cause][int(len(ranks[cause]) * cutoff_pos)]
 
-    def generate_cause_rankings(self, va_cause_list, uniform_list):
-        """Determine cause rankings by comparing
+        status_notifier.update({'sub_progress': None})
+
+        return uniform_train, scores, ranks, cutoffs
+
+    def write_cutoffs(self, cutoffs):
+        """Write cutoffs to a file.
+
         Args:
-            va_cause_list:
-            uniform_list:
-
-        Returns:
-
+            cutoffs (dict): mapping of cause to cutoff ranks
         """
-        status_notifier.update({'sub_progress': (0, len(va_cause_list))})
-        cause_scores = {}
-        for cause in self.cause_list:
-            cause_scores[cause] = sorted((_.cause_scores[cause] for _ in (v_va for v_va in uniform_list)), reverse=True)
+        output_file = os.path.join(self.intermediate_dir,
+                                   '{:s}-cutoffs.txt'.format(self.AGE_GROUP))
+        with open(output_file, 'w') as f:
+            for cause in self.cause_list:
+                f.write('{} : {}\n'.format(cause, cutoffs[cause]))
 
-        for index, va in enumerate(va_cause_list):
+    def generate_cause_rankings(self, scored, uniform_scores):
+        """Determine rank for each cause.
+
+        The scored user data is ranked against the scores from the validation
+        data which has been resampled to a uniform cause distribtuion. If an
+        observation is scored higher than any observation in the training data
+        it is ranked 0.5. If an observation is scored lower than any
+        observation in the training data it is ranked len(training) + 0.5.
+
+        The user_data is modified in place and not returned.
+
+        Args:
+            scored (list): list of ScoredVAs from user data
+            uniform_scores (dict of lists): sorted distribution of scores
+                by cause from uniform training data
+        """
+        status_notifier.update({'sub_progress': (0, len(scored))})
+
+        for index, va in enumerate(scored):
             status_notifier.update({'sub_progress': (index,)})
 
             for cause in self.cause_list:
                 self.check_abort()
 
-                # get the tariff score for this cause for this external VA
-                death_score = va.cause_scores[cause]
+                gt = bisect_left(uniform_scores[cause], va.scores[cause])
+                lt = bisect_right(uniform_scores[cause], va.scores[cause])
+                avg_rank = len(uniform_scores[cause]) - gt + (gt - lt) / 2.
 
-                lowest_rank = np.sum(np.array(cause_scores[cause]) > death_score)
-                highest_rank = len(cause_scores[cause]) - np.sum(np.array(cause_scores[cause]) < death_score)
-                avg_rank = (lowest_rank + highest_rank) / 2.
-
-                # add .5 because python is zero indexed, and stata is 1 indexed so we get the same
-                # answer as the original stata tool
-                # If an observation is scored higher than any observation in the training data it is ranked 0.5
-                # If an observation is scored lower than any observation in the training data
-                # it is ranked len(training) + 0.5
-                va.rank_list[cause] = avg_rank + .5
+                va.ranks[cause] = avg_rank + .5
 
         status_notifier.update({'sub_progress': None})
-
-    def write_external_ranks(self, va_cause_list):
-        """Write Scored VA ranks to a file.
-
-        Args:
-            va_cause_list (list): List of Scored VAs.
-        """
-        ranks = []
-        for va in va_cause_list:
-            self.check_abort()
-
-            rank_dict = {"sid": va.sid}
-            rank_dict.update(va.rank_list)
-            ranks.append(rank_dict)
-
-        DataPrep.write_output_file(sorted(ranks[0].keys(), key=lambda x: (isinstance(x, int), x)),
-                                   ranks,
-                                   self.external_ranks_filename)
 
     def _get_undetermined_matrix(self):
         """Return mapping of undetermined weights read from the specified file.
@@ -410,134 +542,203 @@ class TariffPrep(DataPrep):
 
         return weights
 
-    def identify_lowest_ranked_causes(self, va_cause_list, uniform_list, cutoffs, cause_conditions, lowest_rank,
-                                      uniform_list_pos, min_cause_score):
-        """Determine which causes are least likely by testing conditions.
-        Only females ages 15-49 can have anaemia, hemorrhage, hypertensive disease, other pregnancy-related, or sepsis.
-        Only males can have prostate cancer.
-        Eliminate user specified causes (Malaria).
+    def mask_ranks(self, user_data, n_uniform_train, cause_cutoffs,
+                   age_sex_restrictions, lowest_rank, overall_rank_cutoff,
+                   min_cause_score):
+        """Mask the ranks for some causes based on certain criteria.
+
+        Causes may by masked for any of the following reasons:
+        * The is biologically impossible/improbably given the age and sex of
+          the decent. Example: no prostate cancer in females.
+        * User data may come from areas with very low prevalence of certain
+          infectious diseases which are not likely to occur in the sample.
+          These are indicated by the HIV and Malaria options flags.
+        * The tariff score for a cause may be below the minimum score.
+        * The rank for a cause may be below the cause-specific minimum rank.
+        * The rank for a cause may be below the minimum overall rank.
+
+        The last three are information criteria which prevent unstable
+        predictions for VAs with very few endorsements or only endorsements
+        which do not clearly lead to a given prediction.
+
+        This modifies the records in place and does not return anything.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
-            uniform_list (list): Uniform list of validated VAs.
-            cutoffs (dict): Map of cutoff values for each cause.
-            cause_conditions (dict): Conditions necessary for a given list of causes.
+            user_data (list): List of Scored VAs.
+            n_uniform_train (int): number of observations in the validated
+                data which has been resampled to a uniform cause distribution.
+            cause_cutoffs (dict): Map of cutoff ranks for each cause.
+            age_sex_restrictions (dict): Conditions necessary for a given
+                list of causes. Keys are LDAP strings which compare age or
+                sex to a numeric threshold.
             lowest_rank (int): Value to assign to the least likely causes.
-            uniform_list_pos (float): Reject causes above this position in the uniform list.
-            min_cause_score (float): Reject causes under this threshold.
+            overall_rank_cutoff (float): The percentile (between 0 and 1)
+                under which a cause is rejected
+            min_cause_score (dict): Map of cutoff scores for each cause.
         """
-        for va in va_cause_list:
+        overall_rank_cutoff = n_uniform_train * overall_rank_cutoff
+        for va in user_data:
             self.check_abort()
 
-            # if a VA has a tariff score less than 0 for a certain cause,
-            # replace the rank for that cause with the lowest possible rank
-            for cause in va.cause_scores:
-                if float(va.cause_scores[cause]) < 0.0:
-                    va.rank_list[cause] = lowest_rank
+            # Mask based on cause scores
+            for cause in va.scores:
+                if va.scores[cause] <= min_cause_score[cause]:
+                    va.masked[cause].add(Masks.SCORE)
 
-            lowest_cause_list = set(va.restricted)
+            # Mask based on age/sex criteria
+            def lookup(x):
+                return value_or_default(va[x], int_or_float)
 
-            for condition, causes in cause_conditions.items():
-                if not LdapNotationParser(condition, lambda t: value_or_default(va[t], int_or_float), int).evaluate():
-                    lowest_cause_list.update(causes)
+            for condition, causes in age_sex_restrictions.items():
+                if not LdapNotationParser(condition, lookup, int).evaluate():
+                    for cause in causes:
+                        va.masked[cause].add(Masks.DEMOG)
 
+            # Mask based on regional prevalence of HIV
             if not self.hiv_region:
-                lowest_cause_list.update(self.data_module.HIV_CAUSES)
+                for cause in self.data_module.HIV_CAUSES:
+                    va.masked[cause].add(Masks.EPI)
 
                 # This a fragile hack to remove rule-based predictions of AIDS
                 # from the child module if the user specifies that the data is
                 # from a low prevalence HIV region. It works because the AIDS
                 # rule is the last listed rule so it is not masking any other
                 # rule-based predictions
-                if va.cause in self.data_module.HIV_CAUSES:
-                    va.cause = None
+                if va.rules in self.data_module.HIV_CAUSES:
+                    va.rules = None
 
-
+            # Mask based on regional prevalence of Malaria
             if not self.malaria_region:
-                lowest_cause_list.update(self.data_module.MALARIA_CAUSES)
+                for cause in self.data_module.MALARIA_CAUSES:
+                    va.masked[cause].add(Masks.EPI)
 
-            for cause_num in self.cause_list:
-                if ((float(va.rank_list[cause_num]) > float(cutoffs[cause_num])) or
-                        (float(va.rank_list[cause_num]) > float(len(uniform_list) * uniform_list_pos)) or
-                    # EXPERIMENT: reject tariff scores less than a fixed amount as well
-                        (float(va.cause_scores[cause_num]) <= min_cause_score[cause_num])):
-                    lowest_cause_list.add(cause_num)
+            for cause in self.cause_list:
+                # Mask based on cause-specific rank
+                if va.ranks[cause] > cause_cutoffs[cause]:
+                    va.masked[cause].add(Masks.CAUSE_RANK)
 
-            for cause_num in lowest_cause_list:
-                va.rank_list[cause_num] = lowest_rank
+                # Mask based on overall rank
+                if va.ranks[cause] > overall_rank_cutoff:
+                    va.masked[cause].add(Masks.OVERALL)
 
-    def write_predictions(self, va_cause_list, undetermined_matrix, lowest_rank, cause_reduction, cause34_names, cause46_names):
-        """Determine cause predictions and write to a file. Return cause count.
+            # Apply the mask
+            for cause in va.masked:
+                va.ranks[cause] = lowest_rank
+
+    def predict(self, user_data, lowest_rank, cause_reduction, cause34_names,
+                cause46_names):
+        """Determine cause predictions.
+
+        First look for causes which are already specified. These are rule
+        based predictions. If this is missing or invalid predictions are
+        based on the tariff ranks.
+
+        This modifies a list in place and adds the cause34 and cause34_name
+        attributes to the ScoredVA objects.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
-            undetermined_matrix (list): Matrix of undetermined cause weights.
-            lowest_rank (int): Lowest possible rank (highest value, length of uniform list).
+            user_data (list): list of ScoredVAs which have been ranked.
+            lowest_rank (int): Lowest possible rank.
             cause_reduction (dict): Map to reduce cause46 values to cause34.
             cause34_names (dict): Cause34 cause names for prediction output.
             cause46_names (dict): Cause46 cause names for warning messages.
-
-        Returns:
-            collections.Counter: Dict of cause counts.
         """
-        cause_counts = collections.Counter()
-        with open(os.path.join(self.output_dir_path, '{:s}-predictions.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
+        for va in user_data:
+            self.check_abort()
 
-            for va in va_cause_list:
-                self.check_abort()
+            if va.rules and va.rules in cause_reduction:
+                va.cause = va.rules
+            elif len(set(va.ranks.values())) > 1:
+                best_rank = min(va.ranks.values())
+                predictions = [cause for cause, rank in va.ranks.items()
+                               if rank == best_rank and cause not in va.masked]
 
-                # Record causes already determined.
-                cause46 = safe_float(va.cause)
-                cause34 = cause_reduction.get(cause46)
-                if cause46 and cause34 is None:
+                # Use the first listed cause if there are ties
+                if predictions:
+                    va.cause = sorted(predictions)[0]
+
+                if len(predictions) > 1:
+                    names = [cause46_names[cause] for cause in predictions]
                     warning_logger.info(
-                        '{group:s} :: SID: {sid:s} was assigned an invalid cause: {cause}'
-                        .format(group=self.AGE_GROUP.capitalize(), sid=va.sid, cause=cause46)
+                        '{group:s} :: SID: {sid:s} had multiple causes '
+                        '{causes} predicted to be equally likely, using '
+                        '\'{causes[0]:s}\'.'
+                        .format(group=self.AGE_GROUP.capitalize(),
+                                sid=va.sid, causes=names)
                     )
 
-                # If a cause is not yet determined and any cause is higher than the lowest rank:
-                va_lowest_rank = min(va.rank_list.values())
-                if not cause34 and va_lowest_rank < lowest_rank:
-                    # Extract the causes with the highest rank (lowest value). Choose first cause if multiple are found.
-                    causes = np.extract(np.array(va.rank_list.values()) == va_lowest_rank, va.rank_list.keys())
-                    cause34 = cause_reduction[int(causes[0])]
+            va.cause34 = cause_reduction.get(va.cause)
+            va.cause34_name = cause34_names.get(va.cause34, 'Undetermined')
 
-                    # Warn user if multiple causes are equally likely and which will be chosen.
-                    if len(causes) > 1:
-                        multiple_cause_list = [cause46_names[int(_)] for _ in causes]
-                        warning_logger.info(
-                            '{group:s} :: SID: {sid:s} had multiple causes {causes} predicted to be equally likely, '
-                            'using \'{causes[0]:s}\'.'.format(group=self.AGE_GROUP.capitalize(), sid=va.sid,
-                                                              causes=multiple_cause_list))
+    def calculate_csmf(self, user_data, undetermined_weights):
+        """Tabluate predictions into Cause-Specific Mortality Fractions.
 
-                # Count causes, for use in graphs
-                cause34_name = cause34_names.get(cause34, 'Undetermined')
-                if not cause34:
-                    if self.iso3 is None:
-                        cause_counts.update([cause34_name])
-                    else:
-                        # For undetermined, look up the weights for the age and sex category which matches this VA
-                        # and add the fractions to the 'count' for all causes. If there is no weight for the
-                        # given age-sex, redistribute based on the proporiton across all ages and both sexes. This
-                        # may occur if the VA lists an age group in gen_5_4d, but lacks a real age data
-                        age = self._calc_age_bin(va.age)
-                        try:
-                            undetermined_weights = undetermined_matrix[age, va.sex]
-                        except KeyError:
-                            undetermined_weights = undetermined_matrix[99, 3]
-                        cause_counts.update(undetermined_weights)
-                else:
-                    cause_counts.update([cause34_name])
+        If a country is specified the undetermined predictions will be
+        redistributed. The weights are by the Global Burden of Disease age,
+        sex, country and cause34. For each undetermined prediction, a
+        fractions will be added to the 'count' for all relevant causes. If
+        there is no weight for the given age-sex, it will be redistributed
+        based on the proporiton across all ages and both sexes. This
+        may occur if age or sex data is missing such as when the VA lists an
+        age group in gen_5_4d, but lacks a real age data.
 
-                # We filled age with a default value of zero but do not want to
-                # report this value in output files and graphs
-                if float(va.age) == 0 and self.AGE_GROUP in ['adult', 'child']:
-                    va.age = ''
+        Args:
+            user_data (list): list of ScoredVAs with predictions
+            undetermined_weights: redistribution weights by age and sex
+        """
+        cause_counts = collections.Counter()
 
-                writer.writerow([va.sid, cause34, cause34_name, va.age, va.sex])
-        return cause_counts
+        for va in user_data:
+            self.check_abort()
+
+            if va.cause34_name == 'Undetermined' and self.iso3:
+                age = self._calc_age_bin(va.age)
+                try:
+                    redistributed = undetermined_weights[age, va.sex]
+                except KeyError:
+                    redistributed = undetermined_weights[99, 3]
+                cause_counts.update(redistributed)
+            else:
+                cause_counts.update([va.cause34_name])
+
+        # The undetermined weights may have redistributed onto causes which
+        # the user specified as non-existent. These should be removed.
+        drop_causes = []
+        if not self.hiv_region:
+            drop_causes.extend(self.data_module.HIV_CAUSES)
+        if not self.malaria_region:
+            drop_causes.extend(self.data_module.MALARIA_CAUSES)
+
+        for cause in drop_causes:
+            cause34 = self.data_module.CAUSE_REDUCTION[cause]
+            gs_text34 = self.data_module.CAUSES[cause34]
+            if gs_text34 in cause_counts:
+                cause_counts.pop(gs_text34)
+
+        # Convert counts to fractions
+        total_counts = sum(cause_counts.values())
+        csmf = {k: v / total_counts for k, v in cause_counts.items()}
+
+        return csmf
+
+    def write_predictions(self, user_data):
+        """Write the predicted causes.
+
+        Args:
+            user_data (list): List of ScoredVAs with predictions
+        """
+        def format_row(va):
+            # We filled age with a default value of zero but do not want to
+            # report this value in output files and graphs
+            if float(va.age) == 0 and self.AGE_GROUP in ['adult', 'child']:
+                va.age = ''
+            return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
+
+        filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
+        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+            writer = csv.writer(f)
+            writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
+            writer.writerows([format_row(va) for va in user_data])
 
     @abc.abstractmethod
     def _calc_age_bin(self, va, u_row):
@@ -555,48 +756,31 @@ class TariffPrep(DataPrep):
         """
         pass
 
-    def write_tariff_scores(self, va_cause_list):
-        """Write Scored VA Tariff scores.
+    def write_intermediate_file(self, user_data, name, attr):
+        """Write intermediate tariff files.
 
         Args:
-            va_cause_list (list): List of Scored VAs.
+            user_data (list): List of Scored VAs.
         """
-        with open(os.path.join(self.intermediate_dir, '{:s}-tariff-scores.csv'.format(self.AGE_GROUP)), 'wb') as f:
+
+        def format_row(va):
+            vals = [getattr(va, attr).get(cause) for cause in self.cause_list]
+            return [va.sid] + vals
+
+        filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
+        with open(os.path.join(self.intermediate_dir, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.cause_scores[cause] for cause in self.cause_list] for va in va_cause_list])
+            writer.writerows([format_row(va) for va in user_data])
 
-    def write_tariff_ranks(self, va_cause_list):
-        """Write Scored VA Tariff ranks.
-
-        Args:
-            va_cause_list (list): List of Scored VAs.
-        """
-        with open(os.path.join(self.intermediate_dir, '{:s}-tariff-ranks.csv'.format(self.AGE_GROUP)), 'wb') as f:
-            writer = csv.writer(f)
-            writer.writerow([SID_KEY] + self.cause_list)
-            writer.writerows([[va.sid] + [va.rank_list[cause] for cause in self.cause_list] for va in va_cause_list])
-
-    def write_csmf(self, cause_counts):
-        """Write Scored VA cause counts.
+    def write_csmf(self, csmf):
+        """Write Cause-Specific Mortaility Fractions.
 
         Args:
-            cause_counts (dict): Map of causes to count.
+            csmf (dict): Map of causes to count.
         """
-        drop_causes = []
-        if not self.hiv_region:
-            drop_causes.extend(self.data_module.HIV_CAUSES)
-        if not self.malaria_region:
-            drop_causes.extend(self.data_module.MALARIA_CAUSES)
-
-        for cause in drop_causes:
-            cause34 = self.data_module.CAUSE_REDUCTION[cause]
-            gs_text34 = self.data_module.CAUSES[cause34]
-            if gs_text34 in cause_counts:
-                cause_counts.pop(gs_text34)
-
-        cause_count_values = float(sum(cause_counts.values()))
-        with open(os.path.join(self.output_dir_path, '{:s}-csmf.csv'.format(self.AGE_GROUP)), 'wb') as f:
+        filename = '{:s}-csmf.csv'.format(self.AGE_GROUP)
+        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
-            writer.writerows([[k, (v / cause_count_values)] for k, v in cause_counts.items()])
+            writer.writerows(sorted(csmf.items(), key=lambda _: _[0]))

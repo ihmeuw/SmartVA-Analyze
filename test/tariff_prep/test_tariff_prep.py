@@ -7,10 +7,10 @@ import pandas as pd
 import numpy as np
 
 from smartva.tariff_prep import (
-    ScoredVA,
+    Record,
     TariffPrep,
-    get_cause_num,
-    get_cause_symptoms,
+    get_tariff_matrix,
+    clean_tariffs,
 )
 
 import sample_tariff_data
@@ -43,24 +43,50 @@ class TestTariffPrep(object):
         assert prep.AGE_GROUP == 'sample'
 
 
-def test_get_cause_num():
-    assert get_cause_num('cause0') == 0
+@pytest.mark.parametrize('row, drop_headers, expected', [
+    ({'bad': ''}, ['bad'], []),
+    ({'bad': '', 'symp': '1'}, ['bad'], [('symp', 1)]),
+    ({'bad': '', 'bad2': '', 'symp': '1'}, ['bad', 'bad2'], [('symp', 1)]),
+])
+def test_clean_tariffs_drop_headers(row, drop_headers, expected):
+    cleaned = clean_tariffs(row, drop_headers=drop_headers)
+    assert cleaned == expected
 
 
-@pytest.mark.parametrize('row,expected', [
-    ({'sid': 'none', 'restricted': ''}, []),
-    ({'sid': 'one', 'restricted': '1'}, [1]),
-    ({'sid': 'two', 'restricted': '1 2'}, [1, 2]),
-], ids=lambda x: x['sid'])
-def test_get_va_cause_list_restricted(tmpdir, prep, row, expected):
-    f = tmpdir.join('test.csv')
-    f.write('\n'.join([','.join(r) for r in zip(*row.items())]))
-    va = prep.get_va_cause_list(f.strpath, {})[0]
-
-    assert va.restricted == expected
+@pytest.mark.parametrize('row, spurious, expected', [
+    ({'symp1': 1, 'symp2': 2}, [], [('symp2', 2), ('symp1', 1)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp1'], [('symp2', 2)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp2'], [('symp1', 1)]),
+    ({'symp1': 1, 'symp2': 2}, ['symp1', 'symp2'], []),
+])
+def test_clean_tariffs_spurious(row, spurious, expected):
+    cleaned = clean_tariffs(row, spurious=spurious)
+    assert cleaned == expected
 
 
-def test_get_cause_symptoms(tmpdir):
+@pytest.mark.parametrize('row, max_symptoms, expected', [
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 2, [('symp1', 5), ('symp2', 4)]),
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 1, [('symp1', 5)]),
+    ({'symp1': 5, 'symp2': 4, 'symp3': 3}, 0, []),
+    ({'symp1': 5, 'symp2': -5, 'symp3': 3}, 2, [('symp1', 5), ('symp2', -5)]),
+])
+def test_clean_tariffs_max_symptoms(row, max_symptoms, expected):
+    cleaned = clean_tariffs(row, max_symptoms=max_symptoms)
+    assert cleaned == expected
+
+
+@pytest.mark.parametrize('row, precision, expected', [
+    ({'symp': '1.1'}, 0.5, [('symp', 1.0)]),
+    ({'symp': '1.6'}, 0.5, [('symp', 1.5)]),
+    ({'symp': '1.7499'}, 0.5, [('symp', 1.5)]),
+    ({'symp': '1.75'}, 0.5, [('symp', 2.0)]),
+])
+def test_clean_tariffs_precision(row, precision, expected):
+    cleaned = clean_tariffs(row, precision=precision)
+    assert cleaned == expected
+
+
+def test_get_tariff_matrix(tmpdir):
     input_data = [
         ['xs_name', 'age', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
         ['cause1', '10.0', '8.0', '6.0', '4.0', '2.0', '0.0', '-1.0', '-3.0', '-5.0'],
@@ -85,12 +111,41 @@ def test_get_cause_symptoms(tmpdir):
         w = csv.writer(f)
         w.writerows(input_data)
 
-    result = get_cause_symptoms(f_path.strpath, ['xs_name'], 5)
+    result = get_tariff_matrix(f_path.strpath, ['xs_name'], {}, 5)
 
     print(result)
 
     for key in result:
         assert result[key] == expected_result[key]
+
+
+@pytest.mark.parametrize('row,expected', [
+    ({'sid': 'none', 'restricted': ''}, set()),
+    ({'sid': 'one', 'restricted': '1'}, {1}),
+    ({'sid': 'two', 'restricted': '1 2'}, {1, 2}),
+], ids=lambda x: x['sid'])
+def test_score_symptom_data_restricted(prep, row, expected):
+    va = prep.score_symptom_data([row], {})[0]
+    assert va.censored == expected
+
+
+@pytest.mark.parametrize('row, expected', [
+    ({'symp1': 0, 'symp2': 0, 'symp3': 0, 'symp4': 0}, {1: 0, 2: 0, 3: 0}),
+    ({'symp1': 1, 'symp2': 1, 'symp3': 1, 'symp4': 1}, {1: 4, 2: 5, 3: 7}),
+    ({'symp1': 1, 'symp2': 0, 'symp3': 0, 'symp4': 0}, {1: 1, 2: 3, 3: 0}),
+    ({'symp1': 0, 'symp2': 1, 'symp3': 0, 'symp4': 0}, {1: 1, 2: 0, 3: 7}),
+    ({'symp1': 0, 'symp2': 0, 'symp3': 1, 'symp4': 0}, {1: 1, 2: 0, 3: 0}),
+    ({'symp1': 0, 'symp2': 0, 'symp3': 0, 'symp4': 1}, {1: 1, 2: 2, 3: 0}),
+])
+def test_score_symptom_data_scoring(prep, row, expected):
+    tariffs = {
+        1: [('symp1', 1), ('symp2', 1), ('symp3', 1), ('symp4', 1)],
+        2: [('symp1', 3), ('symp4', 2)],
+        3: [('symp2', 7)],
+    }
+
+    scored = prep.score_symptom_data([row], tariffs)[0].scores
+    assert scored == expected
 
 
 def test_generate_cause_rankings(prep):
@@ -108,7 +163,8 @@ def test_generate_cause_rankings(prep):
         -2,   # rank 9 (duplicate negative)
         -3,   # rank 10
     ]
-    train_data = [ScoredVA({1: s}, 0, 'sid', 7, 2, []) for s in train_scores]
+    train_data = [Record(scores={1: s}) for s in train_scores]
+    uniform_scores = {1: np.sort([va.scores[1] for va in train_data])}
 
     # Score, Rank within training
     tests = [
@@ -124,28 +180,27 @@ def test_generate_cause_rankings(prep):
         (-3, 10),   # at lowest score in train data
         (-5, 10.5),   # below lowest score in train data
     ]
-    test_data = [ScoredVA({1: score}, 0, 'sid', 7, 2, []) for score, rank in tests]
+    test_data = [Record(scores={1: score}) for score, rank in tests]
 
-    # Modifies list of ScoredVAs in place and doesn't return anything
-    prep.generate_cause_rankings(test_data, train_data)
+    # Modifies list of Records in place and doesn't return anything
+    prep.generate_cause_rankings(test_data, uniform_scores)
 
-    predicted_test_ranks = [va.rank_list[1] for va in test_data]
+    predicted_test_ranks = [va.ranks[1] for va in test_data]
     actual_test_ranks = [float(rank) for score, rank in tests]
     assert predicted_test_ranks == actual_test_ranks
 
 
-@pytest.mark.parametrize('restrictions,scores,ranks,expected', [
+@pytest.mark.parametrize('censored,scores,ranks,expected', [
     ([], {1: 10}, {1: 7}, {1: 7}),
     ([1], {1: 10}, {1: 7}, {1: 9999}),
     ([1], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 5}),
     ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
 ])
-def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
-                                                 ranks, expected):
+def test_mask_ranks(prep, censored, scores, ranks, expected):
     prep.cause_list = scores.keys()
 
-    va = ScoredVA(scores, 0, 'sid', 7, 2, restrictions)
-    va.rank_list = ranks
+    va = Record(scores=scores, censored=censored)
+    va.ranks = ranks
 
     uniform = range(1000)  # just needs length
     cutoffs = dict(zip(scores.keys(), [99999] * len(scores)))
@@ -154,24 +209,39 @@ def test_identify_lowest_ranked_cause_restricted(prep, restrictions, scores,
     uniform_list_pos = 999
     min_cause_score = defaultdict(lambda: 0)
 
-    prep.identify_lowest_ranked_causes([va], uniform, cutoffs,
-                                       demog_restrictions, lowest_rank,
-                                       uniform_list_pos, min_cause_score)
+    prep.mask_ranks([va], uniform, cutoffs, demog_restrictions, lowest_rank,
+                    uniform_list_pos, min_cause_score)
 
-    assert va.rank_list == expected
+    assert va.ranks == expected
 
 
-def test_csmf_summed_to_one(tmpdir):
-    options = {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}
-    prep = TariffPrepMock(tmpdir.strpath, True, options, 'USA')
-    prep.data_module = sample_tariff_data
+@pytest.mark.parametrize('va, cause, cause_name', [
+    (Record(sid='rules', cause=1), 11, 'c11'),
+    (Record(sid='rules2', cause=2), 12, 'c12'),
+    (Record(sid='ranks', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (Record(sid='rules_bad', cause='x', ranks={1: 1, 2: 2}), 11, 'c11'),
+    (Record(sid='tie', ranks={1: 1, 2: 1, 3: 2}), 11, 'c11'),
+    (Record(sid='lowest', ranks={1: 999, 2: 999, 3: 999}), None,
+     'Undetermined'),
+])
+def test_predict_with_rule(prep, va, cause, cause_name):
+    user_data = [va]
+    cause_reduction = {1: 11, 2: 12, 3: 13, 4: 14}
+    names34 = {11: 'c11', 12: 'c12', 13: 'c13', 14: 'c14'}
+    names46 = {1: 'c1', 2: 'c2', 3: 'c3', 4: 'c4'}
+    prep.predict(user_data, 999, cause_reduction, names34, names46)
 
+    assert va.cause34 == cause
+    assert va.cause34_name == cause_name
+
+
+def test_csmf_summed_to_one(prep):
     causes = ['a', 'b', 'c']
     counts = np.random.randint(10, 100, 3)
-    cause_counts = dict(zip(causes, counts))
-    prep.write_csmf(cause_counts)
 
-    outfile_path = os.path.join(prep.output_dir_path,
-                                '{}-csmf.csv'.format(prep.AGE_GROUP))
-    csmf = pd.read_csv(outfile_path)
-    assert np.allclose(csmf.CSMF.sum(), 1)
+    user_data = [Record({}, cause, '', 0, 1, '')
+                 for i, cause in enumerate(causes) for _ in range(counts[i])]
+
+    csmf = prep.calculate_csmf(user_data, [])
+
+    assert np.allclose(sum(csmf.values()), 1)

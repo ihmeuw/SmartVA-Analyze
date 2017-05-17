@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
+from smartva.tariff_prep import Record
 from smartva.neonate_tariff import NeonateTariff
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -62,7 +63,7 @@ def test_tariff_prep(prep, input_file, tmpdir):
 
 
 def test_uniform_frequencies(prep):
-    df = pd.read_csv(prep.va_validated_filename, index_col=0)
+    df = pd.read_csv(prep.validated_filename, index_col=0)
     df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
 
     # Neonates use the six causes in the 34 cause list
@@ -89,10 +90,11 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.malaria_region = malaria
     prep.hiv_region = hiv
     causes = prep.data_module.CAUSES.values()
-    cause_counts = dict(zip(causes, [7 for c in causes]))
-    prep.write_csmf(cause_counts)
 
-    outfile_path = os.path.join(prep.output_dir_path,
-                                '{}-csmf.csv'.format(prep.AGE_GROUP))
-    csmf = pd.read_csv(outfile_path)
-    assert np.allclose(csmf.CSMF.sum(), 1)
+    user_data = [Record({}, cause, '', 0, 1, '')
+                 for _ in range(7) for cause in causes]
+
+    undetermined_weights = prep._get_undetermined_matrix()
+    csmf = prep.calculate_csmf(user_data, undetermined_weights)
+
+    assert np.allclose(sum(csmf.values()), 1)
