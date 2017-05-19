@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import csv
 import os
 
@@ -14,6 +14,11 @@ from smartva.tariff_prep import (
 )
 
 import sample_tariff_data
+from smartva.adult_tariff import AdultTariff
+from smartva.child_tariff import ChildTariff
+from smartva.neonate_tariff import NeonateTariff
+
+tariff_subclasses = [AdultTariff, ChildTariff, NeonateTariff]
 
 
 class TariffPrepMock(TariffPrep):
@@ -245,3 +250,93 @@ def test_csmf_summed_to_one(prep):
     csmf = prep.calculate_csmf(user_data, [])
 
     assert np.allclose(sum(csmf.values()), 1)
+
+
+@pytest.mark.parametrize('Tariff', tariff_subclasses)
+def test_training_likelihood_ranges(Tariff):
+    prep = Tariff('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}, 'USA')
+    drop_headers = {'xs_name'}
+    drop_headers.update(prep.data_module.SHORT_FORM_DROP_LIST)
+    tariffs = get_tariff_matrix(prep.tariffs_filename, drop_headers,
+                                prep.data_module.SPURIOUS_ASSOCIATIONS)
+    prep.cause_list = sorted(tariffs.keys())
+    validated = prep.read_input_file(prep.validated_filename)[1]
+    train = prep.process_training_data(validated, tariffs,
+                                       prep.data_module.FREQUENCIES,
+                                       prep.data_module.CUTOFF_POS,
+                                       [.25, .5, .75])
+    uniform_train = train[0]
+    likelihoods = train[4]
+
+    assert likelihoods.keys() == prep.cause_list
+    assert len(set(map(len, likelihoods.values()))) == 1
+    for cause, likelihood in likelihoods.items():
+        assert likelihood[-1] == len(uniform_train)
+        assert sorted(likelihood) == likelihood
+
+
+@pytest.mark.parametrize('va, expected', [
+    (Record(sid='no-prediction', ranks={1: 5}), []),
+    (Record(sid='best-likelihood', cause=1, ranks={1: 5}), [(1, 0)]),
+    (Record(sid='mid-likelihood', cause=1, ranks={1: 15}), [(1, 1)]),
+    (Record(sid='low-likelihood', cause=1, ranks={1: 55}), [(1, 2)]),
+    (Record(sid='negative-rank', cause=1, ranks={1: -5}), [(1, 0)]),
+    (Record(sid='zero-rank', cause=1, ranks={1: 0}), [(1, 0)]),
+    (Record(sid='at-threshold1', cause=1, ranks={1: 10}), [(1, 1)]),
+    (Record(sid='at-threshold2', cause=1, ranks={1: 50}), [(1, 2)]),
+    (Record(sid='at-highest-threshold', cause=1, ranks={1: 100}), [(1, 2)]),
+    (Record(sid='above-highest-threshold', cause=1, ranks={1: 110}), [(1, 2)]),
+    (Record(sid='rule-best-ranked', cause=1, rules=1, ranks={1: 5, 2: 10}),
+        [(1, 0), (2, 0)]),
+    (Record(sid='rule-best-ranked2', cause=1, rules=1, ranks={1: 5, 2: 90}),
+        [(1, 0), (2, 2)]),
+    (Record(sid='rule2-best-ranked', cause=2, rules=2, ranks={1: 5, 2: 10}),
+        [(2, 0), (1, 0)]),
+    (Record(sid='rule2-best-ranked2', cause=2, rules=2, ranks={1: 55, 2: 90}),
+        [(2, 0), (1, 2)]),
+    (Record(sid='rule-not-best-ranked', cause=1, rules=1,
+            ranks={1: 40, 2: 10}), [(1, 0), (2, 0)]),
+    (Record(sid='rule-not-best-ranked2', cause=1, rules=1,
+            ranks={1: 40, 2: 90}), [(1, 0), (2, 2)]),
+    (Record(sid='rule2-not-best-ranked', cause=2, rules=2,
+            ranks={1: 5, 2: 10}), [(2, 0), (1, 0)]),
+    (Record(sid='rule2-not-best-ranked2', cause=2, rules=2,
+            ranks={1: 55, 2: 90}), [(2, 0), (1, 2)]),
+    (Record(sid='rank-order', cause=1, ranks={1: 9, 2: 25, 3: 55}),
+        [(1, 0), (2, 0), (3, 0)]),
+    (Record(sid='rank-order2', cause=2, ranks={1: 9, 2: 5, 3: 7}),
+        [(2, 0), (3, 0), (1, 0)]),
+    (Record(sid='rank-order3', cause=2, ranks={1: 90, 2: 85, 3: 87}),
+        [(2, 2), (3, 2), (1, 2)]),
+    (Record(sid='capped1', cause=1, ranks={1: 55, 2: 56, 3: 57}),
+        [(1, 2), (2, 2), (3, 2)]),
+    (Record(sid='capped2', cause=1, ranks={1: 55, 2: 58, 3: 57}),
+        [(1, 2), (3, 2), (2, 2)]),
+    (Record(sid='capped-by-second', cause=2, ranks={1: 55, 2: 20, 3: 75}),
+        [(2, 0), (1, 2), (3, 2)]),
+    (Record(sid='aggregates', cause=5, ranks={5: 20}), [(4, 0)]),
+    (Record(sid='aggregates-same', cause=5, ranks={4: 22, 5: 20}), [(4, 0)]),
+    (Record(sid='aggregates-takes-best', cause=5, ranks={4: 55, 5: 20}),
+        [(4, 0)]),
+    (Record(sid='aggregates-takes-best-capped', cause=5, ranks={4: 50, 5: 30}),
+        [(4, 1)]),
+    (Record(sid='aggregates-takes-best-capped2', cause=5,
+            ranks={3: 82, 4: 83, 5: 20}), [(4, 0), (3, 2)]),
+], ids=lambda va: va.sid)
+def test_determine_likelihood(prep, va, expected):
+    thresholds = {
+        1: [0, 10, 50, 100],
+        2: [0, 30, 60, 100],
+        3: [0, 70, 80, 100],
+        4: [0, 50, 85, 100],
+        5: [0, 25, 60, 100],
+    }
+    cause_reduction = {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 4,
+    }
+    prep.determine_likelihood([va], thresholds, cause_reduction)
+    assert va.likelihoods == OrderedDict(expected)

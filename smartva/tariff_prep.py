@@ -142,11 +142,13 @@ class Record(object):
         scores (dict): tariff score for each cause
         ranks (dict): rank relative to uniform training data for each cause
         masked (dict): mapping of causes to reason why it is masked
+        likelihoods (OrderedDict): mapping of cause34 to categorical likelihood
     """
 
     def __init__(self, sid=None, age=None, sex=None, cause=0, cause34=None,
                  cause34_name=None, endorsements=None, censored=None,
-                 rules=None, scores=None, ranks=None, masked=None):
+                 rules=None, scores=None, ranks=None, masked=None,
+                 likelihoods=None, predictions34=None):
         self.sid = sid
         self.age = age
         self.sex = sex
@@ -166,6 +168,7 @@ class Record(object):
             for cause, removed in masked.items():
                 masked_[cause].update(removed)
         self.masked = masked_
+        self.likelihoods = likelihoods or {}
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -291,8 +294,10 @@ class TariffPrep(DataPrep):
                            .format(self.AGE_GROUP.capitalize()))
         train = self.process_training_data(validated, tariffs,
                                            self.data_module.FREQUENCIES,
-                                           self.data_module.CUTOFF_POS)
-        uniform_train, uniform_scores, uniform_ranks, cutoffs = train
+                                           self.data_module.CUTOFF_POS,
+                                           [.25, .5, .75])
+        (uniform_train, uniform_scores, uniform_ranks, cutoffs,
+         likelihoods) = train
 
         self.write_cutoffs(cutoffs)
 
@@ -317,10 +322,17 @@ class TariffPrep(DataPrep):
         self.predict(user_data, lowest_rank, self.data_module.CAUSE_REDUCTION,
                      self.data_module.CAUSES, self.data_module.CAUSES46)
 
+        self.determine_likelihood(user_data, likelihoods,
+                                  self.data_module.CAUSE_REDUCTION)
+
         undetermined_weights = self._get_undetermined_matrix()
         csmf = self.calculate_csmf(user_data, undetermined_weights)
 
         self.write_predictions(user_data)
+
+        likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
+                            'Possible']
+        self.write_multiple_predictions(user_data, likelihood_names)
 
         self.write_csmf(csmf)
 
@@ -381,7 +393,8 @@ class TariffPrep(DataPrep):
 
         return scored
 
-    def process_training_data(self, train, tariffs, frequencies, cutoff_pos):
+    def process_training_data(self, train, tariffs, frequencies, cutoff_pos,
+                              thresholds):
         """Process the training data.
 
         The validated data is expanded so that the cause distribution across
@@ -427,8 +440,12 @@ class TariffPrep(DataPrep):
         scores = {}
         ranks = {}
         cutoffs = {}
+        likelihoods = {}
 
         n_causes = len(self.cause_list)
+        n_uniform = len(uniform_train)
+        overall_cutoff = n_uniform * self.data_module.CUTOFF_POS
+
         for index, cause in enumerate(self.cause_list):
             self.check_abort()
 
@@ -451,14 +468,24 @@ class TariffPrep(DataPrep):
             # Determine the rank within the complete uniform training data
             # of the subset of VAs whose gold standard cause is the cause
             # by which the VAs are ranked.
-            ranks[cause] = [(i + 1) for i, va in enumerate(uniform_sorted)
-                            if int(va.cause) == cause]
+            ranks = [(i + 1) for i, va in enumerate(uniform_sorted)
+                     if int(va.cause) == cause]
+            n_ranks = len(ranks)
+            ranks[cause] = ranks
+
             # Find the index of the item at cutoff position.
-            cutoffs[cause] = ranks[cause][int(len(ranks[cause]) * cutoff_pos)]
+            cutoffs[cause] = ranks[int(n_ranks * cutoff_pos)]
+
+            # Find the rank value at each threshold value
+            like = [0]
+            like.extend([ranks[int(n_ranks * thre)] for thre in thresholds])
+            like.append(min([cutoffs[cause], overall_cutoff]))
+            like.append(n_uniform)
+            likelihoods[cause] = like
 
         status_notifier.update({'sub_progress': None})
 
-        return uniform_train, scores, ranks, cutoffs
+        return uniform_train, scores, ranks, cutoffs, likelihoods
 
     def write_cutoffs(self, cutoffs):
         """Write cutoffs to a file.
@@ -670,6 +697,71 @@ class TariffPrep(DataPrep):
             va.cause34 = cause_reduction.get(va.cause)
             va.cause34_name = cause34_names.get(va.cause34, 'Undetermined')
 
+    def determine_likelihood(self, user_data, thresholds, cause_reduction):
+        """
+        """
+        for va in user_data:
+            self.check_abort()
+
+            # Skip VAs with no predictions, these are undetermined.
+            if not va.cause:
+                continue
+
+            # Sort the unmasked causes by rank. If there are ties in ranks,
+            # causes are sorted in numeric order, which matches the predict
+            # method. The true prediction is skipped and inserted into the
+            # front of the list. This prevents causes predicted by rules from
+            # appearing in multiple places.
+            ordered = sorted([(cause, rank) for cause, rank in va.ranks.items()
+                              if cause not in va.masked and cause != va.cause],
+                             key=lambda x: (x[1], x[0]))
+            ordered.insert(0, (va.cause, va.ranks.get(va.cause)))
+
+            # Keep track of the order of predictions at the cause34 level
+            # while looping over cause46 level causes
+            pred34 = []
+
+            # Keep track of the likelihoods at the cause34 level while looping
+            # over cause46 level causes
+            likelihoods = {}
+
+            # The likelihoods should be capped by the previous likelihood
+            # This prevents a lower ranked cause from being a more likely
+            # prediction
+            prev_likelihood = 0
+            # import pdb; pdb.set_trace()
+            for cause46, rank in ordered:
+                cause34 = cause_reduction.get(cause46)
+                if cause34 not in pred34:
+                    pred34.append(cause34)
+
+                # Give highest likelihood to rule-based predictions
+                if cause46 == va.cause == va.rules:
+                    likelihood46 = 0
+                elif rank >= thresholds[cause46][-1]:
+                    # There are `len` -1 ranges between `len` items
+                    # ranges are zero-indexed (must substract 2)
+                    likelihood46 = len(thresholds[cause46]) - 2
+                else:
+                    likelihood46 = bisect_right(thresholds[cause46], rank) - 1
+
+                # Use the higher likelihood at the cause34 level, if multiple
+                # causes aggregates into same cause
+                likelihood34_prev = likelihoods.get(cause34)
+                if likelihood34_prev is not None:
+                    likelihood34 = min(likelihood46, likelihood34_prev)
+                else:
+                    likelihood34 = likelihood46
+
+                if likelihood34_prev is None:
+                    likelihood34 = max(likelihood34, prev_likelihood)
+
+                prev_likelihood = likelihood34
+                likelihoods[cause34] = likelihood34
+
+            likelihoods34 = [(cause, likelihoods[cause]) for cause in pred34]
+            va.likelihoods = collections.OrderedDict(likelihoods34)
+
     def calculate_csmf(self, user_data, undetermined_weights):
         """Tabluate predictions into Cause-Specific Mortality Fractions.
 
@@ -738,6 +830,41 @@ class TariffPrep(DataPrep):
         with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
+            writer.writerows([format_row(va) for va in user_data])
+
+    def write_multiple_predictions(self, user_data, likelihood_names):
+        """Write the predicted causes.
+
+        Args:
+            user_data (list): List of ScoredVAs with predictions
+            likelihood_names (list): Names to use for likelihood categories
+                from highest to lowest
+        """
+        cause_names = self.data_module.CAUSES
+        n_causes = 5
+        headers = ['sid', 'age', 'sex']
+        for i in range(1, n_causes + 1):
+            headers.extend(['cause{}'.format(i), 'likelihood{}'.format(i)])
+
+        def format_row(va):
+            row = [va.sid, va.age, va.sex]
+            for i, (cause, likelihood) in enumerate(va.likelihoods.items()):
+                if i == n_causes:
+                    break
+                row.extend([
+                    cause_names.get(cause, 'Undetermined'),
+                    likelihood_names[likelihood]
+                ])
+
+            # Add undetermined if no causes were added
+            if len(row) == 3:
+                row.append('Undetermined')
+            return row
+
+        filename = '{:s}-likelihoods.csv'.format(self.AGE_GROUP)
+        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+            writer = csv.writer(f)
+            writer.writerow(headers)
             writer.writerows([format_row(va) for va in user_data])
 
     @abc.abstractmethod
