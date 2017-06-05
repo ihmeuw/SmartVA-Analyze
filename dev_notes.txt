@@ -1,9 +1,0 @@
-# Stillbirth mod:
-# In ~/Desktop/IHME/SmartVA/Mac/src/neonatetariff.py, added the following lines at line 506
-
-            # Check to see if there is a special stillbirth value
-            if va.s20 == '1':
-                # set cause34 to stillbirth
-                cause34 = '6'
-                causenum = '6'
-            
