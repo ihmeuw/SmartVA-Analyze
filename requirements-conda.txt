@@ -32,3 +32,4 @@ wheel=0.29.0
 wxpython=3.0
 zlib=1.2.8
 pandas=0.19.1
+xlsxwriter==0.9.6
