@@ -370,8 +370,9 @@ class TariffPrep(DataPrep):
         likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
                             'Possible']
         colors = ['#3CB371', '#47d147', '#8ae600', '#e6e600']
-        self.write_multiple_predictions(user_data, tariffs, likelihood_names,
-                                        colors)
+        mp = self.write_multiple_predictions_xlsx(user_data, tariffs,
+                                                  likelihood_names, colors)
+        self.write_multiple_predictions_csv(mp)
 
         self.write_csmf(csmf)
 
@@ -874,8 +875,9 @@ class TariffPrep(DataPrep):
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
             writer.writerows([format_row(va) for va in user_data])
 
-    def write_multiple_predictions(self, user_data, tariffs, likelihood_names,
-                                   likelihood_colors=None):
+    def write_multiple_predictions_xlsx(self, user_data, tariffs,
+                                        likelihood_names,
+                                        likelihood_colors=None):
         """Write the predicted causes.
 
         Args:
@@ -886,6 +888,7 @@ class TariffPrep(DataPrep):
             likelihood_colors (list): hex color codes for likelihood categories
                 from highest to lowest
         """
+        matrix = []   # store data to return
         cause_names = self.data_module.CAUSES
         symptom_descriptions = self.data_module.SYMPTOM_DESCRIPTIONS
         symptom_order = symptom_descriptions.values()
@@ -944,6 +947,8 @@ class TariffPrep(DataPrep):
             for i, header in enumerate(headers):
                 worksheet.write(0, i, header)
 
+            matrix.append(headers)
+
             for i, va in enumerate(user_data):
                 i += 1   # offset for header row
                 worksheet.set_row(i, 52.50)   # about 3.5 lines of height
@@ -955,6 +960,8 @@ class TariffPrep(DataPrep):
                     sid = unicode(va.sid, 'latin-1')
 
                 sex = sex_names.get(va.sex, 'Missing')
+
+                row = [va.sid, va.age, sex]   # use original sid (not unicode)
                 for j, d in enumerate([sid, va.age, sex]):
                     worksheet.write(i, j, d)
 
@@ -977,8 +984,15 @@ class TariffPrep(DataPrep):
                         worksheet.write(i, j, cause_name, fmt)
                         worksheet.write(i, j + 1, likelihood_name, fmt)
                         worksheet.write(i, j + 2, symptom_description)
+
+                        row.extend([
+                            cause_name,
+                            likelihood_name,
+                            symptom_description
+                        ])
                 else:
                     worksheet.write(i, 3, 'Undetermined', vcentered_fmt)
+                    row.append('Undetermined')
 
                 symptoms = sorted([symptom_descriptions[symptom]
                                    for symptom in va.endorsements
@@ -987,6 +1001,26 @@ class TariffPrep(DataPrep):
                 symptoms_list = '\r\n'.join([u'\u2022 {}'.format(symptom)
                                              for symptom in symptoms])
                 worksheet.write(i, 3 + n_causes * 3, symptoms_list)
+
+                row.extend([''] * ((3 + n_causes * 3) - len(row)))
+                row.append('; '.join(symptoms))
+                matrix.append(row)
+        return matrix
+
+    def write_multiple_predictions_csv(self, matrix):
+        """Write multiple predicted causes with likelihoods.
+
+        The CSV version of this output produces a file which is easily
+        machine readable and exists in a non-proprietary format. This allows
+        all users to access and post-process this info.
+
+        Args:
+
+        """
+        csv_filename = '{:s}-likelihoods.csv'.format(self.AGE_GROUP)
+        csv_filepath = os.path.join(self.output_dir_path, csv_filename)
+        with open(csv_filepath, 'wb') as f:
+            csv.writer(f).writerows(matrix)
 
     @abc.abstractmethod
     def _calc_age_bin(self, va, u_row):
