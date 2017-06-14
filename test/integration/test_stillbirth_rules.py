@@ -29,7 +29,7 @@ Test cases:
      True),
     ({'sid': '4_never_agegroup', 'gen_5_4d': 1, 'child_1_15': 1}, True),
     ({'sid': '5_never_age5', 'gen_5_4': 4, 'gen_5_4c': 5, 'child_1_15': 1},
-     True),   # conflicting info on VA
+     False),   # conflicting info on VA
     ({'sid': '6_born_dead_age0', 'gen_5_4': 4, 'gen_5_4c': 0, 'child_1_11': 2},
      True),
     ({'sid': '7_born_dead_agegroup', 'gen_5_4d': 1, 'child_1_11': 2}, True),
