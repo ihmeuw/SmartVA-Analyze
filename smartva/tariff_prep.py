@@ -668,14 +668,6 @@ class TariffPrep(DataPrep):
                 for cause in self.data_module.HIV_CAUSES:
                     va.masked[cause].add(Masks.EPI)
 
-                # This a fragile hack to remove rule-based predictions of AIDS
-                # from the child module if the user specifies that the data is
-                # from a low prevalence HIV region. It works because the AIDS
-                # rule is the last listed rule so it is not masking any other
-                # rule-based predictions
-                if va.rules in self.data_module.HIV_CAUSES:
-                    va.rules = None
-
             # Mask based on regional prevalence of Malaria
             if not self.malaria_region:
                 for cause in self.data_module.MALARIA_CAUSES:
@@ -715,12 +707,18 @@ class TariffPrep(DataPrep):
         for va in user_data:
             self.check_abort()
 
-            if va.rules and va.rules in cause_reduction:
+            # Allow user-specified epidemogical conditions (AIDS or Malaria),
+            # age/sex restrictions, and censoring to mask rule-based
+            # predictions
+            ignore_rules_if = [Masks.EPI, Masks.DEMOG, Masks.CENSORED]
+            is_masked = va.masked[va.rules].intersection(ignore_rules_if)
+
+            if va.rules and va.rules in cause46_names and not is_masked:
                 va.cause = va.rules
             elif len(set(va.ranks.values())) > 1:
                 best_rank = min(va.ranks.values())
                 predictions = [cause for cause, rank in va.ranks.items()
-                               if rank == best_rank and cause not in va.masked]
+                               if rank == best_rank and not va.masked[cause]]
 
                 # Use the first listed cause if there are ties
                 if predictions:
@@ -755,7 +753,7 @@ class TariffPrep(DataPrep):
             # front of the list. This prevents causes predicted by rules from
             # appearing in multiple places.
             ordered = sorted([(cause, rank) for cause, rank in va.ranks.items()
-                              if cause not in va.masked and cause != va.cause],
+                              if not va.masked[cause] and cause != va.cause],
                              key=lambda x: (x[1], x[0]))
             ordered.insert(0, (va.cause, va.ranks.get(va.cause)))
 
