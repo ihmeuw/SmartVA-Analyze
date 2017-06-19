@@ -1,4 +1,4 @@
-from smartva.utils.conversion_utils import additional_headers_and_values, check_skip_patterns
+from smartva.utils.conversion_utils import additional_headers_and_values
 
 
 def test_additional_headers_and_values():
@@ -29,19 +29,3 @@ def test_additional_headers_and_values_existing():
 
     assert additional_headers == [k for k, v in additional_headers_data if k not in headers]
     assert additional_values == [v for k, v in additional_headers_data if k not in headers]
-
-
-def test_check_skip_patterns():
-    headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b']
-    row = dict(zip(headers, ['1', 1, 1, 1, 1, 1, 1]))
-
-    skip_pattern_data = [
-        ('(test1=1)', ['test1a', 'test1b']),
-        ('(!(test2=1))', ['test2a', 'test2b'])
-    ]
-
-    check_skip_patterns(row, skip_pattern_data)
-
-    print(row)
-
-    assert row == dict(zip(headers, ['1', 1, 1, 1, 1, 0, 0]))
