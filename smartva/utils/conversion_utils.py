@@ -69,24 +69,6 @@ def convert_binary_variable(row, data_header, data_map):
         pass
 
 
-def check_skip_patterns(row, skip_pattern_data, default_values=None):
-    default_values = default_values or {}
-
-    warnings = False
-    for skip_pattern_item in skip_pattern_data:
-        skip_condition, skip_list = skip_pattern_item
-        condition_value = LdapNotationParser(skip_condition, get_cell(row), int).evaluate()
-        if not condition_value:
-            for skip_list_item in skip_list:
-                if str(row.get(skip_list_item, '')) not in ['', '0']:
-                    warnings = True
-                    warning_logger.info('SID: {} variable \'{}\' has value \'{}\', but should be blank.'
-                                        .format(row['sid'], skip_list_item, row[skip_list_item]))
-                    row[skip_list_item] = default_values.get(skip_list_item, 0)
-
-    return warnings
-
-
 def get_cell(row):
     def fn(var):
         try:

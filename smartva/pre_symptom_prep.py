@@ -9,7 +9,7 @@ from smartva.data.answer_ranges import RANGE_LIST
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values, check_skip_patterns
+from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values
 
 INPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -135,9 +135,6 @@ class PreSymptomPrep(DataPrep):
             self.recode_answers(row, self.data_module.RECODE_MAP)
 
             self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
-
-            check_skip_patterns(row, self.data_module.SKIP_PATTERN_DATA, self.default_fill)
-            # special case skip patterns
 
             self.calculate_duration_vars(row, duration_vars, self.data_module.DURATION_VARS_SPECIAL_CASE)
 
