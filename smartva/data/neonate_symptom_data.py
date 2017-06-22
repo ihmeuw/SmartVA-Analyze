@@ -395,6 +395,16 @@ CENSORED_MAP = {
         's63',      # Abnormalities: Head size very large at time of birth?
         's64',      # Abnormalities: Mass defect on the back of head or spine
     ],
+    6: [   # Stillbirth
+        # Age censoring redundant with requiring s4991
+        'age',      # Age: cutoff > 3 days
+        's4993',    # Age quartile 3
+        's4994',    # Age quartile 4
+    ]
 }
 
-REQUIRED_MAP = {}
+REQUIRED_MAP = {
+    6: [
+        's4991',    # Age quartile: Age == 0 days
+    ]
+}
