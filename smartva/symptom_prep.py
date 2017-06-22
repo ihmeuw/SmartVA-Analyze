@@ -4,7 +4,9 @@ import re
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import additional_headers_and_values
+from smartva.utils.conversion_utils import (additional_headers_and_values,
+                                            safe_float)
+from smartva.data.common_data import SYMPTOM_AGE_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
@@ -81,6 +83,8 @@ class SymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
+            self.set_default_age(row, self.data_module.DEFAULT_AGE)
+
             self.pre_processing_step(row)
 
             self.copy_variables(row, self.data_module.COPY_VARS)
@@ -128,6 +132,32 @@ class SymptomPrep(DataPrep):
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. copy_variables'
                                      .format(row['sid'], e.message))
+
+    def set_default_age(self, row, default_age):
+        """Reset the age to a valid value.
+
+        All presymptom age variable which were missing or blank were filled
+        with zeros. If the VAI lists an age group but no age all the age vars
+        will be zero and the age wil be listed as zero. Instead these should
+        be filled with a plausible value.
+
+        Things to consider when picking a default age:
+            * age dichotomized symptom
+            * age quantile symptoms
+            * redistrbution weights are age-specific
+            * age-restrictions one certain causes (particularly maternal)
+            * reported age in predictions files and graphs
+
+        Args:
+            row (dict): Row of VA data
+            default_age (int): fill value for "falsy" ages (including 0)
+
+        Note:
+            modifies row in-place
+        """
+        age = safe_float(row.get(SYMPTOM_AGE_KEY))
+        if not age:
+            row[SYMPTOM_AGE_KEY] = default_age
 
     def process_cutoff_data(self, row, cutoff_data_map):
         """Change read variable to 1/0 if value is greater/less or equal to cutoff, respectively.

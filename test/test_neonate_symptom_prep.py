@@ -3,16 +3,20 @@ import csv
 import pytest
 
 from smartva.neonate_symptom_prep import NeonateSymptomPrep
+from smartva.data.neonate_symptom_data import DEFAULT_AGE
 
 headers = ['sid']
 headers.extend(['c1_22a'])
+headers.extend(['g5_04a'])
 
 data = [
     {'sid': 'hosp_death_5', 'c1_22a': '5'},
+    {'sid': 'age_group', 'g5_04a': 0},
 ]
 
 expected_results = [
     {'sid': 'hosp_death_5', 's30991': '1'},
+    {'sid': 'age_group', 'real_age': str(DEFAULT_AGE)},
 ]
 
 

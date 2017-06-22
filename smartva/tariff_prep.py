@@ -11,7 +11,7 @@ from smartva import config
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
-from smartva.utils.conversion_utils import value_or_default
+from smartva.utils.conversion_utils import value_or_default, safe_float
 from smartva.utils.utils import round5, int_or_float
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
@@ -27,13 +27,6 @@ SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
 RESTRICTED_KEY = 'restricted'
-
-
-def safe_float(x):
-    try:
-        return float(x)
-    except (ValueError, TypeError):
-        return 0.0
 
 
 def get_cause_num(cause):

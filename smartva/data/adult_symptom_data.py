@@ -1,7 +1,9 @@
-from smartva.data.common_data import ADULT
+from smartva.data.common_data import ADULT, SYMPTOM_AGE_KEY
 
 AGE_GROUP = ADULT
 KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|restricted$|s\d+)'
+
+DEFAULT_AGE = 35
 
 GENERATED_VARS_DATA = {
     's88881': 0,
@@ -37,7 +39,7 @@ GENERATED_VARS_DATA = {
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
     'g5_02': 'real_gender',
-    'g5_04a': 'real_age',
+    'g5_04a': SYMPTOM_AGE_KEY,
     'a1_01_1': 's1',
     'a1_01_2': 's2',
     'a1_01_3': 's3',
@@ -198,7 +200,7 @@ VAR_CONVERSION_MAP = {
 }
 
 COPY_VARS = {
-    'real_age': 'age',
+    SYMPTOM_AGE_KEY: 'age',
     'real_gender': 'sex'
 }
 

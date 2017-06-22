@@ -169,6 +169,8 @@ class DataPrep(Prep):
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. process_progressive_value_data'
                                          .format(row['sid'], e.message))
                     continue
+                except ValueError as e:
+                    continue
 
     @staticmethod
     def read_input_file(input_file_path, mode='rb'):

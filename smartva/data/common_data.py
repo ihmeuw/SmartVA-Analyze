@@ -7,6 +7,8 @@ MALE = 1
 
 CONSENT_HEADER = 'gen_3_1'
 
+SYMPTOM_AGE_KEY = 'real_age'
+
 ADDITIONAL_HEADERS = [
     'adultparalysis1',
     'adultparalysis2',

@@ -2,18 +2,22 @@ import csv
 import pytest
 
 from smartva.adult_symptom_prep import AdultSymptomPrep
+from smartva.data.adult_symptom_data import DEFAULT_AGE
 
 headers = ['sid']
 headers.extend(['a4_06']) # alcohol amount
 headers.extend(['a2_63_1'])
+headers.extend(['g5_04a'])
 data = [
     {'sid': 'lower_belly_pain', 'a2_63_1': '2'},
     {'sid': 'heavy_alcohol', 'a4_06': '3'},
+    {'sid': 'age_group', 'g5_04a': 0},
 ]
 
 expected_results = [
     {'sid': 'lower_belly_pain',  's82991' : '1'},
     {'sid': 'heavy_alcohol', 's150992': '1'},
+    {'sid': 'age_group', 'real_age': str(DEFAULT_AGE)},
 ]
 
 

@@ -1,7 +1,9 @@
-from smartva.data.common_data import NEONATE
+from smartva.data.common_data import NEONATE, SYMPTOM_AGE_KEY
 
 AGE_GROUP = NEONATE
 KEEP_PATTERN = r'(sid$|real|age$|sex$|cause$|restricted$|s\d+)'
+
+DEFAULT_AGE = 0
 
 GENERATED_VARS_DATA = {
     'age': 0,
@@ -39,7 +41,7 @@ GENERATED_VARS_DATA = {
 VAR_CONVERSION_MAP = {
     'sid': 'sid',
     'g5_02': 'real_gender',
-    'g5_04a': 'real_age',
+    'g5_04a': SYMPTOM_AGE_KEY,
     'g5_04b': 's3',
     'g5_04c': 'age',
     'c1_01': 's5_1',
