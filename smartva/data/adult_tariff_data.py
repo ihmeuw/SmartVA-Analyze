@@ -928,7 +928,7 @@ HIV_CAUSES = [
 MALARIA_CAUSES = [29]
 
 CAUSE_CONDITIONS = {
-    '(&(sex=2)(age>15)(age<49))': MATERNAL_CAUSES,
+    '(&(sex=2)(age<49))': MATERNAL_CAUSES,
     '(sex=2)': FEMALE_CAUSES,
     '(sex=1)': MALE_CAUSES,
     '(age<=75)': AIDS_CAUSES,
