@@ -9,6 +9,4 @@ def logic_rule(row):
 
     hiv_positive = value_of(Child.HIV_POSITIVE_TEST) == YES
 
-    mother_hiv_positive = value_of(Child.HIV_POSITIVE_PROFESSIONAL) == YES
-
-    return hiv_positive or mother_hiv_positive
+    return hiv_positive
