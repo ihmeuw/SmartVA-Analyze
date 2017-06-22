@@ -28,7 +28,7 @@ def test_pass_positive_professional():
         VA.HIV_POSITIVE_PROFESSIONAL: YES,
     }
 
-    assert aids.logic_rule(row) is True
+    assert aids.logic_rule(row) is False
 
 def test_fail_neither():
     row = {
