@@ -1,7 +1,7 @@
 <project>
     <shortName>SmartVA</shortName>
     <fullName>SmartVA-Analyze</fullName>
-    <version>1.2.1</version>
+    <version>1.2.1-rc1</version>
     <componentList>
         <component>
             <name>default</name>
