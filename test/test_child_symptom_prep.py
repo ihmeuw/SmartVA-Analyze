@@ -3,12 +3,14 @@ import csv
 import pytest
 
 from smartva.child_symptom_prep import ChildSymptomPrep
+from smartva.data.child_symptom_data import DEFAULT_AGE
 
 headers = ['sid']
 # Rash variables
 headers.extend(['c4_31_1', 'c4_32', 'c4_33'])
 headers.extend(['c1_22a'])
 headers.extend(['c4_07b'])
+headers.extend(['g5_04a'])
 
 data = [
     {'sid': 'multiple_stools', 'c4_07b': 2}, # two loose stools
@@ -17,12 +19,14 @@ data = [
     # The value needs to be larger than 2 to pass the broken test
     {'sid': 'rash1', 'c4_31_1': '1', 'c4_32': '0', 'c4_33': '10.0', 'c4_07b': 9 },
     {'sid': 'hosp_death_5', 'c1_22a': '5', 'c4_07b': 9},
+    {'sid': 'age_group', 'g5_04a': 0},
 ]
 
 expected_results = [
     {'sid': 'multiple_stools', 's116991': '1'},
     {'sid': 'rash1', 's139991': '1', 's141991': '0'},
     {'sid': 'hosp_death_5', 's30991': '1'},
+    {'sid': 'age_group', 'real_age': str(DEFAULT_AGE)},
 ]
 
 

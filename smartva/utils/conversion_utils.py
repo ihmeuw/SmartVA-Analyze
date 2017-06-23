@@ -16,6 +16,13 @@ def value_or_default(x, fn=int, invalid=None, default=0):
     return default
 
 
+def safe_float(x):
+    try:
+        return float(x)
+    except (ValueError, TypeError):
+        return 0.0
+
+
 def additional_headers_and_values(headers, additional_headers_data):
     """
     Calculate necessary additional headers and values based on comparing existing headers to additional header data.
