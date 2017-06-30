@@ -1,2 +1,2 @@
 prog_name = 'SmartVA-Analyze'
-version = '1.2.1-rc1'
+version = '1.2.1'
