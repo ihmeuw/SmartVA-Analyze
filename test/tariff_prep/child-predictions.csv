@@ -166,7 +166,7 @@ sid,cause,cause34,age,sex
 165,,Undetermined,1,1
 166,,Undetermined,1,1
 167,,Undetermined,1,1
-168,15,Other Digestive Diseases,1,1
+168,15,Digestive Diseases,1,1
 169,,Undetermined,1,1
 170,,Undetermined,1,1
 171,,Undetermined,1,1
@@ -174,7 +174,7 @@ sid,cause,cause34,age,sex
 173,,Undetermined,1,1
 174,,Undetermined,1,1
 175,,Undetermined,1,1
-176,12,Other Cancers,1,1
+176,12,Cancers,1,1
 177,,Undetermined,1,1
 178,,Undetermined,1,1
 179,,Undetermined,1,1
@@ -190,7 +190,7 @@ sid,cause,cause34,age,sex
 189,,Undetermined,1,1
 190,,Undetermined,1,1
 191,,Undetermined,1,1
-192,13,Other Cardiovascular Diseases,1,1
+192,13,Cardiovascular Diseases,1,1
 193,,Undetermined,1,1
 194,,Undetermined,1,1
 195,,Undetermined,1,1
@@ -216,7 +216,7 @@ sid,cause,cause34,age,sex
 215,,Undetermined,1,1
 216,,Undetermined,1,1
 217,,Undetermined,1,1
-218,15,Other Digestive Diseases,1,1
+218,15,Digestive Diseases,1,1
 219,,Undetermined,1,1
 220,,Undetermined,1,1
 221,,Undetermined,1,1
