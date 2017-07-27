@@ -8,3 +8,4 @@
 * Remove the condition "Mother was told she had HIV by health worker" from
   child AIDS rule (PR148)
 * Remove data processing step which validates survey skip logic (PR150)
+* Remove "Other" from residual child cause categories (PR151)
