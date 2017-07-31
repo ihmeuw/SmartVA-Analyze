@@ -207,7 +207,7 @@ CAUSE_REDUCTION = {
 
 SYMPTOM_DESCRIPTIONS = OrderedDict([
     ("age", "Age greater than {} days".format(DURATION_CUTOFF_DATA['age'])),
-    ("sex", "Sex of deceased (Male)"),
+    ("sex", "Sex of deceased (Female)"),
     ("s4991", "Age quartile: Under 1 day old"),
     ("s4993", "Age quartile 1 to 2 days"),
     ("s4994", "Age quartile 2+ days old"),
