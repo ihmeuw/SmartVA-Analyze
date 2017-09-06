@@ -21,7 +21,8 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff):
     prep = tariff(
         working_dir_path=tmpdir.strpath,
         short_form=True,
-        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country='USA'
     )
     df = pd.read_csv(prep.undetermined_matrix_filename)
@@ -39,7 +40,8 @@ def test_redistribution_weights_for_countries(tmpdir, tariff, country):
     prep = tariff(
         working_dir_path=tmpdir.strpath,
         short_form=True,
-        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country=country
     )
     undetermined_weights = prep._get_undetermined_matrix()
@@ -56,7 +58,8 @@ def test_redistribution_weights(tmpdir, tariff, short_form, hce):
     prep = tariff(
         working_dir_path=tmpdir.strpath,
         short_form=short_form,
-        options={'hce': hce, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': hce, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country='USA'
     )
     undetermined_weights = prep._get_undetermined_matrix()
@@ -82,7 +85,8 @@ def test_redistribution_weights_no_country(tmpdir, tariff):
     prep = tariff(
         working_dir_path=tmpdir.strpath,
         short_form=True,
-        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country=None
     )
     undetermined_weights = prep._get_undetermined_matrix()
@@ -94,7 +98,8 @@ def test_redistribution_causes_match_reporting_causes(tmpdir, tariff):
     prep = tariff(
         working_dir_path=tmpdir.strpath,
         short_form=True,
-        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country=None
     )
     with open(prep.undetermined_matrix_filename) as f:
