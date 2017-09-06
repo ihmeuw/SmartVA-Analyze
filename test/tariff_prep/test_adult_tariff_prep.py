@@ -26,7 +26,8 @@ def prep(tmpdir):
     return AdultTariff(
         working_dir_path=tmpdir.strpath,
         short_form=True,
-        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True},
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
         country='USA'
     )
 

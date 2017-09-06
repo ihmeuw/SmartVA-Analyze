@@ -3,6 +3,7 @@ import abc
 from bisect import bisect_left, bisect_right
 import collections
 import csv
+import json
 import os
 
 import numpy as np
@@ -13,7 +14,7 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
 from smartva.utils.conversion_utils import value_or_default
-from smartva.utils.utils import int_or_float
+from smartva.utils.utils import int_or_float, UnicodeWriter
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
 INPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
@@ -271,6 +272,7 @@ class TariffPrep(DataPrep):
         self.hiv_region = options['hiv']
         self.malaria_region = options['malaria']
         self.iso3 = country
+        self.chinese = options['chinese']
 
         self.cause_list = []
 
@@ -367,11 +369,18 @@ class TariffPrep(DataPrep):
 
         self.write_predictions(user_data)
 
+        if self.chinese:
+            path = os.path.join(config.basedir, 'data', 'chinese.json')
+            with open(path, 'rb') as f:
+                translation = json.load(f)['causes'][self.AGE_GROUP]
+        else:
+            translation = None
         likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
                             'Possible']
         colors = ['#3CB371', '#47d147', '#8ae600', '#e6e600']
         mp = self.write_multiple_predictions_xlsx(user_data, tariffs,
-                                                  likelihood_names, colors)
+                                                  likelihood_names, colors,
+                                                  translation)
         self.write_multiple_predictions_csv(mp)
 
         self.write_csmf(csmf)
@@ -875,7 +884,8 @@ class TariffPrep(DataPrep):
 
     def write_multiple_predictions_xlsx(self, user_data, tariffs,
                                         likelihood_names,
-                                        likelihood_colors=None):
+                                        likelihood_colors=None,
+                                        translations=None):
         """Write the predicted causes.
 
         Args:
@@ -971,11 +981,15 @@ class TariffPrep(DataPrep):
                         # Offset 3 demographic columns and previous likelihoods
                         j = 3 + c * 3
                         cause_name = cause_names.get(cause, 'Undetermined')
+                        if translations and self.chinese:
+                            cause_name = translations.get(cause_name,
+                                                          cause_name)
                         likelihood_name = likelihood_names[likelihood]
                         symptom = find_key_symptom(tariffs, cause_reduction,
                                                    cause, va.endorsements,
                                                    rule_symptoms)
-                        symptom_description = symptom_descriptions.get(symptom)
+                        symptom_description = symptom_descriptions.get(symptom,
+                                                                       '')
 
                         fmt = fill.get(likelihood_name, vcentered_fmt)
 
@@ -1018,7 +1032,7 @@ class TariffPrep(DataPrep):
         csv_filename = '{:s}-likelihoods.csv'.format(self.AGE_GROUP)
         csv_filepath = os.path.join(self.output_dir_path, csv_filename)
         with open(csv_filepath, 'wb') as f:
-            csv.writer(f).writerows(matrix)
+            UnicodeWriter(f).writerows(matrix)
 
     @abc.abstractmethod
     def _calc_age_bin(self, va, u_row):

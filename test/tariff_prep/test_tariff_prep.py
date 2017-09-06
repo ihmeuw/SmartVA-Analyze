@@ -28,7 +28,7 @@ class TariffPrepMock(TariffPrep):
 
 @pytest.fixture
 def prep():
-    prep = TariffPrepMock('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}, 'USA')
+    prep = TariffPrepMock('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True, 'chinese': False}, 'USA')
     prep.data_module = sample_tariff_data
     return prep
 
@@ -254,7 +254,7 @@ def test_csmf_summed_to_one(prep):
 
 @pytest.mark.parametrize('Tariff', tariff_subclasses)
 def test_training_likelihood_ranges(Tariff):
-    prep = Tariff('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True}, 'USA')
+    prep = Tariff('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True, 'chinese': False}, 'USA')
     drop_headers = {'xs_name'}
     drop_headers.update(prep.data_module.SHORT_FORM_DROP_LIST)
     tariffs = get_tariff_matrix(prep.tariffs_filename, drop_headers,
