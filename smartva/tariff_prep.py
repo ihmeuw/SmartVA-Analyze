@@ -969,7 +969,7 @@ class TariffPrep(DataPrep):
 
                 sex = sex_names.get(va.sex, 'Missing')
 
-                row = [va.sid, va.age, sex]   # use original sid (not unicode)
+                row = [sid, va.age, sex]
                 for j, d in enumerate([sid, va.age, sex]):
                     worksheet.write(i, j, d)
 
