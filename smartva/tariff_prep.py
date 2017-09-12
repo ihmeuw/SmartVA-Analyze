@@ -369,14 +369,16 @@ class TariffPrep(DataPrep):
 
         self.write_predictions(user_data)
 
+        likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
+                            'Possible']
         if self.chinese:
             path = os.path.join(config.basedir, 'data', 'chinese.json')
             with open(path, 'rb') as f:
-                translation = json.load(f)['causes'][self.AGE_GROUP]
+                translation = json.load(f)
+            likelihood_names = [translation['likelihoods'].get(likelihood)
+                                for likelihood in likelihood_names]
         else:
             translation = None
-        likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
-                            'Possible']
         colors = ['#3CB371', '#47d147', '#8ae600', '#e6e600']
         mp = self.write_multiple_predictions_xlsx(user_data, tariffs,
                                                   likelihood_names, colors,
@@ -902,9 +904,25 @@ class TariffPrep(DataPrep):
         symptom_order = symptom_descriptions.values()
         cause_reduction = self.data_module.CAUSE_REDUCTION
         rule_symptoms = self.data_module.RULE_KEY_SYMPTOMS
+        undetermined = 'Undetermined'
+        missing = 'Missing'
 
         likelihood_colors = likelihood_colors or []
         sex_names = {'1': 'Male', '2': 'Female'}
+
+        if translations:
+            cause_names = {cause: translations['causes'].get(name, name)
+                           for cause, name in self.data_module.CAUSES.items()}
+            symptom_descriptions = {
+                symp: translations['symptoms'].get(des, des)
+                for symp, des in self.data_module.SYMPTOM_DESCRIPTIONS.items()}
+            symptom_order = [translations['symptoms'].get(symp, symp)
+                             for symp in symptom_order]
+            sex_names = {sex: translations['sexes'].get(name, name)
+                         for sex, name, in sex_names.items()}
+            undetermined = translations['causes'].get(undetermined,
+                                                      undetermined)
+            missing = translations['sexes'].get(missing, missing)
 
         n_causes = 3
         headers = ['sid', 'age', 'sex']
@@ -967,7 +985,7 @@ class TariffPrep(DataPrep):
                 except UnicodeDecodeError:
                     sid = unicode(va.sid, 'latin-1')
 
-                sex = sex_names.get(va.sex, 'Missing')
+                sex = sex_names.get(va.sex, missing)
 
                 row = [sid, va.age, sex]
                 for j, d in enumerate([sid, va.age, sex]):
@@ -980,10 +998,7 @@ class TariffPrep(DataPrep):
                             break
                         # Offset 3 demographic columns and previous likelihoods
                         j = 3 + c * 3
-                        cause_name = cause_names.get(cause, 'Undetermined')
-                        if translations and self.chinese:
-                            cause_name = translations.get(cause_name,
-                                                          cause_name)
+                        cause_name = cause_names.get(cause, undetermined)
                         likelihood_name = likelihood_names[likelihood]
                         symptom = find_key_symptom(tariffs, cause_reduction,
                                                    cause, va.endorsements,
@@ -1003,8 +1018,8 @@ class TariffPrep(DataPrep):
                             symptom_description
                         ])
                 else:
-                    worksheet.write(i, 3, 'Undetermined', vcentered_fmt)
-                    row.append('Undetermined')
+                    worksheet.write(i, 3, undetermined, vcentered_fmt)
+                    row.append(undetermined)
 
                 symptoms = sorted([symptom_descriptions[symptom]
                                    for symptom in va.endorsements
