@@ -258,7 +258,7 @@ SYMPTOM_DESCRIPTIONS = OrderedDict([
     ("s50991", "Water broke a day or more before labor"),
     ("s51991", "Water wasn't normal color"),
     ("s52", "Liquor was foul smelling"),
-    ("s53", "Labor and delivery took at least {} hours".format(round(DURATION_CUTOFF_DATA['s53']))),
+    ("s53", "Labor and delivery took at least {} hours".format(round(DURATION_CUTOFF_DATA['s53'] * 24))),
     ("s54", "Mother receive any vaccinations during pregnancy"),
     ("s55991", "Mother had insufficient vaccination"),
     ("s56991", "Pregnancy not in health facility"),
