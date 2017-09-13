@@ -1,6 +1,7 @@
 import json
 import os
 
+from smartva.config import basedir
 from smartva.data.adult_tariff_data import (
     SYMPTOM_DESCRIPTIONS as ADULT_SYMPTOM_DESCRIPTIONS,
     CAUSES as ADULT_CAUSES,
@@ -18,8 +19,7 @@ from smartva.data.neonate_tariff_data import (
 )
 
 
-path = os.path.join(os.path.dirname(__file__), '..', '..', 'smartva',
-                    'data', 'chinese.json')
+path = os.path.join(basedir, 'data', 'chinese.json')
 with open(path, 'rb') as f:
     translation = json.load(f)
 
