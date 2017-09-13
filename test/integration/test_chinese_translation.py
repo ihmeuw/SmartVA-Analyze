@@ -18,7 +18,7 @@ from smartva.data.neonate_tariff_data import (
 )
 
 
-path = os.path.join(os.path.realpath(__file__), '..', '..', '..', 'smartva',
+path = os.path.join(os.path.dirname(__file__), '..', '..', 'smartva',
                     'data', 'chinese.json')
 with open(path, 'rb') as f:
     translation = json.load(f)
