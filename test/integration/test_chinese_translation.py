@@ -35,7 +35,9 @@ def test_symptom_descriptions():
     # The open response words from the long form are not translated.
     diff = {symp for symp in diff if not symp.startswith('Open Response')}
 
-    assert not diff
+    extra = set(translation['symptoms'].keys()).difference(english)
+
+    assert not diff and not extra
 
 
 def test_causes():
