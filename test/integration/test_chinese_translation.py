@@ -31,10 +31,6 @@ def test_symptom_descriptions():
     english.update(NEONATE_SYMPTOM_DESCRIPTIONS.values())
 
     diff = english.difference(translation['symptoms'].keys())
-
-    # The open response words from the long form are not translated.
-    diff = {symp for symp in diff if not symp.startswith('Open Response')}
-
     extra = set(translation['symptoms'].keys()).difference(english)
 
     assert not diff and not extra
