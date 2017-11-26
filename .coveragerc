@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit =
+    # ignore secondary entrypoint
+    smartva/__main__.py
+
+    # ignore code only used by the GUI
+    */gui/*
+    smartva/va_ui.py
+    smartva\utils\adaptive_eta.py
