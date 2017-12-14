@@ -14,23 +14,22 @@ from smartva.tariff_prep import (
 )
 
 import sample_tariff_data
-from smartva.adult_tariff import AdultTariff
-from smartva.child_tariff import ChildTariff
-from smartva.neonate_tariff import NeonateTariff
+from smartva.tariff_prep import TariffPrep
+from smartva.data import (
+    adult_tariff_data,
+    child_tariff_data,
+    neonate_tariff_data,
+)
 
-tariff_subclasses = [AdultTariff, ChildTariff, NeonateTariff]
-
-
-class TariffPrepMock(TariffPrep):
-    def _calc_age_bin(self, age):
-        return int(age / 5) * 5 if age < 80 else 80
+module_data = [adult_tariff_data, child_tariff_data, neonate_tariff_data]
 
 
 @pytest.fixture
 def prep():
-    prep = TariffPrepMock('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True, 'chinese': False}, 'USA')
-    prep.data_module = sample_tariff_data
-    return prep
+    return TariffPrep(sample_tariff_data, '/', True,
+                      {'hce': True, 'free_text': True, 'hiv': True,
+                       'malaria': True, 'chinese': False},
+                      'USA')
 
 
 class TestTariffPrep(object):
@@ -252,9 +251,9 @@ def test_csmf_summed_to_one(prep):
     assert np.allclose(sum(csmf.values()), 1)
 
 
-@pytest.mark.parametrize('Tariff', tariff_subclasses)
-def test_training_likelihood_ranges(Tariff):
-    prep = Tariff('/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True, 'chinese': False}, 'USA')
+@pytest.mark.parametrize('tariff_data', module_data)
+def test_training_likelihood_ranges(tariff_data):
+    prep = TariffPrep(tariff_data, '/', True, {'hce': True, 'free_text': True, 'hiv': True, 'malaria': True, 'chinese': False}, 'USA')
     drop_headers = {'xs_name'}
     drop_headers.update(prep.data_module.SHORT_FORM_DROP_LIST)
     tariffs = get_tariff_matrix(prep.tariffs_filename, drop_headers,
