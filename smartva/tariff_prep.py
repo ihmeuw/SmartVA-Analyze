@@ -272,7 +272,7 @@ class TariffPrep(DataPrep):
         self.hiv_region = options['hiv']
         self.malaria_region = options['malaria']
         self.iso3 = country
-        self.chinese = options['chinese']
+        self.chinese = options.get('chinese', False)
 
         self.cause_list = []
 
