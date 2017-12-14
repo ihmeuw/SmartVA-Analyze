@@ -1,3 +1,5 @@
+from argparse import Namespace
+
 import pytest
 
 from smartva.symptom_prep import SymptomPrep
@@ -5,7 +7,8 @@ from smartva.symptom_prep import SymptomPrep
 
 @pytest.fixture
 def prep():
-    return SymptomPrep('', True)
+    data_module = Namespace(AGE_GROUP='test')
+    return SymptomPrep(data_module, '', True)
 
 
 class TestSymptomPrep(object):

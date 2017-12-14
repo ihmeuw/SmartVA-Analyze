@@ -2,7 +2,8 @@ import csv
 
 import pytest
 
-from smartva.neonate_symptom_prep import NeonateSymptomPrep
+from smartva.symptom_prep import SymptomPrep
+from smartva.data import neonate_symptom_data
 
 headers = ['sid']
 headers.extend(['c1_22a'])
@@ -34,7 +35,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return NeonateSymptomPrep(tmpdir.strpath, True)
+    return SymptomPrep(neonate_symptom_data, tmpdir.strpath, True)
 
 
 class TestNeonateSymptomPrep(object):

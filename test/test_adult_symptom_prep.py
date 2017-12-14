@@ -1,7 +1,8 @@
 import csv
 import pytest
 
-from smartva.adult_symptom_prep import AdultSymptomPrep
+from smartva.symptom_prep import SymptomPrep
+from smartva.data import adult_symptom_data
 
 headers = ['sid']
 headers.extend(['a4_06']) # alcohol amount
@@ -35,7 +36,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return AdultSymptomPrep(tmpdir.strpath, True)
+    return SymptomPrep(adult_symptom_data, tmpdir.strpath, True)
 
 
 class TestAdultSymptomPrep(object):
