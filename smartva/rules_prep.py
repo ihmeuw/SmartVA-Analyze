@@ -89,45 +89,30 @@ class RulesPrep(DataPrep):
         return matrix
 
 
-class AdultRulesPrep(RulesPrep):
-    RULES = [
-        road_traffic_adult,
-        bite_adult,
-        drowning_adult,
-        fires_adult,
-        falls_adult,
-        poisoning_adult,
-        other_injury_adult,
-        homicide_adult,
-        suicide,
-        stroke,
-    ]
+ADULT_RULES = [
+    road_traffic_adult,
+    bite_adult,
+    drowning_adult,
+    fires_adult,
+    falls_adult,
+    poisoning_adult,
+    other_injury_adult,
+    homicide_adult,
+    suicide,
+    stroke,
+]
 
-    def __init__(self, working_dir_path, short_form):
-        super(AdultRulesPrep, self).__init__(working_dir_path, short_form, common_data.ADULT, self.RULES)
-
-
-class ChildRulesPrep(RulesPrep):
-    RULES = [
-        road_traffic_child,
-        bite_child,
-        drowning_child,
-        fires_child,
-        falls_child,
-        poisoning_child,
-        other_injury_child,
-        homicide_child,
-        aids_child,
-    ]
-
-    def __init__(self, working_dir_path, short_form):
-        super(ChildRulesPrep, self).__init__(working_dir_path, short_form, common_data.CHILD, self.RULES)
-
-
-class NeonateRulesPrep(RulesPrep):
-    RULES = [
-        stillbirth,
-    ]
-
-    def __init__(self, working_dir_path, short_form):
-        super(NeonateRulesPrep, self).__init__(working_dir_path, short_form, common_data.NEONATE, self.RULES)
+CHILD_RULES = [
+    road_traffic_child,
+    bite_child,
+    drowning_child,
+    fires_child,
+    falls_child,
+    poisoning_child,
+    other_injury_child,
+    homicide_child,
+    aids_child,
+]
+NEONATE_RULES = [
+    stillbirth,
+]
