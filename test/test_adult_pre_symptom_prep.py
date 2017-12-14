@@ -2,7 +2,8 @@ import csv
 
 import pytest
 
-from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
+from smartva.pre_symptom_prep import PreSymptomPrep
+from smartva.data import adult_pre_symptom_data
 
 headers = ['sid']
 # Free text variables
@@ -55,7 +56,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return AdultPreSymptomPrep(tmpdir.strpath, True)
+    return PreSymptomPrep(adult_pre_symptom_data, tmpdir.strpath, True)
 
 
 class TestAdultPreSymptomPrep(object):
