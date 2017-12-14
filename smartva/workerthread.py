@@ -6,11 +6,9 @@ from data_prep import AbortException
 
 from smartva.common_prep import CommonPrep
 from smartva.adult_pre_symptom_prep import AdultPreSymptomPrep
-from smartva.adult_symptom_prep import AdultSymptomPrep
 from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
-from smartva.child_symptom_prep import ChildSymptomPrep
 from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
-from smartva.neonate_symptom_prep import NeonateSymptomPrep
+from smartva.symptom_prep import SymptomPrep
 from smartva.rules_prep import AdultRulesPrep, ChildRulesPrep, NeonateRulesPrep
 from smartva.tariff_prep import TariffPrep
 from smartva.cause_grapher import CauseGrapher
@@ -18,6 +16,9 @@ from smartva.csmf_grapher import CSMFGrapher
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import find_dupes, status_notifier, intermediate_dir_path
 from smartva.data import (
+    adult_symptom_data,
+    child_symptom_data,
+    neonate_symptom_data,
     adult_tariff_data,
     child_tariff_data,
     neonate_tariff_data,
@@ -151,15 +152,15 @@ class WorkerThread(threading.Thread):
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = AdultPreSymptomPrep(self.output_dir_path, self.short_form)
         adult_rules = AdultRulesPrep(self.output_dir_path, self.short_form)
-        adult_symptom = AdultSymptomPrep(self.output_dir_path, self.short_form)
+        adult_symptom = SymptomPrep(adult_symptom_data, self.output_dir_path, self.short_form)
         adult_results = TariffPrep(adult_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
         child_pre_symptom = ChildPreSymptomPrep(self.output_dir_path, self.short_form)
         child_rules = ChildRulesPrep(self.output_dir_path, self.short_form)
-        child_symptom = ChildSymptomPrep(self.output_dir_path, self.short_form)
+        child_symptom = SymptomPrep(child_symptom_data, self.output_dir_path, self.short_form)
         child_results = TariffPrep(child_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
         neonate_pre_symptom = NeonatePreSymptomPrep(self.output_dir_path, self.short_form)
         neonate_rules = NeonateRulesPrep(self.output_dir_path, self.short_form)
-        neonate_symptom = NeonateSymptomPrep(self.output_dir_path, self.short_form)
+        neonate_symptom = SymptomPrep(neonate_symptom_data, self.output_dir_path, self.short_form)
         neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
         cause_grapher = CauseGrapher(self.output_dir_path)
         csmf_grapher = CSMFGrapher(self.output_dir_path)
