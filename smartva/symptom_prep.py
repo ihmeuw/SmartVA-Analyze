@@ -1,4 +1,3 @@
-import abc
 import re
 
 from smartva.data_prep import DataPrep
@@ -26,9 +25,7 @@ class SymptomPrep(DataPrep):
         years prior to death be assigned to road traffic deaths.
     """
 
-    __metaclass__ = abc.ABCMeta
-
-    def __init__(self, working_dir_path, short_form):
+    def __init__(self, data_module, working_dir_path, short_form):
         super(SymptomPrep, self).__init__(working_dir_path, short_form)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
@@ -37,18 +34,8 @@ class SymptomPrep(DataPrep):
         self.input_dir_path = self.intermediate_dir
         self.output_dir_path = self.intermediate_dir
 
-        self._data_module = None
-
-    @property
-    def data_module(self):
-        return self._data_module
-
-    @data_module.setter
-    def data_module(self, value):
-        assert self._data_module is None
-        self._data_module = value
-
-        self.AGE_GROUP = self.data_module.AGE_GROUP
+        self.data_module = data_module
+        self.AGE_GROUP = data_module.AGE_GROUP
 
     def run(self):
         super(SymptomPrep, self).run()
@@ -81,8 +68,6 @@ class SymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
-            self.pre_processing_step(row)
-
             self.copy_variables(row, self.data_module.COPY_VARS)
 
             # Compute age quartiles.
@@ -101,8 +86,6 @@ class SymptomPrep(DataPrep):
             self.censor_causes(row, self.data_module.CENSORED_MAP)
 
             self.require_symptoms(row, self.data_module.REQUIRED_MAP)
-
-            self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
 

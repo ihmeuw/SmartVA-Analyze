@@ -6,8 +6,8 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from smartva.tariff_prep import Record
-from smartva.neonate_tariff import NeonateTariff
+from smartva.tariff_prep import TariffPrep, Record
+from smartva.data import neonate_tariff_data
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,7 +21,8 @@ def input_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return NeonateTariff(
+    return TariffPrep(
+        neonate_tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
