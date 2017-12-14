@@ -8,8 +8,8 @@ import pytest
 
 from smartva.tariff_prep import Record
 from smartva import config
-from smartva.tariff_prep import get_tariff_matrix
-from smartva.child_tariff import ChildTariff
+from smartva.tariff_prep import TariffPrep, get_tariff_matrix
+from smartva.data import child_tariff_data
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,7 +23,8 @@ def input_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return ChildTariff(
+    return TariffPrep(
+        child_tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
@@ -76,14 +77,12 @@ def test_uniform_frequencies(prep):
 
 @pytest.mark.parametrize('age,expected', [
     (0, None),
-    (20/365.0, None),
     (29/365.0, 0),
     (.99, 0),
     (1, 1),
     (4, 1),
     (7, 5),
     (11.2, 10),
-    (12, None),
 ])
 def test_calc_age_bin(prep, age, expected):
     age_bin = prep._calc_age_bin(age)
