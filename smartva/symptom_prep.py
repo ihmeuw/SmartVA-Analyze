@@ -68,8 +68,6 @@ class SymptomPrep(DataPrep):
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
-            self.pre_processing_step(row)
-
             self.copy_variables(row, self.data_module.COPY_VARS)
 
             # Compute age quartiles.
@@ -88,8 +86,6 @@ class SymptomPrep(DataPrep):
             self.censor_causes(row, self.data_module.CENSORED_MAP)
 
             self.require_symptoms(row, self.data_module.REQUIRED_MAP)
-
-            self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
 
