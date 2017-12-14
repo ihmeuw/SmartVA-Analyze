@@ -70,8 +70,6 @@ class RulesPrep(DataPrep):
 
             self.expand_row(row, ADDITIONAL_DATA)
 
-            self.pre_processing_step(row)
-
             for rule in self.rules:
                 try:
                     if rule.logic_rule(row) is True:
@@ -79,8 +77,6 @@ class RulesPrep(DataPrep):
                         break
                 except Exception as e:
                     warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
-
-            self.post_processing_step(row)
 
         status_notifier.update({'sub_progress': None})
 

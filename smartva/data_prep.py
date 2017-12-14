@@ -58,22 +58,6 @@ class DataPrep(Prep):
     def intermediate_dir(self):
         return intermediate_dir_path(self.working_dir_path)
 
-    def pre_processing_step(self, row):
-        """Pipeline specific pre-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
-    def post_processing_step(self, row):
-        """Pipeline specific post-processing actions.
-
-        Args:
-            row: Row of VA data.
-        """
-        pass
-
     @staticmethod
     def rename_vars(row, conversion_map):
         for old_header, new_header in conversion_map.items():
