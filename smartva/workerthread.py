@@ -165,7 +165,7 @@ class WorkerThread(threading.Thread):
         neonate_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.NEONATE, NEONATE_RULES)
         neonate_symptom = SymptomPrep(neonate_symptom_data, self.output_dir_path, self.short_form)
         neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
-        legacy = self.options['legacy_format']
+        legacy = self.options.get('legacy_format', False)
         output = OutputPrep(self.output_dir_path, reorganize=not legacy,
                             keep_orig=legacy)
         cause_grapher = CauseGrapher(self.output_dir_path)
