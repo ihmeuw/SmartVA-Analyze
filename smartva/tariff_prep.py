@@ -1,5 +1,4 @@
 from __future__ import division
-import abc
 from bisect import bisect_left, bisect_right
 import collections
 import csv
@@ -258,9 +257,8 @@ class TariffPrep(DataPrep):
         Processing pipelines must implement `_calc_age_bin` method.
     """
 
-    __metaclass__ = abc.ABCMeta
-
-    def __init__(self, working_dir_path, short_form, options, country):
+    def __init__(self, data_module, working_dir_path, short_form, options,
+                 country):
         super(TariffPrep, self).__init__(working_dir_path, short_form)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
@@ -272,22 +270,12 @@ class TariffPrep(DataPrep):
         self.hiv_region = options['hiv']
         self.malaria_region = options['malaria']
         self.iso3 = country
-        self.chinese = options['chinese']
+        self.chinese = options.get('chinese', False)
 
         self.cause_list = []
 
-        self._data_module = None
-
-    @property
-    def data_module(self):
-        return self._data_module
-
-    @data_module.setter
-    def data_module(self, value):
-        assert self._data_module is None
-        self._data_module = value
-
-        self.AGE_GROUP = self.data_module.AGE_GROUP
+        self.data_module = data_module
+        self.AGE_GROUP = data_module.AGE_GROUP
 
     @property
     def tariffs_filename(self):
@@ -1049,8 +1037,7 @@ class TariffPrep(DataPrep):
         with open(csv_filepath, 'wb') as f:
             UnicodeWriter(f).writerows(matrix)
 
-    @abc.abstractmethod
-    def _calc_age_bin(self, va, u_row):
+    def _calc_age_bin(self, age):
         """Determine the GBD age bin for a given age.
 
         Ages on the ScoredVA for child and adult modules are in years and the
@@ -1063,7 +1050,27 @@ class TariffPrep(DataPrep):
         Returns:
             int
         """
-        pass
+        age = float(age)
+        # Age may have been filled with the default value of zero
+        # In this case do not return an age value. When looking up
+        # redistribution weights, the lookup should fail and default all-age
+        # both-sex category will be used instead.
+        if self.AGE_GROUP == 'neonate':
+            if age < 7:
+                return 0
+            elif 7 <= age <= 28:
+                return 7
+        else:
+            if not age:
+                return None
+            elif age < 1:
+                return 0
+            elif 1 <= age < 5:
+                return 1
+            elif 5 <= age <= 80:
+                return int(age / 5) * 5
+            elif age > 80:
+                return 80
 
     def write_intermediate_file(self, user_data, name, attr):
         """Write intermediate tariff files.
