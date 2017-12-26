@@ -12,7 +12,8 @@ from smartva import config
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier, LdapNotationParser
-from smartva.utils.conversion_utils import value_or_default
+from smartva.utils.conversion_utils import value_or_default, safe_float, \
+    safe_int
 from smartva.utils.utils import int_or_float, UnicodeWriter
 from smartva.rules_prep import RULES_CAUSE_NUM_KEY
 
@@ -24,17 +25,6 @@ TARIFF_CAUSE_NUM_KEY = 'xs_name'
 SID_KEY = 'sid'
 AGE_KEY = 'real_age'
 SEX_KEY = 'real_gender'
-
-
-def safe_float(x):
-    try:
-        return float(x)
-    except (ValueError, TypeError):
-        return 0.0
-
-
-def safe_int(x):
-    return int(safe_float(x))
 
 
 def clean_tariffs(row, drop_headers=None, spurious=None, max_symptoms=40,
