@@ -8,8 +8,10 @@ from smartva.data.answer_ranges import RANGE_LIST
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import value_or_default, additional_headers_and_values
+from smartva.utils.conversion_utils import value_or_default, \
+    additional_headers_and_values, safe_int
 from smartva.data import common_data
+
 
 INPUT_FILENAME_TEMPLATE = '{:s}-prepped.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-presymptom.csv'
@@ -384,11 +386,11 @@ class PreSymptomPrep(DataPrep):
                     age_at_exam_months = months_delta(latest_exam, dob)
 
                     if age_at_exam_months <= 60:
-                        sex = int(row[SEX_VAR])
+                        sex = safe_int(row[SEX_VAR])
                         weight_kg = latest_weight / 1000
 
                         for sd_var, sd_data in weight_sd_data.items():
-                            row[sd_var] = int(
+                            row[sd_var] = safe_int(
                                 weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 
     def fix_rash_length(self, row):

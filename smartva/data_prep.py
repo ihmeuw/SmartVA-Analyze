@@ -3,7 +3,8 @@ import csv
 import os
 
 from smartva.loggers import warning_logger
-from smartva.utils.conversion_utils import convert_binary_variable, ConversionError
+from smartva.utils.conversion_utils import convert_binary_variable, \
+    ConversionError, safe_float
 from smartva.utils import intermediate_dir_path
 
 
@@ -142,7 +143,7 @@ class DataPrep(Prep):
         for read_header, conversion_data in progressive_data:
             for value, write_header in conversion_data:
                 try:
-                    if float(row[read_header]) > value:
+                    if safe_float(row[read_header]) > value:
                         if isinstance(write_header, tuple):
                             write_header, write_value = write_header
                         else:

@@ -79,3 +79,14 @@ def get_cell(row):
         return 0
 
     return fn
+
+
+def safe_float(x):
+    try:
+        return float(x)
+    except (ValueError, TypeError):
+        return 0.0
+
+
+def safe_int(x):
+    return int(safe_float(x))
