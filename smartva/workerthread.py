@@ -11,6 +11,7 @@ from smartva.rules_prep import RulesPrep, ADULT_RULES, CHILD_RULES, NEONATE_RULE
 from smartva.tariff_prep import TariffPrep
 from smartva.cause_grapher import CauseGrapher
 from smartva.csmf_grapher import CSMFGrapher
+from smartva.output_prep import OutputPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import find_dupes, status_notifier, intermediate_dir_path
 from smartva.data import (
@@ -164,6 +165,9 @@ class WorkerThread(threading.Thread):
         neonate_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.NEONATE, NEONATE_RULES)
         neonate_symptom = SymptomPrep(neonate_symptom_data, self.output_dir_path, self.short_form)
         neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
+        legacy = self.options['legacy_format']
+        output = OutputPrep(self.output_dir_path, reorganize=not legacy,
+                            keep_orig=legacy)
         cause_grapher = CauseGrapher(self.output_dir_path)
         csmf_grapher = CSMFGrapher(self.output_dir_path)
 
@@ -225,6 +229,8 @@ class WorkerThread(threading.Thread):
                 cause_grapher.run()
                 # generate all csmf graphs
                 csmf_grapher.run()
+
+            output.run()
 
         except AbortException:
             self._complete(CompletionStatus.ABORT)

@@ -243,12 +243,14 @@ def test_csmf_summed_to_one(prep):
     causes = ['a', 'b', 'c']
     counts = np.random.randint(10, 100, 3)
 
-    user_data = [Record({}, cause, '', 0, 1, '')
-                 for i, cause in enumerate(causes) for _ in range(counts[i])]
+    user_data = [Record('sid{}'.format(i), age=35, sex=i % 2 + 1, cause=cause)
+                 for i, cause in enumerate(causes) for i in range(counts[i])]
 
-    csmf = prep.calculate_csmf(user_data, [])
+    csmf, csmf_by_sex = prep.calculate_csmf(user_data, [])
 
     assert np.allclose(sum(csmf.values()), 1)
+    for sex, csmf_data in csmf_by_sex.items():
+        assert np.allclose(sum(csmf_data.values()), 1)
 
 
 @pytest.mark.parametrize('tariff_data', module_data)
