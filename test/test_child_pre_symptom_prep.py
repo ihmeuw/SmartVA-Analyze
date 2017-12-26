@@ -2,7 +2,8 @@ import csv
 
 import pytest
 
-from smartva.child_pre_symptom_prep import ChildPreSymptomPrep
+from smartva.pre_symptom_prep import PreSymptomPrep
+from smartva.data import child_pre_symptom_data
 
 headers = ['sid']
 # Rash variables
@@ -74,7 +75,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return ChildPreSymptomPrep(tmpdir.strpath, True)
+    return PreSymptomPrep(child_pre_symptom_data, tmpdir.strpath, True)
 
 
 class TestChildPreSymptomPrep(object):

@@ -2,7 +2,8 @@ import csv
 
 import pytest
 
-from smartva.neonate_pre_symptom_prep import NeonatePreSymptomPrep
+from smartva.pre_symptom_prep import PreSymptomPrep
+from smartva.data import neonate_pre_symptom_data
 
 headers = ['sid']
 # Free text variables
@@ -66,7 +67,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return NeonatePreSymptomPrep(tmpdir.strpath, True)
+    return PreSymptomPrep(neonate_pre_symptom_data, tmpdir.strpath, True)
 
 
 class TestNeonatePreSymptomPrep(object):

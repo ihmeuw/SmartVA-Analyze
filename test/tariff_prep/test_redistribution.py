@@ -6,19 +6,23 @@ import pandas as pd
 import numpy as np
 
 from smartva.data.countries import COUNTRIES, COUNTRY_DEFAULT
-from smartva.adult_tariff import AdultTariff
-from smartva.child_tariff import ChildTariff
-from smartva.neonate_tariff import NeonateTariff
+from smartva.tariff_prep import TariffPrep
+from smartva.data import (
+    adult_tariff_data,
+    child_tariff_data,
+    neonate_tariff_data,
+)
 
 
 iso3s = [country.split(' ')[-1].strip('()') for country in COUNTRIES
          if country != COUNTRY_DEFAULT]
-tariff_subclasses = [AdultTariff, ChildTariff, NeonateTariff]
+module_data = [adult_tariff_data, child_tariff_data, neonate_tariff_data]
 
 
-@pytest.mark.parametrize('tariff', tariff_subclasses)
-def test_redistribution_weights_sum_to_one(tmpdir, tariff):
-    prep = tariff(
+@pytest.mark.parametrize('tariff_data', module_data)
+def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
+    prep = TariffPrep(
+        tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
@@ -32,12 +36,13 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff):
 
 @pytest.mark.skipif(not pytest.config.getoption("--data-checks"),
                     reason="need --data-checks option to run")
-@pytest.mark.parametrize('tariff', tariff_subclasses)
+@pytest.mark.parametrize('tariff_data', module_data)
 @pytest.mark.parametrize('country', iso3s)
-def test_redistribution_weights_for_countries(tmpdir, tariff, country):
+def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):
     """Any valid country from the countries list should be present and contain
        the default key used for invalid age-sex observations."""
-    prep = tariff(
+    prep = TariffPrep(
+        tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
@@ -49,13 +54,14 @@ def test_redistribution_weights_for_countries(tmpdir, tariff, country):
     assert (99, 3) in undetermined_weights
 
 
-@pytest.mark.parametrize('tariff', tariff_subclasses)
+@pytest.mark.parametrize('tariff_data', module_data)
 @pytest.mark.parametrize('short_form', [True, False])
 @pytest.mark.parametrize('hce', [True, False])
-def test_redistribution_weights(tmpdir, tariff, short_form, hce):
+def test_redistribution_weights(tmpdir, tariff_data, short_form, hce):
     """Verify the shape of structure of the redistribution weights is correct
        for one country."""
-    prep = tariff(
+    prep = TariffPrep(
+        tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=short_form,
         options={'hce': hce, 'free_text': True, 'hiv': True, 'malaria': True,
@@ -80,9 +86,10 @@ def test_redistribution_weights(tmpdir, tariff, short_form, hce):
         assert np.allclose(sum(weights.values()), 1)
 
 
-@pytest.mark.parametrize('tariff', tariff_subclasses)
-def test_redistribution_weights_no_country(tmpdir, tariff):
-    prep = tariff(
+@pytest.mark.parametrize('tariff_data', module_data)
+def test_redistribution_weights_no_country(tmpdir, tariff_data):
+    prep = TariffPrep(
+        tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
@@ -93,9 +100,10 @@ def test_redistribution_weights_no_country(tmpdir, tariff):
     assert undetermined_weights == {}
 
 
-@pytest.mark.parametrize('tariff', tariff_subclasses)
-def test_redistribution_causes_match_reporting_causes(tmpdir, tariff):
-    prep = tariff(
+@pytest.mark.parametrize('tariff_data', module_data)
+def test_redistribution_causes_match_reporting_causes(tmpdir, tariff_data):
+    prep = TariffPrep(
+        tariff_data,
         working_dir_path=tmpdir.strpath,
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,

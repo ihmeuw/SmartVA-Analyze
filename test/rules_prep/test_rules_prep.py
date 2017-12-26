@@ -113,26 +113,8 @@ def test_rule_order(tmpdir, rule_list):
 
 
 class TestAdultRulesPrep(object):
-    RULE_LIST = [
-        road_traffic_adult,
-        bite_adult,
-        drowning_adult,
-        fires_adult,
-        falls_adult,
-        poisoning_adult,
-        other_injury_adult,
-        homicide_adult,
-        suicide,
-        stroke,
-    ]
 
-    def test_instance(self, tmpdir):
-        adult_rules_prep = smartva.rules_prep.AdultRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
-
-        assert adult_rules_prep.AGE_GROUP == 'adult'
-        assert adult_rules_prep.rules == self.RULE_LIST
-
-    @pytest.mark.parametrize("rule", RULE_LIST)
+    @pytest.mark.parametrize("rule", smartva.rules_prep.ADULT_RULES)
     def test_prediction_exists(self, rule):
         assert rule.CAUSE_ID in adult_tariff_data.CAUSES46
         assert rule.CAUSE_ID in adult_tariff_data.CAUSE_REDUCTION
@@ -141,25 +123,8 @@ class TestAdultRulesPrep(object):
 
 
 class TestChildRulesPrep(object):
-    RULE_LIST = [
-        road_traffic_child,
-        bite_child,
-        drowning_child,
-        fires_child,
-        falls_child,
-        poisoning_child,
-        other_injury_child,
-        homicide_child,
-        aids_child,
-    ]
 
-    def test_instance(self, tmpdir):
-        rules_prep = smartva.rules_prep.ChildRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
-
-        assert rules_prep.AGE_GROUP == 'child'
-        assert rules_prep.rules == self.RULE_LIST
-
-    @pytest.mark.parametrize("rule", RULE_LIST)
+    @pytest.mark.parametrize("rule", smartva.rules_prep.CHILD_RULES)
     def test_prediction_exists(self, rule):
         assert rule.CAUSE_ID in child_tariff_data.CAUSES46
         assert rule.CAUSE_ID in child_tariff_data.CAUSE_REDUCTION
@@ -168,17 +133,8 @@ class TestChildRulesPrep(object):
 
 
 class TestNeonateRulesPrep(object):
-    RULE_LIST = [
-        stillbirth,
-    ]
 
-    def test_instance(self, tmpdir):
-        rules_prep = smartva.rules_prep.NeonateRulesPrep(working_dir_path=tmpdir.strpath, short_form=True)
-
-        assert rules_prep.AGE_GROUP == 'neonate'
-        assert rules_prep.rules == self.RULE_LIST
-
-    @pytest.mark.parametrize("rule", RULE_LIST)
+    @pytest.mark.parametrize("rule", smartva.rules_prep.NEONATE_RULES)
     def test_prediction_exists(self, rule):
         assert rule.CAUSE_ID in neonate_tariff_data.CAUSES46
         assert rule.CAUSE_ID in neonate_tariff_data.CAUSE_REDUCTION
