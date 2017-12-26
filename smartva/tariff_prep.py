@@ -353,7 +353,8 @@ class TariffPrep(DataPrep):
                                   self.data_module.CAUSE_REDUCTION)
 
         undetermined_weights = self._get_undetermined_matrix()
-        csmf = self.calculate_csmf(user_data, undetermined_weights)
+        csmf, csmf_by_sex = self.calculate_csmf(user_data,
+                                                undetermined_weights)
 
         self.write_predictions(user_data)
 
@@ -373,7 +374,11 @@ class TariffPrep(DataPrep):
                                                   translation)
         self.write_multiple_predictions_csv(mp)
 
-        self.write_csmf(csmf)
+        self.write_csmf(self.AGE_GROUP, csmf)
+        sex_name = {1: 'male', 2: 'female'}
+        for sex, csmf_data in csmf_by_sex.items():
+            key = '-'.join([self.AGE_GROUP, sex_name[sex]])
+            self.write_csmf(key, csmf_data)
 
         self.write_intermediate_file(user_data, 'tariff-scores', 'scores')
 
@@ -819,9 +824,11 @@ class TariffPrep(DataPrep):
             undetermined_weights: redistribution weights by age and sex
         """
         cause_counts = collections.Counter()
+        counts_by_sex = {1: collections.Counter(), 2: collections.Counter()}
 
         for va in user_data:
             self.check_abort()
+            sex = safe_int(va.sex)
 
             if va.cause34_name == 'Undetermined' and self.iso3:
                 age = self._calc_age_bin(va.age)
@@ -830,8 +837,12 @@ class TariffPrep(DataPrep):
                 except KeyError:
                     redistributed = undetermined_weights[99, 3]
                 cause_counts.update(redistributed)
+                if sex in counts_by_sex:
+                    counts_by_sex[sex].update(redistributed)
             else:
                 cause_counts.update([va.cause34_name])
+                if sex in counts_by_sex:
+                    counts_by_sex[sex].update([va.cause34_name])
 
         # The undetermined weights may have redistributed onto causes which
         # the user specified as non-existent. These should be removed.
@@ -844,14 +855,20 @@ class TariffPrep(DataPrep):
         for cause in drop_causes:
             cause34 = self.data_module.CAUSE_REDUCTION[cause]
             gs_text34 = self.data_module.CAUSES[cause34]
-            if gs_text34 in cause_counts:
-                cause_counts.pop(gs_text34)
+            for d in (cause_counts, counts_by_sex[1], counts_by_sex[2]):
+                if gs_text34 in cause_counts:
+                    d.pop(gs_text34)
 
         # Convert counts to fractions
         total_counts = sum(cause_counts.values())
         csmf = {k: v / total_counts for k, v in cause_counts.items()}
 
-        return csmf
+        totals = {sex: sum(counts.values())
+                        for sex, counts in counts_by_sex.items()}
+        csmf_by_sex = {sex: {k: v / totals[sex] for k, v in counts.items()}
+                       for sex, counts in counts_by_sex.items()}
+
+        return csmf, csmf_by_sex
 
     def write_predictions(self, user_data):
         """Write the predicted causes.
@@ -1089,13 +1106,13 @@ class TariffPrep(DataPrep):
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([format_row(va) for va in user_data])
 
-    def write_csmf(self, csmf):
+    def write_csmf(self, key, csmf):
         """Write Cause-Specific Mortaility Fractions.
 
         Args:
             csmf (dict): Map of causes to count.
         """
-        filename = '{:s}-csmf.csv'.format(self.AGE_GROUP)
+        filename = '{:s}-csmf.csv'.format(key)
         with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
