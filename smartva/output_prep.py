@@ -103,7 +103,7 @@ class OutputPrep(DataPrep):
                    'geography2', 'geography3', 'geography4', 'cause34',
                    'cause', 'icd10', 'age', 'sex', 'dob_y', 'dob_m', 'dob_d',
                    'interview_date']
-        with open(predictions_file, 'w') as f:
+        with open(predictions_file, 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for module in MODULES:
@@ -113,7 +113,7 @@ class OutputPrep(DataPrep):
                 if not (os.path.exists(pred_file) and os.path.exists(raw_file)):
                     continue
 
-                with open(pred_file) as f_pred, open(raw_file) as f_raw:
+                with open(pred_file, 'rb') as f_pred, open(raw_file, 'rb') as f_raw:
                     raw_reader = csv.DictReader(f_raw)
                     pred_reader = csv.DictReader(f_pred)
                     try:
@@ -321,7 +321,7 @@ class OutputPrep(DataPrep):
         if not os.path.exists(prepped_file):
             return
 
-        with open(prepped_file) as f_prep, open(recoded_file, 'w') as f_rec:
+        with open(prepped_file, 'rb') as f_prep, open(recoded_file, 'wb') as f_rec:
             reader = csv.DictReader(f_prep)
             writer = csv.DictWriter(f_rec, fieldnames=reader.fieldnames)
             writer.writeheader()
@@ -396,7 +396,7 @@ class OutputPrep(DataPrep):
                                 '{}-endorsement-rates.csv'.format(module))
         headers = ['symptom']
         headers.extend(causes)
-        with open(filename, 'w') as f:
+        with open(filename, 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for symptom, rates in data.items():
