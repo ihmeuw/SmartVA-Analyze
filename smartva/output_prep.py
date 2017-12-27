@@ -1,10 +1,11 @@
 from collections import Counter, defaultdict, OrderedDict
 import csv
+import logging
 import os
 import re
 import shutil
 
-from smartva.loggers import status_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
 from smartva.tariff_prep import safe_float, safe_int
@@ -420,6 +421,15 @@ class OutputPrep(DataPrep):
         for module in MODULES:
             for stub in stubs:
                 files.append('-'.join([module, stub]))
+
+        # WindowsOS keeps a lock on the text file used as the destination
+        # for the warning logger. If we try to remove the file while to
+        # handler is still active, it throws an OSError which we catch and
+        # ignore. Close the handler before trying to remove the log file
+        for handler in warning_logger.handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+
         for f in files:
             try:
                 os.remove(os.path.join(self.working_dir_path, f))
