@@ -3,7 +3,9 @@ import re
 from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
-from smartva.utils.conversion_utils import additional_headers_and_values
+from smartva.utils.conversion_utils import additional_headers_and_values, \
+    safe_int
+
 
 INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
 OUTPUT_FILENAME_TEMPLATE = '{:s}-symptom.csv'
@@ -195,7 +197,7 @@ class SymptomPrep(DataPrep):
         """
         restricted = set()
         for cause, symptoms in cause_conditions.items():
-            if any([int(row.get(symp, 0)) for symp in symptoms]):
+            if any([safe_int(row.get(symp, 0)) for symp in symptoms]):
                 restricted.add(cause)
         row['restricted'] = ' '.join(map(str, sorted(restricted)))
 
