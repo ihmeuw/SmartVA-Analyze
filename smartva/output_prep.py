@@ -195,7 +195,7 @@ class OutputPrep(DataPrep):
                     if cause != 'cause':   # skip header row
                         csmf[cause][label] = value
 
-        table = [['cause34', 'cause', 'icd10', 'both', 'male', 'female']]
+        table = [['cause34', 'cause', 'icd10', 'all', 'male', 'female']]
         for cause in sorted(csmf):
             table.append([
                 cause,
