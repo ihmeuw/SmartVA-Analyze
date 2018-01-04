@@ -1,5 +1,6 @@
 from collections import Counter, defaultdict, OrderedDict
 import csv
+from datetime import datetime
 import logging
 import os
 import re
@@ -102,7 +103,7 @@ class OutputPrep(DataPrep):
                                         'individual-cause-of-death.csv')
         headers = ['sid', 'name1', 'name2', 'name3', 'geography1',
                    'geography2', 'geography3', 'geography4', 'cause34',
-                   'cause', 'icd10', 'age', 'sex', 'dob_y', 'dob_m', 'dob_d',
+                   'cause', 'icd10', 'age', 'sex', 'birth_date', 'death_date',
                    'interview_date']
         with open(predictions_file, 'wb') as f:
             writer = csv.writer(f)
@@ -121,6 +122,12 @@ class OutputPrep(DataPrep):
                         while True:
                             raw_row = next(raw_reader)
                             pred_row = next(pred_reader)
+                            birth_date = [raw_row.get('gen_5_1{}'.format(x))
+                                          for x in 'abc']
+
+                            death_date = [raw_row.get('gen_5_3{}'.format(x))
+                                          for x in 'abc']
+
                             writer.writerow([
                                 pred_row.get('sid'),
                                 # TODO: finalize name/geography columns
@@ -136,13 +143,24 @@ class OutputPrep(DataPrep):
                                 ICDS[module].get(pred_row.get('cause34')),
                                 pred_row.get('age'),
                                 pred_row.get('sex'),
-                                raw_row.get('gen_5_3a'),
-                                raw_row.get('gen_5_3b'),
-                                raw_row.get('gen_5_3c'),
+                                self.make_date(*birth_date),
+                                self.make_date(*death_date),
                                 raw_row.get('interviewdate'),
                             ])
                     except StopIteration:
                         pass
+
+    @staticmethod
+    def make_date(year, month, day):
+        try:
+            year, month, day = map(float, (year, month, day))
+        except (TypeError, ValueError):
+            return ''
+        if (1880 <= year <= datetime.now().year and 1 <= month <= 12 and
+                1 <= day <= 31):
+            return '{:d}-{:02d}-{:02d}'.format(*map(int, (year, month, day)))
+        else:
+            return ''
 
     def _concatenate_likelihoods_files(self):
         likelihoods_file = os.path.join(self.working_dir_path, FOLDER1,
