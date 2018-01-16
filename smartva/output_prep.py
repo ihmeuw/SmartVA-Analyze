@@ -132,6 +132,7 @@ class OutputPrep(DataPrep):
                                 pred_row.get('sid'),
                                 # TODO: finalize name/geography columns
                                 raw_row.get('gen_5_0a'),  # Doesn't exist
+                                raw_row.get('gen_5_0a2'),  # Doesn't exist
                                 raw_row.get('gen_5_0'),
                                 raw_row.get('gen_5_0c'),  # Doesn't exist
                                 raw_row.get('gen_5_5a'),  # Doesn't exist
