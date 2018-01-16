@@ -1,0 +1,1 @@
+recursive-include smartva *.csv *.json
