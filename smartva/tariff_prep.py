@@ -260,7 +260,7 @@ class TariffPrep(DataPrep):
         self.hiv_region = options['hiv']
         self.malaria_region = options['malaria']
         self.iso3 = country
-        self.chinese = options.get('chinese', False)
+        self.language = options.get('language', 'english')
 
         self.cause_list = []
 
@@ -349,8 +349,8 @@ class TariffPrep(DataPrep):
 
         likelihood_names = ['Very Likely', 'Likely', 'Somewhat Likely',
                             'Possible']
-        if self.chinese:
-            path = os.path.join(config.basedir, 'data', 'chinese.json')
+        if self.language != 'english':
+            path = os.path.join(config.basedir, 'data', '{}.json'.format(self.language))
             with open(path, 'rb') as f:
                 translation = json.load(f)
             likelihood_names = [translation['likelihoods'].get(likelihood)
