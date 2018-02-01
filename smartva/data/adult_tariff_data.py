@@ -1011,7 +1011,7 @@ SYMPTOM_DESCRIPTIONS = OrderedDict([
     ("s18992", "Severity of fever was moderate to large"),
     ("s19991", "Pattern of fever was continuous"),
     ("s19992", "Pattern of fever was on-and-off"),
-    ("s20", "Fever with sweating"),
+    ("s20", "Sweating with the fever"),
     ("s21", "Rash"),
     ("s22", "Rash for at least {} days".format(DURATION_CUTOFF_DATA['s22'])),
     ("s23991", "Rash was located on face"),
