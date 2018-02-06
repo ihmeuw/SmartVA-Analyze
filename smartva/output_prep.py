@@ -81,7 +81,7 @@ class OutputPrep(DataPrep):
 
         Contains:
             - individual predictions for all records
-                * extra columns for names (first, middle, last)
+                * extra columns for names
                 * extra columns for geography
                 * extra column with ICD10
                 * extra columns with date of birth
@@ -101,7 +101,7 @@ class OutputPrep(DataPrep):
 
         predictions_file = os.path.join(self.working_dir_path, FOLDER1,
                                         'individual-cause-of-death.csv')
-        headers = ['sid', 'name1', 'name2', 'name3', 'geography1',
+        headers = ['sid', 'name1', 'name2', 'name3', 'name4', 'geography1',
                    'geography2', 'geography3', 'geography4', 'cause34',
                    'cause', 'icd10', 'age', 'sex', 'birth_date', 'death_date',
                    'interview_date']
