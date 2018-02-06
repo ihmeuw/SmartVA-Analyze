@@ -221,9 +221,9 @@ class OutputPrep(DataPrep):
                 cause,
                 CAUSE_NUMBERS[module].get(cause),
                 ICDS[module].get(cause),
-                csmf[cause].get('both', 0),
-                csmf[cause].get('male', 0),
-                csmf[cause].get('female', 0)
+                round(safe_float(csmf[cause].get('both', 0)), 3),
+                round(safe_float(csmf[cause].get('male', 0)), 3),
+                round(safe_float(csmf[cause].get('female', 0)), 3),
             ])
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
