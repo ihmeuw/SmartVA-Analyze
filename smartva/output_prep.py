@@ -517,8 +517,7 @@ class OutputPrep(DataPrep):
             writer.writerow(headers)
             for symptom, rates in data.items():
                 row = [symptom]
-                # TODO: consider rounding. CSMF aren't rounded so maybe not...
-                row.extend([rates[cause] * 100 for cause in causes])
+                row.extend([round(rates[cause] * 100, 1) for cause in causes])
                 writer.writerow(row)
 
     def clean_up(self):
