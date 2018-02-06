@@ -98,6 +98,7 @@ class OutputPrep(DataPrep):
                 * extra column with ICD10
                 * extra columns with date of birth
                 * extra columns with date of interview
+            - module-specific predictions with the same columns
         """
         self._format_predictions_file()
 
@@ -123,9 +124,16 @@ class OutputPrep(DataPrep):
                 if not (os.path.exists(pred_file) and os.path.exists(raw_file)):
                     continue
 
-                with open(pred_file, 'rb') as f_pred, open(raw_file, 'rb') as f_raw:
+                module_file = os.path.join(self.working_dir_path, FOLDER1,
+                                           '{}-predictions.csv'.format(module))
+
+                with open(pred_file, 'rb') as f_pred, \
+                        open(raw_file, 'rb') as f_raw, \
+                        open(module_file, 'wb') as f_mod:
                     raw_reader = csv.DictReader(f_raw)
                     pred_reader = csv.DictReader(f_pred)
+                    mod_writer = csv.writer(f_mod)
+                    mod_writer.writerow(headers)
                     try:
                         while True:
                             raw_row = next(raw_reader)
@@ -136,7 +144,7 @@ class OutputPrep(DataPrep):
                             death_date = [raw_row.get('gen_5_3{}'.format(x))
                                           for x in 'abc']
 
-                            writer.writerow([
+                            row = [
                                 pred_row.get('sid'),
                                 # TODO: finalize name/geography columns
                                 raw_row.get('gen_5_0a'),  # Doesn't exist
@@ -156,7 +164,9 @@ class OutputPrep(DataPrep):
                                 self.make_date(*birth_date),
                                 self.make_date(*death_date),
                                 raw_row.get('interviewdate'),
-                            ])
+                            ]
+                            writer.writerow(row)
+                            mod_writer.writerow(row)
                     except StopIteration:
                         pass
 
