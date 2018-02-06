@@ -103,8 +103,8 @@ class OutputPrep(DataPrep):
                                         'individual-cause-of-death.csv')
         headers = ['sid', 'name1', 'name2', 'name3', 'name4', 'geography1',
                    'geography2', 'geography3', 'geography4', 'cause34',
-                   'cause', 'icd10', 'age', 'sex', 'birth_date', 'death_date',
-                   'interview_date']
+                   'cause list #', 'icd10', 'age', 'sex', 'birth_date',
+                   'death_date', 'interview_date']
         with open(predictions_file, 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
@@ -214,7 +214,7 @@ class OutputPrep(DataPrep):
                     if cause != 'cause':   # skip header row
                         csmf[cause][label] = value
 
-        table = [['cause34', 'cause', 'icd10', 'all', 'male', 'female']]
+        table = [['cause34', 'cause list #', 'icd10', 'all', 'male', 'female']]
         for cause in sorted(csmf):
             table.append([
                 cause,
