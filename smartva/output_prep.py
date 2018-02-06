@@ -11,6 +11,7 @@ from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
 from smartva.tariff_prep import safe_float, safe_int
 from smartva.data.icds import ICDS
+from smartva.data.gbd_causes import GBD_LEVEL1_CAUSE_NAMES, GBD_LEVEL1_CAUSES
 from smartva.data import codebook
 from smartva.data.adult_tariff_data import CAUSES as ADULT_CAUSES
 from smartva.data.child_tariff_data import CAUSES as CHILD_CAUSES
@@ -210,10 +211,12 @@ class OutputPrep(DataPrep):
                 * extra column with ICD10 code
                 * extra column with cause number
                 * extra columns with CSMF stratified by sex
+            - CSMF at GBD level 1 across all modules
         """
         # Spec is non-specific as to column layout and names
         for module in MODULES:
             self._reformat_csmf(module)
+        self._aggregate_csmf_to_gbd_level1()
 
     def _reformat_csmf(self, module):
         keys = {
@@ -246,6 +249,34 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 '{}-csmf.csv'.format(module))
+        with open(filename, 'wb') as f:
+            csv.writer(f).writerows(table)
+
+    def _aggregate_csmf_to_gbd_level1(self):
+        gbd_counts = Counter()
+        for module in MODULES:
+            filename = os.path.join(self.working_dir_path,
+                                    '{}-predictions.csv'.format(module))
+            if not os.path.exists(filename):
+                continue
+
+            with open(filename) as f:
+                gbd_counts.update([
+                    GBD_LEVEL1_CAUSES[module][row['cause34']]
+                    for row in csv.DictReader(f)
+                ])
+
+        # silly py2 and your integer division
+        total = float(sum(gbd_counts.values()))
+
+        table = [['cause', 'cause_name', 'CSMF']]
+        table.extend([
+            [cause, GBD_LEVEL1_CAUSE_NAMES[cause], round(value / total, 3)]
+            for cause, value in sorted(gbd_counts.items(), key=lambda x: x[0])
+        ])
+
+        filename = os.path.join(self.working_dir_path, FOLDER2,
+                                'gbd-level1-csmf.csv')
         with open(filename, 'wb') as f:
             csv.writer(f).writerows(table)
 
