@@ -102,9 +102,9 @@ class OutputPrep(DataPrep):
         predictions_file = os.path.join(self.working_dir_path, FOLDER1,
                                         'individual-cause-of-death.csv')
         headers = ['sid', 'name1', 'name2', 'name3', 'name4', 'geography1',
-                   'geography2', 'geography3', 'geography4', 'cause34',
-                   'cause list #', 'icd10', 'age', 'sex', 'birth_date',
-                   'death_date', 'interview_date']
+                   'geography2', 'geography3', 'geography4', 'geography5',
+                   'cause34', 'cause list #', 'icd10', 'age', 'sex',
+                   'birth_date', 'death_date', 'interview_date']
         with open(predictions_file, 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
@@ -139,6 +139,7 @@ class OutputPrep(DataPrep):
                                 raw_row.get('gen_5_5b'),  # Doesn't exist
                                 raw_row.get('gen_5_5c'),  # Doesn't exist
                                 raw_row.get('gen_5_5d'),  # Doesn't exist
+                                raw_row.get('gen_5_5e'),  # Doesn't exist
                                 pred_row.get('cause34'),
                                 pred_row.get('cause'),
                                 ICDS[module].get(pred_row.get('cause34')),
