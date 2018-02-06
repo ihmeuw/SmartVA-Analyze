@@ -24,7 +24,7 @@ ICDS = {
         'Other Cardiovascular Diseases': 'I99',
         'Other Infectious Diseases': 'B99',
         'Other Injuries': 'X58',
-        'Other Non-communicable Diseases': 'R99',
+        'Other Non-communicable Diseases': 'R100',
         'Pneumonia': 'J22',
         'Poisonings': 'X49',
         'Prostate Cancer': 'C61',
@@ -37,6 +37,7 @@ ICDS = {
         'Chronic Respiratory': 'J44/45',
         'Ischemic Heart Disease': 'I24',
         'Other Cancers': 'C76',
+        'Undetermined': 'R99',
     },
     CHILD: {
         'AIDS': 'B24',
@@ -52,7 +53,7 @@ ICDS = {
         'Meningitis': 'G03',
         'Cancers': 'C76',
         'Cardiovascular Diseases': 'I99',
-        'Other Defined Causes of Child Deaths': 'R99',
+        'Other Defined Causes of Child Deaths': 'R101',
         'Digestive Diseases': 'K92',
         'Other Infectious Diseases': 'B99',
         'Pneumonia': 'J22',
@@ -60,6 +61,7 @@ ICDS = {
         'Road Traffic': 'V89',
         'Sepsis': 'A41',
         'Violent Death': 'Y09',
+        'Undetermined': 'R99',
     },
     NEONATE: {
         'Birth asphyxia': 'P21',
@@ -68,5 +70,6 @@ ICDS = {
         'Pneumonia': 'P23/J22',
         'Preterm Delivery': 'P07',
         'Stillbirth': 'P95',
+        'Undetermined': 'R99',
     },
 }
