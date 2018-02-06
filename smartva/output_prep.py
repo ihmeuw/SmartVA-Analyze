@@ -98,12 +98,8 @@ class OutputPrep(DataPrep):
                 * extra column with ICD10
                 * extra columns with date of birth
                 * extra columns with date of interview
-            - multiple predictions for all records
-                * unmodified concatenated likelihoods files
         """
         self._format_predictions_file()
-        # TODO: consider saving likelihoods excel file (but only if asked to)
-        self._concatenate_likelihoods_files()
 
     def _format_predictions_file(self):
         # Instead of hackishly carrying extra columns through each step, we're
@@ -193,26 +189,6 @@ class OutputPrep(DataPrep):
 
         plural = 's' if age_scaled != 1 else ''
         return '{} {}{}'.format(int(age_scaled), unit, plural)
-
-    def _concatenate_likelihoods_files(self):
-        likelihoods_file = os.path.join(self.working_dir_path, FOLDER1,
-                                        'possible-predictions.csv')
-        with open(likelihoods_file, 'wb') as out:
-            first = True
-            for module in MODULES:
-                filename = os.path.join(self.working_dir_path,
-                                        '{:s}-likelihoods.csv'.format(module))
-                if not os.path.exists(filename):
-                    continue
-
-                with open(filename, 'rb') as f:
-                    for i, row in enumerate(f):
-                        if i == 0:
-                            if first:
-                                out.write(row)
-                                first = False
-                        else:
-                            out.write(row)
 
     def organize_folder2(self):
         """Folder 2: CSMF
@@ -418,6 +394,7 @@ class OutputPrep(DataPrep):
             - Symptom files by module (unmodified)
             - Tariff scores files by module with cause names as headers
             - Endorsement rates of symptoms by cause by module
+            - Likelihood files by module, both CSV and XLSX (unmodified)
         """
         shutil.copy2(
             os.path.join(self.working_dir_path, 'warnings.txt'),
@@ -427,6 +404,7 @@ class OutputPrep(DataPrep):
         for module in MODULES:
             self._recode_prepped_files(module)
             self._copy_intermediate_files(module)
+            self._copy_likelihood_files(module)
             self._write_endorsement_rates(module)
 
     def _recode_prepped_files(self, module):
@@ -476,6 +454,14 @@ class OutputPrep(DataPrep):
                 with open(new, 'wb') as f_out:
                     f_out.write(','.join(new_headers) + '\n')
                     f_out.write(f_in.read())
+
+    def _copy_likelihood_files(self, module):
+        for ext in ('csv', 'xlsx'):
+            filename = '{:s}-likelihoods.{:s}'.format(module, ext)
+            src = os.path.join(self.output_dir_path, filename)
+            if os.path.exists(src):
+                dest = os.path.join(self.working_dir_path, FOLDER4, filename)
+                shutil.copy2(src, dest)
 
     def _write_endorsement_rates(self, module):
         """Calculate endorsement rates by predicted cause for a module."""
