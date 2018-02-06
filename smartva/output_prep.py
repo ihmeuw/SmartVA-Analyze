@@ -17,7 +17,8 @@ from smartva.tariff_prep import safe_float, safe_int
 from smartva.data.icds import ICDS
 from smartva.data.gbd_causes import GBD_LEVEL1_CAUSE_NAMES, GBD_LEVEL1_CAUSES
 from smartva.data import codebook
-from smartva.data.adult_tariff_data import CAUSES as ADULT_CAUSES
+from smartva.data.adult_tariff_data import CAUSES as ADULT_CAUSES,\
+    CAUSES46 as ADULT_CAUSES46
 from smartva.data.child_tariff_data import CAUSES as CHILD_CAUSES
 from smartva.data.neonate_tariff_data import CAUSES as NEONATE_CAUSES
 
@@ -45,6 +46,12 @@ CAUSE_NUMBERS = {
     ADULT: {v: k for k, v in ADULT_CAUSES.items()},
     CHILD: {v: k for k, v in CHILD_CAUSES.items()},
     NEONATE: {v: k for k, v in NEONATE_CAUSES.items()},
+}
+
+CAUSE46_NAMES = {
+    ADULT: ADULT_CAUSES46,
+    CHILD: CHILD_CAUSES,
+    NEONATE: NEONATE_CAUSES,
 }
 
 
@@ -409,7 +416,7 @@ class OutputPrep(DataPrep):
             - Report file (output from warning_logger)
             - Raw data files by module
             - Symptom files by module (unmodified)
-            - Tariff scores files by module (unmodified)
+            - Tariff scores files by module with cause names as headers
             - Endorsement rates of symptoms by cause by module
         """
         shutil.copy2(
@@ -448,13 +455,27 @@ class OutputPrep(DataPrep):
                 writer.writerow(row)
 
     def _copy_intermediate_files(self, module):
-        files = ('{:s}-symptom.csv', '{:s}-tariff-scores.csv')
+        files = ['{:s}-symptom.csv']
         files = [f.format(module) for f in files]
         for f in files:
             src = os.path.join(self.intermediate_dir, f)
             if os.path.exists(src):
                 shutil.copy2(src,
                              os.path.join(self.working_dir_path, FOLDER4, f))
+
+        causes = sorted(CAUSE46_NAMES[module].items(), key=lambda x: x[0])
+        new_headers = ['sid']
+        new_headers.extend([cause for _, cause in causes])
+
+        filename = '{:s}-tariff-scores.csv'.format(module)
+        orig = os.path.join(self.intermediate_dir, filename)
+        if os.path.exists(orig):
+            new = os.path.join(self.working_dir_path, FOLDER4, filename)
+            with open(orig, 'rb') as f_in:
+                f_in.readline()   # burn headers
+                with open(new, 'wb') as f_out:
+                    f_out.write(','.join(new_headers) + '\n')
+                    f_out.write(f_in.read())
 
     def _write_endorsement_rates(self, module):
         """Calculate endorsement rates by predicted cause for a module."""
