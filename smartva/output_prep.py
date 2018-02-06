@@ -6,6 +6,10 @@ import os
 import re
 import shutil
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 from smartva.loggers import status_logger, warning_logger
 from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
@@ -279,19 +283,22 @@ class OutputPrep(DataPrep):
                                 'gbd-level1-csmf.csv')
         with open(filename, 'wb') as f:
             csv.writer(f).writerows(table)
+        self.gbd_csmf = table
 
     def organize_folder3(self):
         """Folder 3: Graphs and Tables
 
         Contains:
-            - CSMF graphs by module
-            - Adult CSMF graphs by sex
-            - All-cause graph by age and sex
-            - Undetermined by age and sex
+            - CSMF bar graphs by module
+            - Adult CSMF bar graphs by sex
+            - All-cause CSMF bar graph by age and sex
+            - Undetermined bar graph by age and sex
+            - GBD CSMF pie chart
             - Table of CSMF by cause, age group, and sex
         """
         self._save_graphs()
         self._write_csmf_table()
+        self._graph_gbd_csmf()
 
     def _save_graphs(self):
         files = ['all-figure.png', 'undetermined-figure.png',
@@ -304,6 +311,38 @@ class OutputPrep(DataPrep):
             if os.path.exists(src):
                 shutil.copy2(src,
                              os.path.join(self.working_dir_path, FOLDER3, f))
+
+    def _graph_gbd_csmf(self):
+        data = self.gbd_csmf[1:]  # drop headers
+        values = [row[2] for row in data]
+
+        def wrap(x):
+            if x.startswith('Comm'):
+                return x.replace(', neo', ',\nneo')
+            else:
+                return x
+        labels = [wrap(row[1]) for row in data]
+        color_map = {
+            'A': 'red',
+            'B': 'blue',
+            'C': 'green',
+            'X': 'grey'
+        }
+        colors = [color_map[row[0]] for row in data]
+
+        plt.ioff()   # turn off interactive mode
+        fig, ax = plt.subplots()
+        patches, texts, autotexts = ax.pie(values, labels=labels, colors=colors,
+                                           autopct='%1.1f%%')
+        for t in texts:
+            t.set_fontsize(9)
+        ax.axis('equal')   # force aspect ratio so chart is circular
+        plt.subplots_adjust(left=0.3, right=0.7)
+        filename = 'gbd-level1-csmf.png'
+        fig.savefig(os.path.join(self.working_dir_path, FOLDER3, filename),
+                    dpi=150)
+
+        plt.close()
 
     def _write_csmf_table(self):
         sex_names = OrderedDict([(1, 'Male'), (2, 'Female'), (9, 'Missing')])
