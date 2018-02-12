@@ -61,6 +61,8 @@ class OutputPrep(DataPrep):
         super(OutputPrep, self).__init__(working_dir_path, None)
         self.reorganize = reorganize
         self.keep_orig = keep_orig
+        self.predictions = defaultdict(list)
+        self.csmf = {module: defaultdict(int) for module in MODULES}
 
     def run(self):
         if self.reorganize:
@@ -138,6 +140,7 @@ class OutputPrep(DataPrep):
                         while True:
                             raw_row = next(raw_reader)
                             pred_row = next(pred_reader)
+                            self.predictions[module].append(pred_row)
                             birth_date = [raw_row.get('gen_5_1{}'.format(x))
                                           for x in 'abc']
 
@@ -235,11 +238,14 @@ class OutputPrep(DataPrep):
 
         table = [['cause34', 'cause list #', 'icd10', 'all', 'male', 'female']]
         for cause in sorted(csmf):
+            both_csmf = safe_float(csmf[cause].get('both', 0))
+            self.csmf[module][cause] = both_csmf
+
             table.append([
                 cause,
                 CAUSE_NUMBERS[module].get(cause),
                 ICDS[module].get(cause),
-                round(safe_float(csmf[cause].get('both', 0)), 3),
+                round(both_csmf, 3),
                 round(safe_float(csmf[cause].get('male', 0)), 3),
                 round(safe_float(csmf[cause].get('female', 0)), 3),
             ])
@@ -250,26 +256,23 @@ class OutputPrep(DataPrep):
             csv.writer(f).writerows(table)
 
     def _aggregate_csmf_to_gbd_level1(self):
-        gbd_counts = Counter()
-        for module in MODULES:
-            filename = os.path.join(self.working_dir_path,
-                                    '{}-predictions.csv'.format(module))
-            if not os.path.exists(filename):
-                continue
-
-            with open(filename) as f:
-                gbd_counts.update([
-                    GBD_LEVEL1_CAUSES[module][row['cause34']]
-                    for row in csv.DictReader(f)
-                ])
-
         # silly py2 and your integer division
-        total = float(sum(gbd_counts.values()))
+        total = float(sum(len(v) for v in self.predictions.values()))
+        if not total:  # this wouldn't happen, would it
+            return
+
+        module_weights = {module: len(self.predictions[module]) / total
+                          for module in MODULES}
+        gbd_csmf = defaultdict(float)
+        for module, values in self.csmf.items():
+            for cause, value in values.items():
+                gbd_cause = GBD_LEVEL1_CAUSES[module][cause]
+                gbd_csmf[gbd_cause] += value * module_weights[module]
 
         table = [['cause', 'cause_name', 'CSMF']]
         table.extend([
-            [cause, GBD_LEVEL1_CAUSE_NAMES[cause], round(value / total, 3)]
-            for cause, value in sorted(gbd_counts.items(), key=lambda x: x[0])
+            [cause, GBD_LEVEL1_CAUSE_NAMES[cause], round(value, 3)]
+            for cause, value in sorted(gbd_csmf.items(), key=lambda x: x[0])
         ])
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
