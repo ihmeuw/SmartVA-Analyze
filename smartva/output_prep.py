@@ -18,9 +18,12 @@ from smartva.data.icds import ICDS
 from smartva.data.gbd_causes import GBD_LEVEL1_CAUSE_NAMES, GBD_LEVEL1_CAUSES
 from smartva.data import codebook
 from smartva.data.adult_tariff_data import CAUSES as ADULT_CAUSES,\
-    CAUSES46 as ADULT_CAUSES46
-from smartva.data.child_tariff_data import CAUSES as CHILD_CAUSES
-from smartva.data.neonate_tariff_data import CAUSES as NEONATE_CAUSES
+    CAUSES46 as ADULT_CAUSES46, \
+    SYMPTOM_DESCRIPTIONS as ADULT_SYMPTOM_DESCRIPTIONS
+from smartva.data.child_tariff_data import CAUSES as CHILD_CAUSES,\
+    SYMPTOM_DESCRIPTIONS as CHILD_SYMPTOM_DESCRIPTIONS
+from smartva.data.neonate_tariff_data import CAUSES as NEONATE_CAUSES,\
+    SYMPTOM_DESCRIPTIONS as NEONATE_SYMPTOM_DESCRIPTIONS
 
 FOLDER1 = '1-individual-cause-of-death'
 FOLDER2 = '2-csmf'
@@ -52,6 +55,12 @@ CAUSE46_NAMES = {
     ADULT: ADULT_CAUSES46,
     CHILD: CHILD_CAUSES,
     NEONATE: NEONATE_CAUSES,
+}
+
+SYMPTOM_DESCRIPTIONS = {
+    ADULT: ADULT_SYMPTOM_DESCRIPTIONS,
+    CHILD: CHILD_SYMPTOM_DESCRIPTIONS,
+    NEONATE: NEONATE_SYMPTOM_DESCRIPTIONS,
 }
 
 
@@ -523,14 +532,15 @@ class OutputPrep(DataPrep):
         causes = sorted(counts)
         filename = os.path.join(self.working_dir_path, FOLDER4,
                                 '{}-endorsement-rates.csv'.format(module))
-        headers = ['symptom']
+        headers = ['symptom', 'description']
         headers.extend(causes)
         with open(filename, 'wb') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for symptom, rates in data.items():
-                row = [symptom]
-                row.extend([round(rates[cause] * 100, 1) for cause in causes])
+                row = [symptom, SYMPTOM_DESCRIPTIONS[module].get(symptom)]
+                row.extend(['{}%'.format(round(rates[cause] * 100, 1))
+                             for cause in causes])
                 writer.writerow(row)
 
     def clean_up(self):
