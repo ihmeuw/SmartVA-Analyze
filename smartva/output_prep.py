@@ -163,11 +163,11 @@ class OutputPrep(DataPrep):
                                 raw_row.get('gen_5_0a2'),  # Doesn't exist
                                 raw_row.get('gen_5_0'),
                                 raw_row.get('gen_5_0c'),  # Doesn't exist
-                                raw_row.get('gen_5_5a'),  # Doesn't exist
-                                raw_row.get('gen_5_5b'),  # Doesn't exist
-                                raw_row.get('gen_5_5c'),  # Doesn't exist
-                                raw_row.get('gen_5_5d'),  # Doesn't exist
-                                raw_row.get('gen_5_5e'),  # Doesn't exist
+                                raw_row.get('gen_2_3a'),  # Doesn't exist
+                                raw_row.get('gen_2_3b'),  # Doesn't exist
+                                raw_row.get('gen_2_3c'),  # Doesn't exist
+                                raw_row.get('gen_2_3d'),  # Doesn't exist
+                                raw_row.get('gen_2_3e'),  # Doesn't exist
                                 pred_row.get('cause34'),
                                 pred_row.get('cause'),
                                 ICDS[module].get(pred_row.get('cause34')),
