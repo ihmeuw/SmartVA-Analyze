@@ -121,7 +121,7 @@ class OutputPrep(DataPrep):
 
         predictions_file = os.path.join(self.working_dir_path, FOLDER1,
                                         'individual-cause-of-death.csv')
-        headers = ['sid', 'name1', 'name2', 'name3', 'name4', 'geography1',
+        headers = ['sid', 'name', 'name2', 'surname', 'surname2', 'geography1',
                    'geography2', 'geography3', 'geography4', 'geography5',
                    'cause34', 'cause list #', 'icd10', 'age', 'sex',
                    'birth_date', 'death_date', 'interview_date']
@@ -158,11 +158,10 @@ class OutputPrep(DataPrep):
 
                             row = [
                                 pred_row.get('sid'),
-                                # TODO: finalize name/geography columns
-                                raw_row.get('gen_5_0a'),  # Doesn't exist
-                                raw_row.get('gen_5_0a2'),  # Doesn't exist
                                 raw_row.get('gen_5_0'),
                                 raw_row.get('gen_5_0c'),  # Doesn't exist
+                                raw_row.get('gen_5_0a'),  # Doesn't exist
+                                raw_row.get('gen_5_0a2'),  # Doesn't exist
                                 raw_row.get('gen_2_3a'),  # Doesn't exist
                                 raw_row.get('gen_2_3b'),  # Doesn't exist
                                 raw_row.get('gen_2_3c'),  # Doesn't exist
