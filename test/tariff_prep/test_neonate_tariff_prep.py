@@ -93,10 +93,12 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.hiv_region = hiv
     causes = prep.data_module.CAUSES.values()
 
-    user_data = [Record({}, cause, '', 0, 1, '')
-                 for _ in range(7) for cause in causes]
+    user_data = [Record('sid{}'.format(i), age=.1, sex=i % 2 + 1, cause=cause)
+                 for i in range(7) for cause in causes]
 
     undetermined_weights = prep._get_undetermined_matrix()
-    csmf = prep.calculate_csmf(user_data, undetermined_weights)
+    csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
 
     assert np.allclose(sum(csmf.values()), 1)
+    for sex, csmf_data in csmf_by_sex.items():
+        assert np.allclose(sum(csmf_data.values()), 1)
