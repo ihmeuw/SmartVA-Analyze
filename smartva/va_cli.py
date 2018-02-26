@@ -41,7 +41,7 @@ def check_country(ctx, param, value):
 @click.option('--hce', default=True, type=click.BOOL, help='Use Health Care Experience (HCE) variables. Default is True.')
 @click.option('--freetext', default=True, type=click.BOOL, help='Use "free text" variables. Default is True.')
 @click.option('--figures', default=True, type=click.BOOL, help='Generate charts and figures output. Default is True.')
-@click.option('--chinese', is_flag=True, help='Translate output into Chinese.')
+@click.option('--language', default='english', type=click.Choice(['english', 'chinese', 'spanish']), help='Language used for output files.')
 @click.version_option(version=version, prog_name=prog_name)
 @click.option('--legacy-format', is_flag=True,
               help='Output files in a format that matches SmartVA v1.2')
@@ -75,7 +75,7 @@ def main(*args, **kwargs):
         'hiv': kwargs.pop('hiv'),
         'malaria': kwargs.pop('malaria'),
         'figures': kwargs.pop('figures'),
-        'chinese': kwargs.pop('chinese'),
+        'language': kwargs.pop('language'),
         'legacy_format': kwargs.pop('legacy_format'),
     }
 
