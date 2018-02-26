@@ -100,6 +100,22 @@ class CSMFGrapher(GrapherPrep):
                 # The file isn't there, there was no data or an error, so just skip it
                 continue
 
+            for sex in ('male', 'female'):
+                try:
+                    key = '-'.join([module_key, sex])
+                    filename = os.path.join(self.input_dir_path,
+                                            '{:s}-csmf.csv'.format(key))
+                    with open(filename, 'rb') as f:
+                        for row in csv.DictReader(f):
+                            self.check_abort()
+
+                            cause_key = row['cause'].rstrip()
+                            cause_fraction = row['CSMF']
+
+                            graph_data_unsorted[key][cause_key] = float(cause_fraction)
+                except IOError:
+                    continue
+
         return graph_data_unsorted
 
     def _make_graphs(self, graph_data_unsorted):

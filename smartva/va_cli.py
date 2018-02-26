@@ -43,6 +43,8 @@ def check_country(ctx, param, value):
 @click.option('--figures', default=True, type=click.BOOL, help='Generate charts and figures output. Default is True.')
 @click.option('--language', default='english', type=click.Choice(['english', 'chinese', 'spanish']), help='Language used for output files.')
 @click.version_option(version=version, prog_name=prog_name)
+@click.option('--legacy-format', is_flag=True,
+              help='Output files in a format that matches SmartVA v1.2')
 @click.argument('input', type=click.Path(file_okay=True, dir_okay=False, readable=True, exists=True))
 @click.argument('output', type=click.Path(file_okay=False, dir_okay=True, writable=True, exists=True))
 # @click.option('--config', help='Specify options in a YAML file.')
@@ -73,7 +75,8 @@ def main(*args, **kwargs):
         'hiv': kwargs.pop('hiv'),
         'malaria': kwargs.pop('malaria'),
         'figures': kwargs.pop('figures'),
-        'language': kwargs.pop('language')
+        'language': kwargs.pop('language'),
+        'legacy_format': kwargs.pop('legacy_format'),
     }
 
     global worker
