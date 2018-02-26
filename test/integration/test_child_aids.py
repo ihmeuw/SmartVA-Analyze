@@ -6,7 +6,7 @@ import sys
 import pytest
 
 APP = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'app.py')
-CMD = 'python {app} {infile} {outdir} --hiv {hiv}'
+CMD = 'python {app} {infile} {outdir} --hiv {hiv} --legacy-format'
 
 
 @pytest.fixture

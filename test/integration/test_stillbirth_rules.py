@@ -53,7 +53,7 @@ def test_stillbirth_rules(tmpdir, tmpdir_factory, row, expected):
 
     infile = csvfile.strpath
     outdir = tmpdir_factory.mktemp('out').strpath
-    subprocess.call(['python', APP, infile, outdir])
+    subprocess.call(['python', APP, infile, outdir, '--legacy-format'])
 
     with open(os.path.join(outdir, 'neonate-predictions.csv')) as f:
         predictions = [row for row in csv.DictReader(f)]

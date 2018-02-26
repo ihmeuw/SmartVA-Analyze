@@ -59,7 +59,8 @@ def test_invalid_inputs(tmpdir):
         'python', os.path.join(os.path.dirname(basedir), 'app.py'),
         input_file.strpath, out_dir.strpath
     ])
+    results_dir = out_dir.join('1-individual-cause-of-death')
 
     for module in ('adult', 'child', 'neonate'):
-        with out_dir.join('{}-predictions.csv'.format(module)).open() as f:
+        with results_dir.join('{}-predictions.csv'.format(module)).open() as f:
             assert len([row for row in f])

@@ -534,7 +534,6 @@ class vaUI(wx.Frame):
             self.action_button.SetLabel('Start')
             self.enable_ui(True)
             status_logger.info(status_message)
-            status_notifier.update({'message': (status_message + message, style)})
 
             self.StatusBar.SetStatusText('')
 
