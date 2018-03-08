@@ -2,18 +2,38 @@
 
 set -e
 
-cd ../smartva
-
 find -name "*.pyc" -exec rm {} \;
 
 rm -rf build
-rm -rf dist
 
-env/Scripts/pyinstaller.exe smartva-win.spec --onefile --windowed --clean
-env/Scripts/pyinstaller.exe smartva-win-cli.spec --onefile --clean
+echo "Building: $BUILD_SPECS"
 
-if [[ -f dist/SmartVA-Analyze.exe && -f dist/SmartVA-Analyze-cli.exe ]]; then
-  exit 0
-fi
+for SPEC in $BUILD_SPECS; do
+  if [[ -z "$WINE" ]]; then
+    BUILD_OS="linux"
+  else
+    BUILD_OS="win"
+  fi
 
-exit 1
+  if [[ "$SPEC" == "gui" ]]; then
+    BUILD_OPTS="--windowed"
+    SPEC_FILE="smartva-$BUILD_OS.spec"
+  else
+    BUILD_OPTS=""
+    SPEC_FILE="smartva-$BUILD_OS-cli.spec"
+  fi
+
+  BUILD_TARGET=$(grep name pkg/$SPEC_FILE | tr "'" " " | awk '{print $2}')
+  rm -rf dist/$BUILD_TARGET
+
+  cp pkg/$SPEC_FILE .
+
+  $WINE python -m PyInstaller $SPEC_FILE --onefile --clean $BUILD_OPTS
+
+  rm $SPEC_FILE
+
+  if [[ ! -f "./dist/$BUILD_TARGET" ]]; then
+    echo "Failed to build $BUILD_TARGET"
+    exit 1
+  fi
+done
