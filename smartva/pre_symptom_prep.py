@@ -207,7 +207,7 @@ class PreSymptomPrep(DataPrep):
                 # TODO - Maybe use '#' before var to indicate lookup.
                 if value in data_map:
                     if isinstance(data_map[value], str):
-                        row[write_header] = row[data_map[value]]
+                        row[write_header] = row.get(data_map[value])
                     else:
                         row[write_header] = data_map[value]
 
