@@ -100,6 +100,14 @@ class TestPreSymptomPrep(object):
 
         assert row == dict(zip(headers, ['0', 13, 3, 1, 2, 3]))
 
+        # There's no guarentee that the columns that appear in the values
+        # of the consolidation map actually appear in the data. If they are
+        # missing the row should be filled with None
+        row2 = dict(zip(headers[:-1], ['0', 13, 0, 1, 2]))
+        prep.recode_answers(row2, consolidation_map)
+
+        assert row2 == dict(zip(headers[:-1], ['0', 13, None, 1, 2]))
+
     def test_fill_missing_data(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, ['0', '', '', 3, 4]))
