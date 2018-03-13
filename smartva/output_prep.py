@@ -285,6 +285,7 @@ class OutputPrep(DataPrep):
         # silly py2 and your integer division
         total = float(sum(len(v) for v in self.predictions.values()))
         if not total:  # this wouldn't happen, would it
+            self.gbd_csmf = None  # apparently it does...
             return
 
         module_weights = {module: len(self.predictions[module]) / total
@@ -335,6 +336,9 @@ class OutputPrep(DataPrep):
                              os.path.join(self.working_dir_path, FOLDER3, f))
 
     def _graph_gbd_csmf(self):
+        if not self.gbd_csmf:
+            return
+
         data = self.gbd_csmf[1:]  # drop headers
         values = [row[2] for row in data]
 
