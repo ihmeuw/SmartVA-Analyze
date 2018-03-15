@@ -167,7 +167,9 @@ class WorkerThread(threading.Thread):
         neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
         legacy = self.options.get('legacy_format', False)
         output = OutputPrep(self.output_dir_path, reorganize=not legacy,
-                            keep_orig=legacy)
+                            keep_orig=legacy, short_form=self.short_form,
+                            free_text=self.options.get('free_text', True),
+                            hce=self.options.get('hce', True))
         cause_grapher = CauseGrapher(self.output_dir_path)
         csmf_grapher = CSMFGrapher(self.output_dir_path)
 
