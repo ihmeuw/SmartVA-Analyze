@@ -32,6 +32,7 @@ INTERMEDIATES_FOLDER = os.path.join(FOLDER4, 'intermediate-files')
 
 MODULES = (ADULT, CHILD, NEONATE)
 SYMPTOMS_RE = re.compile('^s\d+$')
+INVALID_DATE_RE = re.compile('^[:.0]*$')
 
 
 # The leading space in front of ages listed in days is a hack that forces the
@@ -194,6 +195,11 @@ class OutputPrep(DataPrep):
                             death_date = [raw_row.get('gen_5_3{}'.format(x))
                                           for x in 'abc']
 
+                            interview_date = raw_row.get('interviewdate', '')
+                            # Remove any goofy dates that are all zeros
+                            if INVALID_DATE_RE.match(interview_date):
+                                interview_date = ''
+
                             row = [
                                 pred_row.get('sid'),
                                 raw_row.get('gen_6_7'),
@@ -213,7 +219,7 @@ class OutputPrep(DataPrep):
                                 pred_row.get('sex'),
                                 self.make_date(*birth_date),
                                 self.make_date(*death_date),
-                                raw_row.get('interviewdate'),
+                                interview_date,
                             ]
                             writer.writerow(row)
                             mod_writer.writerow(row)
