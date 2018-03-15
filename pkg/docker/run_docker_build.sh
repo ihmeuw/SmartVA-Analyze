@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-cd ~
-cp -r smartva/pkg/build-agent/. build-agent/
-cp smartva/pkg/docker/run_tests_and_build_in_wine.patch .
-git apply run_tests_and_build_in_wine.patch
+if [[ ! -z "$WINE" ]]; then
+  WIN_REQUIREMENTS="-r requirements-win.txt"
+else
+  WIN_REQUIREMENTS=""
+fi
 
-wine python -m pip install -U -r smartva/requirements.txt
 
-cd build-agent
-./run_tests.sh
-./run_build.sh
+$WINE python -m pip install --user -r requirements.txt -r requirements-dev.txt $WIN_REQUIREMENTS
+
+./pkg/build-agent/run_tests.sh
+./pkg/build-agent/run_build.sh
