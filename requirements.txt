@@ -1,20 +1,13 @@
 click==6.6
 colorama==0.3.7
-matplotlib==1.5.1
+matplotlib==1.5.2
 numpy==1.11.1
-pefile==2016.3.28
 py==1.4.31
-PyInstaller==3.1.1
 pyparsing==2.1.4
-pypiwin32==219 ; sys_platform == 'win32'
-pytest==2.9.2
 python-dateutil==2.4.2
 pytz==2016.6.1
-setuptools==19.2.0
 six==1.10.0
 stemming==1.0.1
 tornado==4.4.1
 progressbar==2.3
-wheel==0.29.0
-pandas==0.19.1
 xlsxwriter==0.9.6

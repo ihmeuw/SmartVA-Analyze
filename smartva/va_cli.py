@@ -5,11 +5,23 @@ import sys
 import click
 from progressbar import ProgressBar, Bar, ETA
 
-from smartva import prog_name, version
-from smartva import workerthread
-from smartva.data.countries import COUNTRIES, COUNTRY_DEFAULT
-from smartva.loggers import status_logger
-from smartva.utils import status_notifier
+# Filter out matplotlib font cache warnings before importing matplotlib.
+# Doing this at the entrypoint avoids having to catch warnings in each of the
+# submodules that import matplotlib. This makes a difference when using the
+# linux binary bundled by PyInstaller. PyInstaller in onefile mode (which we
+# use) unpacks everything into a temporary directory. This means matplotlib
+# builds the font cache every time any command is run (include --help). We're
+# ok with the performance hit, but lets not tell our users what's going on.
+# Without the warning it just looks like a startup lag.
+import warnings
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', UserWarning)
+
+    from smartva import prog_name, version
+    from smartva import workerthread
+    from smartva.data.countries import COUNTRIES, COUNTRY_DEFAULT
+    from smartva.loggers import status_logger
+    from smartva.utils import status_notifier
 
 worker = None
 

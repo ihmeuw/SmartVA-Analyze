@@ -4,20 +4,11 @@ ENV WINEDEBUG=-all
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         apt-transport-https \
-        build-essential \
-        curl \
-        git \
-        make \
-        openssh-server \
-        sudo \
-        vim \
-        wget \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN dpkg --add-architecture i386 \
+    && dpkg --add-architecture i386 \
     && cd /tmp \
     && wget https://dl.winehq.org/wine-builds/Release.key \
     && apt-key add Release.key \
+    && rm Release.key \
     && echo "deb https://dl.winehq.org/wine-builds/debian/ jessie main" >> /etc/apt/sources.list \
     && apt-get update && apt-get install -y --no-install-recommends \
         cabextract \
@@ -32,18 +23,14 @@ ENV WINEPREFIX /home/smartva/.wine
 EXPOSE 22
 EXPOSE 8000
 
-WORKDIR /home/smartva
-
 # Use COPY here because Jenkins appears to have an old version of docker and can't expand .tar files.
-COPY pkg/docker/ssh.tar \
-     pkg/docker/smartva-password.md5 /home/smartva/
+COPY smartva-password.md5 /home/smartva/
 
 RUN groupadd -r smartva \
     && useradd -r -g smartva smartva -s /bin/bash \
-    && tar -xf ssh.tar \
     && cp -R /etc/skel/. /home/smartva \
     && chown -R smartva:smartva /home/smartva \
-    && chpasswd -e < smartva-password.md5 \
+    && chpasswd -e < /home/smartva/smartva-password.md5 \
     && mkdir /var/run/sshd \
     && mkdir /tmp/.X11-unix \
     && chmod a+rwxt /tmp/.X11-unix
@@ -51,6 +38,7 @@ RUN groupadd -r smartva \
 USER smartva
 
 RUN wine wineboot --init \
+    && cd /home/smartva \
     && wget https://www.python.org/ftp/python/${PYTHON2_VERSION}/python-${PYTHON2_VERSION}.msi \
     && wine msiexec /i python-${PYTHON2_VERSION}.msi ALLUSERS=1 \
     && wget https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi \
@@ -63,5 +51,10 @@ RUN wine wineboot --init \
     && rm * | true
 
 VOLUME ["/home/smartva/smartva"]
+
+WORKDIR /home/smartva/smartva
+
+ENV WINE="wine"
+ENV BUILD_SPECS="gui cli"
 
 CMD ["/home/smartva/smartva/pkg/docker/run_docker_build.sh"]
