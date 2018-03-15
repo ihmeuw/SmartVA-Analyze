@@ -21,9 +21,13 @@ MODULE_LABELS = (ADULT, CHILD, NEONATE)
 
 AGE_DATA = OrderedDict(
     (
-        (60.0, '60+ years'),
-        (45.0, '45-59 years'),
-        (20.0, '20-44 years'),
+        (80.0, '80+ years'),
+        (70.0, '70-79 years'),
+        (60.0, '60-69 years'),
+        (50.0, '50-59 years'),
+        (40.0, '40-49 years'),
+        (30.0, '30-39 years'),
+        (20.0, '20-29 years'),
         (12.0, '12-19 years'),
         (5.0, '5-11 years'),
         (1.0, '1-4 years'),
