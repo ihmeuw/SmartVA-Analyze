@@ -33,10 +33,14 @@ FOLDER4 = '4-monitoring-and-quality'
 MODULES = (ADULT, CHILD, NEONATE)
 SYMPTOMS_RE = re.compile('^s\d+$')
 
+
+# The leading space in front of ages listed in days is a hack that forces the
+# ASCII sort order of the strings to present values in the correct order. This
+# was explicitly requested by the customer who is always right.
 AGE_GROUPS = OrderedDict([
-    ('neonate1', '0-7 days'),
-    ('neonate2', '8-28 days'),
-    ('child1', '29 days - <1 year'),
+    ('neonate1', ' 00-07 days'),
+    ('neonate2', ' 08-28 days'),
+    ('child1', ' 29 days - <1 year'),
     ('child2', '1-4 years'),
     ('child3', '5-11 years'),
     ('adult1', '12-19 years')
