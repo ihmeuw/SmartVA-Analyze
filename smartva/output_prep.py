@@ -28,6 +28,7 @@ FOLDER1 = '1-individual-cause-of-death'
 FOLDER2 = '2-csmf'
 FOLDER3 = '3-graphs-and-tables'
 FOLDER4 = '4-monitoring-and-quality'
+INTERMEDIATES_FOLDER = os.path.join(FOLDER4, 'intermediate-files')
 
 MODULES = (ADULT, CHILD, NEONATE)
 SYMPTOMS_RE = re.compile('^s\d+$')
@@ -97,6 +98,7 @@ class OutputPrep(DataPrep):
             status_logger.info('Preparing output files.')
             for folder in (FOLDER1, FOLDER2, FOLDER3, FOLDER4):
                 self.make_dir(self.working_dir_path, folder)
+            self.make_dir(self.working_dir_path, INTERMEDIATES_FOLDER)
 
             self.organize_folder1()
             self.organize_folder2()
@@ -454,7 +456,7 @@ class OutputPrep(DataPrep):
     def _recode_prepped_files(self, module):
         prepped_file = os.path.join(self.intermediate_dir,
                                     '{}-prepped.csv'.format(module))
-        recoded_file = os.path.join(self.working_dir_path, FOLDER4,
+        recoded_file = os.path.join(self.working_dir_path, INTERMEDIATES_FOLDER,
                                     '{}-raw-data.csv'.format(module))
         if not os.path.exists(prepped_file):
             return
@@ -482,8 +484,8 @@ class OutputPrep(DataPrep):
         for f in files:
             src = os.path.join(self.intermediate_dir, f)
             if os.path.exists(src):
-                shutil.copy2(src,
-                             os.path.join(self.working_dir_path, FOLDER4, f))
+                shutil.copy2(src, os.path.join(self.working_dir_path,
+                                               INTERMEDIATES_FOLDER, f))
 
         causes = sorted(CAUSE46_NAMES[module].items(), key=lambda x: x[0])
         new_headers = ['sid']
@@ -548,7 +550,7 @@ class OutputPrep(DataPrep):
             for symp in symptoms if symp not in drop
         )
         causes = sorted(counts)
-        filename = os.path.join(self.working_dir_path, FOLDER4,
+        filename = os.path.join(self.working_dir_path, INTERMEDIATES_FOLDER,
                                 '{}-endorsement-rates.csv'.format(module))
         headers = ['symptom', 'description']
         headers.extend(causes)
