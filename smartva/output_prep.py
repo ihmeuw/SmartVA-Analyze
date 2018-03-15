@@ -251,6 +251,7 @@ class OutputPrep(DataPrep):
         # Spec is non-specific as to column layout and names
         for module in MODULES:
             self._reformat_csmf(module)
+        self._tabulate_all_age_csmf()
         self._aggregate_csmf_to_gbd_level1()
 
     def _reformat_csmf(self, module):
@@ -269,26 +270,50 @@ class OutputPrep(DataPrep):
             with open(filename) as f:
                 for cause, value in csv.reader(f):
                     if cause != 'cause':   # skip header row
-                        csmf[cause][label] = value
+                        csmf[label][cause] = safe_float(value)
 
+        self.csmf[module] = csmf
         table = [['cause34', 'cause list #', 'icd10', 'all', 'male', 'female']]
         for cause in sorted(csmf):
-            both_csmf = safe_float(csmf[cause].get('both', 0))
-            self.csmf[module][cause] = both_csmf
-
             table.append([
                 cause,
                 CAUSE_NUMBERS[module].get(cause),
                 ICDS[module].get(cause),
-                round(both_csmf, 3),
-                round(safe_float(csmf[cause].get('male', 0)), 3),
-                round(safe_float(csmf[cause].get('female', 0)), 3),
+                round(safe_float(csmf.get('both', {}).get(cause)), 3),
+                round(safe_float(csmf.get('male', {}).get(cause)), 3),
+                round(safe_float(csmf.get('female', {}).get(cause)), 3),
             ])
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 '{}-csmf.csv'.format(module))
         with open(filename, 'wb') as f:
             csv.writer(f).writerows(table)
+
+    def _tabulate_all_age_csmf(self):
+        total = float(sum(len(v) for v in self.predictions.values()))
+        if not total:
+            return
+
+        table = [['cause34', 'module', 'cause list #', 'icd10', 'all', 'male',
+                  'female']]
+        for module in MODULES:
+            if module not in self.csmf:
+                continue
+            weight = len(self.predictions[module]) / total
+            for cause in sorted(self.csmf[module]['both']):
+                table.append([
+                    cause,
+                    module,
+                    CAUSE_NUMBERS[module].get(cause),
+                    ICDS[module].get(cause),
+                    round(self.csmf[module].get('both', {}).get(cause, 0) * weight, 3),
+                    round(self.csmf[module].get('male', {}).get(cause, 0) * weight, 3),
+                    round(self.csmf[module].get('female', {}).get(cause, 0) * weight, 3),
+                ])
+        filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
+        with open(filename, 'wb') as f:
+            csv.writer(f).writerows(table)
+
 
     def _aggregate_csmf_to_gbd_level1(self):
         # silly py2 and your integer division
@@ -301,7 +326,7 @@ class OutputPrep(DataPrep):
                           for module in MODULES}
         gbd_csmf = defaultdict(float)
         for module, values in self.csmf.items():
-            for cause, value in values.items():
+            for cause, value in values['both'].items():
                 gbd_cause = GBD_LEVEL1_CAUSES[module][cause]
                 gbd_csmf[gbd_cause] += value * module_weights[module]
 
