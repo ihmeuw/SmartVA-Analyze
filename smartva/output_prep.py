@@ -489,16 +489,6 @@ class OutputPrep(DataPrep):
         new_headers = ['sid']
         new_headers.extend([cause for _, cause in causes])
 
-        filename = '{:s}-tariff-scores.csv'.format(module)
-        orig = os.path.join(self.intermediate_dir, filename)
-        if os.path.exists(orig):
-            new = os.path.join(self.working_dir_path, FOLDER4, filename)
-            with open(orig, 'rb') as f_in:
-                f_in.readline()   # burn headers
-                with open(new, 'wb') as f_out:
-                    f_out.write(','.join(new_headers) + '\n')
-                    f_out.write(f_in.read())
-
     def _copy_likelihood_files(self, module):
         for ext in ('csv', 'xlsx'):
             filename = '{:s}-likelihoods.{:s}'.format(module, ext)
