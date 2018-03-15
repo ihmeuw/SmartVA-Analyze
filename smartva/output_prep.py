@@ -335,10 +335,10 @@ class OutputPrep(DataPrep):
                 return x
         labels = [wrap(row[1]) for row in data]
         color_map = {
-            'A': 'red',
-            'B': 'blue',
-            'C': 'green',
-            'X': 'grey'
+            'A': '#e74c3c',
+            'B': '#3498db',
+            'C': '#2ecc71',
+            'X': '#D3D3D3'
         }
         colors = [color_map[row[0]] for row in data]
 
