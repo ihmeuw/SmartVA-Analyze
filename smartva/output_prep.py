@@ -188,7 +188,7 @@ class OutputPrep(DataPrep):
                                 pred_row.get('cause34'),
                                 pred_row.get('cause'),
                                 ICDS[module].get(pred_row.get('cause34')),
-                                self.add_age_unit(pred_row.get('age')),
+                                pred_row.get('age'),
                                 pred_row.get('sex'),
                                 self.make_date(*birth_date),
                                 self.make_date(*death_date),
@@ -210,24 +210,6 @@ class OutputPrep(DataPrep):
             return '{:d}-{:02d}-{:02d}'.format(*map(int, (year, month, day)))
         else:
             return ''
-
-    @staticmethod
-    def add_age_unit(age):
-        try:
-            age = float(age)
-        except (TypeError, ValueError):
-            return
-        else:
-            one_month = 30. / 365
-            if age >= 1:
-                age_scaled, unit = age, 'year'
-            elif one_month <= age < 1:
-                age_scaled, unit = age * 12, 'month'
-            elif 0 <= age < one_month:
-                age_scaled, unit = age * 365, 'day'
-
-        plural = 's' if age_scaled != 1 else ''
-        return '{} {}{}'.format(int(age_scaled), unit, plural)
 
     def organize_folder2(self):
         """Folder 2: CSMF
