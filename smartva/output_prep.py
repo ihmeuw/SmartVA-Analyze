@@ -17,13 +17,12 @@ from smartva.tariff_prep import safe_float, safe_int
 from smartva.data.icds import ICDS
 from smartva.data.gbd_causes import GBD_LEVEL1_CAUSE_NAMES, GBD_LEVEL1_CAUSES
 from smartva.data import codebook
-from smartva.data.adult_tariff_data import CAUSES as ADULT_CAUSES,\
-    CAUSES46 as ADULT_CAUSES46, \
-    SYMPTOM_DESCRIPTIONS as ADULT_SYMPTOM_DESCRIPTIONS
-from smartva.data.child_tariff_data import CAUSES as CHILD_CAUSES,\
-    SYMPTOM_DESCRIPTIONS as CHILD_SYMPTOM_DESCRIPTIONS
-from smartva.data.neonate_tariff_data import CAUSES as NEONATE_CAUSES,\
-    SYMPTOM_DESCRIPTIONS as NEONATE_SYMPTOM_DESCRIPTIONS
+from smartva.data import (
+    adult_tariff_data,
+    child_tariff_data,
+    neonate_tariff_data
+)
+
 
 FOLDER1 = '1-individual-cause-of-death'
 FOLDER2 = '2-csmf'
@@ -50,32 +49,48 @@ for d in range(2, 8):
 AGE_GROUPS['adult8'] = '80+'
 
 CAUSE_NUMBERS = {
-    ADULT: {v: k for k, v in ADULT_CAUSES.items()},
-    CHILD: {v: k for k, v in CHILD_CAUSES.items()},
-    NEONATE: {v: k for k, v in NEONATE_CAUSES.items()},
+    ADULT: {v: k for k, v in adult_tariff_data.CAUSES.items()},
+    CHILD: {v: k for k, v in child_tariff_data.CAUSES.items()},
+    NEONATE: {v: k for k, v in neonate_tariff_data.CAUSES.items()},
 }
 
 CAUSE46_NAMES = {
-    ADULT: ADULT_CAUSES46,
-    CHILD: CHILD_CAUSES,
-    NEONATE: NEONATE_CAUSES,
+    ADULT: adult_tariff_data.CAUSES46,
+    CHILD: child_tariff_data.CAUSES,
+    NEONATE: neonate_tariff_data.CAUSES,
 }
 
 SYMPTOM_DESCRIPTIONS = {
-    ADULT: ADULT_SYMPTOM_DESCRIPTIONS,
-    CHILD: CHILD_SYMPTOM_DESCRIPTIONS,
-    NEONATE: NEONATE_SYMPTOM_DESCRIPTIONS,
+    ADULT: adult_tariff_data.SYMPTOM_DESCRIPTIONS,
+    CHILD: child_tariff_data.SYMPTOM_DESCRIPTIONS,
+    NEONATE: neonate_tariff_data.SYMPTOM_DESCRIPTIONS,
+}
+
+SHORT_DROP_SYMPTOMS = {
+    ADULT: adult_tariff_data.SHORT_FORM_DROP_LIST,
+    CHILD: child_tariff_data.SHORT_FORM_DROP_LIST,
+    NEONATE: neonate_tariff_data.SHORT_FORM_DROP_LIST,
+}
+
+HCE_DROP_SYMPTOMS = {
+    ADULT: adult_tariff_data.HCE_DROP_LIST,
+    CHILD: child_tariff_data.HCE_DROP_LIST,
+    NEONATE: neonate_tariff_data.HCE_DROP_LIST,
 }
 
 
 class OutputPrep(DataPrep):
 
-    def __init__(self, working_dir_path, reorganize=True, keep_orig=False):
+    def __init__(self, working_dir_path, reorganize=True, keep_orig=False,
+                 short_form=False, free_text=True, hce=True):
         super(OutputPrep, self).__init__(working_dir_path, None)
         self.reorganize = reorganize
         self.keep_orig = keep_orig
         self.predictions = defaultdict(list)
         self.csmf = {module: defaultdict(int) for module in MODULES}
+        self.short_form = short_form
+        self.free_text = free_text
+        self.hce = hce
 
     def run(self):
         if self.reorganize:
@@ -529,12 +544,18 @@ class OutputPrep(DataPrep):
             except StopIteration:
                 pass
 
+        drop = set(SHORT_DROP_SYMPTOMS[module]) if self.short_form else set()
+        if not self.hce:
+            drop.update(HCE_DROP_SYMPTOMS[module])
+        if not self.free_text:
+            drop.update([s for s in symptoms if s.startswith('s9999')])
+
         # Transpose "dataframe". This allows us to write data by row
         # We also want to preserve the order of the symptoms, just in case
         data = OrderedDict(
             (symp, {cause: endorsements[cause].get(symp, 0) / float(total)
                     for cause, total in counts.items() if total})
-            for symp in symptoms
+            for symp in symptoms if symp not in drop
         )
         causes = sorted(counts)
         filename = os.path.join(self.working_dir_path, FOLDER4,
