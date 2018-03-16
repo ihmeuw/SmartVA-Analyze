@@ -38,7 +38,9 @@ INVALID_DATE_RE = re.compile('^[:.0]*$')
 # The leading space in front of ages listed in days is a hack that forces the
 # ASCII sort order of the strings to present values in the correct order. This
 # was explicitly requested by the customer who is always right.
+STILLBIRTH_AGE = ' 00 days'
 AGE_GROUPS = OrderedDict([
+    ('neonate0', STILLBIRTH_AGE),
     ('neonate1', ' 00-07 days'),
     ('neonate2', ' 08-28 days'),
     ('child1', ' 29 days - <1 year'),
@@ -417,10 +419,14 @@ class OutputPrep(DataPrep):
 
             with open(filename, 'r') as f:
                 for row in csv.DictReader(f):
-                    age_group = self.bin_ages(module, safe_float(row['age']))
-                    sex = sex_names.get(safe_int(row['sex']), 'Missing')
                     cause = row['cause34']
                     causes[module].add(cause)
+
+                    if cause == 'Stillbirth':
+                        age_group = STILLBIRTH_AGE
+                    else:
+                        age_group = self.bin_ages(module, safe_float(row['age']))
+                    sex = sex_names.get(safe_int(row['sex']), 'Missing')
                     counts[(age_group, sex, cause)] += 1
 
         # It's times like this where you really start to appreciate a
