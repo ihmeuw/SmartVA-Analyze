@@ -3,6 +3,7 @@ from bisect import bisect_left, bisect_right
 import collections
 import csv
 import json
+import logging
 import os
 
 import numpy as np
@@ -721,13 +722,11 @@ class TariffPrep(DataPrep):
 
                 if len(predictions) > 1:
                     names = [cause46_names[cause] for cause in predictions]
-                    warning_logger.info(
-                        '{group:s} :: SID: {sid:s} had multiple causes '
-                        '{causes} predicted to be equally likely, using '
-                        '\'{causes[0]:s}\'.'
-                        .format(group=self.AGE_GROUP.capitalize(),
-                                sid=va.sid, causes=names)
-                    )
+                    msg = ("SID: {} had multiple causes predicted to be "
+                           "equally likely: {}, using first listed."
+                           .format(va.sid, names, va.cause))
+                    warning_logger.info(msg)
+                    logging.getLogger('prediction').info(msg)
 
             va.cause34 = cause_reduction.get(va.cause)
             va.cause34_name = cause34_names.get(va.cause34, 'Undetermined')

@@ -12,7 +12,7 @@ from smartva.tariff_prep import TariffPrep
 from smartva.cause_grapher import CauseGrapher
 from smartva.csmf_grapher import CSMFGrapher
 from smartva.output_prep import OutputPrep
-from smartva.loggers import status_logger, warning_logger
+from smartva.loggers import status_logger, warning_logger, report_logger
 from smartva.utils import find_dupes, status_notifier, intermediate_dir_path
 from smartva.data import (
     common_data,
@@ -149,8 +149,22 @@ class WorkerThread(threading.Thread):
             warning_logger.warning(message)
             return
 
+        report_logger.info('Analysis parameters:')
+        report_logger.info('- Input file: {}'.format(self.input_file_path))
+        report_logger.info('- Output folder: {}'.format(self.output_dir_path))
+        report_logger.info('- Country: {}'.format(self.options.get('country')))
+        report_logger.info('- HIV Region: {}'.format(self.options.get('hiv', True)))
+        report_logger.info('- Malaria Region: {}'.format(self.options.get('malaria', True)))
+        report_logger.info('- HCE variables: {}'.format(self.options.get('hce', True)))
+        report_logger.info('')
+
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
         warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
+        if self.short_form:
+            form_name = 'PHMRC Shortened Questionnaire'
+        else:
+            form_name = 'PHMRC Full Questionnaire'
+        report_logger.info('Detected {}'.format(form_name))
 
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = PreSymptomPrep(adult_pre_symptom_data, self.output_dir_path, self.short_form)
