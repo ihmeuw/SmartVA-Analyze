@@ -44,8 +44,8 @@ AGE_GROUPS = OrderedDict([
     ('neonate1', ' 00-07 days'),
     ('neonate2', ' 08-28 days'),
     ('child1', ' 29 days - <1 year'),
-    ('child2', '1-4 years'),
-    ('child3', '5-11 years'),
+    ('child2', '01-04 years'),
+    ('child3', '05-11 years'),
     ('adult1', '12-19 years')
 ])
 for d in range(2, 8):
