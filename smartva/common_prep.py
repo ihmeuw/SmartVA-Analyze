@@ -1,3 +1,4 @@
+import logging
 import re
 
 from smartva.data.common_data import (
@@ -47,6 +48,8 @@ class CommonPrep(DataPrep):
             'invalid-age': [],
         }
 
+        self.sids = set()
+
     def run(self):
         """Perform initial processing step for preparing input data.
 
@@ -74,6 +77,8 @@ class CommonPrep(DataPrep):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
+
+            self.check_sids(row, index)
 
             if not self.check_consent(row, CONSENT_HEADER):
                 warning_logger.info('SID: {} Refused consent.'.format(row['sid']))
@@ -108,6 +113,20 @@ class CommonPrep(DataPrep):
 
         return bool(self._matrix_data[ADULT]), bool(self._matrix_data[CHILD]), bool(self._matrix_data[NEONATE])
 
+    def check_sids(self, row, index):
+        if 'sid' not in row:
+            return
+
+        sid = row['sid']
+        if sid in ['', None]:
+            logging.getLogger('sids').error(
+                'Row {} has a missing value for sid'.format(index + 1))
+        elif sid in self.sids:
+            logging.getLogger('sids').error(
+                'Row {} has a duplicate SID: "{}"'.format(index + 1, sid))
+
+        self.sids.add(sid)
+
     def check_consent(self, row, header):
         """Check consent. Consent is considered given if value is '1' or '' or the column is missing.
         A warning is logged if the value is invalid.
@@ -119,13 +138,22 @@ class CommonPrep(DataPrep):
         Returns:
             bool:
         """
-        try:
-            if row[header] in ['', '1', 1]:
-                return True
-        except KeyError:
+        if header not in row:
             return True
-        warning_logger.info('SID: {} Invalid value for consent: {}'.format(row['sid'], row[header]))
-        return False
+
+        value = row[header]
+        sid = row.get('sid') or '<unknown>'  # handles sid == ''
+        if value in ['', '1', 1]:
+            return True
+        elif value in ['0', 0]:
+            logging.getLogger('refused').warning(
+                'SID: {} refused the survey'.format(sid))
+            return False
+        else:
+            msg = 'SID: {} Invalid value for consent: {}'.format(sid, value)
+            warning_logger.info(msg)
+            logging.getLogger('valid_consent').error(msg)
+            return False
 
     def correct_missing_age(self, row):
         """Ensure that the age group variable is set to missing if all AGE_VARS are blank"""
@@ -277,9 +305,12 @@ class CommonPrep(DataPrep):
         """
         # If there is age data (there is a sum) use it even if the module is
         # marked as "Refuesd" or "Don't Know"
+        sid = sid or '<unknown>'
         if sum([years, months, days]) == 0 and module in {8, 9}:
-            warning_logger.warning('SID: {} does not have valid age data and is being removed from the analysis.'
-                                     .format(sid))
+            msg = ('SID: {} does not have valid age data and is being removed '
+                   'from the analysis.'.format(sid))
+            warning_logger.warning(msg)
+            logging.getLogger('valid_age').error(msg)
             return matrix_data['invalid-age']
         if years >= 12 or (not years and not months and not days and module == 3):
             return matrix_data[ADULT]

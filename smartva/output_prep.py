@@ -10,7 +10,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from smartva.loggers import status_logger, warning_logger
+from smartva.loggers import status_logger, warning_logger, REPORT_LOGGERS_NAMES
 from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
 from smartva.tariff_prep import safe_float, safe_int
@@ -484,6 +484,7 @@ class OutputPrep(DataPrep):
             self._copy_intermediate_files(module)
             self._copy_likelihood_files(module)
             self._write_endorsement_rates(module)
+        self._write_report()
 
     def _recode_prepped_files(self, module):
         prepped_file = os.path.join(self.intermediate_dir,
@@ -594,6 +595,42 @@ class OutputPrep(DataPrep):
                 row.extend(['{}%'.format(round(rates[cause] * 100, 1))
                              for cause in causes])
                 writer.writerow(row)
+
+    def _write_report(self):
+        filename = os.path.join(self.working_dir_path, FOLDER4, 'report.txt')
+        handler = logging.FileHandler(filename, mode='w')
+        report_logger = logging.getLogger('report')
+
+        log_descriptions = {
+            'sids': '{} rows have duplicate or missing sids',
+            'refused': '{} rows declined the interview.',
+            'valid_consent': '{} rows did not have a valid value for consent.',
+            'valid_age': ('{} rows did not have valid age data and were '
+                          'dropped from the analysis.'),
+            'prediction': ('{} rows had multiple causes predicted with equal '
+                           'likelihood.')
+        }
+
+        report_logger.info('')
+        report_logger.info('Quality summary:')
+        for name in REPORT_LOGGERS_NAMES:
+            errors = len(logging.getLogger(name).handlers[0].buffer)
+            if errors:
+                report_logger.info(log_descriptions[name].format(errors))
+
+        report_logger.info('')
+        report_logger.info('Details:')
+
+        report = report_logger.handlers[0]
+        report.setTarget(handler)
+        report.flush()
+
+        for name in REPORT_LOGGERS_NAMES:
+            logger = logging.getLogger(name)
+            store = logger.handlers[0]
+            store.setTarget(handler)
+            store.flush()
+
 
     def clean_up(self):
         """Remove all the original output files"""
