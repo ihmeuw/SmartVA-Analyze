@@ -479,11 +479,6 @@ class OutputPrep(DataPrep):
             - Endorsement rates of symptoms by cause by module
             - Likelihood files by module, both CSV and XLSX (unmodified)
         """
-        shutil.copy2(
-            os.path.join(self.working_dir_path, 'warnings.txt'),
-            os.path.join(self.working_dir_path, FOLDER4, 'report.txt')
-        )
-
         for module in MODULES:
             self._recode_prepped_files(module)
             self._copy_intermediate_files(module)
