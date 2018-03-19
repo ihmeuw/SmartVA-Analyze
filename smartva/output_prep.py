@@ -602,12 +602,12 @@ class OutputPrep(DataPrep):
         report_logger = logging.getLogger('report')
 
         log_descriptions = {
-            'sids': '{} rows have duplicate or missing sids',
-            'refused': '{} rows declined the interview.',
-            'valid_consent': '{} rows did not have a valid value for consent.',
-            'valid_age': ('{} rows did not have valid age data and were '
-                          'dropped from the analysis.'),
-            'prediction': ('{} rows had multiple causes predicted with equal '
+            'sids': '{} row(s) have duplicate or missing sids',
+            'refused': '{} row(s) declined the interview.',
+            'valid_consent': '{} row(s) did not have a valid value for consent.',
+            'valid_age': ('{} row(s) did not have valid age data and could '
+                          'not be analyzed.'),
+            'prediction': ('{} row(s) had multiple causes predicted with equal '
                            'likelihood.')
         }
 

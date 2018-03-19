@@ -80,7 +80,7 @@ class CommonPrep(DataPrep):
 
             self.check_sids(row, index)
 
-            if not self.check_consent(row, CONSENT_HEADER):
+            if not self.check_consent(row, CONSENT_HEADER, index):
                 warning_logger.info('SID: {} Refused consent.'.format(row['sid']))
                 continue
 
@@ -105,7 +105,7 @@ class CommonPrep(DataPrep):
 
             self.convert_free_text(row, FREE_TEXT_VARS, WORD_SUBS)
 
-            self.save_row(row)
+            self.save_row(row, index)
 
         status_notifier.update({'sub_progress': None})
 
@@ -127,7 +127,7 @@ class CommonPrep(DataPrep):
 
         self.sids.add(sid)
 
-    def check_consent(self, row, header):
+    def check_consent(self, row, header, index):
         """Check consent. Consent is considered given if value is '1' or '' or the column is missing.
         A warning is logged if the value is invalid.
 
@@ -147,10 +147,11 @@ class CommonPrep(DataPrep):
             return True
         elif value in ['0', 0]:
             logging.getLogger('refused').warning(
-                'SID: {} refused the survey'.format(sid))
+                'SID: {} (row {}) refused the survey'.format(sid, index))
             return False
         else:
-            msg = 'SID: {} Invalid value for consent: {}'.format(sid, value)
+            msg = 'SID: {} ({}) Invalid value for consent: {}'.format(
+                sid, index, value)
             warning_logger.info(msg)
             logging.getLogger('valid_consent').error(msg)
             return False
@@ -281,7 +282,8 @@ class CommonPrep(DataPrep):
         age_data.update({'sid': row['sid']})
         return age_data
 
-    def get_matrix(self, matrix_data, years=0, months=0, days=0, module=0, sid=''):
+    def get_matrix(self, matrix_data, years=0, months=0, days=0, module=0,
+                   sid='', index=None):
         """Returns the appropriate age range matrix for extending.
 
         All four age variables are pre-processed and filled with a default
@@ -306,9 +308,10 @@ class CommonPrep(DataPrep):
         # If there is age data (there is a sum) use it even if the module is
         # marked as "Refuesd" or "Don't Know"
         sid = sid or '<unknown>'
+        index = index or '<unknown>'
         if sum([years, months, days]) == 0 and module in {8, 9}:
-            msg = ('SID: {} does not have valid age data and is being removed '
-                   'from the analysis.'.format(sid))
+            msg = ('SID: {} (row {}) does not have valid age data and is being '
+                   'removed from the analysis.'.format(sid, index))
             warning_logger.warning(msg)
             logging.getLogger('valid_age').error(msg)
             return matrix_data['invalid-age']
@@ -318,13 +321,14 @@ class CommonPrep(DataPrep):
             return matrix_data[CHILD]
         return matrix_data[NEONATE]
 
-    def save_row(self, row):
+    def save_row(self, row, index):
         """Save row of data in appropriate age matrix.
 
         Args:
             row (dict): Row of VA data.
         """
-        self.get_matrix(self._matrix_data, **self.get_age_data(row)).extend([row])
+        self.get_matrix(self._matrix_data, index=index,
+                        **self.get_age_data(row)).extend([row])
 
     def write_data(self, headers, matrix_data):
         """Write intermediate prepped csv files.

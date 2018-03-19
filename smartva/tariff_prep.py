@@ -700,7 +700,7 @@ class TariffPrep(DataPrep):
             cause34_names (dict): Cause34 cause names for prediction output.
             cause46_names (dict): Cause46 cause names for warning messages.
         """
-        for va in user_data:
+        for i, va in enumerate(user_data):
             self.check_abort()
 
             # Allow user-specified epidemogical conditions (AIDS or Malaria),
@@ -722,9 +722,10 @@ class TariffPrep(DataPrep):
 
                 if len(predictions) > 1:
                     names = [cause46_names[cause] for cause in predictions]
-                    msg = ("SID: {} had multiple causes predicted to be "
-                           "equally likely: {}, using first listed."
-                           .format(va.sid, names, va.cause))
+                    msg = ("SID: {} ({} row {}) had multiple causes predicted "
+                           "to be equally likely: {}, using first listed."
+                           .format(va.sid, self.AGE_GROUP.title(), i, names,
+                                   va.cause))
                     warning_logger.info(msg)
                     logging.getLogger('prediction').info(msg)
 
