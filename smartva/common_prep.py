@@ -13,8 +13,7 @@ from smartva.data.common_data import (
     ADULT, CHILD, NEONATE,
 )
 from smartva.data_prep import DataPrep
-from smartva.loggers import status_logger
-from smartva.loggers.application import warning_logger
+from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values
 
