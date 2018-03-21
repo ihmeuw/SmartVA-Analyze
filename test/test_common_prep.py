@@ -158,19 +158,19 @@ class TestCommonPrep(object):
         headers = ['sid', 'consent']
         row = dict(zip(headers, ['1', '1']))
 
-        assert prep.check_consent(row, 'consent') is True
+        assert prep.check_consent(row, 'consent', 7) is True
 
     def test_consent_refusal(self, prep):
         headers = ['sid', 'consent']
         row = dict(zip(headers, ['1', '0']))
 
-        assert prep.check_consent(row, 'consent') is False
+        assert prep.check_consent(row, 'consent', 7) is False
 
     def test_consent_empty(self, prep):
         headers = ['sid', 'consent']
         row = dict(zip(headers, ['1', '']))
 
-        assert prep.check_consent(row, 'consent') is True
+        assert prep.check_consent(row, 'consent', 7) is True
 
     def test_consent_garbage(self, prep):
         garbage = ['blah', '1.0', '0.0']
@@ -178,13 +178,13 @@ class TestCommonPrep(object):
         for value in garbage:
             row = dict(zip(headers, ['1', value]))
 
-            assert prep.check_consent(row, 'consent') is False
+            assert prep.check_consent(row, 'consent', 7) is False
 
     def test_consent_not_exist(self, prep):
         headers = ['sid']
         row = dict(zip(headers, ['1']))
 
-        assert prep.check_consent(row, 'consent') is True
+        assert prep.check_consent(row, 'consent', 7) is True
 
 
 @pytest.mark.parametrize('row,module', [
