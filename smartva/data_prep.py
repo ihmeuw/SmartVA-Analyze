@@ -167,7 +167,7 @@ class DataPrep(Prep):
             list, list: List of headers, List of matrix data.
         """
         with open(input_file_path, mode) as fi:
-            reader = csv.DictReader(fi)
+            reader = csv.DictReader(fi, restval='')
             return reader.fieldnames, [row for row in reader]
 
     @staticmethod
