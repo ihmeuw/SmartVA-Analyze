@@ -97,7 +97,7 @@ class TestSymptomPrep(object):
         headers = ['test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, [1, 0, 1, 0]))
 
-        valid_result = dict(zip(headers, [0, 0, 0, 0]))
+        valid_result = dict(zip(headers, [1, 0, 1, 0]))
 
         conversion_map = {
             ('test0', 30): ['test1', 'test2', 'test3', 'test4']
@@ -111,7 +111,7 @@ class TestSymptomPrep(object):
         headers = ['test0', 'test1', 'test2', 'test3', 'test4']
         row = dict(zip(headers, ['', 1, 0, 1, 0]))
 
-        valid_result = dict(zip(headers, ['', 0, 0, 0, 0]))
+        valid_result = dict(zip(headers, ['', 1, 0, 1, 0]))
 
         conversion_map = {
             ('test0', 30): ['test1', 'test2', 'test3', 'test4']

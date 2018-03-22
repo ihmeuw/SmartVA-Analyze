@@ -113,8 +113,6 @@ class PreSymptomPrep(DataPrep):
 
             self.verify_answers_for_row(row, RANGE_LIST)
 
-            self.fix_child_injury_length(row)
-
             self.fix_agedays(row)
 
             self.calculate_age_at_death_value(row)
@@ -451,17 +449,3 @@ class PreSymptomPrep(DataPrep):
                                      .format(row['sid'], e.message))
         elif self.AGE_GROUP == common_data.CHILD:
             row['c1_26'] = 2
-
-    def fix_child_injury_length(self, row):
-        """Fix missing injury length. If value is missing, assign 1000. Seems important only for full instrument.
-
-        Args:
-            row: Row of VA data.
-        """
-        if self.AGE_GROUP == common_data.CHILD:
-            try:
-                if row['child_4_50b'] == '':
-                    row['child_4_50b'] = 1000
-            except KeyError as e:
-                warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_child_injury_length'
-                                     .format(row['sid'], e.message))

@@ -4,7 +4,7 @@ from smartva.data_prep import DataPrep
 from smartva.loggers import status_logger, warning_logger
 from smartva.utils import status_notifier
 from smartva.utils.conversion_utils import additional_headers_and_values, \
-    safe_int
+    safe_int, safe_float
 
 
 INPUT_FILENAME_TEMPLATE = '{:s}-logic-rules.csv'
@@ -149,20 +149,12 @@ class SymptomPrep(DataPrep):
         """
         for read_data, injury_list in injury_variable_map:
             read_header, cutoff = read_data
-            try:
-                injury_period = float(row[read_header])
-                if injury_period <= cutoff:
-                    continue
+            injury_period = safe_float(row.get(read_header))
+            if injury_period <= cutoff:
+                continue
 
-            except KeyError as e:
-                # Variable does not exist.
-                warning_logger.debug('SID: {} variable \'{}\' does not exist. process_injury_data'
-                                     .format(row.get('sid'), e.message))
-            except ValueError:
-                warning_logger.debug('SID: {} variable \'{}\' does not contain valid data. process_injury_data'
-                                     .format(row.get('sid'), read_header))
-
-            # Injury duration is out of range or invalid so we 0 out related variables
+            # Injury duration definitely greater than the threshold
+            # so we 0 out related variables
             for injury in injury_list:
                 row[injury] = 0
 
