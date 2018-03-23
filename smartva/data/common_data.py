@@ -373,6 +373,13 @@ BINARY_CONVERSION_MAP = {
     },
 }
 
+COUNT_DATA_HEADERS = [
+    'adult_4_3a',
+    'adult_4_4a',
+    'child_3_45a',
+    'child_4_7a',
+]
+
 AGE_VARS = {
     'years': 'gen_5_4a',
     'months': 'gen_5_4b',
