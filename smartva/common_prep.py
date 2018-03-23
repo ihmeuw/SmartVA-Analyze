@@ -7,6 +7,7 @@ from smartva.data.common_data import (
     SHORT_FORM_ADDITIONAL_HEADERS_DATA,
     BINARY_CONVERSION_MAP,
     AGE_VARS,
+    COUNT_DATA_HEADERS,
     RASH_DATA,
     WEIGHT_CONVERSION_DATA,
     FREE_TEXT_VARS,
@@ -99,6 +100,9 @@ class CommonPrep(DataPrep):
 
             self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
 
+            for header in COUNT_DATA_HEADERS:
+                self.process_count_data(row, header)
+
             self.convert_rash_data(row, RASH_DATA)
 
             self.convert_weight_data(row, WEIGHT_CONVERSION_DATA)
@@ -174,6 +178,13 @@ class CommonPrep(DataPrep):
         # TODO: Eliminate this step in favor more robust future cell processing.
         for header in conversion_data:
             row[header] = int_value(row[header])
+
+    def process_count_data(self, row, header):
+        if header in row:
+            try:
+                row[header] = int(row[header])
+            except (TypeError, ValueError):
+                row[header] = None
 
     def convert_rash_data(self, row, conversion_data):
         """Specialized method to convert rash data into variables based on multiple choice questions.
