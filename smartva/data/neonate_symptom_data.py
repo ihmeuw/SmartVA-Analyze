@@ -274,6 +274,7 @@ BINARY_CONVERSION_MAP = {
 }
 
 BINARY_VARS = [
+    'sex',
     's7',
     's13',
     's17',
