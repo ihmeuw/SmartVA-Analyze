@@ -114,9 +114,16 @@ class TestCommonPrep(object):
 
         assert row == dict(zip(headers, ['', 0, 0, 0]))
 
-    def test_convert_weight_data_g(self, prep):
+    @pytest.mark.parametrize('values, expected', [
+        ([1, '1000', '0'], [1, '1000', '0']),
+        ([2, 0, '1.5'], [1, 1500.0, '1.5']),
+        ([1, '', ''], [1, '', '']),
+        ([2, '', ''], [2, '', '']),
+        ([9, '', ''], [9, '', '']),
+    ])
+    def test_convert_weight_data_g(self, prep, values, expected):
         headers = ['test', 'test1', 'test2']
-        row = dict(zip(headers, [1, '1000', '0']))
+        row = dict(zip(headers, values))
 
         conversion_data = {
             'test': {
@@ -127,22 +134,7 @@ class TestCommonPrep(object):
 
         prep.convert_weight_data(row, conversion_data)
 
-        assert row == dict(zip(headers, [1, '1000', '0']))
-
-    def test_convert_weight_data_kg(self, prep):
-        headers = ['test', 'test1', 'test2']
-        row = dict(zip(headers, [2, 0, '1.5']))
-
-        conversion_data = {
-            'test': {
-                1: 'test1',
-                2: 'test2'
-            }
-        }
-
-        prep.convert_weight_data(row, conversion_data)
-
-        assert row == dict(zip(headers, [1, 1500.0, '1.5']))
+        assert row == dict(zip(headers, expected))
 
     def test_convert_free_text(self, prep):
         headers = ['test1', 'test2']

@@ -253,10 +253,18 @@ class CommonPrep(DataPrep):
                 # Variable does not exist.
                 continue
             else:
-                if units == 2:
-                    weight = float(row[mapping[units]]) * 1000
-                    row[variable] = 1
-                    row[mapping[1]] = int(weight)
+                if units in mapping:
+                    unit_column = mapping[units]
+                    try:
+                        weight = float(row.get(unit_column)) * 1000
+                    except ValueError:
+                        # Unit column has a legal value,
+                        # but corresponding value column has illegal value
+                        continue
+                    else:
+                        if units == 2:
+                            row[variable] = 1
+                            row[mapping[1]] = int(weight)
 
     def convert_free_text(self, row, free_text_vars, word_subs):
         """Substitute words in the word subs list (mostly misspellings, etc..)
