@@ -98,7 +98,8 @@ class CommonPrep(DataPrep):
                 status_notifier.update('abort')
                 continue
 
-            self.process_binary_vars(row, BINARY_CONVERSION_MAP.items())
+            for header, mapping in BINARY_CONVERSION_MAP.items():
+                self.process_multiselect_vars(row, header, mapping)
 
             for header in COUNT_DATA_HEADERS:
                 self.process_count_data(row, header)
@@ -186,6 +187,20 @@ class CommonPrep(DataPrep):
             except (TypeError, ValueError):
                 row[header] = None
 
+    def process_multiselect_vars(self, row, header, mapping):
+        try:
+            values = set(map(int, row.get(header, '').split()))
+        except (ValueError, TypeError):
+            # We want to still write all the output headers to the row
+            values = set()
+
+        if not values or values.difference(mapping.keys()):
+            row[header] = ''
+            values = set()
+
+        for value, write_header in mapping.items():
+            row[write_header] = int(value in values)
+
     def convert_rash_data(self, row, conversion_data):
         """Specialized method to convert rash data into variables based on multiple choice questions.
         Split and store values from a space delimited list of integers in intermediate variables.
@@ -217,15 +232,26 @@ class CommonPrep(DataPrep):
                 continue
             else:
                 locations = set(mapping['locations'])
-                if mapping['everywhere'] in rash_values or locations & rash_values == locations:
+                if rash_values.difference(mapping['values']):
+                    # Treat the entire field as invalid if any invalid values
+                    # are present
+                    rash_values = set()
+
+                if mapping['everywhere'] in rash_values or locations.issubset(rash_values):
                     # if all locations are selected, then change the value to 'everywhere'
                     rash_values = {mapping['everywhere']}
-                else:
-                    # remove any illegal values
-                    rash_values = locations & rash_values
 
-                # set adult rash to the other selected values
-                for index, value in enumerate(rash_values):
+                # FIXME: brittle/hacky handling of rash location
+                # This happens to work for all the wrong reasons. We actually
+                # are going to ignore all the values except those in the first
+                # two listed variables (rashlocation3 doesn't map through to the
+                # symptoms). We only care about the values 1 through 4. If 4 is
+                # present it should be the only value. If 1,2,3 were selected it
+                # should be 4 by now. Sorting ensures the subset of 1,2,3 if
+                # present, are captured in the first two output variables.
+                # Values of 5, 8, 9 may be listed at the end (rashlocation3 to
+                # rashlocation5) and will be inadvertantly dropped. Yup. Hacky.
+                for index, value in enumerate(sorted(rash_values)):
                     row[mapping['vars'][index]] = value
 
     def convert_weight_data(self, row, conversion_data):

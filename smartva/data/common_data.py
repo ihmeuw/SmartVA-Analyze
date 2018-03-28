@@ -305,6 +305,15 @@ BINARY_CONVERSION_MAP = {
         9: 'adultparalysis9',
         11: 'adultparalysis10',
     },
+    'adult_4_2': {
+        1: 'tobaccokind1',
+        2: 'tobaccokind2',
+        3: 'tobaccokind3',
+        4: 'tobaccokind4',
+        11: 'tobaccokind11',
+        8: 'tobaccokind8',
+        9: 'tobaccokind9',
+    },
     'adult_5_2': {
         1: 'adultinjury1',
         2: 'adultinjury2',
@@ -314,6 +323,8 @@ BINARY_CONVERSION_MAP = {
         6: 'adultinjury6',
         7: 'adultinjury7',
         11: 'adultinjury8',
+        8: 'adultinjury_ref',
+        9: 'adultinjury_dk',
     },
     'child_4_48': {
         1: 'childinjury1',
@@ -395,6 +406,7 @@ RASH_DATA = {
             2,  # trunk
             3,  # extremities
         ],
+        'values': {1, 2, 3, 4, 5, 8, 9},
         'everywhere': 4
     }
 }

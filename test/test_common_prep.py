@@ -50,69 +50,59 @@ class TestCommonPrep(object):
 
         assert row == dict(zip(headers, ['', 0, 0, 0]))
 
-    def test_convert_rash_data_all(self, prep):
+    @pytest.mark.parametrize('values, expected', [
+        ('', ['', 0, 0, 0, 0, 0]),
+        ('1', ['1', 1, 0, 0, 0, 0]),
+        ('2', ['2', 0, 1, 0, 0, 0]),
+        ('3', ['3', 0, 0, 1, 0, 0]),
+        ('8', ['8', 0, 0, 0, 1, 0]),
+        ('9', ['9', 0, 0, 0, 0, 1]),
+        ('7', ['', 0, 0, 0, 0, 0]),  # out of range value
+        ('1 2', ['1 2', 1, 1, 0, 0, 0]),
+        ('1 2 8', ['1 2 8', 1, 1, 0, 1, 0]),
+        ('1 X', ['', 0, 0, 0, 0, 0]),  # invalid value
+        ('1.0', ['', 0, 0, 0, 0, 0]),  # must be ints
+        ('1 2.0', ['', 0, 0, 0, 0, 0]),  # must be ints
+    ])
+    def test_process_multiselect_varss(self, prep, values, expected):
+        row = {'input_header': values}
+        conversion_data = {
+            1: 'output1',
+            2: 'output2',
+            3: 'output3',
+            8: 'output4',
+            9: 'output5',
+        }
+        headers = ['input_header']
+        headers.extend(sorted(conversion_data.values()))
+
+        prep.process_multiselect_vars(row, 'input_header', conversion_data)
+        assert row == dict(zip(headers, expected))
+
+    @pytest.mark.parametrize('values, expected', [
+        (['1 2 3', 0, 0, 0], ['1 2 3', 4, 0, 0]),
+        (['1 2 4 5', 0, 0, 0], ['1 2 4 5', 4, 0, 0]),
+        (['1 3', 0, 0, 0], ['1 3', 1, 3, 0]),
+        (['', 0, 0, 0], ['', 0, 0, 0]),
+        (['X', 0, 0, 0], ['X', 0, 0, 0]),
+        (['1 X', 0, 0, 0], ['1 X', 0, 0, 0]),
+    ])
+    def test_convert_rash_data(self, prep, values, expected):
         headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['1 2 3', 0, 0, 0]))
+        row = dict(zip(headers, values))
 
         conversion_data = {
             'test': {
                 'vars': ['test1', 'test2', 'test3'],
                 'locations': [1, 2, 3],
+                'values': {1, 2, 3, 4, 5, 8, 9},
                 'everywhere': 4
             }
         }
 
         prep.convert_rash_data(row, conversion_data)
 
-        assert row == dict(zip(headers, ['1 2 3', 4, 0, 0]))
-
-    def test_convert_rash_data_all2(self, prep):
-        headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['1 2 4 5', 0, 0, 0]))
-
-        conversion_data = {
-            'test': {
-                'vars': ['test1', 'test2', 'test3'],
-                'locations': [1, 2, 3],
-                'everywhere': 4
-            }
-        }
-
-        prep.convert_rash_data(row, conversion_data)
-
-        assert row == dict(zip(headers, ['1 2 4 5', 4, 0, 0]))
-
-    def test_convert_rash_data_some(self, prep):
-        headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['1 3', 0, 0, 0]))
-
-        conversion_data = {
-            'test': {
-                'vars': ['test1', 'test2', 'test3'],
-                'locations': [1, 2, 3],
-                'everywhere': 4
-            }
-        }
-
-        prep.convert_rash_data(row, conversion_data)
-
-        assert row == dict(zip(headers, ['1 3', 1, 3, 0]))
-
-    def test_convert_rash_data_none(self, prep):
-        headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['', 0, 0, 0]))
-
-        conversion_data = {
-            'test': {
-                'vars': ['test1', 'test2', 'test3'],
-                'locations': [1, 2, 3],
-                'everywhere': 4
-            }
-        }
-
-        prep.convert_rash_data(row, conversion_data)
-
-        assert row == dict(zip(headers, ['', 0, 0, 0]))
+        assert row == dict(zip(headers, expected))
 
     @pytest.mark.parametrize('values, expected', [
         ([1, '1000', '0'], [1, '1000', '0']),
