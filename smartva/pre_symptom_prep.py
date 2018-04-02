@@ -36,11 +36,6 @@ def make_date(row, key):
                 int(row['{:s}d'.format(key)]))
 
 
-def months_delta(date1, date2):
-    delta = relativedelta(date1, date2)
-    return abs(delta.years * 12 + delta.months)
-
-
 class PreSymptomPrep(DataPrep):
     """Prepare pre-symptom data for symptom processing.
 
@@ -383,7 +378,8 @@ class PreSymptomPrep(DataPrep):
                 latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
 
                 if latest_exam > dob:
-                    age_at_exam_months = months_delta(latest_exam, dob)
+                    delta = relativedelta(latest_exam, dob)
+                    age_at_exam_months = abs(delta.years * 12 + delta.months)
 
                     if age_at_exam_months <= 60:
                         sex = safe_int(row[SEX_VAR])
