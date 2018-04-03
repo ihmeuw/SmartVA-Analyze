@@ -87,6 +87,8 @@ class PreSymptomPrep(DataPrep):
 
         # Identify new headers and data to be included.
         additional_data = {k: '' for k in self.data_module.DURATION_VARS}
+        duration_day_vars = getattr(self.data_module, 'DURATION_DAYS_VARS', [])
+        additional_data.update({k: '' for k in duration_day_vars})
         additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
         additional_data.update({k: 0 for k in sorted(self.data_module.WORDS_TO_VARS.values())})
         additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
@@ -121,6 +123,8 @@ class PreSymptomPrep(DataPrep):
             self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
 
             self.calculate_duration_vars(row, duration_vars, self.data_module.DURATION_VARS_SPECIAL_CASE)
+
+            self.validate_days_vars(row, duration_day_vars)
 
             self.validate_weight_vars(row, self.data_module.WEIGHT_VARS)
 
@@ -226,6 +230,17 @@ class PreSymptomPrep(DataPrep):
                 row[var] = special_case_vars[var]
             else:
                 row[var] = TIME_FACTORS.get(code_value, 0) * length_value
+
+    def validate_days_vars(self, row, days_vars):
+        for var in days_vars:
+            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
+            try:
+                code_value = int(row[code_var])
+                length_value = int(row[length_var])
+            except (KeyError, ValueError, TypeError):
+                continue
+            else:
+                row[var] = length_value if code_value == 2 else 0
 
     def convert_free_text_words(self, row, input_word_list, word_map):
         """Process free text word lists into binary variables.
