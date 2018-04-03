@@ -107,7 +107,6 @@ class PreSymptomPrep(DataPrep):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
-
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
