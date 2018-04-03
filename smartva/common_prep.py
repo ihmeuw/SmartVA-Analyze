@@ -73,6 +73,8 @@ class CommonPrep(DataPrep):
         additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
 
         headers.extend(additional_headers)
+        if 'child_1_8a' not in headers:
+            headers.append('child_1_8a')
 
         for index, row in enumerate(matrix):
             self.check_abort()
@@ -271,26 +273,22 @@ class CommonPrep(DataPrep):
         """
         for variable, mapping in conversion_data.items():
             try:
-                units = int(row[variable])
-            except ValueError:
-                # No weight data. Skip.
-                continue
-            except KeyError:
-                # Variable does not exist.
-                continue
+                unit = int(row[variable])
+            except (ValueError, TypeError, KeyError):
+                weight = 0
             else:
-                if units in mapping:
-                    unit_column = mapping[units]
-                    try:
-                        weight = float(row.get(unit_column)) * 1000
-                    except ValueError:
-                        # Unit column has a legal value,
-                        # but corresponding value column has illegal value
-                        continue
-                    else:
-                        if units == 2:
-                            row[variable] = 1
-                            row[mapping[1]] = int(weight)
+                try:
+                    weight = float(row[mapping[unit]])
+                except (ValueError, TypeError, KeyError):
+                    weight = 0
+                else:
+                    if unit == 2:
+                        weight = weight * 1000
+
+            # Only pass weights as grams
+            row[variable] = 1
+            row[mapping[1]] = int(weight) if weight else ''
+            row[mapping[2]] = ''
 
     def convert_free_text(self, row, free_text_vars, word_subs):
         """Substitute words in the word subs list (mostly misspellings, etc..)

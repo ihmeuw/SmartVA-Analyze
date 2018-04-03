@@ -105,11 +105,11 @@ class TestCommonPrep(object):
         assert row == dict(zip(headers, expected))
 
     @pytest.mark.parametrize('values, expected', [
-        ([1, '1000', '0'], [1, '1000', '0']),
-        ([2, 0, '1.5'], [1, 1500.0, '1.5']),
+        ([1, '1000', ''], [1, 1000, '']),
+        ([2, '', '1.5'], [1, 1500, '']),
         ([1, '', ''], [1, '', '']),
-        ([2, '', ''], [2, '', '']),
-        ([9, '', ''], [9, '', '']),
+        ([2, '', ''], [1, '', '']),
+        ([9, '', ''], [1, '', '']),
     ])
     def test_convert_weight_data_g(self, prep, values, expected):
         headers = ['test', 'test1', 'test2']
