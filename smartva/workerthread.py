@@ -155,7 +155,6 @@ class WorkerThread(threading.Thread):
         report_logger.info('- Country: {}'.format(self.options.get('country')))
         report_logger.info('- HIV Region: {}'.format(self.options.get('hiv', True)))
         report_logger.info('- Malaria Region: {}'.format(self.options.get('malaria', True)))
-        report_logger.info('- HCE variables: {}'.format(self.options.get('hce', True)))
         report_logger.info('')
 
         self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
