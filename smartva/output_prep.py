@@ -528,8 +528,9 @@ class OutputPrep(DataPrep):
         for ext in ('csv', 'xlsx'):
             filename = '{:s}-likelihoods.{:s}'.format(module, ext)
             src = os.path.join(self.output_dir_path, filename)
+            folder = INTERMEDIATES_FOLDER if ext == 'csv' else FOLDER4
             if os.path.exists(src):
-                dest = os.path.join(self.working_dir_path, FOLDER4, filename)
+                dest = os.path.join(self.working_dir_path, folder, filename)
                 shutil.copy2(src, dest)
 
     def _write_endorsement_rates(self, module):
