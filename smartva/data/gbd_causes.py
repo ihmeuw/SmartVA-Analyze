@@ -66,7 +66,7 @@ GBD_LEVEL1_CAUSES = {
         'Poisonings': 'C',
         'Road Traffic': 'C',
         'Sepsis': 'A',
-        'Violent Death': 'C',
+        'Homicide': 'C',
         'Undetermined': 'X',
     },
     NEONATE: {
