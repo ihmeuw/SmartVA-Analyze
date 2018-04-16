@@ -296,22 +296,23 @@ class OutputPrep(DataPrep):
         if not total:
             return
 
-        table = [['cause34', 'module', 'cause list #', 'icd10', 'all', 'male',
-                  'female']]
-        for module in MODULES:
-            if module not in self.csmf:
-                continue
+        csmf = defaultdict(lambda: defaultdict(float))
+        for module, module_csmfs in self.csmf.items():
             weight = len(self.predictions[module]) / total
-            for cause in sorted(self.csmf[module]['both']):
-                table.append([
-                    cause,
-                    module,
-                    CAUSE_NUMBERS[module].get(cause),
-                    ICDS[module].get(cause),
-                    round(self.csmf[module].get('both', {}).get(cause, 0) * weight, 3),
-                    round(self.csmf[module].get('male', {}).get(cause, 0) * weight, 3),
-                    round(self.csmf[module].get('female', {}).get(cause, 0) * weight, 3),
-                ])
+            for sex, values in module_csmfs.items():
+                for cause, value in values.items():
+                    csmf[cause][sex] += value * weight
+
+        icds = {k: v for icds in ICDS.values() for k, v in icds.items()}
+        table = [['cause34', 'icd10', 'all', 'male', 'female']]
+        for cause in sorted(csmf):
+            table.append([
+                cause,
+                icds.get(cause),
+                round(csmf[cause].get('both', 0), 3),
+                round(csmf[cause].get('male', 0), 3),
+                round(csmf[cause].get('female', 0), 3),
+            ])
         filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
         with open(filename, 'wb') as f:
             csv.writer(f).writerows(table)
