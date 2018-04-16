@@ -1,4 +1,5 @@
 from collections import defaultdict, OrderedDict
+from math import ceil
 
 from smartva.data.common_data import ADULT
 from smartva.data.word_conversions import ADULT_WORDS_TO_VARS
@@ -1084,13 +1085,13 @@ SYMPTOM_DESCRIPTIONS = OrderedDict([
     ("s87", "Mass in the belly"),
     ("s88", "Mass in the belly at least {} days before death".format(DURATION_CUTOFF_DATA['s88'])),
     ("s89", "Headaches"),
-    ("s90", "Headaches at least {} hours before death".format(int(DURATION_CUTOFF_DATA['s90'] * 24))),
+    ("s90", "Headaches at least {} hours before death".format(int(ceil(DURATION_CUTOFF_DATA['s90'] * 24)))),
     ("s91", "Rapid headache onset"),
     ("s92", "Stiff neck"),
-    ("s93", "Stiff neck at least {} hours before death".format(int(DURATION_CUTOFF_DATA['s90'] * 24))),
+    ("s93", "Stiff neck at least {} hours before death".format(int(ceil(DURATION_CUTOFF_DATA['s90'] * 24)))),
     ("s94", "Experienced a period of loss of consciousness"),
     ("s95", "Sudden loss of consciousness"),
-    ("s96", "Loss of consciousness for at least {} hours".format(int(DURATION_CUTOFF_DATA['s96'] * 24))),
+    ("s96", "Loss of consciousness for at least {} hours".format(int(ceil(DURATION_CUTOFF_DATA['s96'] * 24)))),
     ("s97", "Loss of consciousness continued until death"),
     ("s98", "Experienced a period of confusion in the three months prior to death"),
     ("s99", "Period of confusion for at least {} days".format(DURATION_CUTOFF_DATA['s99'])),

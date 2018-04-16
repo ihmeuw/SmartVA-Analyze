@@ -355,9 +355,6 @@ RECODE_MAP = {
         5: 'child_4_50a',
         4: 'child_4_50b',
     },
-    ('c4_08a', 'c4_08a'): {
-        2: 1
-    }
 }
 
 BINARY_CONVERSION_MAP = {
@@ -410,15 +407,19 @@ DURATION_VARS = [
     'c3_28',
     'c3_30',
     'c3_31',
-    'c4_02',
-    'c4_08',
-    'c4_10',
     'c4_13',
     'c4_17',
     'c4_19',
     'c4_33',
     'c4_37',
     'c4_49',
+]
+
+# These are not scaled, but do check for a unit value of 2
+DURATION_DAYS_VARS = [
+    'c4_02',
+    'c4_08',
+    'c4_10',
 ]
 
 DURATION_VARS_SHORT_FORM_DROP_LIST = []

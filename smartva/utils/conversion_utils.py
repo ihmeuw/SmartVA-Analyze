@@ -46,29 +46,6 @@ def get_header_index(headers, header):
         raise ConversionError('Skipping missing header \'{}\'.'.format(header))
 
 
-def convert_binary_variable(row, data_header, data_map):
-    """
-    Convert multiple value answers into binary cells.
-
-    :param row: Data from a single report.
-    :param data_header: Header of column containing parsable data.
-    :param data_map: Map of the values to binary value headers
-    """
-    try:
-        for value in map(int, str(row[data_header]).strip().split(' ')):
-            if isinstance(data_map, dict):
-                if value in data_map:
-                    row[data_map[value]] = 1
-            elif isinstance(data_map, list):
-                row[data_header] = int(value in data_map)
-            elif isinstance(data_map, str):
-                row[data_header] = int(LdapNotationParser(data_map, get_cell(row), int).evaluate())
-
-    except ValueError:
-        # No values to process or not an integer value (invalid).
-        pass
-
-
 def get_cell(row):
     def fn(var):
         try:

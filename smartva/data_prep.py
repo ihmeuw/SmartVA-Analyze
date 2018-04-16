@@ -3,9 +3,8 @@ import csv
 import os
 
 from smartva.loggers import warning_logger
-from smartva.utils.conversion_utils import convert_binary_variable, \
-    ConversionError, safe_float
-from smartva.utils import intermediate_dir_path
+from smartva.utils.conversion_utils import ConversionError, safe_float, get_cell
+from smartva.utils import LdapNotationParser, intermediate_dir_path
 
 
 class AbortException(Exception):
@@ -105,7 +104,19 @@ class DataPrep(Prep):
         """
         for data_header, data_map in conversion_map:
             try:
-                convert_binary_variable(row, data_header, data_map)
+                for value in map(int, str(row[data_header]).strip().split(' ')):
+                    if isinstance(data_map, dict):
+                        if value in data_map:
+                            row[data_map[value]] = 1
+                    elif isinstance(data_map, list):
+                        row[data_header] = int(value in data_map)
+                    elif isinstance(data_map, str):
+                        row[data_header] = int(
+                            LdapNotationParser(data_map, get_cell(row),
+                                               int).evaluate())
+            except ValueError:
+                # No values to process or not an integer value (invalid).
+                pass
             except ConversionError as e:
                 warning_logger.debug(e.message)
                 continue
