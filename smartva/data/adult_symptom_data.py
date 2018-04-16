@@ -230,15 +230,17 @@ DURATION_CUTOFF_DATA = {
     's81': 8,
     's85': 14,
     's88': 90,
-    's90': .5416667,
+    's90': .5416666,
     's93': 7,
-    's96': .4166667,
+    # Should be 10 hours even though survey only collects data
+    # in units of days and months
+    's96': .4166666,
     's99': 4,
     's103': .0208333,
     's106': 15,
     's125': 84,
     's128': 240,
-    's133': .3541667,
+    's133': .3541666,
     's147': 4,
     's148': 10
 }
@@ -323,6 +325,7 @@ BINARY_CONVERSION_MAP = {
 }
 
 BINARY_VARS = [
+    'sex',
     's1',
     's2',
     's3',

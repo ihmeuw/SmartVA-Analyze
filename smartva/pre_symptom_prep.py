@@ -36,11 +36,6 @@ def make_date(row, key):
                 int(row['{:s}d'.format(key)]))
 
 
-def months_delta(date1, date2):
-    delta = relativedelta(date1, date2)
-    return abs(delta.years * 12 + delta.months)
-
-
 class PreSymptomPrep(DataPrep):
     """Prepare pre-symptom data for symptom processing.
 
@@ -92,6 +87,8 @@ class PreSymptomPrep(DataPrep):
 
         # Identify new headers and data to be included.
         additional_data = {k: '' for k in self.data_module.DURATION_VARS}
+        duration_day_vars = getattr(self.data_module, 'DURATION_DAYS_VARS', [])
+        additional_data.update({k: '' for k in duration_day_vars})
         additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
         additional_data.update({k: 0 for k in sorted(self.data_module.WORDS_TO_VARS.values())})
         additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
@@ -112,13 +109,10 @@ class PreSymptomPrep(DataPrep):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
-
             self.expand_row(row, dict(zip(additional_headers, additional_values)))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
             self.verify_answers_for_row(row, RANGE_LIST)
-
-            self.fix_child_injury_length(row)
 
             self.fix_agedays(row)
 
@@ -129,6 +123,8 @@ class PreSymptomPrep(DataPrep):
             self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
 
             self.calculate_duration_vars(row, duration_vars, self.data_module.DURATION_VARS_SPECIAL_CASE)
+
+            self.validate_days_vars(row, duration_day_vars)
 
             self.validate_weight_vars(row, self.data_module.WEIGHT_VARS)
 
@@ -234,6 +230,17 @@ class PreSymptomPrep(DataPrep):
                 row[var] = special_case_vars[var]
             else:
                 row[var] = TIME_FACTORS.get(code_value, 0) * length_value
+
+    def validate_days_vars(self, row, days_vars):
+        for var in days_vars:
+            code_var, length_var = '{}a'.format(var), '{}b'.format(var)
+            try:
+                code_value = int(row[code_var])
+                length_value = int(row[length_var])
+            except (KeyError, ValueError, TypeError):
+                continue
+            else:
+                row[var] = length_value if code_value == 2 else 0
 
     def convert_free_text_words(self, row, input_word_list, word_map):
         """Process free text word lists into binary variables.
@@ -383,7 +390,8 @@ class PreSymptomPrep(DataPrep):
                 latest_exam, latest_weight = sorted(exam_data, reverse=True)[0]
 
                 if latest_exam > dob:
-                    age_at_exam_months = months_delta(latest_exam, dob)
+                    delta = relativedelta(latest_exam, dob)
+                    age_at_exam_months = abs(delta.years * 12 + delta.months)
 
                     if age_at_exam_months <= 60:
                         sex = safe_int(row[SEX_VAR])
@@ -455,17 +463,3 @@ class PreSymptomPrep(DataPrep):
                                      .format(row['sid'], e.message))
         elif self.AGE_GROUP == common_data.CHILD:
             row['c1_26'] = 2
-
-    def fix_child_injury_length(self, row):
-        """Fix missing injury length. If value is missing, assign 1000. Seems important only for full instrument.
-
-        Args:
-            row: Row of VA data.
-        """
-        if self.AGE_GROUP == common_data.CHILD:
-            try:
-                if row['child_4_50b'] == '':
-                    row['child_4_50b'] = 1000
-            except KeyError as e:
-                warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_child_injury_length'
-                                     .format(row['sid'], e.message))

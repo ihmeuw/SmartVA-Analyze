@@ -1,0 +1,2546 @@
+MAPPING = [
+    {
+        'sid': 'Multiple birth (single)',
+        'symptom': 's5991',
+        'child_1_1': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Multiple birth (double)',
+        'symptom': 's5991',
+        'child_1_1': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Multiple birth (missing)',
+        'symptom': 's5991',
+        'child_1_1': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Not first born (first)',
+        'symptom': 's6991',
+        'child_1_2': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Not first born (second)',
+        'symptom': 's6991',
+        'child_1_2': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Not first born (third or more)',
+        'symptom': 's6991',
+        'child_1_2': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Not first born (missing)',
+        'symptom': 's6991',
+        'child_1_2': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother alive',
+        'symptom': 's7',
+        'child_1_3': 1
+    },
+    {
+        'sid': 'Mother died during delivery (during)',
+        'symptom': 's8991',
+        'child_1_4': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Mother died during delivery (after)',
+        'symptom': 's8991',
+        'child_1_4': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died during delivery (missing)',
+        'symptom': 's8991',
+        'child_1_4': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery (during)',
+        'symptom': 's8992',
+        'child_1_4': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery (after)',
+        'symptom': 's8992',
+        'child_1_4': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Mother died after delivery (missing)',
+        'symptom': 's8992',
+        'child_1_4': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (missing)',
+        'symptom': 's9',
+        'child_1_5': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-yes)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': 1005,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-no)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': 20,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-threshold)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': 1000,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-no-empty)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-invalid)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (days-no-no unit)',
+        'symptom': 's9',
+        'child_1_5': '',
+        'child_1_5a': 1005,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (months-yes)',
+        'symptom': 's9',
+        'child_1_5': 2,
+        'child_1_5b': 35,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Mother died after delivery duration (months-no)',
+        'symptom': 's9',
+        'child_1_5': 2,
+        'child_1_5b': 20,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (months-no-empty)',
+        'symptom': 's9',
+        'child_1_5': 2,
+        'child_1_5b': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (months-no-invalid)',
+        'symptom': 's9',
+        'child_1_5': 2,
+        'child_1_5b': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (months-no-no unit)',
+        'symptom': 's9',
+        'child_1_5': '',
+        'child_1_5b': 35,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Mother died after delivery duration (float)',
+        'symptom': 's9',
+        'child_1_5': 4,
+        'child_1_5a': 1115.2,
+        'endorsed': False,   # only integers are valid
+    },
+    # It appears that s10 never existed
+    {
+        'sid': 'Born not in a health facility (hospital)',
+        'symptom': 's11991',
+        'child_1_6': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Born not in a health facility (other health facility)',
+        'symptom': 's11991',
+        'child_1_6': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Born not in a health facility (on route to facility)',
+        'symptom': 's11991',
+        'child_1_6': 3,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Born not in a health facility (home)',
+        'symptom': 's11991',
+        'child_1_6': 4,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Born not in a health facility (other)',
+        'symptom': 's11991',
+        'child_1_6': 5,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Born not in a health facility (missing)',
+        'symptom': 's11991',
+        'child_1_6': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth size-small (very small)',
+        'symptom': 's13991',
+        'child_1_7': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth size-small (small)',
+        'symptom': 's13991',
+        'child_1_7': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth size-small (average)',
+        'symptom': 's13991',
+        'child_1_7': 3,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth size-small (large)',
+        'symptom': 's13991',
+        'child_1_7': 4,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth size-small (missing)',
+        'symptom': 's13991',
+        'child_1_7': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (missing)',
+        'symptom': 's14',
+        'child_1_8': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (grams-yes)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': 1005,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth weight (grams-no)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': 100,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (grams-no-invalid)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (grams-no-no unit)',
+        'symptom': 's14',
+        'child_1_8': '',
+        'child_1_8a': 1005,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (grams-threshold)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': 1000,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth weight (grams-float)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': 1225.2,
+        'endorsed': True,  # floats are legal for weight values
+    },
+    {
+        'sid': 'Birth weight (grams-no value)',
+        'symptom': 's14',
+        'child_1_8': 1,
+        'child_1_8a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (kilograms-yes)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth weight (kilograms-no)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': 0,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (kilograms-threshold)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Birth weight (kilograms-float)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': 2.7,
+        'endorsed': True,  # floats are legal for weight values
+    },
+    {
+        'sid': 'Birth weight (kilograms-no value)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (kilograms-invalid)',
+        'symptom': 's14',
+        'child_1_8': 2,
+        'child_1_8b': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (kilograms-no unit)',
+        'symptom': 's14',
+        'child_1_8': '',
+        'child_1_8b': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Birth weight (missing)',
+        'symptom': 's14',
+        'child_1_8': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Born dead (alive)',
+        'symptom': 's16991',
+        'child_1_11': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Born dead (dead)',
+        'symptom': 's16991',
+        'child_1_11': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Born dead (missing)',
+        'symptom': 's16991',
+        'child_1_11': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Baby cried',
+        'symptom': 's17',
+        'child_1_12': 1
+    },
+    {
+        'sid': 'Baby moved',
+        'symptom': 's18',
+        'child_1_13': 1
+    },
+    {
+        'sid': 'Baby breathed',
+        'symptom': 's19',
+        'child_1_14': 1
+    },
+    {
+        'sid': 'Age illness started (missing)',
+        'symptom': 's28',
+        'child_1_20': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (days-yes)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': 300,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Age illness started (days-no)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': 20,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (days-no-empty)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (days-no-invalid)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (days-no-no unit)',
+        'symptom': 's28',
+        'child_1_20': '',
+        'child_1_20a': 300,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (days-threshold)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': 270,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Age illness started (months-yes)',
+        'symptom': 's28',
+        'child_1_20': 2,
+        'child_1_20b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Age illness started (months-no)',
+        'symptom': 's28',
+        'child_1_20': 2,
+        'child_1_20b': 5,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (months-no-empty)',
+        'symptom': 's28',
+        'child_1_20': 2,
+        'child_1_20b': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (months-no-invalid)',
+        'symptom': 's28',
+        'child_1_20': 2,
+        'child_1_20b': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (months-no-no unit)',
+        'symptom': 's28',
+        'child_1_20': '',
+        'child_1_20b': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (months-threshold)',
+        'symptom': 's28',
+        'child_1_20': 2,
+        'child_1_20b': 9,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Age illness started (years-yes)',
+        'symptom': 's28',
+        'child_1_20': 1,
+        'child_1_20c': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Age illness started (years-no)',
+        'symptom': 's28',
+        'child_1_20': 1,
+        'child_1_20c': 0,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (years-no-empty)',
+        'symptom': 's28',
+        'child_1_20': 1,
+        'child_1_20c': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (years-no-invalid)',
+        'symptom': 's28',
+        'child_1_20': 1,
+        'child_1_20c': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (years-no-no unit)',
+        'symptom': 's28',
+        'child_1_20': '',
+        'child_1_20c': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Age illness started (float)',
+        'symptom': 's28',
+        'child_1_20': 4,
+        'child_1_20a': 315.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Illness duration (missing)',
+        'symptom': 's29',
+        'child_1_21': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (days-yes)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Illness duration (days-no)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': 5,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (days-no-empty)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (days-no-invalid)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (days-no-no unit)',
+        'symptom': 's29',
+        'child_1_21': '',
+        'child_1_21a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (days-threshold)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': 8,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Illness duration (months-yes)',
+        'symptom': 's29',
+        'child_1_21': 2,
+        'child_1_21b': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Illness duration (months-no)',
+        'symptom': 's29',
+        'child_1_21': 2,
+        'child_1_21b': 0,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (months-no-empty)',
+        'symptom': 's29',
+        'child_1_21': 2,
+        'child_1_21b': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (months-no-invalid)',
+        'symptom': 's29',
+        'child_1_21': 2,
+        'child_1_21b': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (months-no-no unit)',
+        'symptom': 's29',
+        'child_1_21': '',
+        'child_1_21b': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Illness duration (float)',
+        'symptom': 's29',
+        'child_1_21': 4,
+        'child_1_21a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (hospital)',
+        'symptom': 's30991',
+        'child_1_22': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (other health facility)',
+        'symptom': 's30991',
+        'child_1_22': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (on route to facility)',
+        'symptom': 's30991',
+        'child_1_22': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (home)',
+        'symptom': 's30991',
+        'child_1_22': 4,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (other)',
+        'symptom': 's30991',
+        'child_1_22': 5,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Didn\'t die in a health facility (missing)',
+        'symptom': 's30991',
+        'child_1_22': 9,
+        'endorsed': False,
+    },
+    # Age symptoms were previously derived from corresponding questions from
+    # child_1_25. Currently this are derived from the `agedays` from ODK. We
+    # ignore the age calculated from the gen_5_4 columns
+    {
+        'sid': 'Child age at death (missing)',
+        'symptom': 's31',
+        'agedays': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Child age at death (days-yes)',
+        'symptom': 's31',
+        'agedays': 400,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Child age at death (days-no)',
+        'symptom': 's31',
+        'agedays': 200,
+        'endorsed': False,
+    },
+    {
+        # FIXME: Use 30 days per month in ODK for agedays calculation
+        # The threshold should be 10 months. However, ODK uses 28 days per month
+        # in the `agedays` calculation. If the respondent says 10 months, this
+        # symptom is not endorsed.
+        'sid': 'Child age at death (days-threshold)',
+        'symptom': 's31',
+        'agedays': 300,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever',
+        'symptom': 's110',
+        'child_4_1': 1
+    },
+    {
+        'sid': 'Fever duration (missing)',
+        'symptom': 's111',
+        'child_4_2': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever duration (yes)',
+        'symptom': 's111',
+        'child_4_2': 2,
+        'child_4_2a': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever duration (no)',
+        'symptom': 's111',
+        'child_4_2': 2,
+        'child_4_2a': 4,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever duration (threshold)',
+        'symptom': 's111',
+        'child_4_2': 2,
+        'child_4_2a': 5,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever duration (no-empty)',
+        'symptom': 's111',
+        'child_4_2': 2,
+        'child_4_2a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever duration (no-invalid)',
+        'symptom': 's111',
+        'child_4_2': 2,
+        'child_4_2a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever duration (no-no unit)',
+        'symptom': 's111',
+        'child_4_2': '',
+        'child_4_2a': 7,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever continue until death',
+        'symptom': 's112',
+        'child_4_3': 1
+    },
+    {
+        'sid': 'Fever severity-severe (mild)',
+        'symptom': 's113991',
+        'child_4_4': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever severity-severe (moderate)',
+        'symptom': 's113991',
+        'child_4_4': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever severity-severe (severe)',
+        'symptom': 's113991',
+        'child_4_4': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever severity-severe (missing)',
+        'symptom': 's113991',
+        'child_4_4': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever pattern-not continuous (continuous)',
+        'symptom': 's114991',
+        'child_4_5': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fever pattern-not continuous (on and off)',
+        'symptom': 's114991',
+        'child_4_5': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever pattern-not continuous (only at night)',
+        'symptom': 's114991',
+        'child_4_5': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fever pattern-not continuous (missing)',
+        'symptom': 's114991',
+        'child_4_5': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea',
+        'symptom': 's115',
+        'child_4_6': 1
+    },
+    {
+        'sid': 'Number of stools (zero)',
+        'symptom': 's116991',
+        'child_4_7': 1,
+        'child_4_7a': 0,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Number of stools (one)',
+        'symptom': 's116991',
+        'child_4_7': 1,
+        'child_4_7a': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Number of stools (two)',
+        'symptom': 's116991',
+        'child_4_7': 1,
+        'child_4_7a': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Number of stools (three)',
+        'symptom': 's116991',
+        'child_4_7': 1,
+        'child_4_7a': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Number of stools (float)',
+        'symptom': 's116991',
+        'child_4_7': 1,
+        'child_4_7a': 2.5,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Diarrhea duration (missing)',
+        'symptom': 's117',
+        'child_4_8': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea duration (yes)',
+        'symptom': 's117',
+        'child_4_8': 2,
+        'child_4_8a': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Diarrhea duration (no)',
+        'symptom': 's117',
+        'child_4_8': 2,
+        'child_4_8a': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea duration (threshold)',
+        'symptom': 's117',
+        'child_4_8': 2,
+        'child_4_8a': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Diarrhea duration (no-empty)',
+        'symptom': 's117',
+        'child_4_8': 2,
+        'child_4_8a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea duration (no-invalid)',
+        'symptom': 's117',
+        'child_4_8': 2,
+        'child_4_8a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea duration (no-no unit)',
+        'symptom': 's117',
+        'child_4_8': '',
+        'child_4_8a': 7,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Diarrhea continue until death',
+        'symptom': 's118',
+        'child_4_9': 1
+    },
+    {
+        'sid': 'Stools stop before death duration (missing)',
+        'symptom': 's119',
+        'child_4_10': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Stools stop before death duration (yes)',
+        'symptom': 's119',
+        'child_4_10': 2,
+        'child_4_10a': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Stools stop before death duration (no)',
+        'symptom': 's119',
+        'child_4_10': 2,
+        'child_4_10a': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Stools stop before death duration (threshold)',
+        'symptom': 's119',
+        'child_4_10': 2,
+        'child_4_10a': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Stools stop before death duration (no-empty)',
+        'symptom': 's119',
+        'child_4_10': 2,
+        'child_4_10a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Stools stop before death duration (no-invalid)',
+        'symptom': 's119',
+        'child_4_10': 2,
+        'child_4_10a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Stools stop before death duration (no-no unit)',
+        'symptom': 's119',
+        'child_4_10': '',
+        'child_4_10a': 7,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Blood in stool',
+        'symptom': 's120',
+        'child_4_11': 1
+    },
+    {
+        'sid': 'Cough',
+        'symptom': 's121',
+        'child_4_12': 1
+    },
+    {
+        'sid': 'Cough duration (missing)',
+        'symptom': 's122',
+        'child_4_13': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Cough duration (days-yes)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Cough duration (days-no)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': 5,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Cough duration (days-threshold)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Cough duration (days-no-empty)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Cough duration (days-no-invalid)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Cough duration (days-no-no unit)',
+        'symptom': 's122',
+        'child_4_13': '',
+        'child_4_13a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Cough duration (float)',
+        'symptom': 's122',
+        'child_4_13': 4,
+        'child_4_13a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Severe cough',
+        'symptom': 's123',
+        'child_4_14': 1
+    },
+    {
+        'sid': 'Vomit after cough',
+        'symptom': 's124',
+        'child_4_15': 1
+    },
+    {
+        'sid': 'Difficulty breathing',
+        'symptom': 's125',
+        'child_4_16': 1
+    },
+    {
+        'sid': 'Difficulty breathing duration (missing)',
+        'symptom': 's126',
+        'child_4_17': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-yes)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-no)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-threshold)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-no-empty)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-no-invalid)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Difficulty breathing duration (days-no-no unit)',
+        'symptom': 's126',
+        'child_4_17': '',
+        'child_4_17a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Difficulty breathing duration (float)',
+        'symptom': 's126',
+        'child_4_17': 4,
+        'child_4_17a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Fast breathing',
+        'symptom': 's127',
+        'child_4_18': 1
+    },
+    {
+        'sid': 'Fast breathing duration (missing)',
+        'symptom': 's128',
+        'child_4_19': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fast breathing duration (days-yes)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fast breathing duration (days-no)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fast breathing duration (days-threshold)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fast breathing duration (days-no-empty)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fast breathing duration (days-no-invalid)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fast breathing duration (days-no)',
+        'symptom': 's128',
+        'child_4_19': '',
+        'child_4_19a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fast breathing duration (float)',
+        'symptom': 's128',
+        'child_4_19': 4,
+        'child_4_19a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Indrawing chest',
+        'symptom': 's129',
+        'child_4_20': 1
+    },
+    {
+        'sid': 'Stridor',
+        'symptom': 's130',
+        'child_4_22': 1
+    },
+    {
+        'sid': 'Grunting',
+        'symptom': 's131',
+        'child_4_23': 1
+    },
+    {
+        'sid': 'Wheezing',
+        'symptom': 's132',
+        'child_4_24': 1
+    },
+    {
+        'sid': 'Convulsions',
+        'symptom': 's133',
+        'child_4_25': 1
+    },
+    {
+        'sid': 'Unconsciousness',
+        'symptom': 's134',
+        'child_4_26': 1
+    },
+    {
+        'sid': 'Unconsciousness more than 1 day (less than 6 hours)',
+        'symptom': 's135991',
+        'child_4_27': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unconsciousness more than 1 day (6-23 hours)',
+        'symptom': 's135991',
+        'child_4_27': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unconsciousness more than 1 day (24 hours or more)',
+        'symptom': 's135991',
+        'child_4_27': 3,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unconsciousness more than 1 day (missing)',
+        'symptom': 's135991',
+        'child_4_27': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Stiff neck',
+        'symptom': 's136',
+        'child_4_28': 1
+    },
+    {
+        'sid': 'Bulging fontanelle',
+        'symptom': 's137',
+        'child_4_29': 1
+    },
+    {
+        'sid': 'Skin rash',
+        'symptom': 's138',
+        'child_4_30': 1
+    },
+    {
+        'sid': 'Skin rash-face (face)',
+        'symptom': 's139991',
+        'child_4_31': '1',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (trunk)',
+        'symptom': 's139991',
+        'child_4_31': '2',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash-face (extremities)',
+        'symptom': 's139991',
+        'child_4_31': '3',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash-face (everywhere)',
+        'symptom': 's139991',
+        'child_4_31': '4',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash-face (missing)',
+        'symptom': 's139991',
+        'child_4_31': '9',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash-face (face, trunk, extremities)',
+        'symptom': 's139991',
+        'child_4_31': '1 2 3',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (trunk, extremities)',
+        'symptom': 's139991',
+        'child_4_31': '2 3',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash-face (face, everywhere)',
+        'symptom': 's139991',
+        'child_4_31': '1 4',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (face, refused)',
+        'symptom': 's139991',
+        'child_4_31': '1 8',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (all values)',
+        'symptom': 's139991',
+        'child_4_31': '1 2 3 4 8 9',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (all values backwards)',
+        'symptom': 's139991',
+        'child_4_31': '9 8 4 3 2 1',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash-face (all values scrambled)',
+        'symptom': 's139991',
+        'child_4_31': '4 8 9 2 1 3',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash started on face (face)',
+        'symptom': 's141991',
+        'child_4_32': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Skin rash started on face (trunk)',
+        'symptom': 's141991',
+        'child_4_32': 2,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash started on face (extremities)',
+        'symptom': 's141991',
+        'child_4_32': 3,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash started on face (everywhere)',
+        'symptom': 's141991',
+        'child_4_32': 4,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Skin rash started on face (missing)',
+        'symptom': 's141991',
+        'child_4_32': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (missing)',
+        'symptom': 's142',
+        'child_4_33': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (days-yes)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Rash duration (days-no)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': 4,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (days-threshold)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': 5,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Rash duration (days-no-empty)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (days-no-invalid)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (days-no-no unit)',
+        'symptom': 's142',
+        'child_4_33': '',
+        'child_4_33a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Rash duration (float)',
+        'symptom': 's142',
+        'child_4_33': 4,
+        'child_4_33a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Rash had blisters',
+        'symptom': 's143',
+        'child_4_34': 1
+    },
+    {
+        'sid': 'Limbs became thin',
+        'symptom': 's144',
+        'child_4_35': 1
+    },
+    {
+        'sid': 'Swollen legs',
+        'symptom': 's145',
+        'child_4_36': 1
+    },
+    {
+        'sid': 'Swelling duration (missing)',
+        'symptom': 's146',
+        'child_4_37': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (days-yes)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Swelling duration (days-no)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': 3,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (days-threshold)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': 3.5,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Swelling duration (days-no-empty)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (days-no-invalid)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (days-no-no unit)',
+        'symptom': 's146',
+        'child_4_37': '',
+        'child_4_37a': 10,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (weeks-yes)',
+        'symptom': 's146',
+        'child_4_37': 3,
+        'child_4_37b': 1,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Swelling duration (weeks-no)',
+        'symptom': 's146',
+        'child_4_37': 3,
+        'child_4_37b': 0,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (weeks-no-empty)',
+        'symptom': 's146',
+        'child_4_37': 3,
+        'child_4_37b': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (weeks-no-invalid)',
+        'symptom': 's146',
+        'child_4_37': 3,
+        'child_4_37b': 'XXX',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (weeks-no-no unit)',
+        'symptom': 's146',
+        'child_4_37': '',
+        'child_4_37b': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Swelling duration (float)',
+        'symptom': 's146',
+        'child_4_37': 4,
+        'child_4_37a': 15.2,
+        'endorsed': False,  # only integers are valid
+    },
+    {
+        'sid': 'Skin flake off in patches',
+        'symptom': 's147',
+        'child_4_38': 1
+    },
+    {
+        'sid': 'Hair change to reddish or yellowish color',
+        'symptom': 's148',
+        'child_4_39': 1
+    },
+    {
+        'sid': 'Protruding belly',
+        'symptom': 's149',
+        'child_4_40': 1
+    },
+    {
+        'sid': 'Pallor',
+        'symptom': 's150',
+        'child_4_41': 1
+    },
+    {
+        'sid': 'Swelling in armpits',
+        'symptom': 's151',
+        'child_4_42': 1
+    },
+    {
+        'sid': 'Whitish rash in mouth',
+        'symptom': 's152',
+        'child_4_43': 1
+    },
+    {
+        'sid': 'Bleeding',
+        'symptom': 's153',
+        'child_4_44': 1
+    },
+    {
+        'sid': 'Skin turned black',
+        'symptom': 's154',
+        'child_4_46': 1
+    },
+    {
+        'sid': 'Road traffic injury',
+        'symptom': 's155',
+        'child_4_48': '1',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (multiple)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 11',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (duplicate)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 11 1',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (ignore constraint)',
+        'symptom': 's155',
+        'child_4_48': '3 1 8 11 9',   # Cannot have 8 or 9 with other answers
+        'endorsed': True,   # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Road traffic injury (with short duration in hours)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 8 11 9 9 1',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (with short duration in days)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 8 11 9 9 1',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (with short duration in hours-threshold)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 8 11 9 9 1',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (with short duration in days-threshold)',
+        'symptom': 's155',
+        'child_4_48': '3 1 5 8 11 9 9 1',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Road traffic injury (exceed duration in hours-threshold)',
+        'symptom': 's155',
+        'child_4_48': '1',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (exceed duration in days-threshold)',
+        'symptom': 's155',
+        'child_4_48': '1',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (empty)',
+        'symptom': 's155',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (float)',
+        'symptom': 's155',
+        'child_4_48': '1.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (not endorsed)',
+        'symptom': 's155',
+        'child_4_48': '3 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (invalid-garbage)',
+        'symptom': 's155',
+        'child_4_48': '1 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Road traffic injury (invalid-out of range)',
+        'symptom': 's155',
+        'child_4_48': '1 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall',
+        'symptom': 's156',
+        'child_4_48': '2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (multiple)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 11',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (duplicate)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 11 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (ignore constraint)',
+        'symptom': 's156',
+        'child_4_48': '3 2 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Fall (with short duration in hours)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 8 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (with short duration in days)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 8 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (with short duration in hours-threshold)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 8 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (with short duration in days-threshold)',
+        'symptom': 's156',
+        'child_4_48': '3 2 5 8 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Fall (exceed duration in hours-threshold)',
+        'symptom': 's156',
+        'child_4_48': '2',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (exceed duration in days-threshold)',
+        'symptom': 's156',
+        'child_4_48': '2',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (empty)',
+        'symptom': 's156',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (float)',
+        'symptom': 's156',
+        'child_4_48': '2.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (not endorsed)',
+        'symptom': 's156',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (invalid-garbage)',
+        'symptom': 's156',
+        'child_4_48': '2 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Fall (invalid-out of range)',
+        'symptom': 's156',
+        'child_4_48': '2 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning',
+        'symptom': 's157',
+        'child_4_48': '3',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (multiple)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 11',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (duplicate)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 11 3',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (ignore constraint)',
+        'symptom': 's157',
+        'child_4_48': '4 3 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Drowning (with short duration in hours)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 8 11 9 9 3',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (with short duration in days)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 8 11 9 9 3',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (with short duration in hours-threshold)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 8 11 9 9 3',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (with short duration in days-threshold)',
+        'symptom': 's157',
+        'child_4_48': '4 3 5 8 11 9 9 3',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Drowning (exceed duration in hours-threshold)',
+        'symptom': 's157',
+        'child_4_48': '3',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (exceed duration in days-threshold)',
+        'symptom': 's157',
+        'child_4_48': '3',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (empty)',
+        'symptom': 's157',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (float)',
+        'symptom': 's157',
+        'child_4_48': '3.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (not endorsed)',
+        'symptom': 's157',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (invalid-garbage)',
+        'symptom': 's157',
+        'child_4_48': '3 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Drowning (invalid-out of range)',
+        'symptom': 's157',
+        'child_4_48': '3 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning',
+        'symptom': 's158',
+        'child_4_48': '4',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (multiple)',
+        'symptom': 's158',
+        'child_4_48': '11 4 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (duplicate)',
+        'symptom': 's158',
+        'child_4_48': '11 4 4 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (ignore constraint)',
+        'symptom': 's158',
+        'child_4_48': '4 2 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Poisoning (with short duration in hours)',
+        'symptom': 's158',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (with short duration in days)',
+        'symptom': 's158',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (with short duration in hours-threshold)',
+        'symptom': 's158',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (with short duration in days-threshold)',
+        'symptom': 's158',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Poisoning (exceed duration in hours-threshold)',
+        'symptom': 's158',
+        'child_4_48': '4',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (exceed duration in days-threshold)',
+        'symptom': 's158',
+        'child_4_48': '4',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (empty)',
+        'symptom': 's158',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (float)',
+        'symptom': 's158',
+        'child_4_48': '4.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (not endorsed)',
+        'symptom': 's158',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (invalid-garbage)',
+        'symptom': 's158',
+        'child_4_48': '4 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Poisoning (invalid-out of range)',
+        'symptom': 's158',
+        'child_4_48': '4 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite',
+        'symptom': 's159',
+        'child_4_48': '5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (multiple)',
+        'symptom': 's159',
+        'child_4_48': '11 4 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (duplicate)',
+        'symptom': 's159',
+        'child_4_48': '11 5 4 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (ignore constraint)',
+        'symptom': 's159',
+        'child_4_48': '4 5 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Bite (with short duration in hours)',
+        'symptom': 's159',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (with short duration in days)',
+        'symptom': 's159',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (with short duration in hours-threshold)',
+        'symptom': 's159',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (with short duration in days-threshold)',
+        'symptom': 's159',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Bite (exceed duration in hours-threshold)',
+        'symptom': 's159',
+        'child_4_48': '5',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (exceed duration in days-threshold)',
+        'symptom': 's159',
+        'child_4_48': '5',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (empty)',
+        'symptom': 's159',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (float)',
+        'symptom': 's159',
+        'child_4_48': '5.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (not endorsed)',
+        'symptom': 's159',
+        'child_4_48': '1 3',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (invalid-garbage)',
+        'symptom': 's159',
+        'child_4_48': '5 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Bite (invalid-out of range)',
+        'symptom': 's159',
+        'child_4_48': '5 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn',
+        'symptom': 's160',
+        'child_4_48': '6',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (multiple)',
+        'symptom': 's160',
+        'child_4_48': '11 6 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (duplicate)',
+        'symptom': 's160',
+        'child_4_48': '11 6 4 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (ignore constraint)',
+        'symptom': 's160',
+        'child_4_48': '4 6 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Burn (with short duration in hours)',
+        'symptom': 's160',
+        'child_4_48': '2 5 8 6 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (with short duration in days)',
+        'symptom': 's160',
+        'child_4_48': '2 5 8 6 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (with short duration in hours-threshold)',
+        'symptom': 's160',
+        'child_4_48': '2 5 8 6 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (with short duration in days-threshold)',
+        'symptom': 's160',
+        'child_4_48': '2 5 8 6 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Burn (exceed duration in hours-threshold)',
+        'symptom': 's160',
+        'child_4_48': '6',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (exceed duration in days-threshold)',
+        'symptom': 's160',
+        'child_4_48': '6',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (empty)',
+        'symptom': 's160',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (float)',
+        'symptom': 's160',
+        'child_4_48': '6.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (not endorsed)',
+        'symptom': 's160',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (invalid-garbage)',
+        'symptom': 's160',
+        'child_4_48': '6 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Burn (invalid-out of range)',
+        'symptom': 's160',
+        'child_4_48': '6 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence',
+        'symptom': 's161',
+        'child_4_48': '7',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (multiple)',
+        'symptom': 's161',
+        'child_4_48': '11 7 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (duplicate)',
+        'symptom': 's161',
+        'child_4_48': '11 7 7 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (ignore constraint)',
+        'symptom': 's161',
+        'child_4_48': '4 7 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Violence (with short duration in hours)',
+        'symptom': 's161',
+        'child_4_48': '2 5 8 7 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (with short duration in days)',
+        'symptom': 's161',
+        'child_4_48': '2 5 8 7 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (with short duration in hours-threshold)',
+        'symptom': 's161',
+        'child_4_48': '2 5 8 7 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (with short duration in days-threshold)',
+        'symptom': 's161',
+        'child_4_48': '2 5 8 7 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Violence (exceed duration in hours-threshold)',
+        'symptom': 's161',
+        'child_4_48': '7',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (exceed duration in days-threshold)',
+        'symptom': 's161',
+        'child_4_48': '7',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (empty)',
+        'symptom': 's161',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (float)',
+        'symptom': 's161',
+        'child_4_48': '7.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (not endorsed)',
+        'symptom': 's161',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (invalid-garbage)',
+        'symptom': 's161',
+        'child_4_48': '7 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Violence (invalid-out of range)',
+        'symptom': 's161',
+        'child_4_48': '7 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury',
+        'symptom': 's162',
+        'child_4_48': '11',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (multiple)',
+        'symptom': 's162',
+        'child_4_48': '11 4 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (duplicate)',
+        'symptom': 's162',
+        'child_4_48': '11 4 4 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (ignore constraint)',
+        'symptom': 's162',
+        'child_4_48': '4 2 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Other injury (with short duration in hours)',
+        'symptom': 's162',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (with short duration in days)',
+        'symptom': 's162',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (with short duration in hours-threshold)',
+        'symptom': 's162',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (with short duration in days-threshold)',
+        'symptom': 's162',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Other injury (exceed duration in hours-threshold)',
+        'symptom': 's162',
+        'child_4_48': '11',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (exceed duration in days-threshold)',
+        'symptom': 's162',
+        'child_4_48': '11',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (empty)',
+        'symptom': 's162',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (float)',
+        'symptom': 's162',
+        'child_4_48': '11.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (not endorsed)',
+        'symptom': 's162',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (invalid-garbage)',
+        'symptom': 's162',
+        'child_4_48': '11 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Other injury (invalid-out of range)',
+        'symptom': 's162',
+        'child_4_48': '11 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury',
+        'symptom': 's163',
+        'child_4_48': '9',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (multiple)',
+        'symptom': 's163',
+        'child_4_48': '11 9 2 5',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (duplicate)',
+        'symptom': 's163',
+        'child_4_48': '11 9 9 5 2',
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (ignore constraint)',
+        'symptom': 's163',
+        'child_4_48': '4 2 8 11 9',  # Cannot have 8 or 9 with other answers
+        'endorsed': True,  # but we ignore ODK constraints
+    },
+    {
+        'sid': 'Unknown injury (with short duration in hours)',
+        'symptom': 's163',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 48,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (with short duration in days)',
+        'symptom': 's163',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50d': 7,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (with short duration in hours-threshold)',
+        'symptom': 's163',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 5,
+        'child_4_50a': 240,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (with short duration in days-threshold)',
+        'symptom': 's163',
+        'child_4_48': '2 5 8 4 11 9 9 2',
+        'child_4_50': 4,
+        'child_4_50b': 10,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Unknown injury (exceed duration in hours-threshold)',
+        'symptom': 's163',
+        'child_4_48': '4',
+        'child_4_50': 5,
+        'child_4_50a': 241,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (exceed duration in days-threshold)',
+        'symptom': 's163',
+        'child_4_48': '9',
+        'child_4_50': 4,
+        'child_4_50b': 11,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (empty)',
+        'symptom': 's163',
+        'child_4_48': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (float)',
+        'symptom': 's163',
+        'child_4_48': '9.0',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (not endorsed)',
+        'symptom': 's163',
+        'child_4_48': '1 5',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (invalid-garbage)',
+        'symptom': 's163',
+        'child_4_48': '9 X',
+        'endorsed': False,
+    },
+    {
+        'sid': 'Unknown injury (invalid-out of range)',
+        'symptom': 's163',
+        'child_4_48': '9 47',
+        'endorsed': False,
+    },
+    {
+        'sid': 'No injury',
+        'symptom': 's164',
+        'child_4_47': 0,
+        'endorsed': True,
+    },
+    {
+        'sid': 'No injury (injured)',
+        'symptom': 's164',
+        'child_4_47': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'No injury (refused)',
+        'symptom': 's164',
+        'child_4_47': 8,
+        'endorsed': False,
+    },
+    {
+        'sid': 'No injury (don\'t know)',
+        'symptom': 's164',
+        'child_4_47': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'No injury (empty)',
+        'symptom': 's164',
+        'child_4_47': '',
+        'endorsed': False,
+    },
+    {
+        'sid': 'No injury (with injuries listed)',
+        'symptom': 's164',
+        'child_4_47': 0,
+        'child_4_48': '1 3 5',   # FIXME: no injury endorsed with injuries
+        'endorsed': True,
+    },
+    {
+        'sid': 'Intentionally inflicted injury',
+        'symptom': 's165',
+        'child_4_49': 1
+    },
+    {
+        'sid': 'Mother ever tested for HIV',
+        'symptom': 's188',
+        'child_5_17': 1
+    },
+    {
+        'sid': 'Mother tested positive for HIV',
+        'symptom': 's189',
+        'child_5_18': 1
+    },
+    {
+        'sid': 'Mother told she had HIV by health worker',
+        'symptom': 's190',
+        'child_5_19': 1
+    },
+    {
+        'sid': 'Sex',
+        'symptom': 'sex',
+        'gen_5_2': 1,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Sex',
+        'symptom': 'sex',
+        'gen_5_2': 2,
+        'endorsed': True,
+    },
+    {
+        'sid': 'Sex',
+        'symptom': 'sex',
+        'gen_5_2': 9,
+        'endorsed': False,
+    },
+    {
+        'sid': 'Sex',
+        'symptom': 'sex',
+        'gen_5_2': '',
+        'endorsed': False,
+    },
+    ###
+    #  Under-weight symptoms
+    #  These compare the weight at the last medical exam after birth to a
+    #  standard growth curve. The curve is age/sex dependent.
+    #
+    #  The ages used for the weight by age thresholds are truncated months.
+    #  For neonates the only possible age is zero months
+    #
+    #  We calculate age from birth date and exam date, since the age at last
+    #  exam is likely less than the age at death.
+    ###
+    # TODO: comprehensive coverage of under weight symptoms
+    {
+        'sid': 'Underweight 3 SD, male age 0 months',
+        'symptom': 's180',
+        # Birth date
+        'gen_5_1a': 2000,  # year
+        'gen_5_1b': 1,  # January
+        'gen_5_1c': 1,  # day
+        'gen_5_2': 1,  # male
+        # Examine date (2 years later)
+        'child_5_6b': 2002,  # year
+        'child_5_6c': 1,  # January
+        'child_5_6d': 1,  # day
+        # Weight
+        'child_5_6e': 1,  # grams as unit
+        'child_5_6f': 8000,  # weight is grams
+        'endorsed': True,
+    },
+    {
+        'sid': 'Underweight 2 SD, male age 0 months',
+        'symptom': 's181',
+        # Birth date
+        'gen_5_1a': 2000,  # year
+        'gen_5_1b': 1,  # January
+        'gen_5_1c': 1,  # day
+        'gen_5_2': 1,  # male
+        # Examine date (15 days later)
+        'child_5_6b': 2002,  # year
+        'child_5_6c': 1,  # January
+        'child_5_6d': 1,  # day
+        # Weight
+        'child_5_6e': 1,  # grams as unit
+        'child_5_6f': 8000,  # weight is grams
+        'endorsed': True,
+    },
+]
+
+for case in MAPPING:
+    if 'endorsed' not in case and len(case) == 3:
+        key = [k for k in case if k not in ('sid', 'symptom')][0]
+        if case[key] == 1:
+            MAPPING.extend([
+                {
+                    'sid': '{} ({})'.format(case['sid'], null),
+                    'symptom': case['symptom'],
+                    key: value,
+                    'endorsed': False,
+                }
+                for null, value in {'missing': 9, 'no': 0, 'empty': ''}.items()
+            ])
