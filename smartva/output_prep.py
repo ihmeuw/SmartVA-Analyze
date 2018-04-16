@@ -276,7 +276,7 @@ class OutputPrep(DataPrep):
 
         self.csmf[module] = csmf
         table = [['cause34', 'cause list #', 'icd10', 'all', 'male', 'female']]
-        for cause in sorted(csmf):
+        for cause in sorted(csmf['both']):
             table.append([
                 cause,
                 CAUSE_NUMBERS[module].get(cause),
