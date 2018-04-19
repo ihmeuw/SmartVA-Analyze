@@ -273,4 +273,5 @@ class WorkerThread(threading.Thread):
         if os.path.exists(self._warnings_file):
             message += ('\nWarnings were generated during processing. '
                         'Please review the file "{}" for further information.'.format(self._warnings_file))
+        self.completion_status = status
         self._completion_callback(status, message)

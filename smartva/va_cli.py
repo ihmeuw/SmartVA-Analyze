@@ -94,6 +94,8 @@ def main(*args, **kwargs):
     global worker
     worker = workerthread.WorkerThread(kwargs['input'], kwargs['output'], options, kwargs['country'],
                                        completion_callback=_completion_handler)
+    worker.join()
+    sys.exit(getattr(worker, 'completion_status', 0))
 
 
 def _completion_handler(status, message=''):
@@ -105,6 +107,8 @@ def _completion_handler(status, message=''):
         status_logger.info('Computation aborted.')
     elif status == workerthread.CompletionStatus.DONE:
         status_logger.info('Process completed.')
+    elif status == workerthread.CompletionStatus.FAIL:
+        status_logger.info('Unknown error occurred during processing.')
     if message:
         status_logger.info(message)
     sys.exit(status)
