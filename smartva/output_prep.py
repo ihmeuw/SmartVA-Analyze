@@ -14,6 +14,7 @@ from smartva.loggers import status_logger, warning_logger, REPORT_LOGGERS_NAMES
 from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
 from smartva.tariff_prep import safe_float, safe_int
+from smartva.csmf_grapher import make_graph
 from smartva.data.icds import ICDS
 from smartva.data.gbd_causes import GBD_LEVEL1_CAUSE_NAMES, GBD_LEVEL1_CAUSES
 from smartva.data import codebook
@@ -92,6 +93,7 @@ class OutputPrep(DataPrep):
         self.keep_orig = keep_orig
         self.predictions = defaultdict(list)
         self.csmf = {module: defaultdict(int) for module in MODULES}
+        self.all_csmf = None
         self.short_form = short_form
         self.free_text = free_text
         self.hce = hce
@@ -276,7 +278,7 @@ class OutputPrep(DataPrep):
 
         self.csmf[module] = csmf
         table = [['cause34', 'cause list #', 'icd10', 'all', 'male', 'female']]
-        for cause in sorted(csmf):
+        for cause in sorted(csmf['both']):
             table.append([
                 cause,
                 CAUSE_NUMBERS[module].get(cause),
@@ -296,22 +298,25 @@ class OutputPrep(DataPrep):
         if not total:
             return
 
-        table = [['cause34', 'module', 'cause list #', 'icd10', 'all', 'male',
-                  'female']]
-        for module in MODULES:
-            if module not in self.csmf:
-                continue
+        csmf = defaultdict(lambda: defaultdict(float))
+        for module, module_csmfs in self.csmf.items():
             weight = len(self.predictions[module]) / total
-            for cause in sorted(self.csmf[module]['both']):
-                table.append([
-                    cause,
-                    module,
-                    CAUSE_NUMBERS[module].get(cause),
-                    ICDS[module].get(cause),
-                    round(self.csmf[module].get('both', {}).get(cause, 0) * weight, 3),
-                    round(self.csmf[module].get('male', {}).get(cause, 0) * weight, 3),
-                    round(self.csmf[module].get('female', {}).get(cause, 0) * weight, 3),
-                ])
+            for sex, values in module_csmfs.items():
+                for cause, value in values.items():
+                    csmf[cause][sex] += value * weight
+
+        self.all_csmf = csmf
+
+        icds = {k: v for icds in ICDS.values() for k, v in icds.items()}
+        table = [['cause34', 'icd10', 'all', 'male', 'female']]
+        for cause in sorted(csmf):
+            table.append([
+                cause,
+                icds.get(cause),
+                round(csmf[cause].get('both', 0), 3),
+                round(csmf[cause].get('male', 0), 3),
+                round(csmf[cause].get('female', 0), 3),
+            ])
         filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
         with open(filename, 'wb') as f:
             csv.writer(f).writerows(table)
@@ -358,6 +363,7 @@ class OutputPrep(DataPrep):
         self._save_graphs()
         self._write_csmf_table()
         self._graph_gbd_csmf()
+        self._graph_all_csmf()
 
     def _save_graphs(self):
         files = ['all-figure.png', 'undetermined-figure.png',
@@ -405,6 +411,13 @@ class OutputPrep(DataPrep):
                     dpi=150)
 
         plt.close()
+
+    def _graph_all_csmf(self):
+        data = OrderedDict(sorted([
+            (cause, val.get('both', 0)) for cause, val in self.all_csmf.items()
+        ], key=lambda x: x[1], reverse=True))
+        output_dir = os.path.join(self.working_dir_path, FOLDER3)
+        make_graph(data, 'all', output_dir)
 
     def _write_csmf_table(self):
         sex_names = OrderedDict([(1, 'Male'), (2, 'Female'), (9, 'Missing')])
@@ -528,8 +541,9 @@ class OutputPrep(DataPrep):
         for ext in ('csv', 'xlsx'):
             filename = '{:s}-likelihoods.{:s}'.format(module, ext)
             src = os.path.join(self.output_dir_path, filename)
+            folder = INTERMEDIATES_FOLDER if ext == 'csv' else FOLDER4
             if os.path.exists(src):
-                dest = os.path.join(self.working_dir_path, FOLDER4, filename)
+                dest = os.path.join(self.working_dir_path, folder, filename)
                 shutil.copy2(src, dest)
 
     def _write_endorsement_rates(self, module):
