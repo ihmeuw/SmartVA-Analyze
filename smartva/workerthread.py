@@ -2,6 +2,7 @@ import csv
 import logging
 import os
 import threading
+import traceback
 from data_prep import AbortException
 
 from smartva.common_prep import CommonPrep
@@ -250,6 +251,9 @@ class WorkerThread(threading.Thread):
 
         except AbortException:
             self._complete(CompletionStatus.ABORT)
+        except Exception:
+            traceback.print_exc()
+            self._complete(CompletionStatus.FAIL)
         else:
             self._complete(CompletionStatus.DONE)
 
