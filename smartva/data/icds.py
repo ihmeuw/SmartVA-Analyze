@@ -60,7 +60,7 @@ ICDS = {
         'Poisonings': 'X49',
         'Road Traffic': 'V89',
         'Sepsis': 'A41',
-        'Violent Death': 'Y09',
+        'Homicide': 'Y09',
         'Undetermined': 'R99',
     },
     NEONATE: {

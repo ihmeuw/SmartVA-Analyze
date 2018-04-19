@@ -184,7 +184,7 @@ SPURIOUS_ASSOCIATIONS = {
         's18',  # Did the baby ever move?
         's19',  # Did the baby ever breathe?
     ],
-    21: [  # Violent Death
+    21: [  # Homicide
         's153',
         's161',
         's165',
@@ -333,7 +333,7 @@ CAUSES = {
     18: 'Poisonings',
     19: 'Road Traffic',
     20: 'Sepsis',
-    21: 'Violent Death',
+    21: 'Homicide',
 }
 
 CAUSES46 = CAUSES
