@@ -2,6 +2,7 @@ import csv
 import logging
 import os
 import threading
+import traceback
 from data_prep import AbortException
 
 from smartva.common_prep import CommonPrep
@@ -249,6 +250,9 @@ class WorkerThread(threading.Thread):
 
         except AbortException:
             self._complete(CompletionStatus.ABORT)
+        except Exception:
+            traceback.print_exc()
+            self._complete(CompletionStatus.FAIL)
         else:
             self._complete(CompletionStatus.DONE)
 
@@ -268,4 +272,5 @@ class WorkerThread(threading.Thread):
         if os.path.exists(self._warnings_file):
             message += ('\nWarnings were generated during processing. '
                         'Please review the file "{}" for further information.'.format(self._warnings_file))
+        self.completion_status = status
         self._completion_callback(status, message)
