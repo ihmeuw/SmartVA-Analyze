@@ -4,10 +4,11 @@ MAPPING = [
         'symptom': 's1',
         'Id10135': 'yes',
     },
+    # No corresponding data for s2: history of arthritis
     # {
     #     'sid': 'History of arthritis',
     #     'symptom': 's2',
-    #     'adult_1_1b': 1
+    #     'adult_1_1b': 'yes'
     # },
     {
         'sid': 'History of cancer',
@@ -49,6 +50,7 @@ MAPPING = [
         'symptom': 's10',
         'Id10132': 'yes',
     },
+    # No corresponding data for s11: history of obesity
     # {
     #     'sid': 'History of obesity',
     #     'symptom': 's11',
@@ -74,6 +76,7 @@ MAPPING = [
         'symptom': 's16',
         'Id10147': 'yes'
     },
+    # No corresponding data for s20: fever with sweating
     # {
     #      'sid': 'Fever with sweating',
     #      'symptom': 's20',
@@ -94,6 +97,7 @@ MAPPING = [
         'symptom': 's28',
         'Id10229': 'yes',
     },
+    # No corresponding data for s29: Itching
     # {
     #     'sid': 'Itching',
     #     'symptom': 's29',
@@ -109,11 +113,13 @@ MAPPING = [
         'symptom': 's31',
         'Id10231': 'yes',
     },
+    # No corresponding data for s33: Pins and needles in feet
     # {
     #     'sid': 'Pins and needles in feet',
     #     'symptom': 's33',
     #     'adult_2_16': 'yes',
     # },
+    # No corresponding data for s34: Blue lips
     # {
     #     'sid': 'Blue lips',
     #     'symptom': 's34',
@@ -133,6 +139,11 @@ MAPPING = [
         'sid': 'Yellow eyes',
         'symptom': 's38',
         'Id10265': 'yes',
+    },
+    {
+        'sid': 'Ankle swelling',
+        'symptom': 's40',
+        'Id10249': 'yes',
     },
     {
         'sid': 'Puffy face',
@@ -180,8 +191,234 @@ MAPPING = [
         'Id10159': 'yes',
     },
     {
+        'sid': 'Fast breathing',
+        'symptom': 's58',
+        'Id10166': 'yes',
+    },
+    #for some reason 'wheezing' is an endorsement of this question
+    {
+        'sid': 'Wheeze',
+        'symptom': 's60',
+        'Id10173_a': 'wheezing',
+    },
+    {
+        'sid': 'Chest pain',
+        'symptom': 's61',
+        'Id10174': 'yes',
+    },
+    # No corresponding data for s63: pain during physical activity
+    # {
+    #     'sid': 'Pain during physical activity',
+    #     'symptom': 's63',
+    #     'adult_2_45': 'yes',
+    # },
+
+    {
+        'sid': 'Diarrhea',
+        'symptom': 's66',
+        'Id10181': 'yes',
+    },
+    # No corresponding data for s68: change in bowel habits
+    # {
+    #     'sid': 'Change in bowel habits',
+    #     'symptom': 's68',
+    #     'adult_2_49': 'yes',
+    # },
+    {
+        'sid': 'Blood in stool',
+        'symptom': 's69',
+        'Id10186': 'yes',
+    },
+    {
+        'sid': 'Blood in stool until death',
+        'symptom': 's70',
+        'Id10187': 'yes',
+    },
+    {
+        'sid': 'Stop urinating',
+        'symptom': 's71',
+        'Id10224': 'yes',
+    },
+    {
+        'sid': 'Vomit',
+        'symptom': 's72',
+        'Id10189': 'yes',
+    },
+    {
         'sid': 'Blood in vomit',
         'symptom': 's74',
-        'Id10191': 'yes'
-    }
+        'Id10191': 'yes',
+    },
+    {
+        'sid': 'Vomit black',
+        'symptom': 's75',
+        'Id10192': 'yes',
+    },
+    {
+        'sid': 'Difficulty swallowing',
+        'symptom': 's76',
+        'Id10261': 'yes',
+    },
+    {
+        'sid': 'Pain on swallowing',
+        'symptom': 's79',
+        'Id10264': 'yes',
+    },
+    {
+        'sid': 'Belly pain',
+        'symptom': 's80',
+        'adult_2_61': 'Id10194',
+    },
+    {
+        'sid': 'Protruding belly',
+        'symptom': 's84',
+        'Id10200': 'yes',
+    },
+    {
+        'sid': 'Mass in belly',
+        'symptom': 's87',
+        'Id10204': 'yes',
+    },
+    {
+        'sid': 'Headache',
+        'symptom': 's89',
+        'Id10207': 'yes',
+    },
+    {
+        'sid': 'Stiff neck',
+        'symptom': 's92',
+        'Id10208': 'yes',
+    },
+    {
+        'sid': 'Lost consciousness',
+        'symptom': 's94',
+        'Id10214': 'yes',
+    },
+    {
+        'sid': 'Unconscious until death',
+        'symptom': 's97',
+        'Id10215': 'yes',
+    },
+    {
+        'sid': 'Confusion',
+        'symptom': 's98',
+        'Id10212': 'yes',
+    },
+    # No corresponding data for s101: Memory loss
+    # {
+    #     'sid': 'Memory loss',
+    #     'symptom': 's101',
+    #     'adult_2_81': 'yes',
+    # },
+    {
+        'sid': 'Convulsions',
+        'symptom': 's102',
+        'Id10219': 'yes',
+    },
+    {
+        'sid': 'Unconscious after convulsions',
+        'symptom': 's104',
+        'Id10222': 'yes',
+    },
+    {
+        'sid': 'Paralyzed',
+        'symptom': 's105',
+        'Id10258': 'yes',
+    },
+    {
+        'sid': 'Lump in breast',
+        'symptom': 's118',
+        'Id10294': 'yes',
+    },
+    {
+        'sid': 'Ulcer in breast',
+        'symptom': 's119',
+        'Id10295': 'yes',
+    },
+    {
+        'sid': 'Periods stop because of menopause',
+        'symptom': 's120',
+        'Id10299': 'yes',
+    },
+    {
+        'sid': 'Post menopausal bleeding',
+        'symptom': 's121',
+        'Id10300': 'yes',
+    },
+    {
+        'sid': 'Intermenstrual bleeding',
+        'symptom': 's122',
+        'Id10297': 'yes',
+    },
+    {
+        'sid': 'Excessive vaginal bleeding',
+        'symptom': 's123',
+        'Id10301': 'yes',
+    },
+    {
+        'sid': 'Period overdue at death',
+        'symptom': 's124',
+        'Id10302': 'yes',
+    },
+    {
+        'sid': 'Sharp belly pain',
+        'symptom': 's126',
+        'Id10304': 'yes',
+    },
+    {
+        'sid': 'Pregnant at death',
+        'symptom': 's127',
+        'Id10305': 'yes',
+    },
+    {
+        'sid': 'Die during abortion',
+        'symptom': 's129',
+        'Id10335': 'yes',
+    },
+    {
+        'sid': 'Bleeding while pregnant',
+        'symptom': 's130',
+        'Id10325': 'yes',
+    },
+    {
+        'sid': 'Excessive bleeding during labor/delivery',
+        'symptom': 's131',
+        'Id10328': 'yes',
+    },
+    {
+        'sid': 'Die during labor/delivery',
+        'symptom': 's132',
+        'Id10312': 'yes',
+    },
+    {
+        'sid': 'Die within 6 weeks of abortion',
+        'symptom': 's134',
+        'Id10336': 'yes',
+    },
+    {
+        'sid': 'Die within 6 weeks of childbirth',
+        'symptom': 's135',
+        'Id10315': 'yes',
+    },
+    {
+        'sid': 'Excessive bleeding after delivery/abortion',
+        'symptom': 's136',
+        'Id10329': 'yes',
+    },
+    {
+        'sid': 'Bad smelling vaginal discharge',
+        'symptom': 's137',
+        'Id10398': 'yes',
+    },
+    {
+        'sid': 'Use tobacco',
+        'symptom': 's138',
+        'Id10412': 'yes',
+    },
+    {
+        'sid': 'Drink alcohol',
+        'symptom': 's149',
+        'Id10411': 'yes',
+    },
 ]
+
