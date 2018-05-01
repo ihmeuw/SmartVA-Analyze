@@ -202,12 +202,12 @@ MAPPING = [
     {
         'sid': 'Yellow eyes',
         'symptom': 's108',
-        'child_3_48': 'yes'
+        'Id10265': 'yes'
     },
     {
         'sid': 'Appear healthy and die suddenly',
         'symptom': 's109',
-        'Id10265': 'yes'
+        'Id10290': 'yes'
     },
     {
         'sid': 'Mother ever tested for HIV',
