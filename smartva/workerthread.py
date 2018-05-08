@@ -1,10 +1,12 @@
 import csv
 import logging
 import os
+import re
 import threading
 import traceback
 from data_prep import AbortException
 
+from smartva.who_prep import WHOPrep
 from smartva.common_prep import CommonPrep
 from smartva.pre_symptom_prep import PreSymptomPrep
 from smartva.symptom_prep import SymptomPrep
@@ -119,6 +121,20 @@ class WorkerThread(threading.Thread):
                 writer.writerows(reader)
 
     @staticmethod
+    def who_questionaire_test(file_path):
+        with open(file_path, 'Ub') as f:
+            headers = next(csv.reader(f))
+
+        # Now we have two problems
+        # case insensitive `id####` possibly with a tag, such as `Id####_a` or
+        # `Id####_check`, or begins with `age` or `is`
+        pattern = re.compile(r'^[Ii]d\d+(_\w+)?$|^age|^is')
+        matches = sum(bool(pattern.match(h)) for h in headers)
+
+        threshold = 0.80
+        return matches / float(len(headers)) > threshold
+
+    @staticmethod
     def short_form_test(file_path):
         with open(file_path, 'Ub') as f:
             return SHORT_FORM_HEADER in next(csv.reader(f))
@@ -158,14 +174,24 @@ class WorkerThread(threading.Thread):
         report_logger.info('- Malaria Region: {}'.format(self.options.get('malaria', True)))
         report_logger.info('')
 
-        self.short_form = self.short_form_test(os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME))
-        warning_logger.debug('Detected {} form'.format('short' if self.short_form else 'standard'))
-        if self.short_form:
-            form_name = 'PHMRC Shortened Questionnaire'
+        file_path = os.path.join(intermediate_dir, CLEAN_HEADERS_FILENAME)
+        who_questionnaire = self.who_questionaire_test(file_path)
+
+        if who_questionnaire:
+            self.short_form = True
+            form_name = 'WHO 2016 Questionnaire'
+
         else:
-            form_name = 'PHMRC Full Questionnaire'
+            self.short_form = self.short_form_test(file_path)
+            warning_logger.debug('Detected {} form'.format(
+                'short' if self.short_form else 'standard'))
+            if self.short_form:
+                form_name = 'PHMRC Shortened Questionnaire'
+            else:
+                form_name = 'PHMRC Full Questionnaire'
         report_logger.info('Detected {}'.format(form_name))
 
+        who_prep = WHOPrep(self.output_dir_path)
         common_prep = CommonPrep(self.output_dir_path, self.short_form)
         adult_pre_symptom = PreSymptomPrep(adult_pre_symptom_data, self.output_dir_path, self.short_form)
         adult_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.ADULT, ADULT_RULES)
@@ -188,6 +214,7 @@ class WorkerThread(threading.Thread):
         csmf_grapher = CSMFGrapher(self.output_dir_path)
 
         self._abort_list.extend([
+            who_prep,
             common_prep,
             adult_pre_symptom,
             adult_rules,
@@ -206,6 +233,9 @@ class WorkerThread(threading.Thread):
         ])
 
         try:
+            if who_questionnaire:
+                who_prep.run()
+
             # makes adult-prepped.csv, child-prepped.csv, neonate-prepped.csv
             adult_data, child_data, neonate_data = common_prep.run()
 
