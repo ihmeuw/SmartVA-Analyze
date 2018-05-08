@@ -66,8 +66,10 @@ def make_valid_phmrc(row):
 
 def make_valid_who2016(row):
     """Add standard WHO2016 specific values for a row of data"""
-    return make_valid(row)
 
+    row['Id10013'] = 'yes'   # All rows need valid consent
+
+    return make_valid(row)
 
 @pytest.fixture(scope='module')
 def phmrc_adult():
