@@ -413,6 +413,9 @@ class OutputPrep(DataPrep):
         plt.close()
 
     def _graph_all_csmf(self):
+        if not self.all_csmf:
+            return
+
         data = OrderedDict(sorted([
             (cause, val.get('both', 0)) for cause, val in self.all_csmf.items()
         ], key=lambda x: x[1], reverse=True))
