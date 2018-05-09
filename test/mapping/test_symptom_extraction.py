@@ -45,8 +45,9 @@ def make_valid(row):
         # We are using the more strict `is` test to verify correctness
         row['endorsed'] = bool(row['endorsed'])
 
-    if 'sid' not in row or 'symptom' not in row:
-        raise KeyError('Rows must contain "sid", "symptom" and "endorsed"')
+    if 'sid' not in row or 'symptom' not in row or 'module' not in row:
+        raise KeyError('Rows must contain "sid", "symptom", "module" and '
+                       '"endorsed"')
 
     return row
 
