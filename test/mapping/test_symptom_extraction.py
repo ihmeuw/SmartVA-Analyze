@@ -128,6 +128,18 @@ def phmrc_gated():
 
 
 @pytest.fixture(scope='module')
+def who_ages():
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    who_cols = {'Id{}'.format(i): '' for i in range(10000, 10050)}
+    from .who_age_mapping import MAPPING
+    for row in MAPPING:
+        make_valid(row)
+        row.update(who_cols)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
 def who2016_adult():
     from .who2016_adult_mapping import MAPPING
     for row in MAPPING:
@@ -144,6 +156,7 @@ def who2016_adult():
     'phmrc_checklist_words',
     'phmrc_ages',
     'phmrc_gated',
+    'who_ages',
     pytest.mark.xfail('who2016_adult', reason='Missing implementation'),
 ])
 def data(request, tmpdir):
