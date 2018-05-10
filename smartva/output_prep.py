@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+from smartva.config import basedir
 from smartva.loggers import status_logger, warning_logger, REPORT_LOGGERS_NAMES
 from smartva.data_prep import DataPrep
 from smartva.data.common_data import (ADULT, CHILD, NEONATE)
@@ -502,6 +503,7 @@ class OutputPrep(DataPrep):
             self._write_endorsement_rates(module)
         self._write_age_group_tabulation()
         self._write_report()
+        self._copy_interpretation_sheet()
 
     def _recode_prepped_files(self, module):
         prepped_file = os.path.join(self.intermediate_dir,
@@ -705,6 +707,11 @@ class OutputPrep(DataPrep):
             store.setTarget(handler)
             store.flush()
 
+    def _copy_interpretation_sheet(self):
+        name = 'SmartVA Analyze Output Interpretation Sheet.docx'
+        src = os.path.join(basedir, 'res', name)
+        dest = os.path.join(self.working_dir_path, FOLDER4, name)
+        shutil.copy(src, dest)
 
     def clean_up(self):
         """Remove all the original output files"""
