@@ -707,6 +707,8 @@ class OutputPrep(DataPrep):
             store.setTarget(handler)
             store.flush()
 
+        handler.close()
+
     def _copy_interpretation_sheet(self):
         name = 'SmartVA Analyze Output Interpretation Sheet.docx'
         src = os.path.join(basedir, 'res', name)
