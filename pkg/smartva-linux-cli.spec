@@ -30,6 +30,7 @@ exe = EXE(
     [('data/adult_undetermined_weights.csv', 'smartva/data/adult_undetermined_weights.csv', 'DATA')],
     [('data/child_undetermined_weights.csv', 'smartva/data/child_undetermined_weights.csv', 'DATA')],
     [('data/neonate_undetermined_weights.csv', 'smartva/data/neonate_undetermined_weights.csv', 'DATA')],
+    [('res/SmartVA Analyze Output Interpretation Sheet.docx', 'smartva/res/SmartVA Analyze Output Interpretation Sheet.docx', 'DATA')],
     name='smartva',
     debug=False,
     strip=False,
