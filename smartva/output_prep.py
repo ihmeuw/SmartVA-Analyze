@@ -500,6 +500,7 @@ class OutputPrep(DataPrep):
             self._copy_intermediate_files(module)
             self._copy_likelihood_files(module)
             self._write_endorsement_rates(module)
+        self._write_age_group_tabulation()
         self._write_report()
 
     def _recode_prepped_files(self, module):
@@ -612,6 +613,62 @@ class OutputPrep(DataPrep):
                 row.extend(['{}%'.format(round(rates[cause] * 100, 1))
                              for cause in causes])
                 writer.writerow(row)
+
+    def _write_age_group_tabulation(self):
+        total = float(sum(len(v) for v in self.predictions.values()))
+        if not total:
+            return
+
+        both = 'count'
+        male = 'male (count)'
+        female = 'female (count)'
+        counts = defaultdict(lambda: Counter())
+        for module, data in self.predictions.items():
+            for row in data:
+                sex = safe_int(row.get('sex'))
+                age = self._get_five_year_age_group(row.get('age'))
+                key = age, row.get('cause34')
+                counts[key][both] += 1
+                if sex == 1:
+                    counts[key][male] += 1
+                elif sex == 2:
+                    counts[key][female] += 1
+
+        icds = {k: v for icds in ICDS.values() for k, v in icds.items()}
+        table = [['cause34', 'icd10', 'age group', both, male, female]]
+        for key in sorted(counts):
+            age_group, cause = key
+            table.append([
+                cause,
+                icds.get(cause),
+                age_group,
+                counts[key].get(both, 0),
+                counts[key].get(male, 0),
+                counts[key].get(female, 0),
+            ])
+
+        path = os.path.join(self.working_dir_path, FOLDER4,
+                            'VA-data-age-groupings.csv')
+        with open(path, 'wb') as f:
+            csv.writer(f).writerows(table)
+
+    @staticmethod
+    def _get_five_year_age_group(age):
+        try:
+            age = float(age)
+        except (TypeError, ValueError):
+            return 'unknown'
+        else:
+            if age < 1:
+                return ' <1 yr'  # leading space hack to sort to top
+            elif 1 <= age < 5:
+                return '1-4 yr'
+            elif age >= 85:
+                return '85+ yr'
+            else:
+                lower = int(age / 5) * 5
+                upper = lower + 4
+                return '{}-{} yr'.format(lower, upper)
 
     def _write_report(self):
         filename = os.path.join(self.working_dir_path, FOLDER4, 'report.txt')
