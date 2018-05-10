@@ -268,6 +268,10 @@ class WorkerThread(threading.Thread):
             if isinstance(handler, logging.FileHandler):
                 handler.close()
 
+        for handler in logging.getLogger('report').handlers:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
+
         # The warnings file will be created on the first warning. If the file doesn't exist, no warnings.
         if os.path.exists(self._warnings_file):
             message += ('\nWarnings were generated during processing. '
