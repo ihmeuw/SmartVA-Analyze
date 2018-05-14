@@ -31,6 +31,17 @@ class WHOPrep(DataPrep):
         status_notifier.update({'progress': 1})
 
         headers = set(self.data_module.ADDITIONAL_HEADERS)
+        headers.update(self.data_module.YES_NO_QUESTIONS)
+        headers.update([h for h, _ in self.data_module.RECODE_QUESTIONS])
+        headers.update(self.data_module.RENAME_QUESTIONS)
+        headers.update(self.data_module.REVERSE_ONE_HOT)
+        headers.update(self.data_module.REVERSE_ONE_HOT_MULTISELECT)
+        headers.update([h for h, _ in self.data_module.RECODE_MULTISELECT])
+        headers.update(self.data_module.ONE_HOT_FROM_MULTISELECT)
+        headers.update(self.data_module.UNIT_IF_AMOUNT)
+        for unit_col, value_col, _ in self.data_module.DURATION_CONVERSIONS:
+            headers.update([unit_col, value_col])
+        headers.update([h for h, _ in self.data_module.BIN_DURATIONS])
 
         _, matrix = DataPrep.read_input_file(self.input_file_path())
 
@@ -43,6 +54,16 @@ class WHOPrep(DataPrep):
 
             self.determine_consent(row)
             self.calculate_age(row)
+            self.recode_yes_no_questions(row)
+            self.recode_categoricals(row)
+            self.rename_questions(row)
+            self.reverse_one_hot(row)
+            self.reverse_one_hot_multiselect(row)
+            self.recode_multiselects(row)
+            self.encode_one_hot_from_multiselect(row)
+            self.map_units_from_values(row)
+            self.convert_durations(row)
+            self.bin_durations_into_categories(row)
 
         status_notifier.update({'sub_progress': None})
 
@@ -127,3 +148,87 @@ class WHOPrep(DataPrep):
         else:
             row['gen_5_4d'] = 9
         row['agedays'] = ''
+
+    def recode_yes_no_questions(self, row):
+        mapping = {'yes': 1, 'no': 0, 'ref': 8, 'dk': 9}
+        for dest, src in self.data_module.YES_NO_QUESTIONS.items():
+            try:
+                value = int(mapping[row[src]])
+            except (TypeError, KeyError):
+                value = ''
+            row[dest] = value
+
+    def recode_categoricals(self, row):
+        for (dest, src), mapping in self.data_module.RECODE_QUESTIONS.items():
+            try:
+                value = int(mapping[row[src]])
+            except (TypeError, KeyError):
+                value = ''
+            row[dest] = value
+
+    def rename_questions(self, row):
+        for dest, src in self.data_module.RENAME_QUESTIONS.items():
+            row[dest] = row.get(src, '')
+
+    def reverse_one_hot(self, row):
+        for dest, mapping in self.data_module.REVERSE_ONE_HOT.items():
+            for src, value in mapping.items():
+                if row.get(src) == 'yes':
+                    row[dest] = value
+                    break
+            else:
+                row[dest] = ''
+
+    def reverse_one_hot_multiselect(self, row):
+        """Recode a series of dummy variables into a multiselect"""
+        for dest, mapping in self.data_module.REVERSE_ONE_HOT_MULTISELECT.items():
+            endorsement = set()
+            for src, value in mapping.items():
+                if row.get(src) == 'yes':
+                    endorsement.add(value)
+            row[dest] = ' '.join(map(str, sorted(endorsement)))
+
+    def recode_multiselects(self, row):
+        for (dest, src), mapping in self.data_module.RECODE_MULTISELECT.items():
+            row[dest] = ' '.join(map(str, sorted(filter(None, [
+                mapping.get(x, '') for x in row.get(src, '').split()]))))
+
+    def encode_one_hot_from_multiselect(self, row):
+        for dest, (src, choice) in self.data_module.ONE_HOT_FROM_MULTISELECT.items():
+            try:
+                value = int(choice in row[src].split())
+            except (KeyError, ValueError, TypeError):
+                value = ''
+            row[dest] = value
+
+    def map_units_from_values(self, row):
+        for dest, (src, unit) in self.data_module.UNIT_IF_AMOUNT.items():
+            row[dest] = unit if safe_int(row.get(src)) > 0 else ''
+
+    def convert_durations(self, row):
+        for x in self.data_module.DURATION_CONVERSIONS.items():
+            (unit_col, value_col, unit), mapping = x
+            for src, scalar in mapping.items():
+                value = safe_int(row.get(src)) * scalar
+                if value > 0:
+                    row[unit_col] = unit
+                    row[value_col] = value
+                    break
+            else:
+                row[unit_col] = ''
+                row[value_col] = ''
+
+    def bin_durations_into_categories(self, row):
+        for (dest, src), mapping in self.data_module.BIN_DURATIONS.items():
+            value = row.get(src)
+            if not value and value != 0:
+                row[dest] = ''
+                continue
+
+            value = safe_int(value)
+            for (start, stop), encoded in mapping.items():
+                if start <= value <= stop:
+                    row[dest] = encoded
+                    break
+            else:
+                row[dest] = ''
