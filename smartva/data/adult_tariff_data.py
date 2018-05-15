@@ -593,13 +593,13 @@ SHORT_FORM_DROP_LIST = [
     's101',
     's106',
     's11',
-    's120',
+    's120',      # FIXME: (adult_3_3: 'period stop' is on short form)
     's137',
     's147',
     's149',
     's150991',
     's150992',
-    's16',
+    's16',        # FIXME: (adult_2_2: 'fever' is on the short form)
     's17',
     's18991',
     's18992',
@@ -637,7 +637,7 @@ SHORT_FORM_DROP_LIST = [
     's89',
     's90',
     's91',
-    's92',
+    's92',       # FIXME: (adult_2_72: 'stiff neck' is on the short form)
     's96',
     's98',
     's99',

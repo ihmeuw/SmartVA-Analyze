@@ -297,8 +297,8 @@ SHORT_FORM_DROP_LIST = [
     's114991',
     's119',
     's124',
-    's127',
-    's129',
+    's127',      # FIXME: (child_4_18: 'fast breathing' on short form)
+    's129',      # FIXME: (child_4_20: 'indrawing chest' on short form)
     's130',
     's132',
     's139991',
@@ -307,9 +307,9 @@ SHORT_FORM_DROP_LIST = [
     's143',
     's144',
     's163',
-    's180',
-    's181',
-    's7'
+    's180',       # FIXME (child weight questions on short form)
+    's181',       # FIXME (child weight questions on short form)
+    's7',         # FIXME: (child_1_3: 'mother alive' is on short form)
 ]
 
 CAUSES = {
