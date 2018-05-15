@@ -70,7 +70,19 @@ def make_valid_who2016(row):
 
     row['Id10013'] = 'yes'   # All rows need valid consent
 
+    # Ensure that there is enough data to classify each row into a specific
+    # module. Otherwise the rows are filtered out
+    row['is{}'.format(row['module'].title())] = 1
+
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    for i in range(10000, 10050):
+        col = 'Id{}'.format(i)
+        if col not in row:
+            row[col] = ''
+
     return make_valid(row)
+
 
 @pytest.fixture(scope='module')
 def phmrc_adult():
@@ -148,6 +160,24 @@ def who2016_adult():
     return MAPPING
 
 
+@pytest.fixture(scope='module')
+def who2016_child():
+    from .who2016_child_mapping import MAPPING
+    for row in MAPPING:
+        row['module'] = 'child'
+        make_valid_who2016(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2016_neonate():
+    from .who2016_neonate_mapping import MAPPING
+    for row in MAPPING:
+        row['module'] = 'neonate'
+        make_valid_who2016(row)
+    return MAPPING
+
+
 @pytest.fixture(params=[
     'phmrc_adult',
     'phmrc_child',
@@ -157,7 +187,9 @@ def who2016_adult():
     'phmrc_ages',
     'phmrc_gated',
     'who_ages',
-    pytest.mark.xfail('who2016_adult', reason='Missing implementation'),
+    'who2016_adult',
+    'who2016_child',
+    'who2016_neonate',
 ])
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}

@@ -22,9 +22,9 @@ ADDITIONAL_HEADERS = [
 YES_NO_QUESTIONS = {
     'adult_5_1': 'Id10077',
     'adult_5_3': 'Id10099',
-    'adult_5_4': 'Id100100',
+    'adult_5_4': 'Id10100',
     'child_4_47': 'Id10077',
-    'child_4_49': 'Id100100',
+    'child_4_49': 'Id10100',
 
     'adult_1_1a': 'Id10135',
     'adult_1_1c': 'Id10137',
@@ -108,6 +108,7 @@ YES_NO_QUESTIONS = {
     'child_1_18': 'Id10370',
 
     'child_2_4': 'Id10377',
+    'child_2_9': 'Id10384',
 
     'child_3_2': 'Id10370',
     'child_3_4': 'Id10111',
@@ -120,6 +121,8 @@ YES_NO_QUESTIONS = {
     'child_3_17': 'Id10159',
     'child_3_20': 'Id10166',
     'child_3_23': 'Id10172',
+    'child_3_25': 'Id10219',
+    'child_3_26': 'Id10147',
     'child_3_29': 'Id10284',
     'child_3_32': 'Id10286',
     'child_3_33': 'Id10281',
@@ -133,6 +136,7 @@ YES_NO_QUESTIONS = {
     'child_4_6': 'Id10181',
     'child_4_9': 'Id10185',
     'child_4_12': 'Id10153',
+    'child_4_11': 'Id10186',
     'child_4_14': 'Id10156',
     'child_4_16': 'Id10159',
     'child_4_18': 'Id10166',
@@ -142,11 +146,13 @@ YES_NO_QUESTIONS = {
     'child_4_28': 'Id10208',
     'child_4_29': 'Id10278',
     'child_4_30': 'Id10233',
+    'child_4_36': 'Id10249',
     'child_4_38': 'Id10238',
     'child_4_39': 'Id10267',
     'child_4_40': 'Id10200',
     'child_4_41': 'Id10268',
     'child_4_42': 'Id10256',
+    'child_4_43': 'Id10245',
     'child_4_44': 'Id10241',
     'child_4_46': 'Id10239',
 
