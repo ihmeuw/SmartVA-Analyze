@@ -25,22 +25,22 @@ MAPPING = [
         'symptom': 's52',
         'Id10384': 'yes'
     },
-    {
-        'sid': 'Mother received vaccinations during pregnancy',
-        'symptom': 's54',
-        'Id10391': 'yes'
-    },
-    # No corresponding data for s59: Received injection during labor before delivery
-    # {
+    # {    # Not on short form
+    #     'sid': 'Mother received vaccinations during pregnancy',
+    #     'symptom': 's54',
+    #     'Id10391': 'yes'
+    # },
+    # No corresponding data
+    # {    # Not on short form
     #     'sid': 'Received injection during labor before delivery',
     #     'symptom': 's59',
     #     'child_2_18': 'yes'
     # },
-    {
-        'sid': 'Bruises when born',
-        'symptom': 's60',
-        'Id10115': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Bruises when born',
+    #     'symptom': 's60',
+    #     'Id10115': 'yes'
+    # },
     {
         'sid': 'Any abnormalities',
         'symptom': 's61',
@@ -81,11 +81,11 @@ MAPPING = [
         'symptom': 's73',
         'Id10272': 'yes'
     },
-    {
-        'sid': 'Stopped being able to suckle',
-        'symptom': 's74',
-        'Id10273': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Stopped being able to suckle',
+    #     'symptom': 's74',
+    #     'Id10273': 'yes'
+    # },
     # No corresponding data for s77: Able to open mouth when stopped suckling
     # {
     #     'sid': 'Able to open mouth when stopped suckling',
@@ -103,7 +103,7 @@ MAPPING = [
         'Id10166': 'yes'
     },
     # No corresponding data for s85: Grunting
-    #see Id10173_nc multi-select
+    # see Id10173_nc multi-select
     # {
     #     'sid': 'Grunting',
     #     'symptom': 's85',
@@ -134,13 +134,13 @@ MAPPING = [
         'symptom': 's94',
         'Id10281': 'yes'
     },
-    {
-        'sid': 'Bulging fontanelle',
-        'symptom': 's95',
-        'Id10278': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Bulging fontanelle',
+    #     'symptom': 's95',
+    #     'Id10278': 'yes'
+    # },
     # No corresponding data for s96: Pus from umbilical cord stump
-    #Id10287 is one question while two questions in SmartVA(child_3_35 and child_3_36)
+    # Id10287 is one question while two questions in SmartVA(child_3_35 and child_3_36)
     # {
     #     'sid': 'Pus from umbilical cord stump',
     #     'symptom': 's96',
@@ -164,46 +164,46 @@ MAPPING = [
     #     'symptom': 's99',
     #     'child_3_38': 'yes'
     # },
-    {
-        'sid': 'Ulcers',
-        'symptom': 's100',
-        'Id10288': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Ulcers',
+    #     'symptom': 's100',
+    #     'Id10288': 'yes'
+    # },
     {
         'sid': 'Skin redness or swelling',
         'symptom': 's101',
         'Id10240': 'yes'
     },
-    {
-        'sid': 'Skin turned black',
-        'symptom': 's102',
-        'Id10239': 'yes'
-    },
-    {
-        'sid': 'Bled',
-        'symptom': 's103',
-        'Id10241': 'yes'
-    },
-    {
-        'sid': 'Diarrhea',
-        'symptom': 's104',
-        'Id10281': 'yes'
-    },
-    {
-        'sid': 'Vomitting',
-        'symptom': 's106',
-        'Id10188': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Skin turned black',
+    #     'symptom': 's102',
+    #     'Id10239': 'yes'
+    # },
+    # {    # Not on short form
+    #     'sid': 'Bled',
+    #     'symptom': 's103',
+    #     'Id10241': 'yes'
+    # },
+    # {    # Not on short form
+    #     'sid': 'Diarrhea',
+    #     'symptom': 's104',
+    #     'Id10281': 'yes'
+    # },
+    # {    # Not on short form
+    #     'sid': 'Vomitting',
+    #     'symptom': 's106',
+    #     'Id10188': 'yes'
+    # },
     {
         'sid': 'Yellow skin',
         'symptom': 's107',
         'Id10289': 'yes'
     },
-    {
-        'sid': 'Yellow eyes',
-        'symptom': 's108',
-        'Id10265': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Yellow eyes',
+    #     'symptom': 's108',
+    #     'Id10265': 'yes'
+    # },
     {
         'sid': 'Appear healthy and die suddenly',
         'symptom': 's109',
