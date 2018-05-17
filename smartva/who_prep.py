@@ -64,6 +64,8 @@ class WHOPrep(DataPrep):
             self.map_units_from_values(row)
             self.convert_durations(row)
             self.bin_durations_into_categories(row)
+            self.map_adult_chest_pain_duration(row)
+            self.map_redundant_child_age_data(row)
 
         status_notifier.update({'sub_progress': None})
 
@@ -202,8 +204,17 @@ class WHOPrep(DataPrep):
             row[dest] = value
 
     def map_units_from_values(self, row):
-        for dest, (src, unit) in self.data_module.UNIT_IF_AMOUNT.items():
-            row[dest] = unit if safe_int(row.get(src)) > 0 else ''
+        for dest, unit_data in self.data_module.UNIT_IF_AMOUNT.items():
+            try:
+                for src, unit in unit_data.items():
+                    if safe_int(row.get(src)) > 0:
+                        row[dest] = unit
+                        break
+                else:
+                    row[dest] = ''
+            except AttributeError:  # not a dict
+                src, unit = unit_data
+                row[dest] = unit if safe_int(row.get(src)) > 0 else ''
 
     def convert_durations(self, row):
         for x in self.data_module.DURATION_CONVERSIONS.items():
@@ -232,3 +243,100 @@ class WHOPrep(DataPrep):
                     break
             else:
                 row[dest] = ''
+
+    def map_adult_chest_pain_duration(self, row):
+        """Custom mapping for adult_2_44: chest pain duration."""
+        key = 'adult_2_44'
+
+        try:
+            dur_in_minutes = int(row['Id10178'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            if 0 <= dur_in_minutes < 30:
+                row[key] = 1
+                return
+            elif 30 <= dur_in_minutes < 24 * 60:
+                row[key] = 2
+                return
+
+        try:
+            dur_in_hours = int(row['Id10179'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            if 0 < dur_in_hours < 24:
+                row[key] = 2
+                return
+            elif dur_in_hours >= 24:
+                row[key] = 3
+                return
+
+        try:
+            dur_in_days = int(row['Id10179_1'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            if dur_in_days > 0:
+                row[key] = 3
+                return
+
+        row[key] = ''
+
+    def map_redundant_child_age_data(self, row):
+        age_group_key = 'child_1_26'
+        unit_key = 'child_1_25'
+        age_days = row.get('agedays')  # must be called after calculate_age
+        if age_days == '' or age_days is None:
+            age_group = row['gen_5_4d']
+            row[age_group_key] = age_group if age_group in (1, 2) else ''
+            row[unit_key] = ''
+            return
+        else:
+            try:
+                age_days = int(age_days)
+            except (ValueError, TypeError):
+                return
+
+        if age_days <= 28:
+            row[age_group_key] = 1
+        elif 28 < age_days < 12 * 365:
+            row[age_group_key] = 2
+        else:
+            row[age_group_key] = ''
+
+        if age_days <= 30:
+            row[unit_key] = 4
+            row['{}a'.format(unit_key)] = age_days
+        elif age_days < 365:
+            row[unit_key] = 2
+            row['{}b'.format(unit_key)] = int(age_days / 30.4)
+        elif age_days >= 365:
+            row[unit_key] = 1
+            row['{}c'.format(unit_key)] = int(age_days / 365)
+
+    def map_child_illness_duration(self, row):
+        key = 'child_1_21'
+        try:
+            row['{}a'.format(key)] = int(row['Id10120_1'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            row[key] = 4
+            return
+
+        try:
+            row['{}b'.format(key)] = int(row['Id10121'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            row[key] = 2
+            return
+
+        try:
+            row['{}b'.format(key)] = int(row['Id10122']) * 12
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            row[key] = 2
+            return
