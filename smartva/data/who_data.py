@@ -14,9 +14,18 @@ ADDITIONAL_HEADERS = [
     'adult_2_83b',   # Convulsion value in hours
     'child_1_5b',
     'child_1_19a',   # stillbirth abnormalities, other specify
+    'child_1_20a',   # no age when illness started in day
     'child_2_8a',    # birth water color, other specify
     'child_2_15a',   # birth attendant, other specify
     'child_3_3a',    # neonate abnormallities, other specify
+
+    # Custom mappings
+    'adult_2_44',
+    'child_1_25',
+    'child_1_25a',
+    'child_1_25b',
+    'child_1_25c',
+    'child_1_26',
 ]
 
 YES_NO_QUESTIONS = {
@@ -210,6 +219,8 @@ RECODE_QUESTIONS = {
         'DK': 9,
         'Ref': 8,
     },
+    # Note reverse yes/no mapping for child_1_11
+    ('child_1_11', 'Id10114'): {'yes': 0, 'no': 1, 'dk': 8, 'ref': 8},
     ('child_2_8', 'Id10385'): {'green_or_brown': 1, 'clear': 2, 'other': 3,
                                'DK': 9, 'ref': 8},
     ('child_2_15', 'Id10339'): {
@@ -391,6 +402,7 @@ UNIT_IF_AMOUNT = {
     'adult_3_16': ('Id10332', 5),
     'adult_4_4': ('Id10415', 1),
     'child_1_8': ('Id10366', 1),
+    'child_1_20': {'Id10352_a': 2, 'Id10352_b': 1},
     'child_2_10': ('Id10382', 5),
     'child_3_19': ('Id10161_0', 4),
     'child_3_22': ('Id10167_a', 4),
@@ -433,14 +445,3 @@ BIN_DURATIONS = {
     ('child_3_8', 'Id10106'): {(0, 5): 1, (6, 30): 2, (30, float('inf')): 3},
     ('child_4_27', 'Id10216'): {(0, 5): 1, (6, 23): 2, (24, float('inf')): 3},
 }
-
-
-# TODO: Map these
-UNMAPPED = [
-    'adult_2_44',  # mulitple durations to categorical
-    'child_1_11',
-    'child_1_20', 'child_1_20a', 'child_1_20b', 'child_1_20c',
-    'child_1_21', 'child_1_21a', 'child_1_21b',
-    'child_1_25', 'child_1_25a', 'child_1_25b', 'child_1_25c',
-    'child_1_26',
-]
