@@ -34,14 +34,12 @@ class WHOPrep(DataPrep):
         headers.update(self.data_module.YES_NO_QUESTIONS)
         headers.update([h for h, _ in self.data_module.RECODE_QUESTIONS])
         headers.update(self.data_module.RENAME_QUESTIONS)
-        headers.update(self.data_module.REVERSE_ONE_HOT)
         headers.update(self.data_module.REVERSE_ONE_HOT_MULTISELECT)
         headers.update([h for h, _ in self.data_module.RECODE_MULTISELECT])
         headers.update(self.data_module.ONE_HOT_FROM_MULTISELECT)
         headers.update(self.data_module.UNIT_IF_AMOUNT)
         for unit_col, value_col, _ in self.data_module.DURATION_CONVERSIONS:
             headers.update([unit_col, value_col])
-        headers.update([h for h, _ in self.data_module.BIN_DURATIONS])
 
         _, matrix = DataPrep.read_input_file(self.input_file_path())
 
@@ -57,14 +55,17 @@ class WHOPrep(DataPrep):
             self.recode_yes_no_questions(row)
             self.recode_categoricals(row)
             self.rename_questions(row)
-            self.reverse_one_hot(row)
             self.reverse_one_hot_multiselect(row)
             self.recode_multiselects(row)
             self.encode_one_hot_from_multiselect(row)
             self.map_units_from_values(row)
             self.convert_durations(row)
-            self.bin_durations_into_categories(row)
             self.map_adult_chest_pain_duration(row)
+            self.map_child_illness_duration(row)
+            self.map_neonate_first_cry(row)
+            self.map_child_unconsciousness_start(row)
+            self.map_neonate_delivery_type(row)
+            self.map_child_birth_size(row)
             self.map_redundant_child_age_data(row)
 
         status_notifier.update({'sub_progress': None})
@@ -172,15 +173,6 @@ class WHOPrep(DataPrep):
         for dest, src in self.data_module.RENAME_QUESTIONS.items():
             row[dest] = row.get(src, '')
 
-    def reverse_one_hot(self, row):
-        for dest, mapping in self.data_module.REVERSE_ONE_HOT.items():
-            for src, value in mapping.items():
-                if row.get(src) == 'yes':
-                    row[dest] = value
-                    break
-            else:
-                row[dest] = ''
-
     def reverse_one_hot_multiselect(self, row):
         """Recode a series of dummy variables into a multiselect"""
         for dest, mapping in self.data_module.REVERSE_ONE_HOT_MULTISELECT.items():
@@ -228,21 +220,6 @@ class WHOPrep(DataPrep):
             else:
                 row[unit_col] = ''
                 row[value_col] = ''
-
-    def bin_durations_into_categories(self, row):
-        for (dest, src), mapping in self.data_module.BIN_DURATIONS.items():
-            value = row.get(src)
-            if not value and value != 0:
-                row[dest] = ''
-                continue
-
-            value = safe_int(value)
-            for (start, stop), encoded in mapping.items():
-                if start <= value <= stop:
-                    row[dest] = encoded
-                    break
-            else:
-                row[dest] = ''
 
     def map_adult_chest_pain_duration(self, row):
         """Custom mapping for adult_2_44: chest pain duration."""
@@ -334,9 +311,77 @@ class WHOPrep(DataPrep):
             return
 
         try:
-            row['{}b'.format(key)] = int(row['Id10122']) * 12
+            row['{}c'.format(key)] = int(row['Id10122']) * 12
         except (KeyError, TypeError, ValueError):
             pass
         else:
             row[key] = 2
             return
+
+    def map_neonate_first_cry(self, row):
+        key = 'child_3_8'
+        try:
+            dur_in_minutes = int(row['Id10106'])
+        except (KeyError, TypeError, ValueError):
+            row[key] = 4 if row.get('Id10105') == 'yes' else ''
+        else:
+            if 0 <= dur_in_minutes <= 5:
+                row[key] = 1
+            elif 6 <= dur_in_minutes <= 30:
+                row[key] = 2
+            elif dur_in_minutes > 30:
+                row[key] = 3
+            else:
+                row[key] = ''
+
+    def map_child_unconsciousness_start(self, row):
+        key = 'child_4_27'
+        who_key = 'Id10216'
+
+        try:
+            dur_in_hours = int(row['{}_a'.format(who_key)])
+        except (KeyError, TypeError, ValueError):
+            dur_in_hours = None
+
+        dur_in_days = safe_int(row.get('{}_b'.format(who_key)))
+
+        if dur_in_hours is None:
+            row[key] = 3 if dur_in_days >= 1 else ''
+            return
+
+        if dur_in_hours >= 24:
+            row[key] = 3
+        elif 0 <= dur_in_hours <= 5:
+            row[key] = 1
+        elif 6 <= dur_in_hours <= 23:
+            row[key] = 2
+        else:
+            row[key] = ''
+
+    def map_neonate_delivery_type(self, row):
+        key = 'child_2_17'
+        if row.get('Id10342') == 'yes':
+            row[key] = 2
+        elif row.get('Id10343') == 'yes':
+            row[key] = 1
+        elif row.get('Id10344') == 'yes':
+            row[key] = 4
+        elif (row.get('Id10342') == 'dk' and row.get('Id0343') == 'dk' and
+              row.get('Id10344') in ('no', 'dk')):
+            row[key] = 3
+        else:
+            row[key] = ''
+
+    def map_child_birth_size(self, row):
+        key = 'child_1_7'
+        if row.get('Id10364') == 'yes':
+            row[key] = 1
+        elif row.get('Id10363') == 'yes':
+            row[key] = 2
+        elif row.get('Id10365') == 'yes':
+            row[key] = 4
+        elif all([row.get(k) == 'no'
+                  for k in ('Id10363', 'Id10364', 'Id10365')]):
+            row[key] = 3
+        else:
+            row[key] = ''

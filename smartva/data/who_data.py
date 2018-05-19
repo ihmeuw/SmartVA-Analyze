@@ -21,11 +21,19 @@ ADDITIONAL_HEADERS = [
 
     # Custom mappings
     'adult_2_44',
+    'child_1_7',
     'child_1_25',
+    'child_1_21',
+    'child_1_21a',
+    'child_1_21b',
+    'child_1_21c',
     'child_1_25a',
     'child_1_25b',
     'child_1_25c',
     'child_1_26',
+    'child_2_17',
+    'child_3_8',
+    'child_4_27',
 ]
 
 YES_NO_QUESTIONS = {
@@ -85,7 +93,6 @@ YES_NO_QUESTIONS = {
     'adult_3_1': 'Id10294',
     'adult_3_2': 'Id10295',
     'adult_3_3a': 'Id10296',
-    'adult_3_3b': 'Id10299',
     'adult_3_3': 'Id10299',
     'adult_3_4': 'Id10300',
     'adult_3_5': 'Id10297',
@@ -105,8 +112,8 @@ YES_NO_QUESTIONS = {
 
     'adult_6_1': 'Id10432',
     'adult_6_3a': 'Id10435',
-    'adult_6_4': 'Id10497',
-    'adult_6_5': 'Id10498',
+    'adult_6_4': 'Id10437',
+    'adult_6_5': 'Id10438',
 
     'child_1_3': 'Id10356',
     'child_1_12': 'Id10104',
@@ -117,7 +124,6 @@ YES_NO_QUESTIONS = {
     'child_1_18': 'Id10370',
 
     'child_2_4': 'Id10377',
-    'child_2_9': 'Id10384',
 
     'child_3_2': 'Id10370',
     'child_3_4': 'Id10111',
@@ -130,8 +136,6 @@ YES_NO_QUESTIONS = {
     'child_3_17': 'Id10159',
     'child_3_20': 'Id10166',
     'child_3_23': 'Id10172',
-    'child_3_25': 'Id10219',
-    'child_3_26': 'Id10147',
     'child_3_29': 'Id10284',
     'child_3_32': 'Id10286',
     'child_3_33': 'Id10281',
@@ -145,7 +149,6 @@ YES_NO_QUESTIONS = {
     'child_4_6': 'Id10181',
     'child_4_9': 'Id10185',
     'child_4_12': 'Id10153',
-    'child_4_11': 'Id10186',
     'child_4_14': 'Id10156',
     'child_4_16': 'Id10159',
     'child_4_18': 'Id10166',
@@ -155,13 +158,11 @@ YES_NO_QUESTIONS = {
     'child_4_28': 'Id10208',
     'child_4_29': 'Id10278',
     'child_4_30': 'Id10233',
-    'child_4_36': 'Id10249',
     'child_4_38': 'Id10238',
     'child_4_39': 'Id10267',
     'child_4_40': 'Id10200',
     'child_4_41': 'Id10268',
     'child_4_42': 'Id10256',
-    'child_4_43': 'Id10245',
     'child_4_44': 'Id10241',
     'child_4_46': 'Id10239',
 
@@ -182,24 +183,25 @@ Schema
 (PHMRC_COL, WHO_COL) {WHO_VALUE: PHMRC_VALUE}
 """
 RECODE_QUESTIONS = {
-    ('gen_5_2', 'Id10019'): {'male': 1, 'female': 2, 'undetermined': 9},
-    ('adult_2_4', 'Id10147'): {'mild': 1, 'moderate': 2, 'severe': 3},
+    ('gen_5_2', 'Id10019'): {'male': 1, 'female': 2, 'undetermined': 8},
+    ('adult_2_4', 'Id10150'): {'mild': 1, 'moderate': 2, 'severe': 3,
+                               'DK': 9, 'Ref': 8},
     ('adult_2_5', 'Id10151'): {'continuous': 1, 'on_and_off': 2, 'nightly': 3,
                                'DK': 9, 'Ref': 8},
     ('adult_2_9', 'Id10235'): {'face': 1, 'trunk': 2, 'extremities': 3,
-                               'everywhere': 4},
-    ('adult_2_22', 'Id10266_unit'): {'day': 4, 'months': 2, 'DK': 9, 'ref': 8},
-    ('adult_2_26', 'Id10248_unit'): {'day': 4, 'months': 2, 'DK': 9, 'ref': 8},
-    ('adult_2_58', 'Id10262_unit'): {'day': 4, 'months': 2, 'DK': 9, 'ref': 8},
-    ('adult_2_62', 'Id10196_unit'): {'hour': 5, 'day': 4, 'months': 2, 'DK': 9,
+                               'everywhere': 4, 'DK': 9, 'Ref': 8},
+    ('adult_2_22', 'Id10266_units'): {'days': 4, 'months': 2, 'DK': 9, 'ref': 8},
+    ('adult_2_26', 'Id10248_units'): {'days': 4, 'months': 2, 'DK': 9, 'ref': 8},
+    ('adult_2_58', 'Id10262_units'): {'days': 4, 'months': 2, 'DK': 9, 'ref': 8},
+    ('adult_2_62', 'id10196_unit'): {'hours': 5, 'days': 4, 'months': 2, 'DK': 9,
                                      'ref': 8},
-    ('adult_2_65', 'Id10201_unit'): {'day': 4, 'months': 2, 'DK': 9, 'ref': 8},
+    ('adult_2_65', 'Id10201_unit'): {'days': 4, 'months': 2, 'DK': 9, 'ref': 8},
     ('adult_2_59', 'Id10263'): {'solids': 1, 'liquids': 2, 'both': 3, 'DK': 9,
-                                'ref': 8},
+                                'Ref': 8},
     ('adult_2_63', 'Id10199'): {'upper_abdomen': 1, 'lower_abdomen': 2,
-                                'DK': 9, 'ref': 8},
-    ('adult_2_66', 'Id10203'): {'rapidly': 1, 'slowly': 2, 'DK': 9, 'ref': 8},
-    ('adult_2_68', 'Id10205_unit'): {'day': 4, 'months': 2, 'DK': 9, 'ref': 8},
+                                'upper_lower_abdomen': 9, 'DK': 9, 'Ref': 8},
+    ('adult_2_66', 'Id10203'): {'rapidly': 1, 'slowly': 2, 'DK': 9, 'Ref': 8},
+    ('adult_2_68', 'Id10205_unit'): {'days': 4, 'months': 2, 'DK': 9, 'ref': 8},
     ('adult_4_2', 'Id10414'): {
         'cigarettes': 1,
         'pipe': 2,
@@ -219,10 +221,9 @@ RECODE_QUESTIONS = {
         'DK': 9,
         'Ref': 8,
     },
-    # Note reverse yes/no mapping for child_1_11
-    ('child_1_11', 'Id10114'): {'yes': 0, 'no': 1, 'dk': 8, 'ref': 8},
+    ('child_1_11', 'Id10114'): {'yes': 2, 'no': 1, 'dk': 9, 'ref': 8},
     ('child_2_8', 'Id10385'): {'green_or_brown': 1, 'clear': 2, 'other': 3,
-                               'DK': 9, 'ref': 8},
+                               'dk': 9, 'ref': 8},
     ('child_2_15', 'Id10339'): {
         'Doctor': 1,
         'Midwife': 2,
@@ -245,7 +246,8 @@ RECODE_QUESTIONS = {
         'DK': 9,
         'ref': 8,
     },
-    ('child_4_4', 'Id10150'): {'mild': 1, 'moderate': 2, 'severe': 3},
+    ('child_4_4', 'Id10150'): {'mild': 1, 'moderate': 2, 'severe': 3,
+                               'DK': 9, 'Ref': 8},
 }
 
 RENAME_QUESTIONS = {
@@ -268,7 +270,7 @@ RENAME_QUESTIONS = {
     'adult_2_65b': 'Id10202',
     'adult_2_68a': 'Id10205_a',
     'adult_2_68b': 'Id10206',
-    'adult_2_83a': 'Id20221',
+    'adult_2_83a': 'Id10221',
     'adult_3_8a': 'Id10303',
     'adult_3_11a': 'Id10309',
     'adult_3_16a': 'Id10332',
@@ -283,18 +285,6 @@ RENAME_QUESTIONS = {
     'child_3_30a': 'Id10285',
     'child_4_7a': 'Id10183',
     'child_4_33a': 'Id10234',
-}
-
-"""Create select one categoricals from a series of questions codes as yes/no.
-
-Schema
-------
-PHMRC_COL: {PHMRC_VALUE: WHO_COL}
-"""
-REVERSE_ONE_HOT = {
-    # TODO: possible error due to skip logic if both small and very small
-    'child_1_7': {'Id10363': 1, 'Id10364': 2, 'Id10365': 4},
-    'child_2_17': {'Id10342': 2, 'Id10343': 1, 'Id10344': 4},
 }
 
 """Create multiselect questions from a series of questions codes as yes/no.
@@ -383,7 +373,7 @@ Schema
 PHMRC_COL: (WHO_COL, WHO_VALUE)
 """
 ONE_HOT_FROM_MULTISELECT = {
-    'child_4_23': ('Id10173', 'grunting')
+    'child_4_23': ('Id10173_nc', 'grunting')
 }
 
 """Fill in unit columns based on the presence of a numeric value.
@@ -397,8 +387,8 @@ greater than one.
 """
 UNIT_IF_AMOUNT = {
     'adult_2_83': ('Id10221', 6),
-    'adult_3_11': ('Id10303', 2),
-    'adult_3_8': ('Id10309', 3),
+    'adult_3_8': ('Id10303', 3),
+    'adult_3_11': ('Id10309', 2),
     'adult_3_16': ('Id10332', 5),
     'adult_4_4': ('Id10415', 1),
     'child_1_8': ('Id10366', 1),
@@ -406,9 +396,9 @@ UNIT_IF_AMOUNT = {
     'child_2_10': ('Id10382', 5),
     'child_3_19': ('Id10161_0', 4),
     'child_3_22': ('Id10167_a', 4),
-    'child_3_30a': ('Id10285', 4),
-    'child_4_7a': ('Id10183', 1),
-    'child_4_33a': ('Id10234', 4),
+    'child_3_30': ('Id10285', 4),
+    'child_4_7': ('Id10183', 1),
+    'child_4_33': ('Id10234', 4),
 }
 
 
@@ -425,23 +415,8 @@ of the WHO value columns.
 """
 DURATION_CONVERSIONS = {
     ('adult_2_15', 'adult_2_15a', 4): {'Id10232_a': 1, 'Id10232_b': 30},
-    ('child_1_5', 'child_1_5a', 4): {'Id10358': 1, 'Id10359': 30,
+    ('child_1_5', 'child_1_5a', 4): {'Id10358': 30, 'Id10359': 1,
                                      'Id10359_a': 7},
     ('child_4_2', 'child_4_2a', 1): {'Id10148_b': 1, 'Id10148_c': 30},
     ('child_4_13', 'child_4_13a', 1): {'Id10154_a': 1, 'Id10154_b': 30},
-}
-
-"""Convert a single duration column into a categorical.
-
-
-Schema
-------
-(PHMRC_COL, WHO_COL): {(INTERVAL_START, INTERVAL_END): ENCODED_VALUE}
-
-The PHMRC columns takes the value of encoded value if the duration in the WHO
-column is within the interval.
-"""
-BIN_DURATIONS = {
-    ('child_3_8', 'Id10106'): {(0, 5): 1, (6, 30): 2, (30, float('inf')): 3},
-    ('child_4_27', 'Id10216'): {(0, 5): 1, (6, 23): 2, (24, float('inf')): 3},
 }

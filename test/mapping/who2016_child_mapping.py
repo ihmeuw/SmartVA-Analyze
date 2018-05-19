@@ -35,11 +35,11 @@ MAPPING = [
         'symptom': 's118',
         'Id10185': 'yes'
     },
-    {
-        'sid': 'Blood in stool',
-        'symptom': 's120',
-        'Id10186': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Blood in stool',
+    #     'symptom': 's120',
+    #     'Id10186': 'yes'
+    # },
     {
         'sid': 'Cough',
         'symptom': 's121',
@@ -125,11 +125,11 @@ MAPPING = [
     #     'symptom': 's144',
     #     'child_4_35': 'yes'
     # },
-    {
-        'sid': 'Swollen legs',
-        'symptom': 's145',
-        'Id10249': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Swollen legs',
+    #     'symptom': 's145',
+    #     'Id10249': 'yes'
+    # },
     {
         'sid': 'Skin flake off in patches',
         'symptom': 's147',
@@ -155,11 +155,11 @@ MAPPING = [
         'symptom': 's151',
         'Id10256': 'yes'
     },
-    {
-        'sid': 'Whitish rash in mouth',
-        'symptom': 's152',
-        'Id10245': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Whitish rash in mouth',
+    #     'symptom': 's152',
+    #     'Id10245': 'yes'
+    # },
     {
         'sid': 'Bleeding',
         'symptom': 's153',

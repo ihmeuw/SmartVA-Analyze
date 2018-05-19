@@ -20,11 +20,11 @@ MAPPING = [
         'symptom': 's19',
         'Id10110': 'yes'
     },
-    {
-        'sid': 'Delivery liquor foul smelling',
-        'symptom': 's52',
-        'Id10384': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Delivery liquor foul smelling',
+    #     'symptom': 's52',
+    #     'Id10384': 'yes'
+    # },
     # {    # Not on short form
     #     'sid': 'Mother received vaccinations during pregnancy',
     #     'symptom': 's54',
@@ -109,16 +109,16 @@ MAPPING = [
     #     'symptom': 's85',
     #     'child_3_24': 'yes'
     # },
-    {
-        'sid': 'Convulsions',
-        'symptom': 's86',
-        'Id10219': 'yes'
-    },
-    {
-        'sid': 'Fever',
-        'symptom': 's87',
-        'Id10147': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Convulsions',
+    #     'symptom': 's86',
+    #     'Id10219': 'yes'
+    # },
+    # {    # Not on short form
+    #     'sid': 'Fever',
+    #     'symptom': 's87',
+    #     'Id10147': 'yes'
+    # },
     {
         'sid': 'Became cold to touch',
         'symptom': 's90',

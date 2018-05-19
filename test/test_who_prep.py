@@ -92,20 +92,6 @@ def test_rename_questions(prep, row, expected):
 
 @pytest.mark.parametrize('row, expected', [
     ({}, {'dest_a': '', 'dest_b': ''}),
-    ({'xxx': 'foo', 'src_a1': 'yes', 'src_b1': 'yes'},
-     {'xxx': 'foo', 'src_a1': 'yes', 'src_b1': 'yes', 'dest_a': 1, 'dest_b': 4}),
-])
-def test_reverse_one_hot(prep, row, expected):
-    prep.data_module.REVERSE_ONE_HOT = {
-        'dest_a': {'src_a1': 1, 'src_a2': 2, 'src_a3': 3},
-        'dest_b': {'src_b1': 4, 'src_b2': 12, 'src_b3': 7},
-    }
-    prep.reverse_one_hot(row)
-    assert row == expected
-
-
-@pytest.mark.parametrize('row, expected', [
-    ({}, {'dest_a': '', 'dest_b': ''}),
     ({'xxx': 'foo', 'src_a1': 'yes', 'src_a3': 'no', 'src_b1': 'no',
       'src_b2': 'yes', 'src_b3': 'yes'},
      {'xxx': 'foo', 'src_a1': 'yes', 'src_a3': 'no', 'src_b1': 'no',
@@ -184,18 +170,4 @@ def test_convert_durations(prep, row, expected):
         ('dest_b_unit', 'dest_b_value', 1): {'src_b1': 14, 'src_b2': 7},
     }
     prep.convert_durations(row)
-    assert row == expected
-
-
-@pytest.mark.parametrize('row, expected', [
-    ({}, {'dest_a': '', 'dest_b': ''}),
-    ({'xxx': 'foo', 'src_a': 0, 'src_b': 12},
-     {'xxx': 'foo', 'src_a': 0, 'src_b': 12, 'dest_a': 1, 'dest_b': 3}),
-])
-def test_bin_durations_into_categories(prep, row, expected):
-    prep.data_module.BIN_DURATIONS = {
-        ('dest_a', 'src_a'): {(0, 5): 1, (6, 50): 2, (51, float('inf')): 3},
-        ('dest_b', 'src_b'): {(0, 2): 1, (2, 10): 2, (11, float('inf')): 3},
-    }
-    prep.bin_durations_into_categories(row)
     assert row == expected
