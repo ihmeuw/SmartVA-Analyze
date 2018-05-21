@@ -5,7 +5,7 @@ MAPPING = [
         'Id10135': 'yes',
     },
     # No corresponding data for s2: history of arthritis
-    # {
+    # {  # Not on short form
     #     'sid': 'History of arthritis',
     #     'symptom': 's2',
     #     'adult_1_1b': 'yes'
@@ -20,16 +20,16 @@ MAPPING = [
         'symptom': 's4',
         'Id10138': 'yes',
     },
-    {
-        'sid': 'History of dementia',
-        'symptom': 's5',
-        'Id10139': 'yes',
-    },
-    {
-        'sid': 'History of depression',
-        'symptom': 's6',
-        'Id10140': 'yes',
-    },
+    # {  # Not on short form
+    #     'sid': 'History of dementia',
+    #     'symptom': 's5',
+    #     'Id10139': 'yes',
+    # },
+    # {   # Not on short form
+    #     'sid': 'History of depression',
+    #     'symptom': 's6',
+    #     'Id10140': 'yes',
+    # },
     {
         'sid': 'History of diabetes',
         'symptom': 's7',
@@ -45,13 +45,13 @@ MAPPING = [
         'symptom': 's9',
         'Id10133': 'yes',
     },
-    {
-        'sid': 'History of hypertension',
-        'symptom': 's10',
-        'Id10132': 'yes',
-    },
+    # {   # Not on short form
+    #     'sid': 'History of hypertension',
+    #     'symptom': 's10',
+    #     'Id10132': 'yes',
+    # },
     # No corresponding data for s11: history of obesity
-    # {
+    # {   # Not on short form
     #     'sid': 'History of obesity',
     #     'symptom': 's11',
     #     'adult_1_1k': 'yes',
@@ -77,7 +77,7 @@ MAPPING = [
         'Id10147': 'yes'
     },
     # No corresponding data for s20: fever with sweating
-    # {
+    # {    # Not on the short form
     #      'sid': 'Fever with sweating',
     #      'symptom': 's20',
     #      'adult_2_6': 'yes',
@@ -114,37 +114,37 @@ MAPPING = [
         'Id10231': 'yes',
     },
     # No corresponding data for s33: Pins and needles in feet
-    # {
+    # {    # Not on the short form
     #     'sid': 'Pins and needles in feet',
     #     'symptom': 's33',
     #     'adult_2_16': 'yes',
     # },
     # No corresponding data for s34: Blue lips
-    # {
+    # {    # Not on the short form
     #     'sid': 'Blue lips',
     #     'symptom': 's34',
     #     'adult_2_17': 'yes',
     # },
-    {
-        'sid': 'Lost weight',
-        'symptom': 's35',
-        'Id10243': 'yes',
-    },
-    {
-        'sid': 'Pale',
-        'symptom': 's37',
-        'Id10268': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Lost weight',
+    #     'symptom': 's35',
+    #     'Id10243': 'yes',
+    # },
+    # {    # Not on the short form
+    #     'sid': 'Pale',
+    #     'symptom': 's37',
+    #     'Id10268': 'yes',
+    # },
     {
         'sid': 'Yellow eyes',
         'symptom': 's38',
         'Id10265': 'yes',
     },
-    {
-        'sid': 'Ankle swelling',
-        'symptom': 's40',
-        'Id10249': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Ankle swelling',
+    #     'symptom': 's40',
+    #     'Id10249': 'yes',
+    # },
     {
         'sid': 'Puffy face',
         'symptom': 's42',
@@ -190,24 +190,24 @@ MAPPING = [
         'symptom': 's53',
         'Id10159': 'yes',
     },
-    {
-        'sid': 'Fast breathing',
-        'symptom': 's58',
-        'Id10166': 'yes',
-    },
-    #for some reason 'wheezing' is an endorsement of this question
-    {
-        'sid': 'Wheeze',
-        'symptom': 's60',
-        'Id10173_a': 'wheezing',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Fast breathing',
+    #     'symptom': 's58',
+    #     'Id10166': 'yes',
+    # },
+    # for some reason 'wheezing' is an endorsement of this question
+    # {    # Not on the short form
+    #     'sid': 'Wheeze',
+    #     'symptom': 's60',
+    #     'Id10173_a': 'wheezing',
+    # },
     {
         'sid': 'Chest pain',
         'symptom': 's61',
         'Id10174': 'yes',
     },
     # No corresponding data for s63: pain during physical activity
-    # {
+    # {    # Not on the short form
     #     'sid': 'Pain during physical activity',
     #     'symptom': 's63',
     #     'adult_2_45': 'yes',
@@ -267,7 +267,7 @@ MAPPING = [
     {
         'sid': 'Belly pain',
         'symptom': 's80',
-        'adult_2_61': 'Id10194',
+        'Id10194': 'yes',
     },
     {
         'sid': 'Protruding belly',
@@ -279,11 +279,11 @@ MAPPING = [
         'symptom': 's87',
         'Id10204': 'yes',
     },
-    {
-        'sid': 'Headache',
-        'symptom': 's89',
-        'Id10207': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Headache',
+    #     'symptom': 's89',
+    #     'Id10207': 'yes',
+    # },
     {
         'sid': 'Stiff neck',
         'symptom': 's92',
@@ -297,15 +297,15 @@ MAPPING = [
     {
         'sid': 'Unconscious until death',
         'symptom': 's97',
-        'Id10215': 'yes',
+        'Id10218': 'yes',
     },
-    {
-        'sid': 'Confusion',
-        'symptom': 's98',
-        'Id10212': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Confusion',
+    #     'symptom': 's98',
+    #     'Id10212': 'yes',
+    # },
     # No corresponding data for s101: Memory loss
-    # {
+    # {    # Not on the short form
     #     'sid': 'Memory loss',
     #     'symptom': 's101',
     #     'adult_2_81': 'yes',
@@ -405,20 +405,20 @@ MAPPING = [
         'symptom': 's136',
         'Id10329': 'yes',
     },
-    {
-        'sid': 'Bad smelling vaginal discharge',
-        'symptom': 's137',
-        'Id10398': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Bad smelling vaginal discharge',
+    #     'symptom': 's137',
+    #     'Id10398': 'yes',
+    # },
     {
         'sid': 'Use tobacco',
         'symptom': 's138',
         'Id10412': 'yes',
     },
-    {
-        'sid': 'Drink alcohol',
-        'symptom': 's149',
-        'Id10411': 'yes',
-    },
+    # {    # Not on the short form
+    #     'sid': 'Drink alcohol',
+    #     'symptom': 's149',
+    #     'Id10411': 'yes',
+    # },
 ]
 
