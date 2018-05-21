@@ -20,11 +20,11 @@ MAPPING = [
         'symptom': 's19',
         'Id10110': 'yes'
     },
-    {
-        'sid': 'Fever continue until death',
-        'symptom': 's112',
-        'Id10149': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Fever continue until death',
+    #     'symptom': 's112',
+    #     'Id10149': 'yes'
+    # },
     {
         'sid': 'Diarrhea',
         'symptom': 's115',
@@ -35,11 +35,11 @@ MAPPING = [
         'symptom': 's118',
         'Id10185': 'yes'
     },
-    {
-        'sid': 'Blood in stool',
-        'symptom': 's120',
-        'Id10186': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Blood in stool',
+    #     'symptom': 's120',
+    #     'Id10186': 'yes'
+    # },
     {
         'sid': 'Cough',
         'symptom': 's121',
@@ -51,7 +51,7 @@ MAPPING = [
         'Id10156': 'yes'
     },
     # No corresponding data for s124: Vomit after cough
-    # {
+    # {    # Not on short form
     #     'sid': 'Vomit after cough',
     #     'symptom': 's124',
     #     'child_4_15': 'yes'
@@ -71,7 +71,7 @@ MAPPING = [
         'symptom': 's129',
         'Id10172': 'yes'
     },
-    #See Id10173_nc for multi-select
+    # See Id10173_nc for multi-select
     # {
     #     'sid': 'Stridor',
     #     'symptom': 's130',
@@ -113,7 +113,7 @@ MAPPING = [
         'Id10233': 'yes'
     },
     # No corresponding data for s143: Rash had blisters
-    #Could be Id10236?
+    # Could be Id10236?
     # {
     #     'sid': 'Rash had blisters',
     #     'symptom': 's143',
@@ -125,11 +125,11 @@ MAPPING = [
     #     'symptom': 's144',
     #     'child_4_35': 'yes'
     # },
-    {
-        'sid': 'Swollen legs',
-        'symptom': 's145',
-        'Id10249': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Swollen legs',
+    #     'symptom': 's145',
+    #     'Id10249': 'yes'
+    # },
     {
         'sid': 'Skin flake off in patches',
         'symptom': 's147',
@@ -155,11 +155,11 @@ MAPPING = [
         'symptom': 's151',
         'Id10256': 'yes'
     },
-    {
-        'sid': 'Whitish rash in mouth',
-        'symptom': 's152',
-        'Id10245': 'yes'
-    },
+    # {    # Not on short form
+    #     'sid': 'Whitish rash in mouth',
+    #     'symptom': 's152',
+    #     'Id10245': 'yes'
+    # },
     {
         'sid': 'Bleeding',
         'symptom': 's153',

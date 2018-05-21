@@ -45,8 +45,9 @@ def make_valid(row):
         # We are using the more strict `is` test to verify correctness
         row['endorsed'] = bool(row['endorsed'])
 
-    if 'sid' not in row or 'symptom' not in row:
-        raise KeyError('Rows must contain "sid", "symptom" and "endorsed"')
+    if 'sid' not in row or 'symptom' not in row or 'module' not in row:
+        raise KeyError('Rows must contain "sid", "symptom", "module" and '
+                       '"endorsed"')
 
     return row
 
@@ -69,7 +70,19 @@ def make_valid_who2016(row):
 
     row['Id10013'] = 'yes'   # All rows need valid consent
 
+    # Ensure that there is enough data to classify each row into a specific
+    # module. Otherwise the rows are filtered out
+    row['is{}'.format(row['module'].title())] = 1
+
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    for i in range(10000, 10050):
+        col = 'Id{}'.format(i)
+        if col not in row:
+            row[col] = ''
+
     return make_valid(row)
+
 
 @pytest.fixture(scope='module')
 def phmrc_adult():
@@ -127,10 +140,40 @@ def phmrc_gated():
 
 
 @pytest.fixture(scope='module')
+def who_ages():
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    who_cols = {'Id{}'.format(i): '' for i in range(10000, 10050)}
+    from .who_age_mapping import MAPPING
+    for row in MAPPING:
+        make_valid(row)
+        row.update(who_cols)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
 def who2016_adult():
     from .who2016_adult_mapping import MAPPING
     for row in MAPPING:
         row['module'] = 'adult'
+        make_valid_who2016(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2016_child():
+    from .who2016_child_mapping import MAPPING
+    for row in MAPPING:
+        row['module'] = 'child'
+        make_valid_who2016(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2016_neonate():
+    from .who2016_neonate_mapping import MAPPING
+    for row in MAPPING:
+        row['module'] = 'neonate'
         make_valid_who2016(row)
     return MAPPING
 
@@ -143,7 +186,10 @@ def who2016_adult():
     'phmrc_checklist_words',
     'phmrc_ages',
     'phmrc_gated',
-    pytest.mark.xfail('who2016_adult', reason='Missing implementation'),
+    'who_ages',
+    'who2016_adult',
+    'who2016_child',
+    'who2016_neonate',
 ])
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}

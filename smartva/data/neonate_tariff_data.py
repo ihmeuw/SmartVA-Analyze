@@ -139,24 +139,26 @@ SHORT_FORM_DROP_LIST = [
     's101',
     's102',
     's103',
+    # FIXME: (child_3_42: 'diarrhea' not on short form)
     's105',
     's106',
     's108',
     's15',
-    's180',
-    's181',
+    's180',      # FIXME (child weight questions on short form)
+    's181',      # FIXME (child weight questions on short form)
     's23',
     's46991',
     's46992',
     's49991',
     's50991',
     's51991',
-    's53',
+    's53',        # FIXME (child_2_10: 'delivery duration' on short form)
+    # FIXME (child_2_11: 'mother vaccinations' not on short form)
     's56991',
-    's57991',
+    's57991',     # FIXME: (child_2_15: 'birth attendant' is on short form)
     's59',
     's60',
-    's7',
+    's7',         # FIXME: (child_1_3: 'mother alive' is on short form)
     's72',
     's74',
     's75',
