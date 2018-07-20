@@ -823,7 +823,7 @@ class TariffPrep(DataPrep):
             if va.cause34_name == 'Undetermined' and self.iso3:
                 age = self._calc_age_bin(va.age)
                 try:
-                    redistributed = undetermined_weights[age, va.sex]
+                    redistributed = undetermined_weights[age, sex]
                 except KeyError:
                     redistributed = undetermined_weights[99, 3]
                 cause_counts.update(redistributed)
