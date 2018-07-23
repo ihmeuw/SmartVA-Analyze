@@ -833,21 +833,44 @@ class TariffPrep(DataPrep):
                 cause_counts.update([va.cause34_name])
                 if sex in counts_by_sex:
                     counts_by_sex[sex].update([va.cause34_name])
-
         # The undetermined weights may have redistributed onto causes which
-        # the user specified as non-existent. These should be removed.
+        # the user specified as non-existent or biologically impossible. These should be removed.
         drop_causes = []
+        male_drops = []
+        female_drops = []
+
         if not self.hiv_region:
             drop_causes.extend(self.data_module.HIV_CAUSES)
         if not self.malaria_region:
             drop_causes.extend(self.data_module.MALARIA_CAUSES)
 
+        # remove sex specific drops
+        male_drops.extend(self.data_module.MALE_CAUSES)
+        female_drops.extend(self.data_module.FEMALE_CAUSES)
+        female_drops.extend(self.data_module.MATERNAL_CAUSES)
+
+        # drop hiv and malaria from all, male ,and female csmfs
         for cause in drop_causes:
             cause34 = self.data_module.CAUSE_REDUCTION[cause]
             gs_text34 = self.data_module.CAUSES[cause34]
             for d in (cause_counts, counts_by_sex[1], counts_by_sex[2]):
                 if gs_text34 in cause_counts:
                     d.pop(gs_text34)
+
+        # TODO: Optimize male and female drops
+        # drop the male causes from the female csmfs
+        for cause in male_drops:
+            cause34 = self.data_module.CAUSE_REDUCTION[cause]
+            gs_text34 = self.data_module.CAUSES[cause34]
+            if gs_text34 in counts_by_sex[2]:
+                counts_by_sex[2].pop(gs_text34)
+
+        # drop the female causes from the male csmfs
+        for cause in female_drops:
+            cause34 = self.data_module.CAUSE_REDUCTION[cause]
+            gs_text34 = self.data_module.CAUSES[cause34]
+            if gs_text34 in counts_by_sex[1]:
+                counts_by_sex[1].pop(gs_text34)
 
         # Convert counts to fractions
         total_counts = sum(cause_counts.values())
@@ -857,7 +880,7 @@ class TariffPrep(DataPrep):
                         for sex, counts in counts_by_sex.items()}
         csmf_by_sex = {sex: {k: v / totals[sex] for k, v in counts.items()}
                        for sex, counts in counts_by_sex.items()}
-
+        print(csmf_by_sex)
         return csmf, csmf_by_sex
 
     def write_predictions(self, user_data):
