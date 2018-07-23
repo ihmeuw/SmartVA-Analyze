@@ -849,7 +849,7 @@ class TariffPrep(DataPrep):
         female_drops.extend(self.data_module.FEMALE_CAUSES)
         female_drops.extend(self.data_module.MATERNAL_CAUSES)
 
-        # drop hiv and malaria from all, male ,and female csmfs
+        # drop hiv and malaria from all, male, and female csmfs
         for cause in drop_causes:
             cause34 = self.data_module.CAUSE_REDUCTION[cause]
             gs_text34 = self.data_module.CAUSES[cause34]
@@ -880,7 +880,6 @@ class TariffPrep(DataPrep):
                         for sex, counts in counts_by_sex.items()}
         csmf_by_sex = {sex: {k: v / totals[sex] for k, v in counts.items()}
                        for sex, counts in counts_by_sex.items()}
-        print(csmf_by_sex)
         return csmf, csmf_by_sex
 
     def write_predictions(self, user_data):
