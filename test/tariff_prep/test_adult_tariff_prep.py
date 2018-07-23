@@ -129,3 +129,28 @@ def test_injuries_have_no_positive_scores(tmpdir, prep):
 
     assert all([score <= 0 for cause, score in scored[0].scores.items()
                 if cause in injuries])
+# TODO: write test
+# def test_csmf_sex_undetermined_unknown_age(prep):
+#     male_drops = []
+#     female_drops = []
+#
+#     # remove sex specific drops
+#     male_drops.extend(prep.data_module.MALE_CAUSES)
+#     female_drops.extend(prep.data_module.FEMALE_CAUSES)
+#     female_drops.extend(prep.data_module.MATERNAL_CAUSES)
+#
+#     user_data_male = [Record('sid{}'.format(i), age=35, sex= 1, cause=cause)
+#                  for i in range(7) for cause in female_drops]
+#     user_data_female = [Record('sid{}'.format(i), age=35, sex= 2, cause=cause)
+#                  for i in range(7) for cause in male_drops]
+#
+#     user_data = user_data_male + user_data_female
+#
+#     undetermined_weights = prep._get_undetermined_matrix()
+#     csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
+#
+#     for sex, csmf_data in csmf_by_sex.items():
+#         if sex == 1:
+#             assert len(list(set(csmf_data.keys()) & set(female_drops))) == 0
+#         if sex == 2:
+#             assert len(list(set(csmf_data.keys()) & set(male_drops))) == 0
