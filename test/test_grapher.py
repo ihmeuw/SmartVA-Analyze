@@ -2,8 +2,8 @@ from collections import defaultdict, OrderedDict
 
 import pytest
 
+
 from smartva import cause_grapher
-from smartva.csmf_grapher import make_graph
 from smartva.data.common_data import MALE, FEMALE
 
 
@@ -82,7 +82,3 @@ def test_get_age_key_12_19():
 ])
 def test_get_age_key(age, label):
     assert cause_grapher.get_age_key(age) == label
-
-# TODO: write test
-# def test_zero_csmf():
-#     assert  _make_graphs(self, graph_data_unsorted) != 0
