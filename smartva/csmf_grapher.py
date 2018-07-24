@@ -128,11 +128,8 @@ class CSMFGrapher(GrapherPrep):
 
             status_notifier.update({'sub_progress': (cnt,)})
 
-            # remove CSMFs of zero
-            data = {cause: csmf for cause, csmf in data.items() if csmf != 0}
-
             # sort data in decreasing order
             graph_data = OrderedDict(sorted(data.iteritems(), key=lambda x: x[1], reverse=True))
             make_graph(graph_data, module_key, self.output_dir_path)
-
+            
         status_notifier.update({'sub_progress': None})

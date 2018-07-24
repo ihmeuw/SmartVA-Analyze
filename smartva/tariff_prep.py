@@ -845,9 +845,9 @@ class TariffPrep(DataPrep):
             drop_causes.extend(self.data_module.MALARIA_CAUSES)
 
         # remove sex specific drops
-        male_drops.extend(self.data_module.MALE_CAUSES)
-        female_drops.extend(self.data_module.FEMALE_CAUSES)
-        female_drops.extend(self.data_module.MATERNAL_CAUSES)
+        male_drops.extend(self.data_module.FEMALE_CAUSES)
+        male_drops.extend(self.data_module.MATERNAL_CAUSES)
+        female_drops.extend(self.data_module.MALE_CAUSES)
 
         # drop hiv and malaria from all, male, and female csmfs
         for cause in drop_causes:
@@ -862,15 +862,15 @@ class TariffPrep(DataPrep):
         for cause in male_drops:
             cause34 = self.data_module.CAUSE_REDUCTION[cause]
             gs_text34 = self.data_module.CAUSES[cause34]
-            if gs_text34 in counts_by_sex[2]:
-                counts_by_sex[2].pop(gs_text34)
+            if gs_text34 in counts_by_sex[1]:
+                counts_by_sex[1].pop(gs_text34)
 
         # drop the female causes from the male csmfs
         for cause in female_drops:
             cause34 = self.data_module.CAUSE_REDUCTION[cause]
             gs_text34 = self.data_module.CAUSES[cause34]
-            if gs_text34 in counts_by_sex[1]:
-                counts_by_sex[1].pop(gs_text34)
+            if gs_text34 in counts_by_sex[2]:
+                counts_by_sex[2].pop(gs_text34)
 
         # Convert counts to fractions
         total_counts = sum(cause_counts.values())
