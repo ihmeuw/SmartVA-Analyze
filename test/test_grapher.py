@@ -1,10 +1,27 @@
 from collections import defaultdict, OrderedDict
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 import pytest
 
 
 from smartva import cause_grapher
 from smartva.data.common_data import MALE, FEMALE
+from smartva.tariff_prep import TariffPrep, Record
+from smartva.data import adult_tariff_data
+
+
+@pytest.fixture
+def prep(tmpdir):
+    return TariffPrep(
+        adult_tariff_data,
+        working_dir_path=tmpdir.strpath,
+        short_form=True,
+        options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
+                 'chinese': False},
+        country='USA'
+    )
 
 
 def test_get_default_dict():
@@ -82,3 +99,92 @@ def test_get_age_key_12_19():
 ])
 def test_get_age_key(age, label):
     assert cause_grapher.get_age_key(age) == label
+
+
+def test_csmf_sex_undetermined_plot(prep):
+    """
+    Redistributed CSMFs for undetermined causes of death should not include
+    biologically impossible causes for males and females. Check that these
+    causes are not included in the CSMF figures.
+    """
+
+    # male and female user data with undetermined cause and age zero (unknown age)
+    user_data_male = [Record('sid{}'.format(i), age=0, sex=1, cause34_name='Undetermined')
+                        for i in range(7)]
+    user_data_female = [Record('sid{}'.format(i), age=0, sex=2, cause34_name='Undetermined')
+                        for i in range(7)]
+    user_data_unknown = [Record('sid{}'.format(i), age=0, sex=0, cause34_name='Undetermined')
+                        for i in range(7)]
+
+    user_data = user_data_male + user_data_female + user_data_unknown
+
+    undetermined_weights = prep._get_undetermined_matrix()
+    csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
+
+    for sex in range(1, 2):
+        # input graph data
+        graph_data = csmf_by_sex[sex]
+
+        cause_keys = graph_data.keys()
+        cause_fractions = graph_data.values()
+
+        #graph_title = module_key.capitalize() + ' CSMF' # not neessary to have the graph title
+        # graph_filename = graph_title.replace(' ', '-').lower() # not neccesary to have filename
+
+        max_value = max(cause_fractions)
+        xlocations = np.arange(len(cause_keys))  # the x locations for the groups
+
+        bar_width = .75  # the width of the bars
+
+        # Interactive mode off.
+        plt.ioff()
+        fig, ax = plt.subplots()
+
+        ax.set_ylabel('Mortality fractions')
+        ax.yaxis.grid()
+
+        ax.set_xticklabels(cause_keys)
+        ax.set_xticks(xlocations)
+
+        bar_width = .75  # the width of the bars
+
+        # Interactive mode off.
+        plt.ioff()
+        fig, ax = plt.subplots()
+
+        #ax.set_title(graph_title) # not neessary to have the graph title
+        ax.set_ylabel('Mortality fractions')
+        ax.yaxis.grid()
+
+        ax.set_xticklabels(cause_keys, rotation=90)
+        ax.set_xticks(xlocations)
+
+        ax.bar(xlocations, cause_fractions, bar_width, color='#C44440', align='center')
+
+        # Add whitespace at top of bar.
+        ax.set_ylim(top=max_value + max_value * 0.1)
+
+        # Add whitespace before first bar and after last.
+        plt.xlim([min(xlocations) - .5, max(xlocations) + 1.0])
+
+        # Add some spacing for rotated xlabels.
+        plt.subplots_adjust(bottom=0.60)
+
+        # neccessary to get acutally plot to get x-axis labels
+        fig.canvas.draw()
+
+        # list of x axis labels
+        labels = [item.get_text() for item in ax.get_xticklabels()]
+
+        # check biologically impossible causes
+        if sex == 1:
+            assert "Stroke" in labels
+            assert "Prostate Cancer" in labels
+            assert "Maternal" not in labels
+
+        if sex == 2:
+            assert "Stroke" in labels
+            assert "Maternal" in labels
+            assert "Cervical Cancer" in labels
+            assert "Prostate Cancer" not in labels
+
