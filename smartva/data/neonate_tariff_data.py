@@ -197,6 +197,12 @@ HIV_CAUSES = []
 
 MALARIA_CAUSES = []
 
+MALE_CAUSES = []
+
+FEMALE_CAUSES = []
+
+MATERNAL_CAUSES = []
+
 # changing 46 causes to 34 causes:
 CAUSE_REDUCTION = {
     1: 1,

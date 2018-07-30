@@ -131,5 +131,5 @@ class CSMFGrapher(GrapherPrep):
             # sort data in decreasing order
             graph_data = OrderedDict(sorted(data.iteritems(), key=lambda x: x[1], reverse=True))
             make_graph(graph_data, module_key, self.output_dir_path)
-
+            
         status_notifier.update({'sub_progress': None})
