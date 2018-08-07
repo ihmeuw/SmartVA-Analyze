@@ -24,7 +24,7 @@ SPURIOUS_ASSOCIATIONS = {
         's94',
         's96',
         's97',
-        's999917'
+        's999917',  # word_bite
         's9999123',
         's9999140',
         's9999148',  # word_suicid
