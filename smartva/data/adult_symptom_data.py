@@ -829,9 +829,9 @@ CENSORED_MAP = {
         's47',       # Did [name] have a lump in the armpit?
     ],
     43: [   # Stomach Cancer
-        's119'       # Did [name] have any ulcers (pits) in the breast?
-        's47'        # Did [name] have a lump in the armpit?
-        's118'       # Did [name] have any swelling or lump in the breast?
+        's119',       # Did [name] have any ulcers (pits) in the breast?
+        's47',        # Did [name] have a lump in the armpit?
+        's118',       # Did [name] have any swelling or lump in the breast?
     ],
     46: [   # TB
         's105',      # Was [name] in any way paralyzed?
