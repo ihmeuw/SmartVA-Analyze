@@ -312,6 +312,16 @@ CENSORED_MAP = {
     ],
     13: [   # Other Cardiovascular Diseases
         's137',         # Did [name] have a bulging fontanelle during the illness that led to death?
+        's129',  # During the illness that led to death, did he/she have indrawing of the chest?
+        's131',  # Breathing: Grunting
+        's133',  # Did [name] experience any generalized convulsions or fits during the illness that led to death
+        's134',  # Was [name] unconscious during the illness that led to death?
+        's999919',  # word_fever
+        's999933',  # word_pneumonia
+        's136',  # Did [name] have a stiff neck during the illness that led to death?
+        's135991',  # unconsciousness started >24hrs before death
+        's189',  # Mother had positive HIV test
+        's190',  # Has the deceased's (biological) mother ever been told she had AIDS by a health worker?
     ],
     15: [   # Other Digestive Diseases
         's999933',      # word_pneumonia
