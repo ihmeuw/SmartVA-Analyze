@@ -420,5 +420,35 @@ MAPPING = [
     #     'symptom': 's149',
     #     'Id10411': 'yes',
     # },
+    {
+        'sid': 'Free text: Chronic Kidney Disease',
+        'symptom': 's999999',
+        'Id10477': 'Chronic Kidney Disease',
+    },
+    {
+        'sid': 'Free text: Dialysis',
+        'symptom': 's999952',
+        'Id10477': 'Dialysis Fever',
+    },
+    {
+        'sid': 'Free text: Fever',
+        'symptom': 's999969',
+        'Id10477': 'Dialysis Fever',
+    },
+    {
+        'sid': 'Free text: Heart_attack',
+        'symptom': 's99994',
+        'Id10477': 'Heart_attack Jaundice Liver_failure',
+    },
+    {
+        'sid': 'Free text: Jaundice',
+        'symptom': 's999997',
+        'Id10477': 'Heart_attack Jaundice Liver_failure',
+    },
+    {
+        'sid': 'Free text: Liver_failure',
+        'symptom': 's9999104',
+        'Id10477': 'Heart_attack Jaundice Liver_failure',
+    },
 ]
 
