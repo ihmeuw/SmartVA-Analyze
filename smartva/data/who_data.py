@@ -275,6 +275,13 @@ RENAME_QUESTIONS = {
     'adult_3_11a': 'Id10309',
     'adult_3_16a': 'Id10332',
     'adult_4_4a': 'Id10415',
+    'adult_6_3b': 'Id10436',
+    'adult_6_8': 'Id10444',
+    'adult_6_11': 'Id10464',
+    'adult_6_12': 'Id10466',
+    'adult_6_13': 'Id10468',
+    'adult_6_14': 'Id10470',
+    'adult_6_15': 'Id10472',
     'child_1_8a': 'Id10366',
     'child_1_20a': 'Id10351',
     'child_1_20b': 'Id10352_a',
@@ -285,6 +292,13 @@ RENAME_QUESTIONS = {
     'child_3_30a': 'Id10285',
     'child_4_7a': 'Id10183',
     'child_4_33a': 'Id10234',
+    'child_5_0b': 'Id10436',
+    'child_5_9': 'Id10444',
+    'child_5_12': 'Id10464',
+    'child_5_13': 'Id10466',
+    'child_5_14': 'Id10468',
+    'child_5_15': 'Id10470',
+    'child_5_16': 'Id10472',
 }
 
 """Create multiselect questions from a series of questions codes as yes/no.
@@ -373,7 +387,34 @@ Schema
 PHMRC_COL: (WHO_COL, WHO_VALUE)
 """
 ONE_HOT_FROM_MULTISELECT = {
-    'child_4_23': ('Id10173_nc', 'grunting')
+    'child_4_23': ('Id10173_nc', 'grunting'),
+    'adult_7_1': ('Id10477', 'Chronic Kidney Disease'),
+    'adult_7_2': ('Id10477', 'Dialysis'),
+    'adult_7_3': ('Id10477', 'Fever'),
+    'adult_7_4': ('Id10477', 'Heart_attack'),
+    'adult_7_5': ('Id10477', 'Heart_problem'),
+    'adult_7_6': ('Id10477', 'Jaundice'),
+    'adult_7_7': ('Id10477', 'Liver_failure'),
+    'adult_7_8': ('Id10477', 'Malaria'),
+    'adult_7_9': ('Id10477', 'Pneumonia'),
+    'adult_7_10': ('Id10477', 'Renal_kidney_failure'),
+    'adult_7_11': ('Id10477', 'Suicide'),
+    'child_6_1': ('Id10478', 'abdomen'),
+    'child_6_2': ('Id10478', 'cancer'),
+    'child_6_3': ('Id10478', 'dehydration'),
+    'child_6_4': ('Id10478', 'dengue'),
+    'child_6_5': ('Id10478', 'diarrhea'),
+    'child_6_6': ('Id10478', 'fever'),
+    'child_6_7': ('Id10478', 'heart_problem'),
+    'child_6_8': ('Id10478', 'jaundice'),
+    'child_6_9': ('Id10478', 'pneumonia'),
+    'child_6_10': ('Id10478', 'rash'),
+    'neonate_6_1': ('Id10479', 'asphyxia'),
+    'neonate_6_2': ('Id10479', 'incubator'),
+    'neonate_6_3': ('Id10479', 'lung_problem'),
+    'neonate_6_4': ('Id10479', 'pneumonia'),
+    'neonate_6_5': ('Id10479', 'preterm_delivery'),
+    'neonate_6_6': ('Id10479', 'respiratory_distress'),
 }
 
 """Fill in unit columns based on the presence of a numeric value.
