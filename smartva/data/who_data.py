@@ -388,7 +388,7 @@ PHMRC_COL: (WHO_COL, WHO_VALUE)
 """
 ONE_HOT_FROM_MULTISELECT = {
     'child_4_23': ('Id10173_nc', 'grunting'),
-    'adult_7_1': ('Id10477', 'Chronic Kidney Disease'),
+    'adult_7_1': ('Id10477', 'Chronic_kidney_disease'),
     'adult_7_2': ('Id10477', 'Dialysis'),
     'adult_7_3': ('Id10477', 'Fever'),
     'adult_7_4': ('Id10477', 'Heart_attack'),
