@@ -180,6 +180,8 @@ def who2016_neonate():
 @pytest.fixture(scope='module')
 def who2016_freetext():
     from .who2016_freetext_mapping import MAPPING
+    for row in MAPPING:
+        make_valid_who2016(row)
     return MAPPING
 
 

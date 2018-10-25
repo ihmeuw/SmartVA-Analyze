@@ -423,7 +423,7 @@ MAPPING = [
     {
         'sid': 'Free text: Chronic Kidney Disease',
         'symptom': 's999999',
-        'Id10477': 'Chronic Kidney Disease',
+        'Id10477': 'Chronic_kidney_disease',
     },
     {
         'sid': 'Free text: Dialysis',
