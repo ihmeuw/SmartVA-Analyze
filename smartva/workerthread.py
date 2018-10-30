@@ -169,7 +169,7 @@ class WorkerThread(threading.Thread):
         report_logger.info('Analysis parameters:')
         report_logger.info('- Input file: {}'.format(self.input_file_path))
         report_logger.info('- Output folder: {}'.format(self.output_dir_path))
-        report_logger.info('- Country: {}'.format(self.options.get('country')))
+        report_logger.info('- Country: {}'.format(self.country))
         report_logger.info('- HIV Region: {}'.format(self.options.get('hiv', True)))
         report_logger.info('- Malaria Region: {}'.format(self.options.get('malaria', True)))
         report_logger.info('')
