@@ -191,4 +191,35 @@ MAPPING = [
         'symptom': 's190',
         'Id10446': 'yes'
     },
+    {
+        'sid': 'Free text: abdomen',
+        'symptom': 's99991',
+        'Id10478': 'abdomen',
+    },
+    {
+        'sid': 'Free text: cancer',
+        'symptom': 's99999',
+        'Id10478': 'cancer dehydration',
+    },
+
+    {
+        'sid': 'Free text: dehydration',
+        'symptom': 's999914',
+        'Id10478': 'cancer dehydration',
+    },
+    {
+        'sid': 'Free text: dengue',
+        'symptom': 's999915',
+        'Id10478': 'dengue diarrhea fever',
+    },
+    {
+        'sid': 'Free text: diarrhea',
+        'symptom': 's999916',
+        'Id10478': 'dengue diarrhea fever',
+    },
+    {
+        'sid': 'Free text: fever',
+        'symptom': 's999919',
+        'Id10478': 'dengue diarrhea fever',
+    },
 ]

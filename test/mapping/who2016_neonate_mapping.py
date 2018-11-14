@@ -225,4 +225,35 @@ MAPPING = [
         'symptom': 's190',
         'Id10446': 'yes'
     },
+    {
+        'sid': 'Free text: asphyxia',
+        'symptom': 's99993',
+        'Id10479': 'asphyxia',
+    },
+    {
+        'sid': 'Free text: asphyxia',
+        'symptom': 's99993',
+        'Id10479': 'asphyxia incubator',
+    },
+
+    {
+        'sid': 'Free text: incubator',
+        'symptom': 's999918',
+        'Id10479': 'asphyxia incubator',
+    },
+    {
+        'sid': 'Free text: lung_problem',
+        'symptom': 's999923',
+        'Id10479': 'lung_problem pneumonia preterm_delivery',
+    },
+    {
+        'sid': 'Free text: pneumonia',
+        'symptom': 's999927',
+        'Id10479': 'lung_problem pneumonia preterm_delivery',
+    },
+    {
+        'sid': 'preterm_delivery',
+        'symptom': 's999930',
+        'Id10479': 'lung_problem pneumonia preterm_delivery',
+    },
 ]

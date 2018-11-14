@@ -453,6 +453,9 @@ DROP_LIST = [
 ]
 
 CENSORED_MAP = {
+    3: [  # Anemia
+        's120',  # Periods stopped naturally because of menopause
+    ],
     4: [   # Asthma
         's109',      # Paralyzed lower part of body
         's110',      # Paralyzed upper part of body
@@ -749,6 +752,12 @@ CENSORED_MAP = {
         's99994',     # word_ami
         's48',       # Did [name] have a lump in the groin?
     ],
+    20: [  # Hemorrhage
+        's120',  # Periods stopped naturally because of menopause
+    ],
+    22: [  # Hypertensive Disorder
+        's120',  # Periods stopped naturally because of menopause
+    ],
     23: [   # Acute Myocardial Infarction
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
@@ -814,6 +823,9 @@ CENSORED_MAP = {
         's113',      # Paralyzed whole body
         's116',      # Paralyzed other
     ],
+    36: [  # Other Pregnancy-Related Deaths
+        's120',  # Periods stopped naturally because of menopause
+    ],
     37: [   # Pneumonia
         's105',      # Was [name] in any way paralyzed?
         's109',      # Paralyzed lower part of body
@@ -827,6 +839,9 @@ CENSORED_MAP = {
         's88',       # For how long before death did [name] have a mass in the belly [days]
         's52',       # Did [name] cough blood?
         's47',       # Did [name] have a lump in the armpit?
+    ],
+    42: [  # Sepsis
+        's120',  # Periods stopped naturally because of menopause
     ],
     43: [   # Stomach Cancer
         's119',       # Did [name] have any ulcers (pits) in the breast?
