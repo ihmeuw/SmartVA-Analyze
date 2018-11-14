@@ -177,6 +177,13 @@ def who2016_neonate():
         make_valid_who2016(row)
     return MAPPING
 
+@pytest.fixture(scope='module')
+def who2016_freetext():
+    from .who2016_freetext_mapping import MAPPING
+    for row in MAPPING:
+        make_valid_who2016(row)
+    return MAPPING
+
 
 @pytest.fixture(params=[
     'phmrc_adult',
@@ -190,6 +197,7 @@ def who2016_neonate():
     'who2016_adult',
     'who2016_child',
     'who2016_neonate',
+    'who2016_freetext',
 ])
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}
