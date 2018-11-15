@@ -9,8 +9,7 @@ ADULT_WORD_COLUMNS = [
     'Id10468',  # adult_6_13
     'Id10470',  # adult_6_14
     'Id10472',  # adult_6_15
-    #'adult_7_c',   # only on PHMRC long questionnaire
-
+    'Id10476',  #adult_7_c  (only on PHMRC long questionnaire)
 ]
 
 ADULT_WORD_SYMPTOMS = {
@@ -540,7 +539,7 @@ CHILD_WORD_COLUMNS = [
     'Id10468',  # child_5_14
     'Id10470',  # child_5_15
     'Id10472',  # child_5_16
-    #'child_6_c',  # only on PHMRC long questionnaire
+    'Id10476',  # child_6_c  (only on PHMRC long questionnaire)
 ]
 
 CHILD_WORD_SYMPTOMS = {
@@ -703,7 +702,7 @@ NEONATE_WORD_COLUMNS = [
     'Id10468',  # child_5_14
     'Id10470',  # child_5_15
     'Id10472',  # child_5_16
-    #'child_6_c',    # only on PHMRC long questionnaire
+    'Id10476',  # child_6_c  (only on PHMRC long questionnaire)
 ]
 
 NEONATE_WORD_SYMPTOMS = {
