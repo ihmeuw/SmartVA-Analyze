@@ -54,7 +54,7 @@ class RulesPrep(DataPrep):
     def run(self):
         super(RulesPrep, self).run()
 
-        status_logger.info('{} :: Processing rules data'.format(self.AGE_GROUP))
+        status_logger.info('{} :: Processing rules data'.format(self.AGE_GROUP.capitalize()))
         status_notifier.update({'progress': 1})
 
         headers, matrix = DataPrep.read_input_file(self.input_file_path())
