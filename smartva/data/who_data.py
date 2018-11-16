@@ -282,6 +282,7 @@ RENAME_QUESTIONS = {
     'adult_6_13': 'Id10468',
     'adult_6_14': 'Id10470',
     'adult_6_15': 'Id10472',
+    'adult_7_c': 'Id10476',
     'child_1_8a': 'Id10366',
     'child_1_20a': 'Id10351',
     'child_1_20b': 'Id10352_a',
@@ -299,6 +300,7 @@ RENAME_QUESTIONS = {
     'child_5_14': 'Id10468',
     'child_5_15': 'Id10470',
     'child_5_16': 'Id10472',
+    'child_6_c': 'Id10476',
 }
 
 """Create multiselect questions from a series of questions codes as yes/no.
