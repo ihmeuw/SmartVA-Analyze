@@ -28,7 +28,7 @@ ICDS = {
         'Pneumonia': 'J22',
         'Poisonings': 'X49',
         'Prostate Cancer': 'C61',
-        'Chronic Renal Failure': 'N18',
+        'Chronic Kidney Disease': 'N18',
         'Road Traffic': 'V89',
         'Stomach Cancer': 'C16',
         'Stroke': 'I64',
