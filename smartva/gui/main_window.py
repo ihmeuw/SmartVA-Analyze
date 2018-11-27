@@ -159,7 +159,7 @@ class vaDocs(wx.Frame):
         wx.Frame.__init__(self, parent, wx.ID_ANY, title=APP_TITLE + ' Documentation', size=(800, 500))
         html = wxHTML(self)
         html.SetStandardFonts()
-        about = 'res' + str(os.path.sep) + 'documentation.htm'
+        about = 'res' + str(os.path.sep) + 'documentation.html'
         html.LoadPage(os.path.join(config.basedir, about))
 
 
