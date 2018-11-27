@@ -1,0 +1,8 @@
+AGE_GROUP = 'sample'
+
+FREE_TEXT = ['s99991']
+
+FEMALE_CAUSES = []
+MALE_CAUSES = []
+MATERNAL_CAUSES = []
+
