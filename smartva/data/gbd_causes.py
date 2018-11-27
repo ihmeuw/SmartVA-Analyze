@@ -34,7 +34,7 @@ GBD_LEVEL1_CAUSES = {
         'Pneumonia': 'A',
         'Poisonings': 'C',
         'Prostate Cancer': 'B',
-        'Chronic Renal Failure': 'B',
+        'Chronic Kidney Disease': 'B',
         'Road Traffic': 'C',
         'Stomach Cancer': 'B',
         'Stroke': 'B',
