@@ -14,38 +14,33 @@ Requirements
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
 
-    WINDOWS: ``build_script.bat``
+WINDOWS: ``build_script.bat``
 
-    LINUX, macOS: ``sh build_script.sh``
+macOS, LINUX: ``sh build_script.sh``
 
 Environment Instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-    WINDOWS::
+WINDOWS::
 
-        $ conda create -n smartva python=2.7.13 wxpython=3.*
-        $ activate smartva
-        $ pip install -r requirements.txt -r requirements-dev.txt - r requirements-win.txt
+    $ conda create -n smartva python=2.7.13 wxpython=3.*
+    $ activate smartva
+    $ pip install -r requirements.txt -r requirements-dev.txt - r requirements-win.txt
 
-    macOS::
+macOS,LINUX::
 
-        $ conda create -n smartva python=2.7.13 wxpython=3.*
-        $ source activate smartva
-        $ pip install -r requirements.txt -r requirements-dev.txt
+    $ conda create -n smartva python=2.7.13 wxpython=3.*
+    $ source activate smartva
+    $ pip install -r requirements.txt -r requirements-dev.txt
 
-    Linux::
+    or
 
-        $ conda env create -f conda-environment-linux.yml
+    $ docker build -t smartva-build-linux -f ./pkg/docker/linux-build/Dockerfile ./pkg/docker
+    $ docker build -t smartva-dev -f pkg/docker/dev/Dockerfile .
+    $ docker run -it --rm -v `pwd`:/home/smartva/smartva smartva-dev
 
 Development Instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-
-WINDOWS: ``$ activate smartva``
-
-LINUX, macOS: ``$ source activate smartva``
-
-
-
 ``$ python app.py --help``
 
 ::
@@ -69,3 +64,14 @@ LINUX, macOS: ``$ source activate smartva``
       --legacy-format                 Output files in a format that matches
                                       SmartVA v1.2
       --help                          Show this message and exit.
+
+Example
+~~~~~~~
+::
+
+    $ mkdir output-folder
+    $ python app.py "./test/end_to_end_notebooks/data/example_1.csv" "./output-folder" --hiv=False --country=RWA
+
+Test Instructions
+~~~~~~~~~~~~~~~~~
+``$ python -m pytest``
