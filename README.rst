@@ -1,10 +1,23 @@
 SmartVA-Analyze is an application that implements the `Tariff 2.0 Method <http://www.healthdata.org/research-article/improving-performance-tariff-method-assigning-causes-death-verbal-autopsies/>`_ for computer certification of verbal autopsies.
 
-More information and the SmartVA-Analyze Application can be found here:
+More information and the SmartVA-Analyze application can be found here:
 http://www.healthdata.org/verbal-autopsy/tools
+
+The latest development version of the SmartVA-Analyze application can be found in `releases. <https://github.com/ihmeuw/SmartVA-Analyze/releases>`_
+The application is available as a Windows graphical user interface (GUI), Windows command-line interface (CLI), and Linux binary.
+
+The latest stable version of the SmartVA-Analyze application can be found here:
+http://www.healthdata.org/verbal-autopsy/tools
+
+The SmartVA-Analyze application requires an input csv in the format of the `PHMRC Full Questionaire, <http://www.healthdata.org/verbal-autopsy/tools/>`_
+`PHMRC Shortened (SmartVA) Questionaire, <http://www.healthdata.org/verbal-autopsy/tools/>`_
+or `WHO 2016 Questionaire. <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_
+The simplest workflow is to collect verbal autopsy data with `ODK Collect <https://docs.opendatakit.org/collect-intro/>`_ and export the questionaire data
+via `ODK Aggregate <https://docs.opendatakit.org/aggregate-intro/>`_ or `ODK Briefcase. <https://docs.opendatakit.org/briefcase-intro/>`_
 
 Requirements
 ~~~~~~~~~~~~
+To compile the source code of SmartVA-Analyze, the following applications must be installed:
 
 * `Anaconda <https://www.anaconda.com/download/>`_
 
@@ -13,21 +26,23 @@ Requirements
 
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
+To build the SmartVA-Analyze application as seen in `releases, <https://github.com/ihmeuw/SmartVA-Analyze/releases>`_ run one of the following commands:
 
-WINDOWS: ``build_script.bat``
+Windows: ``build_script.bat``
 
-macOS, LINUX: ``sh build_script.sh``
+macOS, Linux: ``$ sh build_script.sh``
 
 Environment Instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~
+To create your python environment, either create a conda environment or use the Docker image.
 
-WINDOWS::
+Windows::
 
     $ conda create -n smartva python=2.7.13 wxpython=3.*
     $ activate smartva
     $ pip install -r requirements.txt -r requirements-dev.txt - r requirements-win.txt
 
-macOS,LINUX::
+macOS, Linux::
 
     $ conda create -n smartva python=2.7.13 wxpython=3.*
     $ source activate smartva
@@ -39,8 +54,10 @@ macOS,LINUX::
     $ docker build -t smartva-dev -f pkg/docker/dev/Dockerfile .
     $ docker run -it --rm -v `pwd`:/home/smartva/smartva smartva-dev
 
-Development Instructions
-~~~~~~~~~~~~~~~~~~~~~~~~
+Run Instructions
+~~~~~~~~~~~~~~~~
+To test your python environment, run the following command to show the available options.
+
 ``$ python app.py --help``
 
 ::
@@ -69,9 +86,11 @@ Example
 ~~~~~~~
 ::
 
-    $ mkdir output-folder
-    $ python app.py "./test/end_to_end_notebooks/data/example_1.csv" "./output-folder" --hiv=False --country=RWA
+    $ mkdir ./test/example/output
+    $ python app.py "./test/example/input/PHMRC_short_example.csv" "./test/example/output" --hiv=False --country=RWA
 
 Test Instructions
 ~~~~~~~~~~~~~~~~~
+All tests are run using pytest:
+
 ``$ python -m pytest``
