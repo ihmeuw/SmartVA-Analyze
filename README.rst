@@ -9,11 +9,11 @@ The application is available as a Windows graphical user interface (GUI), Window
 The latest stable version of the SmartVA-Analyze application can be found here:
 http://www.healthdata.org/verbal-autopsy/tools
 
-The SmartVA-Analyze application requires an input csv in the format of the `PHMRC Full Questionaire, <http://www.healthdata.org/verbal-autopsy/tools/>`_
-`PHMRC Shortened (SmartVA) Questionaire, <http://www.healthdata.org/verbal-autopsy/tools/>`_
-or `WHO 2016 Questionaire. <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_
+The SmartVA-Analyze application requires an input csv in the format of the `PHMRC Full Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
+`PHMRC Shortened (SmartVA) Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
+or `WHO 2016 Questionnaire <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_.
 The simplest workflow is to collect verbal autopsy data with `ODK Collect <https://docs.opendatakit.org/collect-intro/>`_ and export the questionaire data
-via `ODK Aggregate <https://docs.opendatakit.org/aggregate-intro/>`_ or `ODK Briefcase. <https://docs.opendatakit.org/briefcase-intro/>`_
+via `ODK Aggregate <https://docs.opendatakit.org/aggregate-intro/>`_ or `ODK Briefcase <https://docs.opendatakit.org/briefcase-intro/>`_.
 
 Requirements
 ~~~~~~~~~~~~
@@ -26,7 +26,7 @@ To compile the source code of SmartVA-Analyze, the following applications must b
 
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
-To build the SmartVA-Analyze application as seen in `releases, <https://github.com/ihmeuw/SmartVA-Analyze/releases>`_ run one of the following commands:
+To build the SmartVA-Analyze application as seen in `releases <https://github.com/ihmeuw/SmartVA-Analyze/releases>`_, run one of the following commands:
 
 Windows: ``build_script.bat``
 
@@ -87,7 +87,8 @@ Example
 ::
 
     $ mkdir ./test/example/output
-    $ python app.py "./test/example/input/PHMRC_short_example.csv" "./test/example/output" --hiv=False --country=RWA
+    $ python app.py "./test/example/input/PHMRC_short_example.csv" "./test/example/output" --hiv=False
+    $ python app.py "./test/example/input/WHO_2016_1_5_1_example.csv" "./test/example/output" --language=chinese --country=CHN
 
 Test Instructions
 ~~~~~~~~~~~~~~~~~
