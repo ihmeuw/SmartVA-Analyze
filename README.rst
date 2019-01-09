@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.com/ihmeuw/SmartVA-Analyze.svg?branch=master
+    :target: https://travis-ci.com/ihmeuw/SmartVA-Analyze
+    
 SmartVA-Analyze is an application that implements the `Tariff 2.0 Method <http://www.healthdata.org/research-article/improving-performance-tariff-method-assigning-causes-death-verbal-autopsies/>`_ for computer certification of verbal autopsies.
 
 More information and the SmartVA-Analyze application can be found here:
