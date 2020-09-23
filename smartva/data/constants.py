@@ -102,6 +102,7 @@ class Child(object):
     POISONING = 'c4_47_4'
     BITE = 'c4_47_5'
     BURN = 'c4_47_6'
+    VIOLENCE = 'c4_47_7'
     NO_INJURY = 'c4_47_11'
     OTHER_INJURY = 'c4_47_8a'
     INFLICTED_BY_OTHER = 'c4_48'
