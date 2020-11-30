@@ -10,7 +10,7 @@ AGE_GROUP = CHILD
 
 CUTOFF_POS = 0.95
 
-UNIFORM_LIST_POS = 0.24
+UNIFORM_LIST_POS = 0.30
 
 MIN_CAUSE_SCORE = defaultdict(lambda: 3.7)
 
@@ -161,28 +161,9 @@ SPURIOUS_ASSOCIATIONS = {
         's99992',  # word_accid
     ],
     20: [  # Sepsis
-        's999924',  # word_icu
-        's2991',  # quintile 1 of age
-        's999923',  # word_heart
-        's999911',  # word_cold
         's999929',  # word_lung
-        's13991',  # decedent was small or very small
-        's999947',  # word_swell
         's999933',  # word_pneumonia
-        's2992',  # quintile 2 of age
-        's164',  # Decedent did not suffer accident
-        's14',  # What was the weight of the deceased at birth?
-        's188',  # Has the deceased's (biological) mother ever been tested for HIV?
         's99998',  # word_breath
-        's125',  # During the illness that led to death, did [name] have difficult breathing?
-        's117',  # How many days before death did the frequent loose or liquid stools start? [days]
-        's28',  # How old was the baby/child when the fatal illness started? [days]
-        's31',  # How old was the deceased at the time of death? [days]
-        's2994',  # quintile 4 of age
-        's2995',  # quintile 5 of age
-        's17',  # Did the baby ever cry?
-        's18',  # Did the baby ever move?
-        's19',  # Did the baby ever breathe?
     ],
     21: [  # Homicide
         's153',

@@ -125,7 +125,7 @@ sid,cause,cause34,age,sex
 124,,Undetermined,1,1
 125,,Undetermined,1,1
 126,,Undetermined,1,1
-127,,Undetermined,1,1
+127,1,AIDS,1,1
 128,,Undetermined,1,1
 129,,Undetermined,1,1
 130,,Undetermined,1,1
@@ -183,7 +183,7 @@ sid,cause,cause34,age,sex
 182,,Undetermined,1,1
 183,3,Diarrhea/Dysentery,1,1
 184,8,Hemorrhagic fever,1,1
-185,,Undetermined,1,1
+185,3,Diarrhea/Dysentery,1,1
 186,,Undetermined,1,1
 187,,Undetermined,1,1
 188,,Undetermined,1,1

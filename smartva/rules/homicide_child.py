@@ -8,8 +8,10 @@ CAUSE_ID = 21  # Violent death
 def logic_rule(row):
     value_of = value_from_row(row, int_or_float)
 
-    injury_by_other = value_of(Child.INFLICTED_BY_OTHER) == YES
-
+    injury_by_other = any([
+        value_of(Child.INFLICTED_BY_OTHER) == YES,
+        value_of(Child.VIOLENCE) == YES,
+    ])
     recent = value_of(Child.INJURY_DAYS) < INJURY_DURATION_CUTTOFF
 
     no_unintentional_injury = all([
