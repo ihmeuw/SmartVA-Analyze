@@ -463,3 +463,36 @@ DURATION_CONVERSIONS = {
     ('child_4_2', 'child_4_2a', 1): {'Id10148_b': 1, 'Id10148_c': 30},
     ('child_4_13', 'child_4_13a', 1): {'Id10154_a': 1, 'Id10154_b': 30},
 }
+
+"""
+New yes/no question mappings for the WHO 2020 questionnaire
+"""
+YES_NO_QUESTIONS_WHO_2020 = {
+    'adult_2_82': 'Id10220', #change from Id10219
+
+    'child_3_49': 'Id10123', #change from Id10290
+
+    'adult_3_12': 'Id10334', #change from Id10335
+
+    'adult_2_10': 'Id10227',  # change from Id10228 - adds 'pus and sores' to combined question whereas PHMRC only asks 'pus'
+
+}
+
+
+"""
+Combine single WHO question into multiple PHMRC questions
+
+
+Schema
+------
+WHO_Col: {PHMRC_COL: PHMRC_COL}
+"""
+
+#yes/no questions from above will be overwritten
+
+COMBINED_TO_MULTIPLE_WHO_2020 = {
+
+    "Id10261" : ('adult_2_57', 'adult_2_60'), #adult_2_57 and adult_2_60 are yes/no questions conversion in WHO 2016
+    "Id10294": ('adult_3_1', 'adult_3_2'),  # adult_3_1 and adult_3_2 are yes/no questions conversion in WHO 2016
+
+}

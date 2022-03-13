@@ -27,8 +27,8 @@ class SymptomPrep(DataPrep):
         years prior to death be assigned to road traffic deaths.
     """
 
-    def __init__(self, data_module, working_dir_path, short_form):
-        super(SymptomPrep, self).__init__(working_dir_path, short_form)
+    def __init__(self, data_module, working_dir_path, short_form, who_2016):
+        super(SymptomPrep, self).__init__(working_dir_path, short_form, who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
         self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE

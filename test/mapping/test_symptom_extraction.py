@@ -83,6 +83,25 @@ def make_valid_who2016(row):
 
     return make_valid(row)
 
+def make_valid_who2020(row):
+    """Add standard WHO2016 specific values for a row of data"""
+
+    row['Id10013'] = 'yes'   # All rows need valid consent
+
+    # Ensure that there is enough data to classify each row into a specific
+    # module. Otherwise the rows are filtered out
+    row['is{}'.format(row['module'].title())] = 1
+
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    for i in range(10000, 10050):
+        col = 'Id{}'.format(i)
+        if i == 10219: # Id10219 destinguishes WHO2016 vs WHO2020 questionnaire
+            col = ''
+        if col not in row:
+            row[col] = ''
+
+    return make_valid(row)
 
 @pytest.fixture(scope='module')
 def phmrc_adult():

@@ -38,8 +38,8 @@ ADDITIONAL_DATA = {RULES_CAUSE_NUM_KEY: ''}
 class RulesPrep(DataPrep):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, working_dir_path, short_form, age_group, rules):
-        super(RulesPrep, self).__init__(working_dir_path, short_form)
+    def __init__(self, working_dir_path, short_form, age_group, rules,who_2016):
+        super(RulesPrep, self).__init__(working_dir_path, short_form,who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
         self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE
