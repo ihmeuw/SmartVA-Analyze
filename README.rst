@@ -14,7 +14,9 @@ http://www.healthdata.org/verbal-autopsy/tools
 
 The SmartVA-Analyze application requires an input csv in the format of the `PHMRC Full Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
 `PHMRC Shortened (SmartVA) Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
-or `WHO 2016 Questionnaire <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_.
+`WHO 2016 Questionnaire <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_
+or
+`WHO 2022 Questionnaire <https://www.who.int/healthinfo/statistics/verbalautopsystandards/en/>`_..
 The simplest workflow is to collect verbal autopsy data with `ODK Collect <https://docs.opendatakit.org/collect-intro/>`_ and export the questionaire data
 via `ODK Aggregate <https://docs.opendatakit.org/aggregate-intro/>`_ or `ODK Briefcase <https://docs.opendatakit.org/briefcase-intro/>`_.
 
@@ -41,14 +43,14 @@ To create your python environment, either create a conda environment or use the 
 
 Windows::
 
-    $ conda create -n smartva python=2.7.13 wxpython=3.*
-    $ activate smartva
-    $ pip install -r requirements.txt -r requirements-dev.txt - r requirements-win.txt
+    $ conda create -n smartva python=2.7.13 wxpython=4.*
+    $ conda activate smartva
+    $ pip install -r requirements.txt -r requirements-dev.txt -r requirements-win.txt
 
 macOS, Linux::
 
-    $ conda create -n smartva python=2.7.13 wxpython=3.*
-    $ source activate smartva
+    $ conda create -n smartva python=2.7.13 wxpython=4.*
+    $ conda activate smartva
     $ pip install -r requirements.txt -r requirements-dev.txt
 
     or
