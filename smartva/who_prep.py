@@ -13,8 +13,8 @@ OUTPUT_FILENAME_TEMPLATE = 'cleanheaders.csv'
 
 class WHOPrep(DataPrep):
 
-    def __init__(self, working_dir_path):
-        super(WHOPrep, self).__init__(working_dir_path, True)
+    def __init__(self, working_dir_path, short_form, who_2016):
+        super(WHOPrep, self).__init__(working_dir_path, short_form, who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
         self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE
@@ -58,6 +58,7 @@ class WHOPrep(DataPrep):
             self.reverse_one_hot_multiselect(row)
             self.recode_multiselects(row)
             self.encode_one_hot_from_multiselect(row)
+            self.encode_multiple_from_combined(row)
             self.map_units_from_values(row)
             self.convert_durations(row)
             self.map_adult_chest_pain_duration(row)
@@ -154,6 +155,13 @@ class WHOPrep(DataPrep):
 
     def recode_yes_no_questions(self, row):
         mapping = {'yes': 1, 'no': 0, 'ref': 8, 'dk': 9}
+
+        if not self.who_2016: #if WHO 2020 questionnaire
+            for sub in self.data_module.YES_NO_QUESTIONS:
+            # replace  WHO 2020 value for WHO 2016 value for yes/no questions
+                if sub in self.data_module.YES_NO_QUESTIONS_WHO_2020:
+                    self.data_module.YES_NO_QUESTIONS[sub] = self.data_module.YES_NO_QUESTIONS_WHO_2020[sub]
+
         for dest, src in self.data_module.YES_NO_QUESTIONS.items():
             try:
                 value = int(mapping[row[src]])
@@ -194,6 +202,14 @@ class WHOPrep(DataPrep):
             except (KeyError, ValueError, TypeError):
                 value = ''
             row[dest] = value
+
+    def encode_multiple_from_combined(self, row):
+        'Recode a combined question into multiple different questions'
+        if not self.who_2016:  # if WHO 2020 questionnaire
+            for src, (dest1, dest2) in self.data_module.COMBINED_TO_MULTIPLE_WHO_2020.items():
+                if row.get(src) == 'yes':
+                    row[dest1] = 1
+                    row[dest2] = 1
 
     def map_units_from_values(self, row):
         for dest, unit_data in self.data_module.UNIT_IF_AMOUNT.items():
@@ -377,6 +393,20 @@ class WHOPrep(DataPrep):
         if row.get('Id10364') == 'yes':
             row[key] = 1
         elif row.get('Id10363') == 'yes':
+            row[key] = 2
+        elif row.get('Id10365') == 'yes':
+            row[key] = 4
+        elif all([row.get(k) == 'no'
+                  for k in ('Id10363', 'Id10364', 'Id10365')]):
+            row[key] = 3
+        else:
+            row[key] = ''
+
+    def map_child_birth_size_2020(self, row): #removal of Id10364 (smaller than usual)
+        key = 'child_1_7'
+        #if row.get('Id10364') == 'yes':
+            #row[key] = 1
+        if row.get('Id10363') == 'yes':
             row[key] = 2
         elif row.get('Id10365') == 'yes':
             row[key] = 4

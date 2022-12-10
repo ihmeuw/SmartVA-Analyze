@@ -88,8 +88,8 @@ HCE_DROP_SYMPTOMS = {
 class OutputPrep(DataPrep):
 
     def __init__(self, working_dir_path, reorganize=True, keep_orig=False,
-                 short_form=False, free_text=True, hce=True):
-        super(OutputPrep, self).__init__(working_dir_path, None)
+                 short_form=False, free_text=True, hce=True, who_2016=False):
+        super(OutputPrep, self).__init__(working_dir_path, None, who_2016)
         self.reorganize = reorganize
         self.keep_orig = keep_orig
         self.predictions = defaultdict(list)
@@ -98,6 +98,7 @@ class OutputPrep(DataPrep):
         self.short_form = short_form
         self.free_text = free_text
         self.hce = hce
+        self.who_2016 = who_2016
 
     def run(self):
         if self.reorganize:
