@@ -62,6 +62,7 @@ class WHOPrep(DataPrep):
             self.map_units_from_values(row)
             self.convert_durations(row)
             self.map_adult_chest_pain_duration(row)
+            self.map_adult_pregnancy_duration(row)
             self.map_child_illness_duration(row)
             self.map_neonate_first_cry(row)
             self.map_child_unconsciousness_start(row)
@@ -275,6 +276,22 @@ class WHOPrep(DataPrep):
                 return
 
         row[key] = ''
+
+    def map_adult_pregnancy_duration(self, row):
+        """Custom mapping for adult_3_11a: how many months pregnant?"""
+        key = 'adult_3_11a'
+
+        try:
+            dur_in_months = int(row['Id10309'])
+        except (KeyError, TypeError, ValueError):
+            pass
+        else:
+            if 0 <= dur_in_months < 11:
+                row[key] = dur_in_months
+                return
+            else:
+                row[key] = ''
+                return
 
     def map_redundant_child_age_data(self, row):
         age_group_key = 'child_1_26'
