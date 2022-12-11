@@ -118,12 +118,12 @@ class DataPrep(Prep):
                 # No values to process or not an integer value (invalid).
                 pass
             except ConversionError as e:
-                warning_logger.debug(e.message)
+                warning_logger.debug(str(e))
                 continue
             except KeyError as e:
                 # Variable does not exist. The new published form does not contain all of the previous variables.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_binary_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     @staticmethod
@@ -163,11 +163,11 @@ class DataPrep(Prep):
                         break
                 except KeyError as e:
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. process_progressive_value_data'
-                                         .format(row['sid'], e.message))
+                                         .format(row['sid'], str(e)))
                     continue
 
     @staticmethod
-    def read_input_file(input_file_path, mode='rb'):
+    def read_input_file(input_file_path, mode='rt'):
         """Read input file. Return headers and matrix data.
 
         Args:
@@ -190,7 +190,7 @@ class DataPrep(Prep):
             matrix (list): Matrix of VA answers.
             output_file_path (str): Path of output file.
         """
-        with open(output_file_path, 'wb') as fo:
+        with open(output_file_path, 'wt') as fo:
             writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(matrix)

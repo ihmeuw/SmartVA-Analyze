@@ -176,7 +176,7 @@ class SymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. post_process_binary_variables'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
             row[read_header] = int(value == 1)
 

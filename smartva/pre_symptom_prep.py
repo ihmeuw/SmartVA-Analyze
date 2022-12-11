@@ -223,7 +223,7 @@ class PreSymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_duration_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
             if var in special_case_vars and row[length_var] == '':
@@ -293,7 +293,7 @@ class PreSymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. fill_missing_data'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def process_age_vars(self, row):
@@ -414,7 +414,7 @@ class PreSymptomPrep(DataPrep):
             pass
         except KeyError as e:
             warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_length'
-                                 .format(row['sid'], e.message))
+                                 .format(row['sid'], str(e)))
 
     def fix_rash_location(self, row):
         """Only rashes which are located on the face are relevant. Filter out other values.

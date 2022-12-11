@@ -1,7 +1,7 @@
 click==6.6
 colorama==0.3.7
 matplotlib==1.5.2
-numpy==1.11.1
+numpy==1.21.0
 py==1.4.31
 pyparsing==2.1.4
 python-dateutil==2.4.2
@@ -9,5 +9,5 @@ pytz==2016.6.1
 six==1.10.0
 stemming==1.0.1
 tornado==4.4.1
-progressbar==2.3
+progressbar33==2.4
 xlsxwriter==0.9.6

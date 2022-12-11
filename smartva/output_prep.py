@@ -169,7 +169,7 @@ class OutputPrep(DataPrep):
             'death_date',
             'interview_date',
         ]
-        with open(predictions_file, 'wb') as f:
+        with open(predictions_file, 'w') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for module in MODULES:
@@ -182,9 +182,9 @@ class OutputPrep(DataPrep):
                 module_file = os.path.join(self.working_dir_path, FOLDER1,
                                            '{}-predictions.csv'.format(module))
 
-                with open(pred_file, 'rb') as f_pred, \
-                        open(raw_file, 'rb') as f_raw, \
-                        open(module_file, 'wb') as f_mod:
+                with open(pred_file, 'r') as f_pred, \
+                        open(raw_file, 'r') as f_raw, \
+                        open(module_file, 'w') as f_mod:
                     raw_reader = csv.DictReader(f_raw)
                     pred_reader = csv.DictReader(f_pred)
                     mod_writer = csv.writer(f_mod)
@@ -291,7 +291,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 '{}-csmf.csv'.format(module))
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             csv.writer(f).writerows(table)
 
     def _tabulate_all_age_csmf(self):
@@ -319,7 +319,7 @@ class OutputPrep(DataPrep):
                 round(csmf[cause].get('female', 0), 3),
             ])
         filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             csv.writer(f).writerows(table)
 
 
@@ -346,7 +346,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 'gbd-level1-csmf.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             csv.writer(f).writerows(table)
         self.gbd_csmf = table
 
@@ -459,7 +459,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER3,
                                 'causes-of-death.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             csv.writer(f).writerows(table)
         return table
 
@@ -513,7 +513,7 @@ class OutputPrep(DataPrep):
         if not os.path.exists(prepped_file):
             return
 
-        with open(prepped_file, 'rb') as f_prep, open(recoded_file, 'wb') as f_rec:
+        with open(prepped_file, 'rt') as f_prep, open(recoded_file, 'wt') as f_rec:
             reader = csv.DictReader(f_prep)
             writer = csv.DictWriter(f_rec, fieldnames=reader.fieldnames)
             writer.writeheader()
@@ -607,7 +607,7 @@ class OutputPrep(DataPrep):
                                 '{}-endorsement-rates.csv'.format(module))
         headers = ['symptom', 'description']
         headers.extend(causes)
-        with open(filename, 'wb') as f:
+        with open(filename, 'w') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for symptom, rates in data.items():
@@ -651,7 +651,7 @@ class OutputPrep(DataPrep):
 
         path = os.path.join(self.working_dir_path, FOLDER4,
                             'VA-data-age-groupings.csv')
-        with open(path, 'wb') as f:
+        with open(path, 'w') as f:
             csv.writer(f).writerows(table)
 
     @staticmethod
