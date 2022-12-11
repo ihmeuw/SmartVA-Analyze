@@ -65,43 +65,39 @@ def make_valid_phmrc(row):
     return make_valid(row)
 
 
+def make_valid_who(row):
+    """Add standard WHO specific values for a row of data"""
+
+    row['Id10013'] = 'yes'   # All rows need valid consent
+
+    # Ensure that there is enough data to classify each row into a specific
+    # module. Otherwise the rows are filtered out
+    row['is{}'.format(row['module'].title())] = 1
+
+    # Hack to support auto detect. There must be enough columns that look
+    # like WHO indicator columns or we assume it's PHMRC data.
+    for i in range(10000, 10050):
+        col = 'Id{}'.format(i)
+        if col not in row:
+            row[col] = ''
+
+    return make_valid(row)
+
+
 def make_valid_who2016(row):
     """Add standard WHO2016 specific values for a row of data"""
-
-    row['Id10013'] = 'yes'   # All rows need valid consent
-
-    # Ensure that there is enough data to classify each row into a specific
-    # module. Otherwise the rows are filtered out
-    row['is{}'.format(row['module'].title())] = 1
-
-    # Hack to support auto detect. There must be enough columns that look
-    # like WHO indicator columns or we assume it's PHMRC data.
-    for i in range(10000, 10050):
-        col = 'Id{}'.format(i)
-        if col not in row:
-            row[col] = ''
-
-    return make_valid(row)
+    valid_row = make_valid_who(row)
+    valid_row['Id10219'] = 'yes'   # Riley used the presence of this column to determine that the form is who2016
+    return valid_row
+    
 
 def make_valid_who2022(row):
-    """Add standard WHO2016 specific values for a row of data"""
+    """Add (and remove) standard WHO2022 specific values for a row of data"""
+    valid_row = make_valid_who(row)
+    if 'Id10219' in valid_row:
+        del valid_row['Id10219']   # Riley used the absence of this column to determine that the form is who2022
+    return valid_row
 
-    row['Id10013'] = 'yes'   # All rows need valid consent
-
-    # Ensure that there is enough data to classify each row into a specific
-    # module. Otherwise the rows are filtered out
-    row['is{}'.format(row['module'].title())] = 1
-
-    # Hack to support auto detect. There must be enough columns that look
-    # like WHO indicator columns or we assume it's PHMRC data.
-    for i in range(10000, 10050):
-        col = 'Id{}'.format(i)
-        if i == 10219: # Id10219 destinguishes WHO2016 vs WHO2022 questionnaire
-            col = ''
-        if col not in row:
-            row[col] = ''
-
-    return make_valid(row)
 
 @pytest.fixture(scope='module')
 def phmrc_adult():
