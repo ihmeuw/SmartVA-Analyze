@@ -190,7 +190,7 @@ class WorkerThread(threading.Thread):
             if self.who_2016:
                 form_name = 'WHO 2016 Questionnaire'
             else:
-                form_name = 'WHO 2020 Questionnaire'
+                form_name = 'WHO 2022 Questionnaire'
 
         else:
             self.short_form = self.short_form_test(file_path)

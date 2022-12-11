@@ -157,11 +157,11 @@ class WHOPrep(DataPrep):
     def recode_yes_no_questions(self, row):
         mapping = {'yes': 1, 'no': 0, 'ref': 8, 'dk': 9}
 
-        if not self.who_2016: #if WHO 2020 questionnaire
+        if not self.who_2016: #if WHO 2022 questionnaire
             for sub in self.data_module.YES_NO_QUESTIONS:
-            # replace  WHO 2020 value for WHO 2016 value for yes/no questions
-                if sub in self.data_module.YES_NO_QUESTIONS_WHO_2020:
-                    self.data_module.YES_NO_QUESTIONS[sub] = self.data_module.YES_NO_QUESTIONS_WHO_2020[sub]
+            # replace  WHO 2022 value for WHO 2016 value for yes/no questions
+                if sub in self.data_module.YES_NO_QUESTIONS_WHO_2022:
+                    self.data_module.YES_NO_QUESTIONS[sub] = self.data_module.YES_NO_QUESTIONS_WHO_2022[sub]
 
         for dest, src in self.data_module.YES_NO_QUESTIONS.items():
             try:
@@ -206,8 +206,8 @@ class WHOPrep(DataPrep):
 
     def encode_multiple_from_combined(self, row):
         'Recode a combined question into multiple different questions'
-        if not self.who_2016:  # if WHO 2020 questionnaire
-            for src, (dest1, dest2) in self.data_module.COMBINED_TO_MULTIPLE_WHO_2020.items():
+        if not self.who_2016:  # if WHO 2022 questionnaire
+            for src, (dest1, dest2) in self.data_module.COMBINED_TO_MULTIPLE_WHO_2022.items():
                 if row.get(src) == 'yes':
                     row[dest1] = 1
                     row[dest2] = 1
@@ -419,7 +419,7 @@ class WHOPrep(DataPrep):
         else:
             row[key] = ''
 
-    def map_child_birth_size_2020(self, row): #removal of Id10364 (smaller than usual)
+    def map_child_birth_size_2022(self, row): #removal of Id10364 (smaller than usual)
         key = 'child_1_7'
         #if row.get('Id10364') == 'yes':
             #row[key] = 1

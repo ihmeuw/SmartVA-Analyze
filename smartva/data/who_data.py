@@ -465,9 +465,9 @@ DURATION_CONVERSIONS = {
 }
 
 """
-New yes/no question mappings for the WHO 2020 questionnaire
+New yes/no question mappings for the WHO 2022 questionnaire
 """
-YES_NO_QUESTIONS_WHO_2020 = {
+YES_NO_QUESTIONS_WHO_2022 = {
     'adult_2_82': 'Id10220', #change from Id10219
 
     'child_3_49': 'Id10123', #change from Id10290
@@ -490,7 +490,7 @@ WHO_Col: {PHMRC_COL: PHMRC_COL}
 
 #yes/no questions from above will be overwritten
 
-COMBINED_TO_MULTIPLE_WHO_2020 = {
+COMBINED_TO_MULTIPLE_WHO_2022 = {
 
     "Id10261" : ('adult_2_57', 'adult_2_60'), #adult_2_57 and adult_2_60 are yes/no questions conversion in WHO 2016
     "Id10294": ('adult_3_1', 'adult_3_2'),  # adult_3_1 and adult_3_2 are yes/no questions conversion in WHO 2016

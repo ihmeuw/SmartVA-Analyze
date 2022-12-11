@@ -5,7 +5,7 @@ from smartva.who_prep import WHOPrep
 
 @pytest.fixture
 def prep():
-    return WHOPrep('/')
+    return WHOPrep('/', short_form=True, who_2016=True)
 
 
 @pytest.mark.parametrize('row, expected', [

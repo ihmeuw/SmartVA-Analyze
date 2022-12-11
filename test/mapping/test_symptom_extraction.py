@@ -83,7 +83,7 @@ def make_valid_who2016(row):
 
     return make_valid(row)
 
-def make_valid_who2020(row):
+def make_valid_who2022(row):
     """Add standard WHO2016 specific values for a row of data"""
 
     row['Id10013'] = 'yes'   # All rows need valid consent
@@ -96,7 +96,7 @@ def make_valid_who2020(row):
     # like WHO indicator columns or we assume it's PHMRC data.
     for i in range(10000, 10050):
         col = 'Id{}'.format(i)
-        if i == 10219: # Id10219 destinguishes WHO2016 vs WHO2020 questionnaire
+        if i == 10219: # Id10219 destinguishes WHO2016 vs WHO2022 questionnaire
             col = ''
         if col not in row:
             row[col] = ''
@@ -289,7 +289,7 @@ def test_symptom_extraction(tmpdir_factory, data):
                         row['sid'] != actual['sid'] or
                         bool(int(value)) is not row['endorsed']):
                     errors.append(row)
-    assert not errors
+                    assert not errors
 
 
 @pytest.fixture(params=[

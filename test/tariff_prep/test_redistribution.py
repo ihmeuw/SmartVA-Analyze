@@ -27,7 +27,7 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country='USA'
+        country='USA', who_2016=True
     )
     df = pd.read_csv(prep.undetermined_matrix_filename)
     weights_by_id = df.groupby(['age', 'sex', 'iso3']).sum()
@@ -66,7 +66,7 @@ def test_redistribution_weights(tmpdir, tariff_data, short_form, hce):
         short_form=short_form,
         options={'hce': hce, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country='USA'
+        country='USA', who_2016=True
     )
     undetermined_weights = prep._get_undetermined_matrix()
 
@@ -94,7 +94,7 @@ def test_redistribution_weights_no_country(tmpdir, tariff_data):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country=None
+        country=None, who_2016=True
     )
     undetermined_weights = prep._get_undetermined_matrix()
     assert undetermined_weights == {}
@@ -108,7 +108,7 @@ def test_redistribution_causes_match_reporting_causes(tmpdir, tariff_data):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country=None
+        country=None, who_2016=True
     )
     with open(prep.undetermined_matrix_filename) as f:
         undetermined_causes = {row['gs_text34'] for row in csv.DictReader(f)}

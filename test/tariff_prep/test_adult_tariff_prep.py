@@ -29,7 +29,7 @@ def prep(tmpdir):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country='USA'
+        country='USA', who_2016=True
     )
 
 
