@@ -203,7 +203,7 @@ def who2016_freetext():
 
 @pytest.fixture(scope='module')
 def who2022_adult():
-    from .who2016_adult_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    from .who2022_adult_mapping import MAPPING
     for row in MAPPING:
         row['module'] = 'adult'
         make_valid_who2022(row)
