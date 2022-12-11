@@ -192,11 +192,47 @@ def who2016_neonate():
         make_valid_who2016(row)
     return MAPPING
 
+
 @pytest.fixture(scope='module')
 def who2016_freetext():
     from .who2016_freetext_mapping import MAPPING
     for row in MAPPING:
         make_valid_who2016(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_adult():
+    from .who2016_adult_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    for row in MAPPING:
+        row['module'] = 'adult'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_child():
+    from .who2016_child_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    for row in MAPPING:
+        row['module'] = 'child'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_neonate():
+    from .who2022_neonate_mapping import MAPPING  # i copied the 2016 mapping and commented out a section that does not appear in the who 2022 instrument
+    for row in MAPPING:
+        row['module'] = 'neonate'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_freetext():
+    from .who2016_freetext_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    for row in MAPPING:
+        make_valid_who2022(row)
     return MAPPING
 
 
@@ -213,6 +249,10 @@ def who2016_freetext():
     'who2016_child',
     'who2016_neonate',
     'who2016_freetext',
+    'who2022_adult',
+    'who2022_child',
+    'who2022_neonate',
+    'who2022_freetext',
 ])
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}
@@ -285,7 +325,7 @@ def test_symptom_extraction(tmpdir_factory, data):
                         row['sid'] != actual['sid'] or
                         bool(int(value)) is not row['endorsed']):
                     errors.append(row)
-                    assert not errors
+    assert not errors
 
 
 @pytest.fixture(params=[
