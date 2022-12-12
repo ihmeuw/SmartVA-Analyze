@@ -143,7 +143,7 @@ class WorkerThread(threading.Thread):
 
     @staticmethod
     def who_2016_test(file_path):
-        with open(file_path, 'Ub') as f:
+        with open(file_path, 'Ut') as f:
             return WHO_2016_FORM_HEADER in (next(csv.reader(f)))
 
     @staticmethod

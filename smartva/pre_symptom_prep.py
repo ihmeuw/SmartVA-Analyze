@@ -327,7 +327,7 @@ class PreSymptomPrep(DataPrep):
                 row[var] = value_or_default(row[var], int, [0, 9999], '')
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_weight_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def validate_date_vars(self, row, date_vars):
@@ -353,7 +353,7 @@ class PreSymptomPrep(DataPrep):
                         row[var_name] = default
                 except KeyError as e:
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_date_vars'
-                                         .format(row['sid'], e.message))
+                                         .format(row['sid'], str(e)))
                     continue
 
     def process_weight_sd_vars(self, row, exam_date_vars, weight_sd_data):
