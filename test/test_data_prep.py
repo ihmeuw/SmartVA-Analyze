@@ -10,7 +10,7 @@ class Preppy(DataPrep):
 
 @pytest.fixture
 def prep(tmpdir):
-    return Preppy(tmpdir.strpath, short_form=False)
+    return Preppy(tmpdir.strpath, short_form=False, who_2016=True)
 
 
 def test_malformed_jagged_csv(prep):

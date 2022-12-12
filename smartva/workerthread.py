@@ -31,6 +31,7 @@ from smartva.data import (
 )
 
 SHORT_FORM_HEADER = 'adult_7_11'
+WHO_2016_FORM_HEADER = 'Id10219'
 CLEAN_HEADERS_FILENAME = 'cleanheaders.csv'
 
 
@@ -89,6 +90,7 @@ class WorkerThread(threading.Thread):
         warning_logger.addHandler(warning_file_handler)
 
         self.short_form = False
+        self.who_2016 = False
 
         self.start()
 
@@ -140,6 +142,11 @@ class WorkerThread(threading.Thread):
             return SHORT_FORM_HEADER in next(csv.reader(f))
 
     @staticmethod
+    def who_2016_test(file_path):
+        with open(file_path, 'Ub') as f:
+            return WHO_2016_FORM_HEADER in (next(csv.reader(f)))
+
+    @staticmethod
     def make_dir(*args):
         path = os.path.join(*args)
         if not os.path.exists(path):
@@ -179,7 +186,11 @@ class WorkerThread(threading.Thread):
 
         if who_questionnaire:
             self.short_form = True
-            form_name = 'WHO 2016 Questionnaire'
+            self.who_2016 = self.who_2016_test(file_path)
+            if self.who_2016:
+                form_name = 'WHO 2016 Questionnaire'
+            else:
+                form_name = 'WHO 2022 Questionnaire'
 
         else:
             self.short_form = self.short_form_test(file_path)
@@ -191,20 +202,20 @@ class WorkerThread(threading.Thread):
                 form_name = 'PHMRC Full Questionnaire'
         report_logger.info('Detected {}'.format(form_name))
 
-        who_prep = WHOPrep(self.output_dir_path)
-        common_prep = CommonPrep(self.output_dir_path, self.short_form)
-        adult_pre_symptom = PreSymptomPrep(adult_pre_symptom_data, self.output_dir_path, self.short_form)
-        adult_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.ADULT, ADULT_RULES)
-        adult_symptom = SymptomPrep(adult_symptom_data, self.output_dir_path, self.short_form)
-        adult_results = TariffPrep(adult_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
-        child_pre_symptom = PreSymptomPrep(child_pre_symptom_data, self.output_dir_path, self.short_form)
-        child_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.CHILD, CHILD_RULES)
-        child_symptom = SymptomPrep(child_symptom_data, self.output_dir_path, self.short_form)
-        child_results = TariffPrep(child_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
-        neonate_pre_symptom = PreSymptomPrep(neonate_pre_symptom_data, self.output_dir_path, self.short_form)
-        neonate_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.NEONATE, NEONATE_RULES)
-        neonate_symptom = SymptomPrep(neonate_symptom_data, self.output_dir_path, self.short_form)
-        neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country)
+        who_prep = WHOPrep(self.output_dir_path, self.short_form, self.who_2016)
+        common_prep = CommonPrep(self.output_dir_path, self.short_form, self.who_2016)
+        adult_pre_symptom = PreSymptomPrep(adult_pre_symptom_data, self.output_dir_path, self.short_form, self.who_2016)
+        adult_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.ADULT, ADULT_RULES, self.who_2016)
+        adult_symptom = SymptomPrep(adult_symptom_data, self.output_dir_path, self.short_form,self.who_2016)
+        adult_results = TariffPrep(adult_tariff_data, self.output_dir_path, self.short_form, self.options, self.country, self.who_2016)
+        child_pre_symptom = PreSymptomPrep(child_pre_symptom_data, self.output_dir_path, self.short_form, self.who_2016)
+        child_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.CHILD, CHILD_RULES, self.who_2016)
+        child_symptom = SymptomPrep(child_symptom_data, self.output_dir_path, self.short_form, self.who_2016)
+        child_results = TariffPrep(child_tariff_data, self.output_dir_path, self.short_form, self.options, self.country, self.who_2016)
+        neonate_pre_symptom = PreSymptomPrep(neonate_pre_symptom_data, self.output_dir_path, self.short_form,self. who_2016)
+        neonate_rules = RulesPrep(self.output_dir_path, self.short_form, common_data.NEONATE, NEONATE_RULES,self. who_2016)
+        neonate_symptom = SymptomPrep(neonate_symptom_data, self.output_dir_path, self.short_form,self.who_2016)
+        neonate_results = TariffPrep(neonate_tariff_data, self.output_dir_path, self.short_form, self.options, self.country, self.who_2016)
         legacy = self.options.get('legacy_format', False)
         output = OutputPrep(self.output_dir_path, reorganize=not legacy,
                             keep_orig=legacy, short_form=self.short_form,

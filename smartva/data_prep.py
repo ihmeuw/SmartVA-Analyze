@@ -40,9 +40,10 @@ class DataPrep(Prep):
 
     AGE_GROUP = None
 
-    def __init__(self, working_dir_path, short_form):
+    def __init__(self, working_dir_path, short_form, who_2016):
         super(DataPrep, self).__init__(working_dir_path)
         self.short_form = short_form
+        self.who_2016 = who_2016
 
     def input_file_path(self, age_group=None, filename_template=None):
         template = filename_template or self.INPUT_FILENAME_TEMPLATE

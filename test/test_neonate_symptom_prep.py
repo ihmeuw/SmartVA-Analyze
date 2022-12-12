@@ -35,7 +35,7 @@ def output_file(tmpdir):
 
 @pytest.fixture
 def prep(tmpdir):
-    return SymptomPrep(neonate_symptom_data, tmpdir.strpath, True)
+    return SymptomPrep(neonate_symptom_data, tmpdir.strpath, True, who_2016=True)
 
 
 class TestNeonateSymptomPrep(object):

@@ -9,7 +9,7 @@ from smartva.pre_symptom_prep import PreSymptomPrep
 def prep():
     data_module = Namespace(AGE_GROUP='test', DEFAULT_FILL={},
                             DEFAULT_FILL_SHORT={})
-    return PreSymptomPrep(data_module, '', True)
+    return PreSymptomPrep(data_module, '', True, who_2016=True)
 
 
 class TestPreSymptomPrep(object):

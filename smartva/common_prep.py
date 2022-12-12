@@ -33,8 +33,8 @@ def int_value(x):
 class CommonPrep(DataPrep):
     """This file cleans up input and converts from ODK collected data to VA variables."""
 
-    def __init__(self, working_dir_path, short_form):
-        super(CommonPrep, self).__init__(working_dir_path, short_form)
+    def __init__(self, working_dir_path, short_form, who_2016):
+        super(CommonPrep, self).__init__(working_dir_path, short_form, who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
         self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE

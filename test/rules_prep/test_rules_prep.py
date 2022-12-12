@@ -80,7 +80,7 @@ all_rules = [always_exception, conditional, sometimes_true, always_false, always
 
 @pytest.fixture
 def prep(tmpdir):
-    return RulesPrep(working_dir_path=tmpdir.strpath, short_form=True, age_group='none', rules=all_rules)
+    return RulesPrep(working_dir_path=tmpdir.strpath, short_form=True, age_group='none', rules=all_rules, who_2016=True)
 
 
 class TestRulesPrep(object):
@@ -103,7 +103,7 @@ def test_rule_order(tmpdir, rule_list):
     input_file.write('sid,condition\nfoo,1')
 
     prep = RulesPrep(working_dir_path=tmpdir.strpath, short_form=True,
-                     age_group='none', rules=rule_list)
+                     age_group='none', rules=rule_list, who_2016=True)
     prep.run()
 
     output_file = os.path.join(intermediate.strpath, 'none-logic-rules.csv')

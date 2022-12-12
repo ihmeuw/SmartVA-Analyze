@@ -8,7 +8,7 @@ from smartva.symptom_prep import SymptomPrep
 @pytest.fixture
 def prep():
     data_module = Namespace(AGE_GROUP='test')
-    return SymptomPrep(data_module, '', True)
+    return SymptomPrep(data_module, '', True, who_2016=True)
 
 
 class TestSymptomPrep(object):

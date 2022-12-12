@@ -65,8 +65,8 @@ def make_valid_phmrc(row):
     return make_valid(row)
 
 
-def make_valid_who2016(row):
-    """Add standard WHO2016 specific values for a row of data"""
+def make_valid_who(row):
+    """Add standard WHO specific values for a row of data"""
 
     row['Id10013'] = 'yes'   # All rows need valid consent
 
@@ -82,6 +82,21 @@ def make_valid_who2016(row):
             row[col] = ''
 
     return make_valid(row)
+
+
+def make_valid_who2016(row):
+    """Add standard WHO2016 specific values for a row of data"""
+    valid_row = make_valid_who(row)
+    valid_row['Id10219'] = 'yes'   # Riley used the presence of this column to determine that the form is who2016
+    return valid_row
+    
+
+def make_valid_who2022(row):
+    """Add (and remove) standard WHO2022 specific values for a row of data"""
+    valid_row = make_valid_who(row)
+    if 'Id10219' in valid_row:
+        del valid_row['Id10219']   # Riley used the absence of this column to determine that the form is who2022
+    return valid_row
 
 
 @pytest.fixture(scope='module')
@@ -177,11 +192,47 @@ def who2016_neonate():
         make_valid_who2016(row)
     return MAPPING
 
+
 @pytest.fixture(scope='module')
 def who2016_freetext():
     from .who2016_freetext_mapping import MAPPING
     for row in MAPPING:
         make_valid_who2016(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_adult():
+    from .who2022_adult_mapping import MAPPING
+    for row in MAPPING:
+        row['module'] = 'adult'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_child():
+    from .who2016_child_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    for row in MAPPING:
+        row['module'] = 'child'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_neonate():
+    from .who2022_neonate_mapping import MAPPING  # i copied the 2016 mapping and commented out a section that does not appear in the who 2022 instrument
+    for row in MAPPING:
+        row['module'] = 'neonate'
+        make_valid_who2022(row)
+    return MAPPING
+
+
+@pytest.fixture(scope='module')
+def who2022_freetext():
+    from .who2016_freetext_mapping import MAPPING  # reuse 2016 mapping, since it seems to exercise same parts
+    for row in MAPPING:
+        make_valid_who2022(row)
     return MAPPING
 
 
@@ -198,6 +249,10 @@ def who2016_freetext():
     'who2016_child',
     'who2016_neonate',
     'who2016_freetext',
+    'who2022_adult',
+    'who2022_child',
+    'who2022_neonate',
+    'who2022_freetext',
 ])
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}

@@ -53,8 +53,8 @@ class PreSymptomPrep(DataPrep):
     Subclasses must set the data_module property, which will get the class ready.
     """
 
-    def __init__(self, data_module, working_dir_path, short_form):
-        super(PreSymptomPrep, self).__init__(working_dir_path, short_form)
+    def __init__(self, data_module, working_dir_path, short_form, who_2016):
+        super(PreSymptomPrep, self).__init__(working_dir_path, short_form,who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
         self.OUTPUT_FILENAME_TEMPLATE = OUTPUT_FILENAME_TEMPLATE

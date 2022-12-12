@@ -6,7 +6,7 @@ from smartva.data import common_data
 
 @pytest.fixture
 def prep():
-    return common_prep.CommonPrep('', True)
+    return common_prep.CommonPrep('', True, who_2016=True)
 
 
 class TestCommonPrep(object):
@@ -198,7 +198,7 @@ class TestCommonPrep(object):
     (['dont-know-with-neonate-data', '', '', '7', '9'], 'neonate'),
 ], ids=lambda x: x['sid'])
 def test_save_row(tmpdir, row, module):
-    prep = common_prep.CommonPrep(tmpdir.strpath, True)
+    prep = common_prep.CommonPrep(tmpdir.strpath, True, who_2016=True)
 
     headers = ['sid', 'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d']
     lines = [','.join(headers)]
