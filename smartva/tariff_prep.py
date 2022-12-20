@@ -422,7 +422,7 @@ class TariffPrep(DataPrep):
 
             va = self.score_row(row, tariffs)
 
-            va.censored = map(safe_int, row.get('restricted', '').split())
+            va.censored = list(map(safe_int, row.get('restricted', '').split()))
             va.rules = safe_int(row.get(RULES_CAUSE_NUM_KEY))
 
             scored.append(va)
@@ -896,7 +896,7 @@ class TariffPrep(DataPrep):
             return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
 
         filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
             writer.writerows([format_row(va) for va in user_data])
@@ -998,7 +998,8 @@ class TariffPrep(DataPrep):
 
                 # TODO: More robust handling of unicode
                 try:
-                    sid = unicode(va.sid, 'utf-8')
+                    b = str.encode(va.sid)
+                    sid = str(b, 'utf-8')
                 except UnicodeDecodeError:
                     sid = unicode(va.sid, 'latin-1')
 
@@ -1037,11 +1038,11 @@ class TariffPrep(DataPrep):
                 else:
                     worksheet.write(i, 3, undetermined, vcentered_fmt)
                     row.append(undetermined)
-
+                symptom_order_list = list(symptom_descriptions.values())
                 symptoms = sorted([symptom_descriptions[symptom]
                                    for symptom in va.endorsements
                                    if symptom in symptom_descriptions],
-                                  key=lambda s: symptom_order.index(s))
+                                  key=lambda s: symptom_order_list.index(s))
                 symptoms_list = '\r\n'.join([u'\u2022 {}'.format(symptom)
                                              for symptom in symptoms])
                 worksheet.write(i, 3 + n_causes * 3, symptoms_list)
@@ -1113,7 +1114,7 @@ class TariffPrep(DataPrep):
             return [va.sid] + vals
 
         filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
-        with open(os.path.join(self.intermediate_dir, filename), 'wb') as f:
+        with open(os.path.join(self.intermediate_dir, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([format_row(va) for va in user_data])
@@ -1125,7 +1126,7 @@ class TariffPrep(DataPrep):
             csmf (dict): Map of causes to count.
         """
         filename = '{:s}-csmf.csv'.format(key)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
             writer.writerows(sorted(csmf.items(), key=lambda _: _[0]))

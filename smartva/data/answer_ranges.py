@@ -2,6 +2,10 @@ from datetime import date
 
 MAX_YEAR = date.today().year + 1
 
+_range = range
+def range(*args):
+    return[_range(*args)]
+
 # these are the acceptable ranges for answers from the master codebook
 RANGE_LIST = {
     'g1_01d': range(1, 31 + 1) + [99],
