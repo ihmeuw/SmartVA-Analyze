@@ -213,8 +213,11 @@ def test_mask_ranks(prep, censored, scores, ranks, expected):
     uniform_list_pos = 999
     min_cause_score = defaultdict(lambda: 0)
 
-    prep.mask_ranks([va], uniform, cutoffs, demog_restrictions, lowest_rank,
-                    uniform_list_pos, min_cause_score)
+    prep.mask_ranks([va],
+                    len(uniform), # this seems better matched to the doc string than what was here before converting to py3
+                    cutoffs, demog_restrictions, lowest_rank,
+                    uniform_list_pos/lowest_rank,  # I picked this because the doc string says it should be a value between 0 and 1, but I'm not sure it is correct
+                    min_cause_score)
 
     assert va.ranks == expected
 

@@ -31,6 +31,8 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
     )
     df = pd.read_csv(prep.undetermined_matrix_filename)
     weights_by_id = df.groupby(['age', 'sex', 'iso3']).sum()
+    del weights_by_id['gs_text34']
+    assert np.allclose(weights_by_id, 1.0)
     assert weights_by_id.apply(np.allclose, args=(1,)).all()
 
 
