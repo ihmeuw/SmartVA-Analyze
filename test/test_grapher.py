@@ -144,8 +144,8 @@ def test_csmf_sex_undetermined_plot(prep):
         ax.set_ylabel('Mortality fractions')
         ax.yaxis.grid()
 
-        ax.set_xticklabels(cause_keys)
         ax.set_xticks(xlocations)
+        ax.set_xticklabels(cause_keys)
 
         bar_width = .75  # the width of the bars
 
@@ -157,8 +157,8 @@ def test_csmf_sex_undetermined_plot(prep):
         ax.set_ylabel('Mortality fractions')
         ax.yaxis.grid()
 
-        ax.set_xticklabels(cause_keys, rotation=90)
         ax.set_xticks(xlocations)
+        ax.set_xticklabels(cause_keys, rotation=90)
 
         ax.bar(xlocations, cause_fractions, bar_width, color='#C44440', align='center')
 

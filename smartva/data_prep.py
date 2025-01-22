@@ -151,7 +151,9 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
         for read_header, conversion_data in progressive_data:
             for value, write_header in conversion_data:
                 try:
-                    if safe_float(row[read_header]) > value:
+                    # in Python 2, (None < x) is True for any float x, but in 
+                    # Python 3 it is an error so we need to check for None explicitly
+                    if (value is None) or safe_float(row[read_header]) > value:
                         if isinstance(write_header, tuple):
                             write_header, write_value = write_header
                         else:

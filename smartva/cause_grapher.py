@@ -80,7 +80,7 @@ def make_graph(graph_data, cause_key, output_dir):
     female_data = list(graph_data[FEMALE].values())
 
     graph_title = cause_key.capitalize() + ' by age and sex'
-    graph_filename = re.sub('[^\w_\. ]', '-', cause_key.replace('(', '').replace(')', '')).replace(' ', '-').lower()
+    graph_filename = re.sub(r'[^\w_\. ]', '-', cause_key.replace('(', '').replace(')', '')).replace(' ', '-').lower()
 
     max_value = max(max(male_data), max(female_data))
     xlocations = np.arange(len(AGE_DATA))  # the x locations for the groups
