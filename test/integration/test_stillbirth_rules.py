@@ -41,7 +41,7 @@ Test cases:
       'child_1_11': 2}, False),   # conflicting info on VA
     ({'sid': '11_born_dead_age4', 'gen_5_4': 4, 'gen_5_4c': 4,
       'child_1_11': 2}, False),   # conflicting info on VA
-], ids=lambda x: x['sid'])
+])
 def test_stillbirth_rules(tmpdir, tmpdir_factory, row, expected):
     data = dict(list(zip(REQUIRED_HEADERS, [''] * len(REQUIRED_HEADERS))))
     data.update(row)   # ensure age data is copied and not overwritten

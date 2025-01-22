@@ -137,7 +137,7 @@ class TestSymptomPrep(object):
         ({'sid': 'two', 'a': 1, 'b': 1, 'c': 0, 'd': 0}, '1 2'),
         ({'sid': 'any', 'a': 0, 'b': 0, 'c': 1, 'd': 0}, '3'),
         ({'sid': 'missing'}, ''),
-    ], ids=lambda x: x['sid'])
+    ])
     def test_censor_causes(self, prep, row, expected):
         censor = {
             1: ['a'],
@@ -158,7 +158,7 @@ class TestSymptomPrep(object):
         ({'sid': 'previous', 'a': 1, 'b': 1, 'c': 1, 'restricted': '3'}, '3'),
         ({'sid': 'same', 'a': 0, 'b': 1, 'c': 1, 'restricted': '1'}, '1'),
         ({'sid': 'add', 'a': 0, 'b': 1, 'c': 1, 'restricted': '2'}, '1 2'),
-    ], ids=lambda x: x['sid'])
+    ])
     def test_require_symptoms(self, prep, row, expected):
         required = {
             1: ['a'],

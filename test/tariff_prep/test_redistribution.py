@@ -34,8 +34,10 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
     assert weights_by_id.apply(np.allclose, args=(1,)).all()
 
 
-@pytest.mark.skipif(not pytest.config.getoption("--data-checks"),
-                    reason="need --data-checks option to run")
+@pytest.mark.skipif(
+    lambda config: not config.getoption("--data-checks"),
+    reason="need --data-checks option to run"
+)
 @pytest.mark.parametrize('tariff_data', module_data)
 @pytest.mark.parametrize('country', iso3s)
 def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):

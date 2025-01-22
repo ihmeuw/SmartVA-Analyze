@@ -127,7 +127,7 @@ def test_get_tariff_matrix(tmpdir):
     ({'sid': 'none', 'restricted': ''}, set()),
     ({'sid': 'one', 'restricted': '1'}, {1}),
     ({'sid': 'two', 'restricted': '1 2'}, {1, 2}),
-], ids=lambda x: x['sid'])
+])
 def test_score_symptom_data_restricted(prep, row, expected):
     va = prep.score_symptom_data([row], {})[0]
     assert va.censored == expected
@@ -323,7 +323,7 @@ def test_training_likelihood_ranges(tariff_data):
         [(4, 1)]),
     (Record(sid='aggregates-takes-best-capped2', cause=5,
             ranks={3: 82, 4: 83, 5: 20}), [(4, 0), (3, 2)]),
-], ids=lambda va: va.sid)
+])
 def test_determine_likelihood(prep, va, expected):
     thresholds = {
         1: [0, 10, 50, 100],

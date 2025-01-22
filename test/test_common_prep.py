@@ -196,7 +196,7 @@ class TestCommonPrep(object):
     (['dont-know-with-child-data', '', '7', '', '9'], 'child'),
     (['refused-with-neonate-data', '', '', '7', '8'], 'neonate'),
     (['dont-know-with-neonate-data', '', '', '7', '9'], 'neonate'),
-], ids=lambda x: x['sid'])
+])
 def test_save_row(tmpdir, row, module):
     prep = common_prep.CommonPrep(tmpdir.strpath, True, who_2016=True)
 
