@@ -455,7 +455,7 @@ class PreSymptomPrep(DataPrep):
         """
         if self.AGE_GROUP == common_data.NEONATE:
             try:
-                value = value_or_default(row['c1_25b'], int, default=None)
+                value = value_or_default(row['c1_25b'], int)
                 if 1 <= value <= 28:
                     row['c1_26'] = 1
             except KeyError as e:
