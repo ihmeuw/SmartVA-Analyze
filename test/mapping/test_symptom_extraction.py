@@ -257,7 +257,7 @@ def who2022_freetext():
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}
     expected = defaultdict(list)
-    input_data = request.getfuncargvalue(request.param)
+    input_data = request.getfixturevalue(request.param)
     for row in input_data:
         headers.update(list(row.keys()))
         expected[row['module']].append(
@@ -338,7 +338,7 @@ def suite(request):
     cases = {
         case['symptom']
         for suite in suites
-        for case in request.getfuncargvalue(suite)
+        for case in request.getfixturevalue(suite)
         if case['endorsed']
     }
     return module, cases
