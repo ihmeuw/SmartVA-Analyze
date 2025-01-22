@@ -128,7 +128,7 @@ class TextEntryStreamWriter(io.TextIOBase):
         # If processing, overwrite previous line.
         # TODO - Figure out if this is the appropriate way to overwrite a line. It seems convoluted.
         if re.match(r'(Adult|Child|Neonate) :: Processing \d+', msg):
-            last_line = self._widget.GetLineText(long(self._widget.GetNumberOfLines() - 2))
+            last_line = self._widget.GetLineText(int(self._widget.GetNumberOfLines() - 2))
             if re.match(r'(Adult|Child|Neonate) :: Processing \d+', last_line):
                 # replace
                 position = self._widget.GetLastPosition()

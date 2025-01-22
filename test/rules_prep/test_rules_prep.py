@@ -53,7 +53,7 @@ def get_expected_results(file_):
 
 def validate_matrix(actual, expected):
     for a in actual:
-        e = expected.next()
+        e = next(expected)
         for var in e:
             assert a[var] == e[var], "SID: '{}' does not produce expected result".format(a['sid'])
 

@@ -91,7 +91,7 @@ class PreSymptomPrep(DataPrep):
         additional_data.update({k: '' for k in duration_day_vars})
         additional_data.update({k: 0 for k in self.data_module.GENERATED_VARS_DATA})
         additional_data.update({k: 0 for k in sorted(self.data_module.WORDS_TO_VARS.values())})
-        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
+        additional_headers, additional_values = additional_headers_and_values(headers, list(additional_data.items()))
 
         headers.extend(additional_headers)
         self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
@@ -109,7 +109,7 @@ class PreSymptomPrep(DataPrep):
             self.check_abort()
 
             status_notifier.update({'sub_progress': (index,)})
-            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.expand_row(row, dict(list(zip(additional_headers, additional_values))))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
             self.verify_answers_for_row(row, RANGE_LIST)
@@ -120,7 +120,7 @@ class PreSymptomPrep(DataPrep):
 
             self.recode_answers(row, self.data_module.RECODE_MAP)
 
-            self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
+            self.process_binary_vars(row, list(self.data_module.BINARY_CONVERSION_MAP.items()))
 
             self.calculate_duration_vars(row, duration_vars, self.data_module.DURATION_VARS_SPECIAL_CASE)
 
@@ -135,7 +135,7 @@ class PreSymptomPrep(DataPrep):
             self.convert_free_text_vars(row, self.data_module.FREE_TEXT_VARS, self.data_module.WORDS_TO_VARS)
 
             if self.short_form:
-                word_list = [v for k, v in self.data_module.SHORT_FORM_FREE_TEXT_CONVERSION.items()
+                word_list = [v for k, v in list(self.data_module.SHORT_FORM_FREE_TEXT_CONVERSION.items())
                              if value_or_default(row.get(k)) == 1]
                 if word_list:
                     self.convert_free_text_words(row, word_list, self.data_module.WORDS_TO_VARS)
@@ -162,7 +162,7 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
             valid_range_data (dict): Map of answers and valid ranges.
         """
-        for variable, range_list in valid_range_data.items():
+        for variable, range_list in list(valid_range_data.items()):
             try:
                 value = row[variable]
             except KeyError:
@@ -189,7 +189,7 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
             consolidation_map (dict): Dictionary of read/write variables and their data counterparts.
         """
-        for data_headers, data_map in consolidation_map.items():
+        for data_headers, data_map in list(consolidation_map.items()):
             read_header, write_header = data_headers
             try:
                 value = int(row[read_header])
@@ -286,7 +286,7 @@ class PreSymptomPrep(DataPrep):
             row (dict): Row of VA data.
             default_fill (dict): Dictionary of headers and default values.
         """
-        for variable, value in default_fill.items():
+        for variable, value in list(default_fill.items()):
             try:
                 if row[variable] == '':
                     row[variable] = value
@@ -345,7 +345,7 @@ class PreSymptomPrep(DataPrep):
             'y': (['', '999', 999, '9999', 9999], 0),
         }
         for var in date_vars:
-            for val, val_data in date_invalid.items():
+            for val, val_data in list(date_invalid.items()):
                 var_name = var + val
                 invalid_data, default = val_data
                 try:
@@ -377,7 +377,7 @@ class PreSymptomPrep(DataPrep):
         else:
 
             exam_data = []
-            for date_var, weight_var in exam_date_vars.items():
+            for date_var, weight_var in list(exam_date_vars.items()):
                 try:
                     exam_date = make_date(row, date_var)
                     exam_weight = float(row['{:s}b'.format(weight_var)])
@@ -397,7 +397,7 @@ class PreSymptomPrep(DataPrep):
                         sex = safe_int(row[SEX_VAR])
                         weight_kg = latest_weight / 1000
 
-                        for sd_var, sd_data in weight_sd_data.items():
+                        for sd_var, sd_data in list(weight_sd_data.items()):
                             row[sd_var] = safe_int(
                                 weight_kg < sd_data.get(sex, {}).get(age_at_exam_months, 0))
 

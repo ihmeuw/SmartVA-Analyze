@@ -145,7 +145,7 @@ class WHOPrep(DataPrep):
         # to least trusted. We want to search one set of suffixes for all
         # age groups (just in case)
         age_group_cols = product(
-            ('', 1, 2), {'Adult': 3, 'Child': 2, 'Neonate': 1}.items())
+            ('', 1, 2), list({'Adult': 3, 'Child': 2, 'Neonate': 1}.items()))
         for suffix, (module, value) in age_group_cols:
             if safe_int(row.get('is{}{}'.format(module, suffix))):
                 row['gen_5_4d'] = value
@@ -163,7 +163,7 @@ class WHOPrep(DataPrep):
                 if sub in self.data_module.YES_NO_QUESTIONS_WHO_2022:
                     self.data_module.YES_NO_QUESTIONS[sub] = self.data_module.YES_NO_QUESTIONS_WHO_2022[sub]
 
-        for dest, src in self.data_module.YES_NO_QUESTIONS.items():
+        for dest, src in list(self.data_module.YES_NO_QUESTIONS.items()):
             try:
                 value = int(mapping[row[src]])
             except (TypeError, KeyError):
@@ -171,7 +171,7 @@ class WHOPrep(DataPrep):
             row[dest] = value
 
     def recode_categoricals(self, row):
-        for (dest, src), mapping in self.data_module.RECODE_QUESTIONS.items():
+        for (dest, src), mapping in list(self.data_module.RECODE_QUESTIONS.items()):
             try:
                 value = int(mapping[row[src]])
             except (TypeError, KeyError):
@@ -179,25 +179,25 @@ class WHOPrep(DataPrep):
             row[dest] = value
 
     def rename_questions(self, row):
-        for dest, src in self.data_module.RENAME_QUESTIONS.items():
+        for dest, src in list(self.data_module.RENAME_QUESTIONS.items()):
             row[dest] = row.get(src, '')
 
     def reverse_one_hot_multiselect(self, row):
         """Recode a series of dummy variables into a multiselect"""
-        for dest, mapping in self.data_module.REVERSE_ONE_HOT_MULTISELECT.items():
+        for dest, mapping in list(self.data_module.REVERSE_ONE_HOT_MULTISELECT.items()):
             endorsement = set()
-            for src, value in mapping.items():
+            for src, value in list(mapping.items()):
                 if row.get(src) == 'yes':
                     endorsement.add(value)
             row[dest] = ' '.join(map(str, sorted(endorsement)))
 
     def recode_multiselects(self, row):
-        for (dest, src), mapping in self.data_module.RECODE_MULTISELECT.items():
-            row[dest] = ' '.join(map(str, sorted(filter(None, [
-                mapping.get(x, '') for x in row.get(src, '').split()]))))
+        for (dest, src), mapping in list(self.data_module.RECODE_MULTISELECT.items()):
+            row[dest] = ' '.join(map(str, sorted([_f for _f in [
+                mapping.get(x, '') for x in row.get(src, '').split()] if _f])))
 
     def encode_one_hot_from_multiselect(self, row):
-        for dest, (src, choice) in self.data_module.ONE_HOT_FROM_MULTISELECT.items():
+        for dest, (src, choice) in list(self.data_module.ONE_HOT_FROM_MULTISELECT.items()):
             try:
                 value = int(choice in row[src].split())
             except (KeyError, ValueError, TypeError):
@@ -207,15 +207,15 @@ class WHOPrep(DataPrep):
     def encode_multiple_from_combined(self, row):
         'Recode a combined question into multiple different questions'
         if not self.who_2016:  # if WHO 2022 questionnaire
-            for src, (dest1, dest2) in self.data_module.COMBINED_TO_MULTIPLE_WHO_2022.items():
+            for src, (dest1, dest2) in list(self.data_module.COMBINED_TO_MULTIPLE_WHO_2022.items()):
                 if row.get(src) == 'yes':
                     row[dest1] = 1
                     row[dest2] = 1
 
     def map_units_from_values(self, row):
-        for dest, unit_data in self.data_module.UNIT_IF_AMOUNT.items():
+        for dest, unit_data in list(self.data_module.UNIT_IF_AMOUNT.items()):
             try:
-                for src, unit in unit_data.items():
+                for src, unit in list(unit_data.items()):
                     if safe_int(row.get(src)) > 0:
                         row[dest] = unit
                         break
@@ -226,9 +226,9 @@ class WHOPrep(DataPrep):
                 row[dest] = unit if safe_int(row.get(src)) > 0 else ''
 
     def convert_durations(self, row):
-        for x in self.data_module.DURATION_CONVERSIONS.items():
+        for x in list(self.data_module.DURATION_CONVERSIONS.items()):
             (unit_col, value_col, unit), mapping = x
-            for src, scalar in mapping.items():
+            for src, scalar in list(mapping.items()):
                 value = safe_int(row.get(src)) * scalar
                 if value > 0:
                     row[unit_col] = unit

@@ -45,7 +45,7 @@ def get_expected_results(file_):
 
 def validate_matrix(actual, expected):
     for a in actual:
-        e = expected.next()
+        e = next(expected)
         for var in e:
             assert a[var] == e[var], "SID: '{}' does not produce expected result".format(a['sid'])
 
@@ -68,7 +68,7 @@ def test_tariff_prep(prep, input_file, tmpdir):
 
 def test_uniform_frequencies(prep):
     df = pd.read_csv(prep.validated_filename, index_col=0)
-    df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
+    df = df.loc[np.repeat(*list(zip(*list(prep.data_module.FREQUENCIES.items()))))]
 
     # The cause list for 46 and 34 are the same for the child module
     counts = df.gs_text46.value_counts()
@@ -94,7 +94,7 @@ def test_calc_age_bin(prep, age, expected):
 def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.malaria_region = malaria
     prep.hiv_region = hiv
-    causes = prep.data_module.CAUSES.values()
+    causes = list(prep.data_module.CAUSES.values())
 
     user_data = [Record('sid{}'.format(i), age=1, sex=i % 2 + 1, cause=cause)
                  for i in range(7) for cause in causes]
@@ -103,7 +103,7 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
 
     assert np.allclose(sum(csmf.values()), 1)
-    for sex, csmf_data in csmf_by_sex.items():
+    for sex, csmf_data in list(csmf_by_sex.items()):
         assert np.allclose(sum(csmf_data.values()), 1)
 
 
@@ -128,5 +128,5 @@ def test_injuries_have_no_positive_scores(prep):
                                 len(symptoms))
 
     scored = prep.score_symptom_data([row], tariffs)
-    assert all([score <= 0 for cause, score in scored[0].scores.items()
+    assert all([score <= 0 for cause, score in list(scored[0].scores.items())
                 if cause in injuries])

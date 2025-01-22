@@ -4,7 +4,7 @@ import os
 import re
 import threading
 import traceback
-from data_prep import AbortException
+from .data_prep import AbortException
 
 from smartva.who_prep import WHOPrep
 from smartva.common_prep import CommonPrep

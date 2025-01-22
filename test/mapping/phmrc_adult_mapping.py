@@ -5956,5 +5956,5 @@ for case in MAPPING:
                     key: value,
                     'endorsed': False,
                 }
-                for null, value in {'missing': 9, 'no': 0, 'empty': ''}.items()
+                for null, value in list({'missing': 9, 'no': 0, 'empty': ''}.items())
             ])

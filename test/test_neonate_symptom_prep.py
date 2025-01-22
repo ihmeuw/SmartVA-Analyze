@@ -51,6 +51,6 @@ class TestNeonateSymptomPrep(object):
 
     def validate_matrix(self, t_matrix, v_matrix):
         for t in t_matrix:
-            v = v_matrix.next()
+            v = next(v_matrix)
             for var in v:
                 assert t[var] == v[var], "SID: '{}' does not produce expected result".format(t['sid'])

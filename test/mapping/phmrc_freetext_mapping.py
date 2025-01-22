@@ -826,8 +826,8 @@ MAPPING_DATA = {
     'neonate': (NEONATE_WORD_COLUMNS, NEONATE_WORD_SYMPTOMS),
 }
 MAPPING = []
-for module, (columns, word_symptoms) in MAPPING_DATA.items():
-    for col, (symp, texts) in product(columns, word_symptoms.items()):
+for module, (columns, word_symptoms) in list(MAPPING_DATA.items()):
+    for col, (symp, texts) in product(columns, list(word_symptoms.items())):
         for text in texts:
             MAPPING.append({
                 'sid': 'Free text "{}" in "{}"'.format(text, col),

@@ -4,7 +4,7 @@ from smartva.data.common_data import NEONATE
 from smartva.data.word_conversions import NEONATE_WORDS_TO_VARS
 from smartva.data.neonate_symptom_data import DURATION_CUTOFF_DATA
 
-FREE_TEXT = NEONATE_WORDS_TO_VARS.values()
+FREE_TEXT = list(NEONATE_WORDS_TO_VARS.values())
 
 AGE_GROUP = NEONATE
 

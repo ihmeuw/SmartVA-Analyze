@@ -11,9 +11,7 @@ class AbortException(Exception):
     pass
 
 
-class Prep(object):
-    __metaclass__ = abc.ABCMeta
-
+class Prep(object, metaclass=abc.ABCMeta):
     INPUT_FILENAME_TEMPLATE = ''
     OUTPUT_FILENAME_TEMPLATE = ''
 
@@ -35,9 +33,7 @@ class Prep(object):
         self.want_abort = True
 
 
-class DataPrep(Prep):
-    __metaclass__ = abc.ABCMeta
-
+class DataPrep(Prep, metaclass=abc.ABCMeta):
     AGE_GROUP = None
 
     def __init__(self, working_dir_path, short_form, who_2016):
@@ -61,7 +57,7 @@ class DataPrep(Prep):
 
     @staticmethod
     def rename_vars(row, conversion_map):
-        for old_header, new_header in conversion_map.items():
+        for old_header, new_header in list(conversion_map.items()):
             try:
                 row[new_header] = row.pop(old_header)
             except KeyError:
@@ -77,7 +73,7 @@ class DataPrep(Prep):
         :param headers: List of headers.
         :param conversion_map: Map of old to new headers.
         """
-        for old_header, new_header in conversion_map.items():
+        for old_header, new_header in list(conversion_map.items()):
             try:
                 headers[headers.index(old_header)] = new_header
             except (KeyError, ValueError):
@@ -133,7 +129,7 @@ class DataPrep(Prep):
         if len(dupes):
             # warning_logger.warning('')
             pass
-        row.update({k: v for k, v in data.items() if k not in row})
+        row.update({k: v for k, v in list(data.items()) if k not in row})
 
     @staticmethod
     def process_progressive_value_data(row, progressive_data):

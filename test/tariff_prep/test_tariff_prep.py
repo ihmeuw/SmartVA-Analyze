@@ -201,13 +201,13 @@ def test_generate_cause_rankings(prep):
     ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
 ])
 def test_mask_ranks(prep, censored, scores, ranks, expected):
-    prep.cause_list = scores.keys()
+    prep.cause_list = list(scores.keys())
 
     va = Record(scores=scores, censored=censored)
     va.ranks = ranks
 
-    uniform = range(1000)  # just needs length
-    cutoffs = dict(zip(scores.keys(), [99999] * len(scores)))
+    uniform = list(range(1000))  # just needs length
+    cutoffs = dict(list(zip(list(scores.keys()), [99999] * len(scores))))
     demog_restrictions = {}
     lowest_rank = 9999   # value set if restricted
     uniform_list_pos = 999
@@ -249,7 +249,7 @@ def test_csmf_summed_to_one(prep):
     csmf, csmf_by_sex = prep.calculate_csmf(user_data, [])
 
     assert np.allclose(sum(csmf.values()), 1)
-    for sex, csmf_data in csmf_by_sex.items():
+    for sex, csmf_data in list(csmf_by_sex.items()):
         assert np.allclose(sum(csmf_data.values()), 1)
 
 
@@ -269,9 +269,9 @@ def test_training_likelihood_ranges(tariff_data):
     uniform_train = train[0]
     likelihoods = train[4]
 
-    assert likelihoods.keys() == prep.cause_list
-    assert len(set(map(len, likelihoods.values()))) == 1
-    for cause, likelihood in likelihoods.items():
+    assert list(likelihoods.keys()) == prep.cause_list
+    assert len(set(map(len, list(likelihoods.values())))) == 1
+    for cause, likelihood in list(likelihoods.items()):
         assert likelihood[-1] == len(uniform_train)
         assert sorted(likelihood) == likelihood
 

@@ -25,8 +25,8 @@ def make_graph(graph_data, module_key, output_dir):
     :param module_key: Name of the module for which to generate graph.
     :param output_dir: Directory in which to save graph.
     """
-    cause_keys = graph_data.keys()
-    cause_fractions = graph_data.values()
+    cause_keys = list(graph_data.keys())
+    cause_fractions = list(graph_data.values())
 
     graph_title = module_key.capitalize() + ' CSMF'
     graph_filename = graph_title.replace(' ', '-').lower()
@@ -129,7 +129,7 @@ class CSMFGrapher(GrapherPrep):
             status_notifier.update({'sub_progress': (cnt,)})
 
             # sort data in decreasing order
-            graph_data = OrderedDict(sorted(data.iteritems(), key=lambda x: x[1], reverse=True))
+            graph_data = OrderedDict(sorted(iter(data.items()), key=lambda x: x[1], reverse=True))
             make_graph(graph_data, module_key, self.output_dir_path)
             
         status_notifier.update({'sub_progress': None})

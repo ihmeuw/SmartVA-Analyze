@@ -71,18 +71,18 @@ def test_redistribution_weights(tmpdir, tariff_data, short_form, hce):
     undetermined_weights = prep._get_undetermined_matrix()
 
     cause_list = set(prep.data_module.CAUSES[cause]
-                     for _, cause in prep.data_module.CAUSE_REDUCTION.items())
-    for key, weights in undetermined_weights.items():
+                     for _, cause in list(prep.data_module.CAUSE_REDUCTION.items()))
+    for key, weights in list(undetermined_weights.items()):
         age, sex = key
         assert sex in [1, 2, 3]
         if prep.AGE_GROUP == 'adult':
-            assert age in range(10, 81, 5) + [99]
+            assert age in list(range(10, 81, 5)) + [99]
         elif prep.AGE_GROUP == 'child':
             assert age in [0, 1, 5, 10, 99]
         elif prep.AGE_GROUP == 'neonate':
             assert age in [0, 7, 99]
 
-        assert not cause_list.symmetric_difference(weights.keys())
+        assert not cause_list.symmetric_difference(list(weights.keys()))
         assert np.allclose(sum(weights.values()), 1)
 
 
@@ -114,6 +114,6 @@ def test_redistribution_causes_match_reporting_causes(tmpdir, tariff_data):
         undetermined_causes = {row['gs_text34'] for row in csv.DictReader(f)}
 
     tariff_causes = {prep.data_module.CAUSES[cause]
-                     for cause in prep.data_module.CAUSE_REDUCTION.values()}
+                     for cause in list(prep.data_module.CAUSE_REDUCTION.values())}
 
     assert undetermined_causes == tariff_causes

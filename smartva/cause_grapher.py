@@ -52,7 +52,7 @@ def get_default_dict():
     """
     default_dict = dict()
     for gender in GENDER_DATA:
-        default_dict[gender] = OrderedDict.fromkeys(reversed(AGE_DATA.values()), 0)
+        default_dict[gender] = OrderedDict.fromkeys(reversed(list(AGE_DATA.values())), 0)
     return default_dict
 
 
@@ -62,7 +62,7 @@ def get_age_key(age_value):
     :param age_value: Age in years.
     :return: String representation of age group.
     """
-    for k, v in AGE_DATA.items():
+    for k, v in list(AGE_DATA.items()):
         if age_value >= k:
             return v
     return 'Unknown'
@@ -76,8 +76,8 @@ def make_graph(graph_data, cause_key, output_dir):
     :param cause_key: Name of the cause for which to generate graph.
     :param output_dir: Directory in which to save graph.
     """
-    male_data = graph_data[MALE].values()
-    female_data = graph_data[FEMALE].values()
+    male_data = list(graph_data[MALE].values())
+    female_data = list(graph_data[FEMALE].values())
 
     graph_title = cause_key.capitalize() + ' by age and sex'
     graph_filename = re.sub('[^\w_\. ]', '-', cause_key.replace('(', '').replace(')', '')).replace(' ', '-').lower()
@@ -100,11 +100,11 @@ def make_graph(graph_data, cause_key, output_dir):
     ax.yaxis.grid()
     ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-    ax.set_xticklabels(list(reversed(AGE_DATA.values())), rotation=90)
+    ax.set_xticklabels(list(reversed(list(AGE_DATA.values()))), rotation=90)
     ax.set_xticks(xlocations + bar_width / 2)
 
     # Push legend outside of the plot.
-    ax.legend((rects1[0], rects2[0]), GENDER_DATA.values(), loc='upper center', bbox_to_anchor=(0.5, -0.375), ncol=2)
+    ax.legend((rects1[0], rects2[0]), list(GENDER_DATA.values()), loc='upper center', bbox_to_anchor=(0.5, -0.375), ncol=2)
 
     # Add whitespace at top of bar.
     ax.set_ylim(top=max_value + max_value * 0.1)
@@ -145,7 +145,7 @@ class CauseGrapher(GrapherPrep):
 
                         try:
                             age_key = get_age_key(float(row['age']))
-                            if age_key not in AGE_DATA.values():
+                            if age_key not in list(AGE_DATA.values()):
                                 raise ValueError('Unknown age group.')
                             sex_key = int(row['sex'])
                             if sex_key not in [1,2]:

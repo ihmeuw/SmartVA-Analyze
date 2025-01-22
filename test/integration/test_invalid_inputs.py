@@ -12,9 +12,9 @@ from smartva.data.neonate_pre_symptom_data import VAR_CONVERSION_MAP as NEONATE_
 def test_invalid_inputs(tmpdir):
     headers = set()
     for var_map in (ADULT_VARS, CHILD_VARS, NEONATE_VARS):
-        headers.update(var_map.keys())
-    headers.update(common_data.SHORT_FORM_ADDITIONAL_HEADERS_DATA.keys())
-    headers.update(common_data.BINARY_CONVERSION_MAP.keys())
+        headers.update(list(var_map.keys()))
+    headers.update(list(common_data.SHORT_FORM_ADDITIONAL_HEADERS_DATA.keys()))
+    headers.update(list(common_data.BINARY_CONVERSION_MAP.keys()))
     headers.add('gen_5_4d')
     headers = list(headers)
 

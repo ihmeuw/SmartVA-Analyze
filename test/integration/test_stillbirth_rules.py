@@ -43,13 +43,13 @@ Test cases:
       'child_1_11': 2}, False),   # conflicting info on VA
 ], ids=lambda x: x['sid'])
 def test_stillbirth_rules(tmpdir, tmpdir_factory, row, expected):
-    data = dict(zip(REQUIRED_HEADERS, [''] * len(REQUIRED_HEADERS)))
+    data = dict(list(zip(REQUIRED_HEADERS, [''] * len(REQUIRED_HEADERS))))
     data.update(row)   # ensure age data is copied and not overwritten
 
     csvfile = tmpdir.join('sample_test.csv')
     with csvfile.open('w') as f:
         w = csv.writer(f)
-        w.writerows(zip(*data.items()))
+        w.writerows(list(zip(*list(data.items()))))
 
     infile = csvfile.strpath
     outdir = tmpdir_factory.mktemp('out').strpath

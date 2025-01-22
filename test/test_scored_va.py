@@ -5,7 +5,7 @@ from smartva.tariff_prep import Record
 
 def test_reporter():
     va = Record()
-    print va
+    print(va)
 
 
 def test_censored_transfers_to_masked_on_init():

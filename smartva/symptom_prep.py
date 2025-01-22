@@ -51,7 +51,7 @@ class SymptomPrep(DataPrep):
 
         additional_data = {}
         additional_data.update(self.data_module.GENERATED_VARS_DATA)
-        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
+        additional_headers, additional_values = additional_headers_and_values(headers, list(additional_data.items()))
 
         headers.extend(additional_headers)
         self.rename_headers(headers, self.data_module.VAR_CONVERSION_MAP)
@@ -67,20 +67,20 @@ class SymptomPrep(DataPrep):
 
             status_notifier.update({'sub_progress': (index,)})
 
-            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.expand_row(row, dict(list(zip(additional_headers, additional_values))))
             self.rename_vars(row, self.data_module.VAR_CONVERSION_MAP)
 
             self.copy_variables(row, self.data_module.COPY_VARS)
 
             # Compute age quartiles.
-            self.process_progressive_value_data(row, self.data_module.AGE_QUARTILE_BINARY_VARS.items())
+            self.process_progressive_value_data(row, list(self.data_module.AGE_QUARTILE_BINARY_VARS.items()))
 
-            self.process_cutoff_data(row, self.data_module.DURATION_CUTOFF_DATA.items())
+            self.process_cutoff_data(row, list(self.data_module.DURATION_CUTOFF_DATA.items()))
 
-            self.process_injury_data(row, self.data_module.INJURY_VARS.items())
+            self.process_injury_data(row, list(self.data_module.INJURY_VARS.items()))
 
             # Dichotomize!
-            self.process_binary_vars(row, self.data_module.BINARY_CONVERSION_MAP.items())
+            self.process_binary_vars(row, list(self.data_module.BINARY_CONVERSION_MAP.items()))
 
             # Ensure all binary variables actually ARE 0 or 1:
             self.post_process_binary_variables(row, self.data_module.BINARY_VARS)
@@ -107,7 +107,7 @@ class SymptomPrep(DataPrep):
             row (dict): Row of VA data.
             copy_variables_map (dict): Read and write answer variables.
         """
-        for read_header, write_header in copy_variables_map.items():
+        for read_header, write_header in list(copy_variables_map.items()):
             try:
                 row[write_header] = row[read_header]
             except KeyError as e:
@@ -188,7 +188,7 @@ class SymptomPrep(DataPrep):
             cause_condtions (dict): cause -> list of symptoms
         """
         restricted = set()
-        for cause, symptoms in cause_conditions.items():
+        for cause, symptoms in list(cause_conditions.items()):
             if any([safe_int(row.get(symp, 0)) for symp in symptoms]):
                 restricted.add(cause)
         row['restricted'] = ' '.join(map(str, sorted(restricted)))
@@ -202,7 +202,7 @@ class SymptomPrep(DataPrep):
             cause_conditions (dict): cause -> list of symptoms
         """
         restricted = set(map(int, row.get('restricted', '').split()))
-        for cause, symptoms in cause_conditions.items():
+        for cause, symptoms in list(cause_conditions.items()):
             if not all([int(row.get(symp, 0)) for symp in symptoms]):
                 restricted.add(cause)
         row['restricted'] = ' '.join(map(str, sorted(restricted)))

@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 """Test utility to output status messages and progress.
 usage: status_notifier.register(StatusHandler())

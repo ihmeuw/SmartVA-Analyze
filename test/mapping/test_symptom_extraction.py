@@ -259,7 +259,7 @@ def data(request, tmpdir):
     expected = defaultdict(list)
     input_data = request.getfuncargvalue(request.param)
     for row in input_data:
-        headers.update(row.keys())
+        headers.update(list(row.keys()))
         expected[row['module']].append(
             {key: row[key] for key in ['sid', 'symptom', 'endorsed']}
         )
@@ -276,7 +276,7 @@ def data(request, tmpdir):
 
 def test_symptoms_exist_on_tariff_matrix(data):
     _, expected = data
-    for module, rows in expected.items():
+    for module, rows in list(expected.items()):
         tested_symptoms = {row['symptom'] for row in rows}
         tariffs = os.path.join(basedir, 'data', 'tariffs-{}.csv'.format(module))
         with open(tariffs, 'rt') as f:
@@ -311,7 +311,7 @@ def test_symptom_extraction(tmpdir_factory, data):
     # error. This will allow us to drop into the debugger upon failing and
     # find every failing test case.
     errors = []
-    for module, expected in expected_results.items():
+    for module, expected in list(expected_results.items()):
         symptom_file = os.path.join(outdir, FOLDER4, 'intermediate-files',
                                     '{}-symptom.csv'.format(module))
 
