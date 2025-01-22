@@ -111,7 +111,7 @@ def test_get_tariff_matrix(tmpdir):
     }
 
     f_path = tmpdir.join('tariff-sample.csv')
-    with f_path.open('wb') as f:
+    with f_path.open('w') as f:
         w = csv.writer(f)
         w.writerows(input_data)
 

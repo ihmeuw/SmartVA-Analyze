@@ -85,7 +85,7 @@ class CSMFGrapher(GrapherPrep):
             status_notifier.update({'sub_progress': (cnt,)})
 
             try:
-                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'rb') as f:
+                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'r') as f:
                     reader = csv.DictReader(f)
 
                     for row in reader:
@@ -105,7 +105,7 @@ class CSMFGrapher(GrapherPrep):
                     key = '-'.join([module_key, sex])
                     filename = os.path.join(self.input_dir_path,
                                             '{:s}-csmf.csv'.format(key))
-                    with open(filename, 'rb') as f:
+                    with open(filename, 'r') as f:
                         for row in csv.DictReader(f):
                             self.check_abort()
 

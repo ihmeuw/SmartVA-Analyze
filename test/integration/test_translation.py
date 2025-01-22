@@ -26,7 +26,7 @@ LANGUAGES = ('chinese', 'spanish')
 @pytest.fixture(params=LANGUAGES, scope='module')
 def translation(request):
     path = os.path.join(basedir, 'data', '{}.json'.format(request.param))
-    with open(path, 'rb') as f:
+    with open(path, 'r') as f:
         return json.load(f)
 
 

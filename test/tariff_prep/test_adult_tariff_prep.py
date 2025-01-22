@@ -38,7 +38,7 @@ def local_file(filename):
 
 
 def get_expected_results(file_):
-    with open(file_, 'rb') as f:
+    with open(file_, 'r') as f:
         r = csv.DictReader(f)
         return [row for row in r]
 
@@ -52,7 +52,7 @@ def validate_matrix(actual, expected):
 
 def validate_predictions(file_):
     assert file_.check()
-    with file_.open('rb') as f:
+    with file_.open('r') as f:
         r = csv.DictReader(f)
         actual_results = [row for row in r]
 

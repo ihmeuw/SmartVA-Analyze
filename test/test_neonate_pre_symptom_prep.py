@@ -52,7 +52,7 @@ expected_results = [
 @pytest.fixture
 def input_file(tmpdir):
     f_path = tmpdir.mkdir('intermediate-files').join('neonate-prepped.csv')
-    with f_path.open('wb') as f:
+    with f_path.open('w') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(data)
@@ -74,7 +74,7 @@ class TestNeonatePreSymptomPrep(object):
     def test_input_data(self, prep, input_file, output_file):
         prep.run()
         assert output_file.check()
-        with output_file.open('rb') as f:
+        with output_file.open('r') as f:
             r = csv.DictReader(f)
             matrix = [row for row in r]
 

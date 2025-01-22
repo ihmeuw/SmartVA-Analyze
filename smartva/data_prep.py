@@ -164,7 +164,7 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
                     continue
 
     @staticmethod
-    def read_input_file(input_file_path, mode='rb'):
+    def read_input_file(input_file_path, mode='r'):
         """Read input file. Return headers and matrix data.
 
         Args:
@@ -187,7 +187,7 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
             matrix (list): Matrix of VA answers.
             output_file_path (str): Path of output file.
         """
-        with open(output_file_path, 'wb') as fo:
+        with open(output_file_path, 'w') as fo:
             writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(matrix)

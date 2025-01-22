@@ -88,7 +88,7 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
     """
     tariffs = {}
 
-    with open(filename, 'rU') as f:
+    with open(filename, 'r') as f:
         for row in csv.DictReader(f):
             cause_num = int(row[TARIFF_CAUSE_NUM_KEY].lstrip('cause'))
             spurious = spurious_assoc.get(cause_num, [])
@@ -353,7 +353,7 @@ class TariffPrep(DataPrep):
                             'Possible']
         if self.language != 'english':
             path = os.path.join(config.basedir, 'data', '{}.json'.format(self.language))
-            with open(path, 'rb') as f:
+            with open(path, 'r') as f:
                 translation = json.load(f)
             likelihood_names = [translation['likelihoods'].get(likelihood)
                                 for likelihood in likelihood_names]
@@ -591,7 +591,7 @@ class TariffPrep(DataPrep):
             instrument = 'short' if self.short_form else 'full'
             weight_key = '{}_hce{}'.format(instrument, int(self.hce))
 
-            with open(self.undetermined_matrix_filename, 'rU') as f:
+            with open(self.undetermined_matrix_filename, 'r') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     # Only use rows for the specified country
@@ -896,7 +896,7 @@ class TariffPrep(DataPrep):
             return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
 
         filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
             writer.writerows([format_row(va) for va in user_data])
@@ -996,11 +996,7 @@ class TariffPrep(DataPrep):
                 i += 1   # offset for header row
                 worksheet.set_row(i, 52.50)   # about 3.5 lines of height
 
-                # TODO: More robust handling of unicode
-                try:
-                    sid = str(va.sid, 'utf-8')
-                except UnicodeDecodeError:
-                    sid = str(va.sid, 'latin-1')
+                sid = str(va.sid)
 
                 sex = sex_names.get(va.sex, missing)
 
@@ -1063,7 +1059,7 @@ class TariffPrep(DataPrep):
         """
         csv_filename = '{:s}-likelihoods.csv'.format(self.AGE_GROUP)
         csv_filepath = os.path.join(self.output_dir_path, csv_filename)
-        with open(csv_filepath, 'wb') as f:
+        with open(csv_filepath, 'w') as f:
             UnicodeWriter(f).writerows(matrix)
 
     def _calc_age_bin(self, age):
@@ -1113,7 +1109,7 @@ class TariffPrep(DataPrep):
             return [va.sid] + vals
 
         filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
-        with open(os.path.join(self.intermediate_dir, filename), 'wb') as f:
+        with open(os.path.join(self.intermediate_dir, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([format_row(va) for va in user_data])
@@ -1125,7 +1121,7 @@ class TariffPrep(DataPrep):
             csmf (dict): Map of causes to count.
         """
         filename = '{:s}-csmf.csv'.format(key)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
             writer.writerows(sorted(list(csmf.items()), key=lambda _: _[0]))
