@@ -115,12 +115,12 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
                 # No values to process or not an integer value (invalid).
                 pass
             except ConversionError as e:
-                warning_logger.debug(e.message)
+                warning_logger.debug(str(e))
                 continue
             except KeyError as e:
                 # Variable does not exist. The new published form does not contain all of the previous variables.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_binary_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     @staticmethod
@@ -160,7 +160,7 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
                         break
                 except KeyError as e:
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. process_progressive_value_data'
-                                         .format(row['sid'], e.message))
+                                         .format(row['sid'], str(e)))
                     continue
 
     @staticmethod

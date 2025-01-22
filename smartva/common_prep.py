@@ -94,7 +94,7 @@ class CommonPrep(DataPrep):
             try:
                 self.convert_cell_to_int(row, list(AGE_VARS.values()))
             except KeyError as e:
-                warning_logger.error('Missing age variable: {}'.format(e.message))
+                warning_logger.error('Missing age variable: {}'.format(str(e)))
                 missing_vars = [var for var in list(AGE_VARS.values()) if var not in headers]
                 status_logger.info('Cannot process data without: {}'.format(', '.join(missing_vars)))
                 status_notifier.update('abort')
@@ -230,7 +230,7 @@ class CommonPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. convert_rash_data'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
             else:
                 locations = set(mapping['locations'])

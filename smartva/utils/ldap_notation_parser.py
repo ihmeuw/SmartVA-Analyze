@@ -29,7 +29,7 @@ class LdapNotationParser(object):
             fn2 = self._arg2_fn(arg2)
             return LdapNotationParser.get_op(cond)(fn1, fn2)
         except Exception as e:
-            raise LdapNotationParserError(e.message)
+            raise LdapNotationParserError(str(e))
 
     def _do_eval(self, parse_str):
         if parse_str[0] in ['(']:

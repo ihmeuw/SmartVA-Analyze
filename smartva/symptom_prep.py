@@ -112,7 +112,7 @@ class SymptomPrep(DataPrep):
                 row[write_header] = row[read_header]
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. copy_variables'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
 
     def process_cutoff_data(self, row, cutoff_data_map):
         """Change read variable to 1/0 if value is greater/less or equal to cutoff, respectively.
@@ -133,7 +133,7 @@ class SymptomPrep(DataPrep):
                 row[read_header] = 0
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_cutoff_data'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
 
     def process_injury_data(self, row, injury_variable_map):
         """Cut off injuries occurring more than 30 days from death, set variable to 0.
@@ -176,7 +176,7 @@ class SymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. post_process_binary_variables'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
             row[read_header] = int(value == 1)
 

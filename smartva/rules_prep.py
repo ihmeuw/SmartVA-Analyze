@@ -74,7 +74,7 @@ class RulesPrep(DataPrep, metaclass=abc.ABCMeta):
                         row[RULES_CAUSE_NUM_KEY] = rule.CAUSE_ID
                         break
                 except Exception as e:
-                    warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
+                    warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, str(e)))
 
         status_notifier.update({'sub_progress': None})
 

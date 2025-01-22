@@ -153,7 +153,7 @@ class CauseGrapher(GrapherPrep):
                         except ValueError as e:
                             # Age or sex is invalid. Log warning and skip this item.
                             warning_logger.warning('Cause Grapher :: SID {} value for age or sex is invalid.'
-                                                   .format(row['sid'], e.message))
+                                                   .format(row['sid'], str(e)))
                             continue
 
                         graph_data[row['cause34']][sex_key][age_key] += 1

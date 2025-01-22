@@ -223,7 +223,7 @@ class PreSymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_duration_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
             if var in special_case_vars and row[length_var] == '':
@@ -276,7 +276,7 @@ class PreSymptomPrep(DataPrep):
                     self.convert_free_text_words(row, word_list, word_map)
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. convert_free_text_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def fill_missing_data(self, row, default_fill):
@@ -293,7 +293,7 @@ class PreSymptomPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. fill_missing_data'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def process_age_vars(self, row):
@@ -312,7 +312,7 @@ class PreSymptomPrep(DataPrep):
                 row['{:s}c'.format(age_var)] = (365.0 * years) + (30.0 * months) + days
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_age_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def validate_weight_vars(self, row, weight_vars):
@@ -327,7 +327,7 @@ class PreSymptomPrep(DataPrep):
                 row[var] = value_or_default(row[var], int, [0, 9999], '')
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_weight_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     def validate_date_vars(self, row, date_vars):
@@ -353,7 +353,7 @@ class PreSymptomPrep(DataPrep):
                         row[var_name] = default
                 except KeyError as e:
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. validate_date_vars'
-                                         .format(row['sid'], e.message))
+                                         .format(row['sid'], str(e)))
                     continue
 
     def process_weight_sd_vars(self, row, exam_date_vars, weight_sd_data):
@@ -414,7 +414,7 @@ class PreSymptomPrep(DataPrep):
             pass
         except KeyError as e:
             warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_length'
-                                 .format(row['sid'], e.message))
+                                 .format(row['sid'], str(e)))
 
     def fix_rash_location(self, row):
         """Only rashes which are located on the face are relevant. Filter out other values.
@@ -428,7 +428,7 @@ class PreSymptomPrep(DataPrep):
                     row[var] = int('1' in str(row[var]).split())
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_rash_location'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
 
     def fix_agedays(self, row):
         """Fix child agedays.  If it's blank give it a 0, if it's not, give it a 4.
@@ -445,7 +445,7 @@ class PreSymptomPrep(DataPrep):
                     row['c1_25a'] = 4
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. fix_agedays'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
 
     def calculate_age_at_death_value(self, row):
         """Write age at death value to the appropriate variable.
@@ -460,6 +460,6 @@ class PreSymptomPrep(DataPrep):
                     row['c1_26'] = 1
             except KeyError as e:
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. calculate_age_at_death_value'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
         elif self.AGE_GROUP == common_data.CHILD:
             row['c1_26'] = 2
