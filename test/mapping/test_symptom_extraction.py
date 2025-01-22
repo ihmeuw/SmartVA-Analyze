@@ -325,14 +325,14 @@ def test_symptom_extraction(tmpdir_factory, data):
                         row['sid'] != actual['sid'] or
                         bool(int(value)) is not row['endorsed']):
                     errors.append(row)
-    assert not errors
+    assert len(errors) == 0, errors
 
 
 @pytest.fixture(params=[
     ('adult', ['phmrc_adult', 'phmrc_freetext', 'phmrc_ages']),
     ('child', ['phmrc_child', 'phmrc_freetext', 'phmrc_ages']),
     ('neonate', ['phmrc_neonate', 'phmrc_freetext', 'phmrc_ages']),
-], ids=lambda x: x[0])
+])
 def suite(request):
     module, suites = request.param
     cases = {

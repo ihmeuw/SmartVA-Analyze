@@ -111,8 +111,10 @@ def int_or_float(x):
 def identity(arg):
     return arg
 
-
-def value_from_row(row, fn=identity, default=None):
+# in python 2, None < x is True for any float x, but in python 3 it is an error
+# so I have made the default value -inf instead of None
+import numpy as np
+def value_from_row(row, fn=identity, default=-np.inf):
     def fn_wrap(var):
         try:
             return fn(row[var])
