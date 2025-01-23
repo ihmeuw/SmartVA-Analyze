@@ -73,7 +73,7 @@ class RulesPrep(DataPrep, metaclass=abc.ABCMeta):
                     if rule.logic_rule(row) is True:
                         row[RULES_CAUSE_NUM_KEY] = rule.CAUSE_ID
                         break
-                except Exception as e:
+                except Exception as e:  # FIXME: this is so broad that it makes debugging hard, but I'm not sure what besides KeyError might legitimately be raised here
                     warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, str(e)))
 
         status_notifier.update({'sub_progress': None})
