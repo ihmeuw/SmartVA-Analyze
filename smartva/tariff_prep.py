@@ -249,7 +249,7 @@ class TariffPrep(DataPrep):
     """
 
     def __init__(self, data_module, working_dir_path, short_form, options,
-                 country,who_2016):
+                 country, who_2016):
         super(TariffPrep, self).__init__(working_dir_path, short_form, who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE

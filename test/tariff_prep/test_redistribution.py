@@ -36,10 +36,7 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
     assert weights_by_id.apply(np.allclose, args=(1,)).all()
 
 
-@pytest.mark.skipif(
-    lambda config: not config.getoption("--data-checks"),
-    reason="need --data-checks option to run"
-)
+@pytest.mark.data_checks
 @pytest.mark.parametrize('tariff_data', module_data)
 @pytest.mark.parametrize('country', iso3s)
 def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):
@@ -51,7 +48,8 @@ def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country=country
+        country=country,
+        who_2016=True,
     )
     undetermined_weights = prep._get_undetermined_matrix()
     assert isinstance(undetermined_weights, dict)
