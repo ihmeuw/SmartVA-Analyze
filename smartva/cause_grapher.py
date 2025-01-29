@@ -137,7 +137,7 @@ class CauseGrapher(GrapherPrep):
             status_notifier.update({'sub_progress': (cnt,)})
 
             try:
-                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'r') as f:
+                with open(os.path.join(self.input_dir_path, INPUT_FILENAME_TEMPLATE.format(module_key)), 'r', newline='') as f:
                     reader = csv.DictReader(f)
 
                     for row in reader:

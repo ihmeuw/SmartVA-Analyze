@@ -88,7 +88,7 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
     """
     tariffs = {}
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r', newline='') as f:
         for row in csv.DictReader(f):
             cause_num = int(row[TARIFF_CAUSE_NUM_KEY].lstrip('cause'))
             spurious = spurious_assoc.get(cause_num, [])
@@ -591,7 +591,7 @@ class TariffPrep(DataPrep):
             instrument = 'short' if self.short_form else 'full'
             weight_key = '{}_hce{}'.format(instrument, int(self.hce))
 
-            with open(self.undetermined_matrix_filename, 'r') as f:
+            with open(self.undetermined_matrix_filename, 'r', newline='') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     # Only use rows for the specified country
@@ -896,7 +896,7 @@ class TariffPrep(DataPrep):
             return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
 
         filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
-        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
             writer.writerows([format_row(va) for va in user_data])
@@ -1109,7 +1109,7 @@ class TariffPrep(DataPrep):
             return [va.sid] + vals
 
         filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
-        with open(os.path.join(self.intermediate_dir, filename), 'w') as f:
+        with open(os.path.join(self.intermediate_dir, filename), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([format_row(va) for va in user_data])

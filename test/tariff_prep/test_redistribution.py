@@ -112,7 +112,7 @@ def test_redistribution_causes_match_reporting_causes(tmpdir, tariff_data):
                  'chinese': False},
         country=None, who_2016=True
     )
-    with open(prep.undetermined_matrix_filename) as f:
+    with open(prep.undetermined_matrix_filename, newline='') as f:
         undetermined_causes = {row['gs_text34'] for row in csv.DictReader(f)}
 
     tariff_causes = {prep.data_module.CAUSES[cause]

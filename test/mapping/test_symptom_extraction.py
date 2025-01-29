@@ -266,7 +266,7 @@ def data(request, tmpdir):
     headers = sorted(headers)
 
     filepath = tmpdir.join('input_data.csv').strpath
-    with open(filepath, 'wt') as f:
+    with open(filepath, 'wt', newline='') as f:
         writer = csv.DictWriter(f, headers)
         writer.writeheader()
         writer.writerows(input_data)

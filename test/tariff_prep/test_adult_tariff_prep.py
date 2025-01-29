@@ -38,7 +38,7 @@ def local_file(filename):
 
 
 def get_expected_results(file_):
-    with open(file_, 'r') as f:
+    with open(file_, 'r', newline='') as f:
         r = csv.DictReader(f)
         return [row for row in r]
 
@@ -113,7 +113,7 @@ def test_injuries_have_no_positive_scores(tmpdir, prep):
     injuries = [5, 15, 18, 19, 21, 34, 38, 41, 45]
 
     tariffs_path = os.path.join(config.basedir, 'data', 'tariffs-adult.csv')
-    with open(tariffs_path, 'r') as f:
+    with open(tariffs_path, 'r', newline='') as f:
         symptoms = next(csv.reader(f))
     symptoms.remove('xs_name')
 

@@ -170,7 +170,7 @@ class OutputPrep(DataPrep):
             'death_date',
             'interview_date',
         ]
-        with open(predictions_file, 'w') as f:
+        with open(predictions_file, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for module in MODULES:
@@ -183,9 +183,9 @@ class OutputPrep(DataPrep):
                 module_file = os.path.join(self.working_dir_path, FOLDER1,
                                            '{}-predictions.csv'.format(module))
 
-                with open(pred_file, 'r') as f_pred, \
-                        open(raw_file, 'r') as f_raw, \
-                        open(module_file, 'w') as f_mod:
+                with open(pred_file, 'r', newline='') as f_pred, \
+                        open(raw_file, 'r', newline='') as f_raw, \
+                        open(module_file, 'w', newline='') as f_mod:
                     raw_reader = csv.DictReader(f_raw)
                     pred_reader = csv.DictReader(f_pred)
                     mod_writer = csv.writer(f_mod)
@@ -273,7 +273,7 @@ class OutputPrep(DataPrep):
             if not os.path.exists(filename):
                 continue
 
-            with open(filename) as f:
+            with open(filename, newline='') as f:
                 for cause, value in csv.reader(f):
                     if cause != 'cause':   # skip header row
                         csmf[label][cause] = safe_float(value)
@@ -292,7 +292,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 '{}-csmf.csv'.format(module))
-        with open(filename, 'w') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
     def _tabulate_all_age_csmf(self):
@@ -320,7 +320,7 @@ class OutputPrep(DataPrep):
                 round(csmf[cause].get('female', 0), 3),
             ])
         filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
-        with open(filename, 'w') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
 
@@ -347,7 +347,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 'gbd-level1-csmf.csv')
-        with open(filename, 'w') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
         self.gbd_csmf = table
 
@@ -435,7 +435,7 @@ class OutputPrep(DataPrep):
             if not os.path.exists(filename):
                 continue
 
-            with open(filename, 'r') as f:
+            with open(filename, 'r', newline='') as f:
                 for row in csv.DictReader(f):
                     cause = row['cause34']
                     causes[module].add(cause)
@@ -460,7 +460,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER3,
                                 'causes-of-death.csv')
-        with open(filename, 'w') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
         return table
 
@@ -514,7 +514,7 @@ class OutputPrep(DataPrep):
         if not os.path.exists(prepped_file):
             return
 
-        with open(prepped_file, 'r') as f_prep, open(recoded_file, 'w') as f_rec:
+        with open(prepped_file, 'r', newline='') as f_prep, open(recoded_file, 'w', newline='') as f_rec:
             reader = csv.DictReader(f_prep)
             writer = csv.DictWriter(f_rec, fieldnames=reader.fieldnames)
             writer.writeheader()
@@ -561,7 +561,7 @@ class OutputPrep(DataPrep):
         if not (os.path.exists(symptom_file) and os.path.exists(prediction_file)):
             return
 
-        with open(symptom_file) as f_symp, open(prediction_file) as f_pred:
+        with open(symptom_file, newline='') as f_symp, open(prediction_file, newline='') as f_pred:
             symp_reader = csv.DictReader(f_symp)
             pred_reader = csv.DictReader(f_pred)
             symptoms = [header for header in symp_reader.fieldnames
@@ -608,7 +608,7 @@ class OutputPrep(DataPrep):
                                 '{}-endorsement-rates.csv'.format(module))
         headers = ['symptom', 'description']
         headers.extend(causes)
-        with open(filename, 'w') as f:
+        with open(filename, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for symptom, rates in list(data.items()):
@@ -652,7 +652,7 @@ class OutputPrep(DataPrep):
 
         path = os.path.join(self.working_dir_path, FOLDER4,
                             'VA-data-age-groupings.csv')
-        with open(path, 'w') as f:
+        with open(path, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
     @staticmethod

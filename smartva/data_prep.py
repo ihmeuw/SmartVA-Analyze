@@ -176,7 +176,7 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
         Returns:
             list, list: List of headers, List of matrix data.
         """
-        with open(input_file_path, mode) as fi:
+        with open(input_file_path, mode, newline='') as fi:
             reader = csv.DictReader(fi, restval='')
             return reader.fieldnames, [row for row in reader]
 
@@ -189,7 +189,7 @@ class DataPrep(Prep, metaclass=abc.ABCMeta):
             matrix (list): Matrix of VA answers.
             output_file_path (str): Path of output file.
         """
-        with open(output_file_path, 'w') as fo:
+        with open(output_file_path, 'w', newline='') as fo:
             writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(matrix)

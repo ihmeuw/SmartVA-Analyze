@@ -36,7 +36,7 @@ def local_file(filename):
 
 
 def get_expected_results(file_):
-    with open(file_, 'r') as f:
+    with open(file_, 'r', newline='') as f:
         r = csv.DictReader(f)
         return [row for row in r]
 
