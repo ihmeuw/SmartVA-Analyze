@@ -28,8 +28,8 @@ def prep(tmpdir):
 def test_get_default_dict():
     valid_d = {
         'test': {
-            MALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0),
-            FEMALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0)
+            MALE: OrderedDict.fromkeys(reversed(list(cause_grapher.AGE_DATA.values())), 0),
+            FEMALE: OrderedDict.fromkeys(reversed(list(cause_grapher.AGE_DATA.values())), 0)
         }
     }
 
@@ -42,8 +42,8 @@ def test_get_default_dict():
 def test_get_default_dict_inc():
     valid_d = {
         'test': {
-            MALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0),
-            FEMALE: OrderedDict.fromkeys(reversed(cause_grapher.AGE_DATA.values()), 0)
+            MALE: OrderedDict.fromkeys(reversed(list(cause_grapher.AGE_DATA.values())), 0),
+            FEMALE: OrderedDict.fromkeys(reversed(list(cause_grapher.AGE_DATA.values())), 0)
         }
     }
     valid_d['test'][MALE]['0-28 days'] += 1
@@ -126,8 +126,8 @@ def test_csmf_sex_undetermined_plot(prep):
         # input graph data
         graph_data = csmf_by_sex[sex]
 
-        cause_keys = graph_data.keys()
-        cause_fractions = graph_data.values()
+        cause_keys = list(graph_data.keys())
+        cause_fractions = list(graph_data.values())
 
         #graph_title = module_key.capitalize() + ' CSMF' # not neessary to have the graph title
         # graph_filename = graph_title.replace(' ', '-').lower() # not neccesary to have filename
@@ -144,8 +144,8 @@ def test_csmf_sex_undetermined_plot(prep):
         ax.set_ylabel('Mortality fractions')
         ax.yaxis.grid()
 
-        ax.set_xticklabels(cause_keys)
         ax.set_xticks(xlocations)
+        ax.set_xticklabels(cause_keys)
 
         bar_width = .75  # the width of the bars
 
@@ -157,8 +157,8 @@ def test_csmf_sex_undetermined_plot(prep):
         ax.set_ylabel('Mortality fractions')
         ax.yaxis.grid()
 
-        ax.set_xticklabels(cause_keys, rotation=90)
         ax.set_xticks(xlocations)
+        ax.set_xticklabels(cause_keys, rotation=90)
 
         ax.bar(xlocations, cause_fractions, bar_width, color='#C44440', align='center')
 

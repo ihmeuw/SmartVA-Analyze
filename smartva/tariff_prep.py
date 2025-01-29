@@ -1,4 +1,4 @@
-from __future__ import division
+
 from bisect import bisect_left, bisect_right
 import collections
 import csv
@@ -57,7 +57,7 @@ def clean_tariffs(row, drop_headers=None, spurious=None, max_symptoms=40,
     """
     drop_headers = drop_headers or []
     spurious = spurious or []
-    items = [(k, float(v)) for k, v in row.items()
+    items = [(k, float(v)) for k, v in list(row.items())
              if k not in drop_headers and k not in spurious and safe_float(v)]
     topN = sorted(items, key=lambda _: abs(_[1]), reverse=True)[:max_symptoms]
 
@@ -88,7 +88,7 @@ def get_tariff_matrix(filename, drop_headers, spurious_assoc, max_symptoms=40,
     """
     tariffs = {}
 
-    with open(filename, 'rU') as f:
+    with open(filename, 'r', newline='') as f:
         for row in csv.DictReader(f):
             cause_num = int(row[TARIFF_CAUSE_NUM_KEY].lstrip('cause'))
             spurious = spurious_assoc.get(cause_num, [])
@@ -117,7 +117,7 @@ def find_key_symptom(tariffs, cause_reduction, cause, endorsements,
     if rule_symp:
         return rule_symp
 
-    causes46s = [cause46 for cause46, cause34 in cause_reduction.items()
+    causes46s = [cause46 for cause46, cause34 in list(cause_reduction.items())
                  if cause34 == cause]
     values = {}
     for cause46 in causes46s:
@@ -131,7 +131,7 @@ def find_key_symptom(tariffs, cause_reduction, cause, endorsements,
                 values[symptom] = tariff
 
     if values:
-        return sorted(values.items(), key=lambda x: x[1])[-1][0]
+        return sorted(list(values.items()), key=lambda x: x[1])[-1][0]
 
 
 class Masks(object):
@@ -193,7 +193,7 @@ class Record(object):
             for cause in censored:
                 masked_[cause].add(Masks.CENSORED)
         if masked:
-            for cause, removed in masked.items():
+            for cause, removed in list(masked.items()):
                 masked_[cause].update(removed)
         self.masked = masked_
         self.likelihoods = likelihoods or {}
@@ -249,7 +249,7 @@ class TariffPrep(DataPrep):
     """
 
     def __init__(self, data_module, working_dir_path, short_form, options,
-                 country,who_2016):
+                 country, who_2016):
         super(TariffPrep, self).__init__(working_dir_path, short_form, who_2016)
 
         self.INPUT_FILENAME_TEMPLATE = INPUT_FILENAME_TEMPLATE
@@ -353,7 +353,7 @@ class TariffPrep(DataPrep):
                             'Possible']
         if self.language != 'english':
             path = os.path.join(config.basedir, 'data', '{}.json'.format(self.language))
-            with open(path, 'rb') as f:
+            with open(path, 'r') as f:
                 translation = json.load(f)
             likelihood_names = [translation['likelihoods'].get(likelihood)
                                 for likelihood in likelihood_names]
@@ -367,7 +367,7 @@ class TariffPrep(DataPrep):
 
         self.write_csmf(self.AGE_GROUP, csmf)
         sex_name = {1: 'male', 2: 'female'}
-        for sex, csmf_data in csmf_by_sex.items():
+        for sex, csmf_data in list(csmf_by_sex.items()):
             key = '-'.join([self.AGE_GROUP, sex_name[sex]])
             self.write_csmf(key, csmf_data)
 
@@ -391,10 +391,10 @@ class TariffPrep(DataPrep):
             Record
         """
         drop = {'sid', 'real_age', 'real_gender', 'cause', 'restricted'}
-        endorsements = {k for k, v in row.items()
+        endorsements = {k for k, v in list(row.items())
                         if safe_float(v) and k not in drop}
         scores = {}
-        for cause, symptoms in tariffs.items():
+        for cause, symptoms in list(tariffs.items()):
             scores[cause] = sum(tariff for symptom, tariff in symptoms
                                 if symptom in endorsements)
         return Record(sid=row.get(SID_KEY), age=row.get(AGE_KEY),
@@ -422,7 +422,7 @@ class TariffPrep(DataPrep):
 
             va = self.score_row(row, tariffs)
 
-            va.censored = map(safe_int, row.get('restricted', '').split())
+            va.censored = list(map(safe_int, row.get('restricted', '').split()))
             va.rules = safe_int(row.get(RULES_CAUSE_NUM_KEY))
 
             scored.append(va)
@@ -591,7 +591,7 @@ class TariffPrep(DataPrep):
             instrument = 'short' if self.short_form else 'full'
             weight_key = '{}_hce{}'.format(instrument, int(self.hce))
 
-            with open(self.undetermined_matrix_filename, 'rU') as f:
+            with open(self.undetermined_matrix_filename, 'r', newline='') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     # Only use rows for the specified country
@@ -654,7 +654,7 @@ class TariffPrep(DataPrep):
             def lookup(x):
                 return value_or_default(va[x], int_or_float)
 
-            for condition, causes in age_sex_restrictions.items():
+            for condition, causes in list(age_sex_restrictions.items()):
                 if not LdapNotationParser(condition, lookup, int).evaluate():
                     for cause in causes:
                         va.masked[cause].add(Masks.DEMOG)
@@ -713,7 +713,7 @@ class TariffPrep(DataPrep):
                 va.cause = va.rules
             elif len(set(va.ranks.values())) > 1:
                 best_rank = min(va.ranks.values())
-                predictions = [cause for cause, rank in va.ranks.items()
+                predictions = [cause for cause, rank in list(va.ranks.items())
                                if rank == best_rank and not va.masked[cause]]
 
                 # Use the first listed cause if there are ties
@@ -747,7 +747,7 @@ class TariffPrep(DataPrep):
             # method. The true prediction is skipped and inserted into the
             # front of the list. This prevents causes predicted by rules from
             # appearing in multiple places.
-            ordered = sorted([(cause, rank) for cause, rank in va.ranks.items()
+            ordered = sorted([(cause, rank) for cause, rank in list(va.ranks.items())
                               if not va.masked[cause] and cause != va.cause],
                              key=lambda x: (x[1], x[0]))
             ordered.insert(0, (va.cause, va.ranks.get(va.cause)))
@@ -874,12 +874,12 @@ class TariffPrep(DataPrep):
 
         # Convert counts to fractions
         total_counts = sum(cause_counts.values())
-        csmf = {k: v / total_counts for k, v in cause_counts.items()}
+        csmf = {k: v / total_counts for k, v in list(cause_counts.items())}
 
         totals = {sex: sum(counts.values())
-                        for sex, counts in counts_by_sex.items()}
-        csmf_by_sex = {sex: {k: v / totals[sex] for k, v in counts.items()}
-                       for sex, counts in counts_by_sex.items()}
+                        for sex, counts in list(counts_by_sex.items())}
+        csmf_by_sex = {sex: {k: v / totals[sex] for k, v in list(counts.items())}
+                       for sex, counts in list(counts_by_sex.items())}
         return csmf, csmf_by_sex
 
     def write_predictions(self, user_data):
@@ -896,7 +896,7 @@ class TariffPrep(DataPrep):
             return [va.sid, va.cause34, va.cause34_name, va.age, va.sex]
 
         filename = '{:s}-predictions.csv'.format(self.AGE_GROUP)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY, 'cause', 'cause34', 'age', 'sex'])
             writer.writerows([format_row(va) for va in user_data])
@@ -918,7 +918,7 @@ class TariffPrep(DataPrep):
         matrix = []   # store data to return
         cause_names = self.data_module.CAUSES
         symptom_descriptions = self.data_module.SYMPTOM_DESCRIPTIONS
-        symptom_order = symptom_descriptions.values()
+        symptom_order = list(symptom_descriptions.values())
         cause_reduction = self.data_module.CAUSE_REDUCTION
         rule_symptoms = self.data_module.RULE_KEY_SYMPTOMS
         undetermined = 'Undetermined'
@@ -929,14 +929,14 @@ class TariffPrep(DataPrep):
 
         if translations:
             cause_names = {cause: translations['causes'].get(name, name)
-                           for cause, name in self.data_module.CAUSES.items()}
+                           for cause, name in list(self.data_module.CAUSES.items())}
             symptom_descriptions = {
                 symp: translations['symptoms'].get(des, des)
-                for symp, des in self.data_module.SYMPTOM_DESCRIPTIONS.items()}
+                for symp, des in list(self.data_module.SYMPTOM_DESCRIPTIONS.items())}
             symptom_order = [translations['symptoms'].get(symp, symp)
                              for symp in symptom_order]
             sex_names = {sex: translations['sexes'].get(name, name)
-                         for sex, name, in sex_names.items()}
+                         for sex, name, in list(sex_names.items())}
             undetermined = translations['causes'].get(undetermined,
                                                       undetermined)
             missing = translations['sexes'].get(missing, missing)
@@ -996,11 +996,13 @@ class TariffPrep(DataPrep):
                 i += 1   # offset for header row
                 worksheet.set_row(i, 52.50)   # about 3.5 lines of height
 
-                # TODO: More robust handling of unicode
-                try:
-                    sid = unicode(va.sid, 'utf-8')
-                except UnicodeDecodeError:
-                    sid = unicode(va.sid, 'latin-1')
+                if isinstance(va.sid, bytes):  # Ensure it's bytes before decoding
+                    try:
+                        sid = va.sid.decode('utf-8')
+                    except UnicodeDecodeError:
+                        sid = va.sid.decode('latin-1')
+                else:
+                    sid = va.sid  # Already a string, no need to decode
 
                 sex = sex_names.get(va.sex, missing)
 
@@ -1008,7 +1010,7 @@ class TariffPrep(DataPrep):
                 for j, d in enumerate([sid, va.age, sex]):
                     worksheet.write(i, j, d)
 
-                likelihoods = va.likelihoods.items()
+                likelihoods = list(va.likelihoods.items())
                 if likelihoods:
                     for c, (cause, likelihood) in enumerate(likelihoods):
                         if c == n_causes:
@@ -1042,7 +1044,7 @@ class TariffPrep(DataPrep):
                                    for symptom in va.endorsements
                                    if symptom in symptom_descriptions],
                                   key=lambda s: symptom_order.index(s))
-                symptoms_list = '\r\n'.join([u'\u2022 {}'.format(symptom)
+                symptoms_list = '\r\n'.join(['\u2022 {}'.format(symptom)
                                              for symptom in symptoms])
                 worksheet.write(i, 3 + n_causes * 3, symptoms_list)
 
@@ -1063,7 +1065,7 @@ class TariffPrep(DataPrep):
         """
         csv_filename = '{:s}-likelihoods.csv'.format(self.AGE_GROUP)
         csv_filepath = os.path.join(self.output_dir_path, csv_filename)
-        with open(csv_filepath, 'wb') as f:
+        with open(csv_filepath, 'w') as f:
             UnicodeWriter(f).writerows(matrix)
 
     def _calc_age_bin(self, age):
@@ -1113,7 +1115,7 @@ class TariffPrep(DataPrep):
             return [va.sid] + vals
 
         filename = '{:s}-{}.csv'.format(self.AGE_GROUP, name)
-        with open(os.path.join(self.intermediate_dir, filename), 'wb') as f:
+        with open(os.path.join(self.intermediate_dir, filename), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([SID_KEY] + self.cause_list)
             writer.writerows([format_row(va) for va in user_data])
@@ -1125,7 +1127,7 @@ class TariffPrep(DataPrep):
             csmf (dict): Map of causes to count.
         """
         filename = '{:s}-csmf.csv'.format(key)
-        with open(os.path.join(self.output_dir_path, filename), 'wb') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
-            writer.writerows(sorted(csmf.items(), key=lambda _: _[0]))
+            writer.writerows(sorted(list(csmf.items()), key=lambda _: _[0]))

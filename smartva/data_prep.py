@@ -11,9 +11,7 @@ class AbortException(Exception):
     pass
 
 
-class Prep(object):
-    __metaclass__ = abc.ABCMeta
-
+class Prep(object, metaclass=abc.ABCMeta):
     INPUT_FILENAME_TEMPLATE = ''
     OUTPUT_FILENAME_TEMPLATE = ''
 
@@ -35,9 +33,7 @@ class Prep(object):
         self.want_abort = True
 
 
-class DataPrep(Prep):
-    __metaclass__ = abc.ABCMeta
-
+class DataPrep(Prep, metaclass=abc.ABCMeta):
     AGE_GROUP = None
 
     def __init__(self, working_dir_path, short_form, who_2016):
@@ -61,7 +57,7 @@ class DataPrep(Prep):
 
     @staticmethod
     def rename_vars(row, conversion_map):
-        for old_header, new_header in conversion_map.items():
+        for old_header, new_header in list(conversion_map.items()):
             try:
                 row[new_header] = row.pop(old_header)
             except KeyError:
@@ -77,7 +73,7 @@ class DataPrep(Prep):
         :param headers: List of headers.
         :param conversion_map: Map of old to new headers.
         """
-        for old_header, new_header in conversion_map.items():
+        for old_header, new_header in list(conversion_map.items()):
             try:
                 headers[headers.index(old_header)] = new_header
             except (KeyError, ValueError):
@@ -119,12 +115,12 @@ class DataPrep(Prep):
                 # No values to process or not an integer value (invalid).
                 pass
             except ConversionError as e:
-                warning_logger.debug(e.message)
+                warning_logger.debug(str(e))
                 continue
             except KeyError as e:
                 # Variable does not exist. The new published form does not contain all of the previous variables.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. process_binary_vars'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
 
     @staticmethod
@@ -133,7 +129,7 @@ class DataPrep(Prep):
         if len(dupes):
             # warning_logger.warning('')
             pass
-        row.update({k: v for k, v in data.items() if k not in row})
+        row.update({k: v for k, v in list(data.items()) if k not in row})
 
     @staticmethod
     def process_progressive_value_data(row, progressive_data):
@@ -155,7 +151,9 @@ class DataPrep(Prep):
         for read_header, conversion_data in progressive_data:
             for value, write_header in conversion_data:
                 try:
-                    if safe_float(row[read_header]) > value:
+                    # in Python 2, (x > None) is True for any float x, but in 
+                    # Python 3 it is an error so we need to check for None explicitly
+                    if (value is None) or safe_float(row[read_header]) > value:
                         if isinstance(write_header, tuple):
                             write_header, write_value = write_header
                         else:
@@ -164,11 +162,11 @@ class DataPrep(Prep):
                         break
                 except KeyError as e:
                     warning_logger.debug('SID: {} variable \'{}\' does not exist. process_progressive_value_data'
-                                         .format(row['sid'], e.message))
+                                         .format(row['sid'], str(e)))
                     continue
 
     @staticmethod
-    def read_input_file(input_file_path, mode='rb'):
+    def read_input_file(input_file_path, mode='r'):
         """Read input file. Return headers and matrix data.
 
         Args:
@@ -178,7 +176,7 @@ class DataPrep(Prep):
         Returns:
             list, list: List of headers, List of matrix data.
         """
-        with open(input_file_path, mode) as fi:
+        with open(input_file_path, mode, newline='') as fi:
             reader = csv.DictReader(fi, restval='')
             return reader.fieldnames, [row for row in reader]
 
@@ -191,7 +189,7 @@ class DataPrep(Prep):
             matrix (list): Matrix of VA answers.
             output_file_path (str): Path of output file.
         """
-        with open(output_file_path, 'wb') as fo:
+        with open(output_file_path, 'w', newline='') as fo:
             writer = csv.DictWriter(fo, fieldnames=headers, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(matrix)

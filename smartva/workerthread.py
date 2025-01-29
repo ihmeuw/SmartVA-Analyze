@@ -4,7 +4,7 @@ import os
 import re
 import threading
 import traceback
-from data_prep import AbortException
+from .data_prep import AbortException
 
 from smartva.who_prep import WHOPrep
 from smartva.common_prep import CommonPrep
@@ -107,8 +107,8 @@ class WorkerThread(threading.Thread):
 
     @classmethod
     def format_headers(cls, source_path, dest_path):
-        with open(source_path, 'Ub') as in_f:
-            with open(dest_path, 'wb') as out_f:
+        with open(source_path, 'r', newline='') as in_f:
+            with open(dest_path, 'w', newline='') as out_f:
                 reader = csv.reader(in_f)
                 writer = csv.writer(out_f)
 
@@ -124,7 +124,7 @@ class WorkerThread(threading.Thread):
 
     @staticmethod
     def who_questionaire_test(file_path):
-        with open(file_path, 'Ub') as f:
+        with open(file_path, 'r', newline='') as f:
             headers = next(csv.reader(f))
 
         # Now we have two problems
@@ -138,12 +138,12 @@ class WorkerThread(threading.Thread):
 
     @staticmethod
     def short_form_test(file_path):
-        with open(file_path, 'Ub') as f:
+        with open(file_path, 'r', newline='') as f:
             return SHORT_FORM_HEADER in next(csv.reader(f))
 
     @staticmethod
     def who_2016_test(file_path):
-        with open(file_path, 'Ub') as f:
+        with open(file_path, 'r', newline='') as f:
             return WHO_2016_FORM_HEADER in (next(csv.reader(f)))
 
     @staticmethod

@@ -38,21 +38,21 @@ def local_file(filename):
 
 
 def get_expected_results(file_):
-    with open(file_, 'rb') as f:
+    with open(file_, 'r', newline='') as f:
         r = csv.DictReader(f)
         return [row for row in r]
 
 
 def validate_matrix(actual, expected):
     for a in actual:
-        e = expected.next()
+        e = next(expected)
         for var in e:
             assert a[var] == e[var], "SID: '{}' does not produce expected result".format(a['sid'])
 
 
 def validate_predictions(file_):
     assert file_.check()
-    with file_.open('rb') as f:
+    with file_.open('r') as f:
         r = csv.DictReader(f)
         actual_results = [row for row in r]
 
@@ -68,7 +68,7 @@ def test_tariff_prep(prep, input_file, tmpdir):
 
 def test_uniform_frequencies(prep):
     df = pd.read_csv(prep.validated_filename, index_col=0)
-    df = df.loc[np.repeat(*zip(*prep.data_module.FREQUENCIES.items()))]
+    df = df.loc[np.repeat(*list(zip(*list(prep.data_module.FREQUENCIES.items()))))]
     counts = df.gs_text46.value_counts()
     assert len(counts.unique()) == 1
 
@@ -92,7 +92,7 @@ def test_calc_age_bin(prep, age, expected):
 def test_csmf_summed_to_one(prep, malaria, hiv):
     prep.malaria_region = malaria
     prep.hiv_region = hiv
-    causes = prep.data_module.CAUSES.values()
+    causes = list(prep.data_module.CAUSES.values())
 
     user_data = [Record('sid{}'.format(i), age=35, sex=i % 2 + 1, cause=cause)
                  for i in range(7) for cause in causes]
@@ -101,7 +101,7 @@ def test_csmf_summed_to_one(prep, malaria, hiv):
     csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
 
     assert np.allclose(sum(csmf.values()), 1)
-    for sex, csmf_data in csmf_by_sex.items():
+    for sex, csmf_data in list(csmf_by_sex.items()):
         assert np.allclose(sum(csmf_data.values()), 1)
 
 
@@ -113,7 +113,7 @@ def test_injuries_have_no_positive_scores(tmpdir, prep):
     injuries = [5, 15, 18, 19, 21, 34, 38, 41, 45]
 
     tariffs_path = os.path.join(config.basedir, 'data', 'tariffs-adult.csv')
-    with open(tariffs_path, 'r') as f:
+    with open(tariffs_path, 'r', newline='') as f:
         symptoms = next(csv.reader(f))
     symptoms.remove('xs_name')
 
@@ -127,7 +127,7 @@ def test_injuries_have_no_positive_scores(tmpdir, prep):
 
     scored = prep.score_symptom_data([row], tariffs)
 
-    assert all([score <= 0 for cause, score in scored[0].scores.items()
+    assert all([score <= 0 for cause, score in list(scored[0].scores.items())
                 if cause in injuries])
 
 
@@ -157,7 +157,7 @@ def test_csmf_sex_undetermined_unknown_age(prep):
     undetermined_weights = prep._get_undetermined_matrix()
     csmf, csmf_by_sex = prep.calculate_csmf(user_data, undetermined_weights)
 
-    for sex, csmf_data in csmf_by_sex.items():
+    for sex, csmf_data in list(csmf_by_sex.items()):
         # check female causes not in male csmfs and vice versa
         if sex == 1:
             assert len(list(set(csmf_data.keys()) & set(male_drops))) == 0

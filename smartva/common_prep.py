@@ -70,7 +70,7 @@ class CommonPrep(DataPrep):
         additional_data = {k: '' for k in ADDITIONAL_HEADERS}
         if self.short_form:
             additional_data.update(SHORT_FORM_ADDITIONAL_HEADERS_DATA)
-        additional_headers, additional_values = additional_headers_and_values(headers, additional_data.items())
+        additional_headers, additional_values = additional_headers_and_values(headers, list(additional_data.items()))
 
         headers.extend(additional_headers)
         if 'child_1_8a' not in headers:
@@ -87,20 +87,20 @@ class CommonPrep(DataPrep):
                 warning_logger.info('SID: {} Refused consent.'.format(row['sid']))
                 continue
 
-            self.expand_row(row, dict(zip(additional_headers, additional_values)))
+            self.expand_row(row, dict(list(zip(additional_headers, additional_values))))
 
             self.correct_missing_age(row)
 
             try:
-                self.convert_cell_to_int(row, AGE_VARS.values())
+                self.convert_cell_to_int(row, list(AGE_VARS.values()))
             except KeyError as e:
-                warning_logger.error('Missing age variable: {}'.format(e.message))
-                missing_vars = [var for var in AGE_VARS.values() if var not in headers]
+                warning_logger.error('Missing age variable: {}'.format(str(e)))
+                missing_vars = [var for var in list(AGE_VARS.values()) if var not in headers]
                 status_logger.info('Cannot process data without: {}'.format(', '.join(missing_vars)))
                 status_notifier.update('abort')
                 continue
 
-            for header, mapping in BINARY_CONVERSION_MAP.items():
+            for header, mapping in list(BINARY_CONVERSION_MAP.items()):
                 self.process_multiselect_vars(row, header, mapping)
 
             for header in COUNT_DATA_HEADERS:
@@ -165,7 +165,7 @@ class CommonPrep(DataPrep):
 
     def correct_missing_age(self, row):
         """Ensure that the age group variable is set to missing if all AGE_VARS are blank"""
-        if all([row.get(var, '') == '' for var in AGE_VARS.values()]):
+        if all([row.get(var, '') == '' for var in list(AGE_VARS.values())]):
             row[AGE_VARS['module']] = '9'  # Don't Know
 
     def convert_cell_to_int(self, row, conversion_data):
@@ -196,11 +196,11 @@ class CommonPrep(DataPrep):
             # We want to still write all the output headers to the row
             values = set()
 
-        if not values or values.difference(mapping.keys()):
+        if not values or values.difference(list(mapping.keys())):
             row[header] = ''
             values = set()
 
-        for value, write_header in mapping.items():
+        for value, write_header in list(mapping.items()):
             row[write_header] = int(value in values)
 
     def convert_rash_data(self, row, conversion_data):
@@ -221,7 +221,7 @@ class CommonPrep(DataPrep):
             row (dict): Row of VA data.
             conversion_data (dict): Data structure with header and rash specific variable mapping.
         """
-        for variable, mapping in conversion_data.items():
+        for variable, mapping in list(conversion_data.items()):
             try:
                 rash_values = set(map(int, row[variable].split(' ')))
             except ValueError:
@@ -230,7 +230,7 @@ class CommonPrep(DataPrep):
             except KeyError as e:
                 # Variable does not exist.
                 warning_logger.debug('SID: {} variable \'{}\' does not exist. convert_rash_data'
-                                     .format(row['sid'], e.message))
+                                     .format(row['sid'], str(e)))
                 continue
             else:
                 locations = set(mapping['locations'])
@@ -271,7 +271,7 @@ class CommonPrep(DataPrep):
             row (dict): Row of VA data.
             conversion_data (dict): Data structure with header and weight variable mapping.
         """
-        for variable, mapping in conversion_data.items():
+        for variable, mapping in list(conversion_data.items()):
             try:
                 unit = int(row[variable])
             except (ValueError, TypeError, KeyError):
@@ -319,7 +319,7 @@ class CommonPrep(DataPrep):
             dict: Age data in years, months, days, and module type.
         """
         age_data = {}
-        for age_group, variable in AGE_VARS.items():
+        for age_group, variable in list(AGE_VARS.items()):
             age_data[age_group] = int(row[variable])
 
         age_data.update({'sid': row['sid']})
@@ -382,6 +382,6 @@ class CommonPrep(DataPrep):
         """
         status_logger.debug('Writing adult, child, neonate prepped.csv files')
 
-        for age, matrix in matrix_data.items():
+        for age, matrix in list(matrix_data.items()):
             if matrix:
                 DataPrep.write_output_file(headers, matrix, self.output_file_path(age))

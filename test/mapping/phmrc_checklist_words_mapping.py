@@ -38,9 +38,9 @@ MODULE_ENCODING = {'adult': 3, 'child': 2, 'neonate': 1}
 VALUES = {1: True, 0: False, '': False, 'X': False}
 MAPPING = []
 
-for module, mapping_data in CHECKLIST_WORD_SYMPTOMS.items():
-    for col, symp in mapping_data.items():
-        for value, endorsed in VALUES.items():
+for module, mapping_data in list(CHECKLIST_WORD_SYMPTOMS.items()):
+    for col, symp in list(mapping_data.items()):
+        for value, endorsed in list(VALUES.items()):
             MAPPING.append({
                 'sid': '"{}" with value "{}"'.format(col, value),
                 'symptom': symp,

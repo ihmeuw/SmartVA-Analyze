@@ -19,5 +19,5 @@ def test_malformed_jagged_csv(prep):
         f.write(data)
 
     _, matrix = prep.read_input_file(prep.input_file_path())
-    assert all([isinstance(value, basestring)
-                for row in matrix for value in row.values()])
+    assert all([isinstance(value, str)
+                for row in matrix for value in list(row.values())])

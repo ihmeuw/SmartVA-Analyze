@@ -37,10 +37,10 @@ def check_country(ctx, param, value):
     """
     if value.upper() == COUNTRY_DEFAULT.upper():
         return None
-    elif not value.upper() in (country.split(u' ')[-1].strip(u'()').upper() for country in COUNTRIES):
-        click.echo(u'Country list:')
+    elif not value.upper() in (country.split(' ')[-1].strip('()').upper() for country in COUNTRIES):
+        click.echo('Country list:')
         for country in COUNTRIES:
-            click.echo(u'- {}'.format(country))
+            click.echo('- {}'.format(country))
         ctx.exit()
     return value.upper()
 

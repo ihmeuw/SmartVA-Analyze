@@ -5,7 +5,7 @@ from smartva.data.common_data import ADULT
 from smartva.data.word_conversions import ADULT_WORDS_TO_VARS
 from smartva.data.adult_symptom_data import DURATION_CUTOFF_DATA
 
-FREE_TEXT = ADULT_WORDS_TO_VARS.values()
+FREE_TEXT = list(ADULT_WORDS_TO_VARS.values())
 
 AGE_GROUP = ADULT
 

@@ -35,9 +35,7 @@ RULES_CAUSE_NUM_KEY = 'cause'
 ADDITIONAL_DATA = {RULES_CAUSE_NUM_KEY: ''}
 
 
-class RulesPrep(DataPrep):
-    __metaclass__ = abc.ABCMeta
-
+class RulesPrep(DataPrep, metaclass=abc.ABCMeta):
     def __init__(self, working_dir_path, short_form, age_group, rules,who_2016):
         super(RulesPrep, self).__init__(working_dir_path, short_form,who_2016)
 
@@ -59,7 +57,7 @@ class RulesPrep(DataPrep):
 
         headers, matrix = DataPrep.read_input_file(self.input_file_path())
 
-        headers.extend(ADDITIONAL_DATA.keys())
+        headers.extend(list(ADDITIONAL_DATA.keys()))
 
         status_notifier.update({'sub_progress': (0, len(matrix))})
 
@@ -75,8 +73,8 @@ class RulesPrep(DataPrep):
                     if rule.logic_rule(row) is True:
                         row[RULES_CAUSE_NUM_KEY] = rule.CAUSE_ID
                         break
-                except Exception as e:
-                    warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, e.message))
+                except Exception as e:  # FIXME: this is so broad that it makes debugging hard, but I'm not sure what besides KeyError might legitimately be raised here
+                    warning_logger.warning('SID: {} rule `{}` failed complete: {}'.format(row['sid'], rule, str(e)))
 
         status_notifier.update({'sub_progress': None})
 

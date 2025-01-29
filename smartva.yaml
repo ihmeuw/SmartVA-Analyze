@@ -1,0 +1,25 @@
+name: smartva3
+channels:
+  - conda-forge
+dependencies:
+  - click
+  - colorama
+  - matplotlib
+  - numpy
+  - py
+  - pyparsing
+  - python-dateutil
+  - pytz
+  - tornado
+  - progressbar
+  - xlsxwriter
+  - PyInstaller
+  - pytest
+  - pytest-cov
+  - pip
+  # - steuptools
+  - wheel
+  - pandas
+  - pip:
+    - stemming
+  

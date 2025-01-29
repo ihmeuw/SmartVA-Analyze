@@ -26,17 +26,17 @@ LANGUAGES = ('chinese', 'spanish')
 @pytest.fixture(params=LANGUAGES, scope='module')
 def translation(request):
     path = os.path.join(basedir, 'data', '{}.json'.format(request.param))
-    with open(path, 'rb') as f:
+    with open(path, 'r') as f:
         return json.load(f)
 
 
 def test_symptom_descriptions(translation):
     english = set()
-    english.update(ADULT_SYMPTOM_DESCRIPTIONS.values())
-    english.update(CHILD_SYMPTOM_DESCRIPTIONS.values())
-    english.update(NEONATE_SYMPTOM_DESCRIPTIONS.values())
+    english.update(list(ADULT_SYMPTOM_DESCRIPTIONS.values()))
+    english.update(list(CHILD_SYMPTOM_DESCRIPTIONS.values()))
+    english.update(list(NEONATE_SYMPTOM_DESCRIPTIONS.values()))
 
-    diff = english.difference(translation['symptoms'].keys())
+    diff = english.difference(list(translation['symptoms'].keys()))
     extra = set(translation['symptoms'].keys()).difference(english)
 
     assert not diff and not extra
@@ -44,13 +44,13 @@ def test_symptom_descriptions(translation):
 
 def test_causes(translation):
     english = set()
-    english.update(ADULT_CAUSES.values())
-    english.update(ADULT_CAUSES46.values())
-    english.update(CHILD_CAUSES.values())
-    english.update(CHILD_CAUSES46.values())
-    english.update(NEONATE_CAUSES.values())
-    english.update(NEONATE_CAUSES46.values())
+    english.update(list(ADULT_CAUSES.values()))
+    english.update(list(ADULT_CAUSES46.values()))
+    english.update(list(CHILD_CAUSES.values()))
+    english.update(list(CHILD_CAUSES46.values()))
+    english.update(list(NEONATE_CAUSES.values()))
+    english.update(list(NEONATE_CAUSES46.values()))
 
-    diff = english.difference(translation['causes'].keys())
+    diff = english.difference(list(translation['causes'].keys()))
 
     assert not diff

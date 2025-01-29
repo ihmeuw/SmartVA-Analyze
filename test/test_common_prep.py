@@ -12,15 +12,15 @@ def prep():
 class TestCommonPrep(object):
     def test_convert_cell_to_int(self, prep):
         headers = ['test1', 'test2', 'test3']
-        row = dict(zip(headers, ['0', '1', '']))
+        row = dict(list(zip(headers, ['0', '1', ''])))
 
         prep.convert_cell_to_int(row, headers)
 
-        assert row == dict(zip(headers, [0, 1, 0]))
+        assert row == dict(list(zip(headers, [0, 1, 0])))
 
     def test_convert_binary_variables(self, prep):
         headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['1 3', 0, 0, 0]))
+        row = dict(list(zip(headers, ['1 3', 0, 0, 0])))
 
         conversion_data = {
             'test': {
@@ -30,13 +30,13 @@ class TestCommonPrep(object):
             }
         }
 
-        prep.process_binary_vars(row, conversion_data.items())
+        prep.process_binary_vars(row, list(conversion_data.items()))
 
-        assert row == dict(zip(headers, ['1 3', 1, 0, 1]))
+        assert row == dict(list(zip(headers, ['1 3', 1, 0, 1])))
 
     def test_convert_binary_variables_none(self, prep):
         headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['', 0, 0, 0]))
+        row = dict(list(zip(headers, ['', 0, 0, 0])))
 
         conversion_data = {
             'test': {
@@ -46,9 +46,9 @@ class TestCommonPrep(object):
             }
         }
 
-        prep.process_binary_vars(row, conversion_data.items())
+        prep.process_binary_vars(row, list(conversion_data.items()))
 
-        assert row == dict(zip(headers, ['', 0, 0, 0]))
+        assert row == dict(list(zip(headers, ['', 0, 0, 0])))
 
     @pytest.mark.parametrize('values, expected', [
         ('', ['', 0, 0, 0, 0, 0]),
@@ -77,7 +77,7 @@ class TestCommonPrep(object):
         headers.extend(sorted(conversion_data.values()))
 
         prep.process_multiselect_vars(row, 'input_header', conversion_data)
-        assert row == dict(zip(headers, expected))
+        assert row == dict(list(zip(headers, expected)))
 
     @pytest.mark.parametrize('values, expected', [
         (['1 2 3', 0, 0, 0], ['1 2 3', 4, 0, 0]),
@@ -89,7 +89,7 @@ class TestCommonPrep(object):
     ])
     def test_convert_rash_data(self, prep, values, expected):
         headers = ['test', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, values))
+        row = dict(list(zip(headers, values)))
 
         conversion_data = {
             'test': {
@@ -102,7 +102,7 @@ class TestCommonPrep(object):
 
         prep.convert_rash_data(row, conversion_data)
 
-        assert row == dict(zip(headers, expected))
+        assert row == dict(list(zip(headers, expected)))
 
     @pytest.mark.parametrize('values, expected', [
         ([1, '1000', ''], [1, 1000, '']),
@@ -113,7 +113,7 @@ class TestCommonPrep(object):
     ])
     def test_convert_weight_data_g(self, prep, values, expected):
         headers = ['test', 'test1', 'test2']
-        row = dict(zip(headers, values))
+        row = dict(list(zip(headers, values)))
 
         conversion_data = {
             'test': {
@@ -124,33 +124,33 @@ class TestCommonPrep(object):
 
         prep.convert_weight_data(row, conversion_data)
 
-        assert row == dict(zip(headers, expected))
+        assert row == dict(list(zip(headers, expected)))
 
     def test_convert_free_text(self, prep):
         headers = ['test1', 'test2']
-        row = dict(zip(headers, ['pencil bite.', 'eraser 123 burn']))
+        row = dict(list(zip(headers, ['pencil bite.', 'eraser 123 burn'])))
 
         free_text_headers = headers
 
         prep.convert_free_text(row, free_text_headers, common_data.WORD_SUBS)
 
-        assert row == dict(zip(headers, ['pencil bite', 'eraser fire']))
+        assert row == dict(list(zip(headers, ['pencil bite', 'eraser fire'])))
 
     def test_consent(self, prep):
         headers = ['sid', 'consent']
-        row = dict(zip(headers, ['1', '1']))
+        row = dict(list(zip(headers, ['1', '1'])))
 
         assert prep.check_consent(row, 'consent', 7) is True
 
     def test_consent_refusal(self, prep):
         headers = ['sid', 'consent']
-        row = dict(zip(headers, ['1', '0']))
+        row = dict(list(zip(headers, ['1', '0'])))
 
         assert prep.check_consent(row, 'consent', 7) is False
 
     def test_consent_empty(self, prep):
         headers = ['sid', 'consent']
-        row = dict(zip(headers, ['1', '']))
+        row = dict(list(zip(headers, ['1', ''])))
 
         assert prep.check_consent(row, 'consent', 7) is True
 
@@ -158,13 +158,13 @@ class TestCommonPrep(object):
         garbage = ['blah', '1.0', '0.0']
         headers = ['sid', 'consent']
         for value in garbage:
-            row = dict(zip(headers, ['1', value]))
+            row = dict(list(zip(headers, ['1', value])))
 
             assert prep.check_consent(row, 'consent', 7) is False
 
     def test_consent_not_exist(self, prep):
         headers = ['sid']
-        row = dict(zip(headers, ['1']))
+        row = dict(list(zip(headers, ['1'])))
 
         assert prep.check_consent(row, 'consent', 7) is True
 
@@ -196,7 +196,7 @@ class TestCommonPrep(object):
     (['dont-know-with-child-data', '', '7', '', '9'], 'child'),
     (['refused-with-neonate-data', '', '', '7', '8'], 'neonate'),
     (['dont-know-with-neonate-data', '', '', '7', '9'], 'neonate'),
-], ids=lambda x: x['sid'])
+])
 def test_save_row(tmpdir, row, module):
     prep = common_prep.CommonPrep(tmpdir.strpath, True, who_2016=True)
 

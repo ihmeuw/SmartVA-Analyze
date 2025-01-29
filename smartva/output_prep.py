@@ -55,9 +55,9 @@ for d in range(2, 8):
 AGE_GROUPS['adult8'] = '80+'
 
 CAUSE_NUMBERS = {
-    ADULT: {v: k for k, v in adult_tariff_data.CAUSES.items()},
-    CHILD: {v: k for k, v in child_tariff_data.CAUSES.items()},
-    NEONATE: {v: k for k, v in neonate_tariff_data.CAUSES.items()},
+    ADULT: {v: k for k, v in list(adult_tariff_data.CAUSES.items())},
+    CHILD: {v: k for k, v in list(child_tariff_data.CAUSES.items())},
+    NEONATE: {v: k for k, v in list(neonate_tariff_data.CAUSES.items())},
 }
 
 CAUSE46_NAMES = {
@@ -170,7 +170,7 @@ class OutputPrep(DataPrep):
             'death_date',
             'interview_date',
         ]
-        with open(predictions_file, 'wb') as f:
+        with open(predictions_file, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             for module in MODULES:
@@ -183,9 +183,9 @@ class OutputPrep(DataPrep):
                 module_file = os.path.join(self.working_dir_path, FOLDER1,
                                            '{}-predictions.csv'.format(module))
 
-                with open(pred_file, 'rb') as f_pred, \
-                        open(raw_file, 'rb') as f_raw, \
-                        open(module_file, 'wb') as f_mod:
+                with open(pred_file, 'r', newline='') as f_pred, \
+                        open(raw_file, 'r', newline='') as f_raw, \
+                        open(module_file, 'w', newline='') as f_mod:
                     raw_reader = csv.DictReader(f_raw)
                     pred_reader = csv.DictReader(f_pred)
                     mod_writer = csv.writer(f_mod)
@@ -235,12 +235,12 @@ class OutputPrep(DataPrep):
     @staticmethod
     def make_date(year, month, day):
         try:
-            year, month, day = map(float, (year, month, day))
+            year, month, day = list(map(float, (year, month, day)))
         except (TypeError, ValueError):
             return ''
         if (1880 <= year <= datetime.now().year and 1 <= month <= 12 and
                 1 <= day <= 31):
-            return '{:d}-{:02d}-{:02d}'.format(*map(int, (year, month, day)))
+            return '{:d}-{:02d}-{:02d}'.format(*list(map(int, (year, month, day))))
         else:
             return ''
 
@@ -267,13 +267,13 @@ class OutputPrep(DataPrep):
             '-'.join([module, 'female']): 'female',
         }
         csmf = defaultdict(dict)
-        for key, label in keys.items():
+        for key, label in list(keys.items()):
             filename = os.path.join(self.working_dir_path,
                                     '{}-csmf.csv'.format(key))
             if not os.path.exists(filename):
                 continue
 
-            with open(filename) as f:
+            with open(filename, newline='') as f:
                 for cause, value in csv.reader(f):
                     if cause != 'cause':   # skip header row
                         csmf[label][cause] = safe_float(value)
@@ -292,24 +292,24 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 '{}-csmf.csv'.format(module))
-        with open(filename, 'wb') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
     def _tabulate_all_age_csmf(self):
-        total = float(sum(len(v) for v in self.predictions.values()))
+        total = float(sum(len(v) for v in list(self.predictions.values())))
         if not total:
             return
 
         csmf = defaultdict(lambda: defaultdict(float))
-        for module, module_csmfs in self.csmf.items():
+        for module, module_csmfs in list(self.csmf.items()):
             weight = len(self.predictions[module]) / total
-            for sex, values in module_csmfs.items():
-                for cause, value in values.items():
+            for sex, values in list(module_csmfs.items()):
+                for cause, value in list(values.items()):
                     csmf[cause][sex] += value * weight
 
         self.all_csmf = csmf
 
-        icds = {k: v for icds in ICDS.values() for k, v in icds.items()}
+        icds = {k: v for icds in list(ICDS.values()) for k, v in list(icds.items())}
         table = [['cause34', 'icd10', 'all', 'male', 'female']]
         for cause in sorted(csmf):
             table.append([
@@ -320,13 +320,13 @@ class OutputPrep(DataPrep):
                 round(csmf[cause].get('female', 0), 3),
             ])
         filename = os.path.join(self.working_dir_path, FOLDER2, 'csmf.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
 
     def _aggregate_csmf_to_gbd_level1(self):
         # silly py2 and your integer division
-        total = float(sum(len(v) for v in self.predictions.values()))
+        total = float(sum(len(v) for v in list(self.predictions.values())))
         if not total:  # this wouldn't happen, would it
             self.gbd_csmf = None  # apparently it does...
             return
@@ -334,20 +334,20 @@ class OutputPrep(DataPrep):
         module_weights = {module: len(self.predictions[module]) / total
                           for module in MODULES}
         gbd_csmf = defaultdict(float)
-        for module, values in self.csmf.items():
-            for cause, value in values['both'].items():
+        for module, values in list(self.csmf.items()):
+            for cause, value in list(values['both'].items()):
                 gbd_cause = GBD_LEVEL1_CAUSES[module][cause]
                 gbd_csmf[gbd_cause] += value * module_weights[module]
 
         table = [['cause', 'cause_name', 'CSMF']]
         table.extend([
             [cause, GBD_LEVEL1_CAUSE_NAMES[cause], round(value, 3)]
-            for cause, value in sorted(gbd_csmf.items(), key=lambda x: x[0])
+            for cause, value in sorted(list(gbd_csmf.items()), key=lambda x: x[0])
         ])
 
         filename = os.path.join(self.working_dir_path, FOLDER2,
                                 'gbd-level1-csmf.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
         self.gbd_csmf = table
 
@@ -419,7 +419,7 @@ class OutputPrep(DataPrep):
             return
 
         data = OrderedDict(sorted([
-            (cause, val.get('both', 0)) for cause, val in self.all_csmf.items()
+            (cause, val.get('both', 0)) for cause, val in list(self.all_csmf.items())
         ], key=lambda x: x[1], reverse=True))
         output_dir = os.path.join(self.working_dir_path, FOLDER3)
         make_graph(data, 'all', output_dir)
@@ -435,7 +435,7 @@ class OutputPrep(DataPrep):
             if not os.path.exists(filename):
                 continue
 
-            with open(filename, 'r') as f:
+            with open(filename, 'r', newline='') as f:
                 for row in csv.DictReader(f):
                     cause = row['cause34']
                     causes[module].add(cause)
@@ -450,9 +450,9 @@ class OutputPrep(DataPrep):
         # It's times like this where you really start to appreciate a
         # high-level dataframe abstraction. Isn't it?
         table = [['module', 'cause34', 'age', 'sex', 'counts']]
-        for age_i, age_group in AGE_GROUPS.items():
+        for age_i, age_group in list(AGE_GROUPS.items()):
             module = age_i[:-1]
-            for sex in sex_names.values():
+            for sex in list(sex_names.values()):
                 for cause in sorted(causes[module]):
                     count = counts[(age_group, sex, cause)]
                     if count:
@@ -460,7 +460,7 @@ class OutputPrep(DataPrep):
 
         filename = os.path.join(self.working_dir_path, FOLDER3,
                                 'causes-of-death.csv')
-        with open(filename, 'wb') as f:
+        with open(filename, 'w', newline='') as f:
             csv.writer(f).writerows(table)
         return table
 
@@ -514,12 +514,12 @@ class OutputPrep(DataPrep):
         if not os.path.exists(prepped_file):
             return
 
-        with open(prepped_file, 'rb') as f_prep, open(recoded_file, 'wb') as f_rec:
+        with open(prepped_file, 'r', newline='') as f_prep, open(recoded_file, 'w', newline='') as f_rec:
             reader = csv.DictReader(f_prep)
             writer = csv.DictWriter(f_rec, fieldnames=reader.fieldnames)
             writer.writeheader()
             for row in reader:
-                for key, value in row.items():
+                for key, value in list(row.items()):
                     value = safe_int(value)
                     if key in codebook.YES_NO_QUESTIONS:
                         row[key] = codebook.YES_NO_LABELS.get(value)
@@ -540,7 +540,7 @@ class OutputPrep(DataPrep):
                 shutil.copy2(src, os.path.join(self.working_dir_path,
                                                INTERMEDIATES_FOLDER, f))
 
-        causes = sorted(CAUSE46_NAMES[module].items(), key=lambda x: x[0])
+        causes = sorted(list(CAUSE46_NAMES[module].items()), key=lambda x: x[0])
         new_headers = ['sid']
         new_headers.extend([cause for _, cause in causes])
 
@@ -561,7 +561,7 @@ class OutputPrep(DataPrep):
         if not (os.path.exists(symptom_file) and os.path.exists(prediction_file)):
             return
 
-        with open(symptom_file) as f_symp, open(prediction_file) as f_pred:
+        with open(symptom_file, newline='') as f_symp, open(prediction_file, newline='') as f_pred:
             symp_reader = csv.DictReader(f_symp)
             pred_reader = csv.DictReader(f_pred)
             symptoms = [header for header in symp_reader.fieldnames
@@ -600,7 +600,7 @@ class OutputPrep(DataPrep):
         # We also want to preserve the order of the symptoms, just in case
         data = OrderedDict(
             (symp, {cause: endorsements[cause].get(symp, 0) / float(total)
-                    for cause, total in counts.items() if total})
+                    for cause, total in list(counts.items()) if total})
             for symp in symptoms if symp not in drop
         )
         causes = sorted(counts)
@@ -608,17 +608,17 @@ class OutputPrep(DataPrep):
                                 '{}-endorsement-rates.csv'.format(module))
         headers = ['symptom', 'description']
         headers.extend(causes)
-        with open(filename, 'wb') as f:
+        with open(filename, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
-            for symptom, rates in data.items():
+            for symptom, rates in list(data.items()):
                 row = [symptom, SYMPTOM_DESCRIPTIONS[module].get(symptom)]
                 row.extend(['{}%'.format(round(rates[cause] * 100, 1))
                              for cause in causes])
                 writer.writerow(row)
 
     def _write_age_group_tabulation(self):
-        total = float(sum(len(v) for v in self.predictions.values()))
+        total = float(sum(len(v) for v in list(self.predictions.values())))
         if not total:
             return
 
@@ -626,7 +626,7 @@ class OutputPrep(DataPrep):
         male = 'male (count)'
         female = 'female (count)'
         counts = defaultdict(lambda: Counter())
-        for module, data in self.predictions.items():
+        for module, data in list(self.predictions.items()):
             for row in data:
                 sex = safe_int(row.get('sex'))
                 age = self._get_five_year_age_group(row.get('age'))
@@ -637,7 +637,7 @@ class OutputPrep(DataPrep):
                 elif sex == 2:
                     counts[key][female] += 1
 
-        icds = {k: v for icds in ICDS.values() for k, v in icds.items()}
+        icds = {k: v for icds in list(ICDS.values()) for k, v in list(icds.items())}
         table = [['cause34', 'icd10', 'age group', both, male, female]]
         for key in sorted(counts):
             age_group, cause = key
@@ -652,7 +652,7 @@ class OutputPrep(DataPrep):
 
         path = os.path.join(self.working_dir_path, FOLDER4,
                             'VA-data-age-groupings.csv')
-        with open(path, 'wb') as f:
+        with open(path, 'w', newline='') as f:
             csv.writer(f).writerows(table)
 
     @staticmethod

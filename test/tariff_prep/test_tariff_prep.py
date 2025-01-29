@@ -111,7 +111,7 @@ def test_get_tariff_matrix(tmpdir):
     }
 
     f_path = tmpdir.join('tariff-sample.csv')
-    with f_path.open('wb') as f:
+    with f_path.open('w') as f:
         w = csv.writer(f)
         w.writerows(input_data)
 
@@ -127,7 +127,7 @@ def test_get_tariff_matrix(tmpdir):
     ({'sid': 'none', 'restricted': ''}, set()),
     ({'sid': 'one', 'restricted': '1'}, {1}),
     ({'sid': 'two', 'restricted': '1 2'}, {1, 2}),
-], ids=lambda x: x['sid'])
+])
 def test_score_symptom_data_restricted(prep, row, expected):
     va = prep.score_symptom_data([row], {})[0]
     assert va.censored == expected
@@ -201,20 +201,23 @@ def test_generate_cause_rankings(prep):
     ([1, 2], {1: 10, 2: 10}, {1: 7, 2: 5}, {1: 9999, 2: 9999}),
 ])
 def test_mask_ranks(prep, censored, scores, ranks, expected):
-    prep.cause_list = scores.keys()
+    prep.cause_list = list(scores.keys())
 
     va = Record(scores=scores, censored=censored)
     va.ranks = ranks
 
-    uniform = range(1000)  # just needs length
-    cutoffs = dict(zip(scores.keys(), [99999] * len(scores)))
+    uniform = list(range(1000))  # just needs length
+    cutoffs = dict(list(zip(list(scores.keys()), [99999] * len(scores))))
     demog_restrictions = {}
     lowest_rank = 9999   # value set if restricted
     uniform_list_pos = 999
     min_cause_score = defaultdict(lambda: 0)
 
-    prep.mask_ranks([va], uniform, cutoffs, demog_restrictions, lowest_rank,
-                    uniform_list_pos, min_cause_score)
+    prep.mask_ranks([va],
+                    len(uniform), # this seems better matched to the doc string than what was here before converting to py3
+                    cutoffs, demog_restrictions, lowest_rank,
+                    uniform_list_pos/lowest_rank,  # I picked this because the doc string says it should be a value between 0 and 1, but I'm not sure it is correct
+                    min_cause_score)
 
     assert va.ranks == expected
 
@@ -249,7 +252,7 @@ def test_csmf_summed_to_one(prep):
     csmf, csmf_by_sex = prep.calculate_csmf(user_data, [])
 
     assert np.allclose(sum(csmf.values()), 1)
-    for sex, csmf_data in csmf_by_sex.items():
+    for sex, csmf_data in list(csmf_by_sex.items()):
         assert np.allclose(sum(csmf_data.values()), 1)
 
 
@@ -269,9 +272,9 @@ def test_training_likelihood_ranges(tariff_data):
     uniform_train = train[0]
     likelihoods = train[4]
 
-    assert likelihoods.keys() == prep.cause_list
-    assert len(set(map(len, likelihoods.values()))) == 1
-    for cause, likelihood in likelihoods.items():
+    assert list(likelihoods.keys()) == prep.cause_list
+    assert len(set(map(len, list(likelihoods.values())))) == 1
+    for cause, likelihood in list(likelihoods.items()):
         assert likelihood[-1] == len(uniform_train)
         assert sorted(likelihood) == likelihood
 
@@ -323,7 +326,7 @@ def test_training_likelihood_ranges(tariff_data):
         [(4, 1)]),
     (Record(sid='aggregates-takes-best-capped2', cause=5,
             ranks={3: 82, 4: 83, 5: 20}), [(4, 0), (3, 2)]),
-], ids=lambda va: va.sid)
+])
 def test_determine_likelihood(prep, va, expected):
     thresholds = {
         1: [0, 10, 50, 100],

@@ -4,9 +4,7 @@ import os
 from smartva.data_prep import Prep
 
 
-class GrapherPrep(Prep):
-    __metaclass__ = abc.ABCMeta
-
+class GrapherPrep(Prep, metaclass=abc.ABCMeta):
     def __init__(self, working_dir_path):
         super(GrapherPrep, self).__init__(working_dir_path)
         self.output_dir_path = os.path.join(self.input_dir_path, 'figures')

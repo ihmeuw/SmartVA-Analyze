@@ -46,21 +46,21 @@ def local_file(filename):
 
 
 def get_expected_results(file_):
-    with open(file_, 'rb') as f:
+    with open(file_, 'r', newline='') as f:
         r = csv.DictReader(f)
         return [row for row in r]
 
 
 def validate_matrix(actual, expected):
     for a in actual:
-        e = expected.next()
+        e = next(expected)
         for var in e:
             assert a[var] == e[var], "SID: '{}' does not produce expected result".format(a['sid'])
 
 
 def validate_predictions(file_):
     assert file_.check()
-    with file_.open('rb') as f:
+    with file_.open('r') as f:
         r = csv.DictReader(f)
         actual_results = [row for row in r]
 
@@ -107,7 +107,7 @@ def test_rule_order(tmpdir, rule_list):
     prep.run()
 
     output_file = os.path.join(intermediate.strpath, 'none-logic-rules.csv')
-    with open(output_file, 'r') as f:
+    with open(output_file, 'r', newline='') as f:
         for row in csv.DictReader(f):
             assert int(row['cause']) == rule_list[0].CAUSE_ID
 

@@ -1,8 +1,9 @@
 import codecs
 import csv
-import cStringIO
+import io
 import os
 import threading
+import numpy as np
 
 
 def intermediate_dir_path(output_dir_path):
@@ -111,8 +112,9 @@ def int_or_float(x):
 def identity(arg):
     return arg
 
-
-def value_from_row(row, fn=identity, default=None):
+# in python 2, None < x is True for any float x, but in python 3 it is an error
+# so I have made the default value -inf instead of None
+def value_from_row(row, fn=identity, default=-np.inf):
     def fn_wrap(var):
         try:
             return fn(row[var])
@@ -131,18 +133,14 @@ class UnicodeWriter:
 
     def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
         # Redirect output to a queue
-        self.queue = cStringIO.StringIO()
+        self.queue = io.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
         self.stream = f
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):
-        self.writer.writerow([s.encode("utf-8") for s in row])
-        # Fetch UTF-8 output from the queue ...
+        self.writer.writerow([s for s in row])
         data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
         # write to the target stream
         self.stream.write(data)
         # empty queue

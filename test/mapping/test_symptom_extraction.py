@@ -257,16 +257,16 @@ def who2022_freetext():
 def data(request, tmpdir):
     headers = {'gen_5_4a', 'gen_5_4b', 'gen_5_4c', 'gen_5_4d'}
     expected = defaultdict(list)
-    input_data = request.getfuncargvalue(request.param)
+    input_data = request.getfixturevalue(request.param)
     for row in input_data:
-        headers.update(row.keys())
+        headers.update(list(row.keys()))
         expected[row['module']].append(
             {key: row[key] for key in ['sid', 'symptom', 'endorsed']}
         )
     headers = sorted(headers)
 
     filepath = tmpdir.join('input_data.csv').strpath
-    with open(filepath, 'wt') as f:
+    with open(filepath, 'wt', newline='') as f:
         writer = csv.DictWriter(f, headers)
         writer.writeheader()
         writer.writerows(input_data)
@@ -276,7 +276,7 @@ def data(request, tmpdir):
 
 def test_symptoms_exist_on_tariff_matrix(data):
     _, expected = data
-    for module, rows in expected.items():
+    for module, rows in list(expected.items()):
         tested_symptoms = {row['symptom'] for row in rows}
         tariffs = os.path.join(basedir, 'data', 'tariffs-{}.csv'.format(module))
         with open(tariffs, 'rt') as f:
@@ -311,7 +311,7 @@ def test_symptom_extraction(tmpdir_factory, data):
     # error. This will allow us to drop into the debugger upon failing and
     # find every failing test case.
     errors = []
-    for module, expected in expected_results.items():
+    for module, expected in list(expected_results.items()):
         symptom_file = os.path.join(outdir, FOLDER4, 'intermediate-files',
                                     '{}-symptom.csv'.format(module))
 
@@ -325,20 +325,20 @@ def test_symptom_extraction(tmpdir_factory, data):
                         row['sid'] != actual['sid'] or
                         bool(int(value)) is not row['endorsed']):
                     errors.append(row)
-    assert not errors
+    assert len(errors) == 0, errors
 
 
 @pytest.fixture(params=[
     ('adult', ['phmrc_adult', 'phmrc_freetext', 'phmrc_ages']),
     ('child', ['phmrc_child', 'phmrc_freetext', 'phmrc_ages']),
     ('neonate', ['phmrc_neonate', 'phmrc_freetext', 'phmrc_ages']),
-], ids=lambda x: x[0])
+])
 def suite(request):
     module, suites = request.param
     cases = {
         case['symptom']
         for suite in suites
-        for case in request.getfuncargvalue(suite)
+        for case in request.getfixturevalue(suite)
         if case['endorsed']
     }
     return module, cases

@@ -35,12 +35,12 @@ class TestPreSymptomPrep(object):
 
     def test_verify_answers_for_row(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['0', 1, 2, 2015]))
+        row = dict(list(zip(headers, ['0', 1, 2, 2015])))
 
         valid_range_data = {
-            'test1': range(12 + 1),
+            'test1': list(range(12 + 1)),
             'test2': [1, 2, 3, 4, 5, 9],
-            'test3': range(1900, 2016) + [9999]
+            'test3': list(range(1900, 2016)) + [9999]
         }
 
         prep.verify_answers_for_row(row, valid_range_data)
@@ -52,7 +52,7 @@ class TestPreSymptomPrep(object):
 
     def test_convert_free_text_words(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['0', 0, 0, 0]))
+        row = dict(list(zip(headers, ['0', 0, 0, 0])))
 
         word_list = ['pencil', 'eraser', 'watermelon']
 
@@ -65,11 +65,11 @@ class TestPreSymptomPrep(object):
 
         prep.convert_free_text_words(row, word_list, word_map)
 
-        assert row == dict(zip(headers + ['test4'], ['0', 1, 0, 1, 1]))
+        assert row == dict(list(zip(headers + ['test4'], ['0', 1, 0, 1, 1])))
 
     def test_convert_free_text_headers(self, prep):
         headers = ['sid', 'test_words', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['0', 'pencil eraser watermelon', 0, 0, 0]))
+        row = dict(list(zip(headers, ['0', 'pencil eraser watermelon', 0, 0, 0])))
 
         data_headers = ['test_words']
 
@@ -82,11 +82,11 @@ class TestPreSymptomPrep(object):
 
         prep.convert_free_text_vars(row, data_headers, word_map)
 
-        assert row == dict(zip(headers + ['test4'], ['0', 'pencil eraser watermelon', 1, 0, 1, 1]))
+        assert row == dict(list(zip(headers + ['test4'], ['0', 'pencil eraser watermelon', 1, 0, 1, 1])))
 
     def test_consolidate_answers(self, prep):
         headers = ['sid', 'test_a', 'test_b', 'test1', 'test2', 'test3']
-        row = dict(zip(headers, ['0', 13, 0, 1, 2, 3]))
+        row = dict(list(zip(headers, ['0', 13, 0, 1, 2, 3])))
 
         consolidation_map = {
             ('test_a', 'test_b'): {
@@ -98,19 +98,19 @@ class TestPreSymptomPrep(object):
 
         prep.recode_answers(row, consolidation_map)
 
-        assert row == dict(zip(headers, ['0', 13, 3, 1, 2, 3]))
+        assert row == dict(list(zip(headers, ['0', 13, 3, 1, 2, 3])))
 
         # There's no guarentee that the columns that appear in the values
         # of the consolidation map actually appear in the data. If they are
         # missing the row should be filled with None
-        row2 = dict(zip(headers[:-1], ['0', 13, 0, 1, 2]))
+        row2 = dict(list(zip(headers[:-1], ['0', 13, 0, 1, 2])))
         prep.recode_answers(row2, consolidation_map)
 
-        assert row2 == dict(zip(headers[:-1], ['0', 13, None, 1, 2]))
+        assert row2 == dict(list(zip(headers[:-1], ['0', 13, None, 1, 2])))
 
     def test_fill_missing_data(self, prep):
         headers = ['sid', 'test1', 'test2', 'test3', 'test4']
-        row = dict(zip(headers, ['0', '', '', 3, 4]))
+        row = dict(list(zip(headers, ['0', '', '', 3, 4])))
 
         default_fill = {
             'test1': 1,
@@ -120,11 +120,11 @@ class TestPreSymptomPrep(object):
 
         prep.fill_missing_data(row, default_fill)
 
-        assert row == dict(zip(headers, ['0', 1, 9, 3, 4]))
+        assert row == dict(list(zip(headers, ['0', 1, 9, 3, 4])))
 
     def test_calculate_duration_variables(self, prep):
         headers = ['sid', 'test1', 'test1a', 'test1b', 'test2', 'test2a', 'test2b', 'test3', 'test3a', 'test3b']
-        row = dict(zip(headers, ['0', '', 1, 1, '', '', '', '', 2, 4]))
+        row = dict(list(zip(headers, ['0', '', 1, 1, '', '', '', '', 2, 4])))
 
         duration_vars = ['test1', 'test2', 'test3']
         special_case_vars = {
@@ -133,7 +133,7 @@ class TestPreSymptomPrep(object):
 
         prep.calculate_duration_vars(row, duration_vars, special_case_vars)
 
-        assert row == dict(zip(headers, ['0', 365.0, 1, 1, 999, '', '', 120.0, 2, 4]))
+        assert row == dict(list(zip(headers, ['0', 365.0, 1, 1, 999, '', '', 120.0, 2, 4])))
 
     def test_process_age_vars(self, prep):
 

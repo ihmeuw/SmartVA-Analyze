@@ -48,7 +48,7 @@ def test_aids_rule_with_aids_unchecked(tmpdir_factory, aids_rule_data):
                          hiv='false')
     subprocess.call(command.split())
 
-    with open(os.path.join(outdir, 'child-predictions.csv')) as f:
+    with open(os.path.join(outdir, 'child-predictions.csv'), newline='') as f:
         predictions = [row for row in csv.DictReader(f)]
 
     assert predictions[0]['cause34'] != 'AIDS'

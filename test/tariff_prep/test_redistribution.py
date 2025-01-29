@@ -31,11 +31,12 @@ def test_redistribution_weights_sum_to_one(tmpdir, tariff_data):
     )
     df = pd.read_csv(prep.undetermined_matrix_filename)
     weights_by_id = df.groupby(['age', 'sex', 'iso3']).sum()
+    del weights_by_id['gs_text34']
+    assert np.allclose(weights_by_id, 1.0)
     assert weights_by_id.apply(np.allclose, args=(1,)).all()
 
 
-@pytest.mark.skipif(not pytest.config.getoption("--data-checks"),
-                    reason="need --data-checks option to run")
+@pytest.mark.data_checks
 @pytest.mark.parametrize('tariff_data', module_data)
 @pytest.mark.parametrize('country', iso3s)
 def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):
@@ -47,7 +48,8 @@ def test_redistribution_weights_for_countries(tmpdir, tariff_data, country):
         short_form=True,
         options={'hce': True, 'free_text': True, 'hiv': True, 'malaria': True,
                  'chinese': False},
-        country=country
+        country=country,
+        who_2016=True,
     )
     undetermined_weights = prep._get_undetermined_matrix()
     assert isinstance(undetermined_weights, dict)
@@ -71,18 +73,18 @@ def test_redistribution_weights(tmpdir, tariff_data, short_form, hce):
     undetermined_weights = prep._get_undetermined_matrix()
 
     cause_list = set(prep.data_module.CAUSES[cause]
-                     for _, cause in prep.data_module.CAUSE_REDUCTION.items())
-    for key, weights in undetermined_weights.items():
+                     for _, cause in list(prep.data_module.CAUSE_REDUCTION.items()))
+    for key, weights in list(undetermined_weights.items()):
         age, sex = key
         assert sex in [1, 2, 3]
         if prep.AGE_GROUP == 'adult':
-            assert age in range(10, 81, 5) + [99]
+            assert age in list(range(10, 81, 5)) + [99]
         elif prep.AGE_GROUP == 'child':
             assert age in [0, 1, 5, 10, 99]
         elif prep.AGE_GROUP == 'neonate':
             assert age in [0, 7, 99]
 
-        assert not cause_list.symmetric_difference(weights.keys())
+        assert not cause_list.symmetric_difference(list(weights.keys()))
         assert np.allclose(sum(weights.values()), 1)
 
 
@@ -110,10 +112,10 @@ def test_redistribution_causes_match_reporting_causes(tmpdir, tariff_data):
                  'chinese': False},
         country=None, who_2016=True
     )
-    with open(prep.undetermined_matrix_filename) as f:
+    with open(prep.undetermined_matrix_filename, newline='') as f:
         undetermined_causes = {row['gs_text34'] for row in csv.DictReader(f)}
 
     tariff_causes = {prep.data_module.CAUSES[cause]
-                     for cause in prep.data_module.CAUSE_REDUCTION.values()}
+                     for cause in list(prep.data_module.CAUSE_REDUCTION.values())}
 
     assert undetermined_causes == tariff_causes

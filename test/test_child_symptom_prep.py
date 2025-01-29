@@ -30,7 +30,7 @@ expected_results = [
 @pytest.fixture
 def input_file(tmpdir):
     f_path = tmpdir.mkdir('intermediate-files').join('child-logic-rules.csv')
-    with f_path.open('wb') as f:
+    with f_path.open('w') as f:
         w = csv.DictWriter(f, fieldnames=headers)
         w.writeheader()
         w.writerows(data)
@@ -53,7 +53,7 @@ class TestChildSymptomPrep(object):
         print(input_file)
         prep.run()
         assert output_file.check()
-        with output_file.open('rb') as f:
+        with output_file.open('r') as f:
             r = csv.DictReader(f)
             matrix = [row for row in r]
 
@@ -61,6 +61,6 @@ class TestChildSymptomPrep(object):
 
     def validate_matrix(self, t_matrix, v_matrix):
         for t in t_matrix:
-            v = v_matrix.next()
+            v = next(v_matrix)
             for var in v:
                 assert t[var] == v[var], "SID: '{}' does not produce expected result".format(t['sid'])

@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import os
 import itertools
 import sys
@@ -29,8 +29,8 @@ def diff(path1, path2):
                 assert (df1.fillna('') == df2.fillna('')).all().all()
             if f == 'csmf':
                 # CSMF order is not guaranteed. 
-                csmf1 = dict(zip(df1.cause, df1.CSMF))
-                csmf2 = dict(zip(df2.cause, df2.CSMF))
+                csmf1 = dict(list(zip(df1.cause, df1.CSMF)))
+                csmf2 = dict(list(zip(df2.cause, df2.CSMF)))
                 assert csmf1 == csmf2
             print('Good.')
 
