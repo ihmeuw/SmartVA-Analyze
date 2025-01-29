@@ -996,7 +996,13 @@ class TariffPrep(DataPrep):
                 i += 1   # offset for header row
                 worksheet.set_row(i, 52.50)   # about 3.5 lines of height
 
-                sid = str(va.sid)
+                if isinstance(va.sid, bytes):  # Ensure it's bytes before decoding
+                    try:
+                        sid = va.sid.decode('utf-8')
+                    except UnicodeDecodeError:
+                        sid = va.sid.decode('latin-1')
+                else:
+                    sid = va.sid  # Already a string, no need to decode
 
                 sex = sex_names.get(va.sex, missing)
 

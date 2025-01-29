@@ -3,6 +3,7 @@ import csv
 import io
 import os
 import threading
+import numpy as np
 
 
 def intermediate_dir_path(output_dir_path):
@@ -113,7 +114,6 @@ def identity(arg):
 
 # in python 2, None < x is True for any float x, but in python 3 it is an error
 # so I have made the default value -inf instead of None
-import numpy as np
 def value_from_row(row, fn=identity, default=-np.inf):
     def fn_wrap(var):
         try:
