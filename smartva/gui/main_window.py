@@ -52,12 +52,15 @@ if platform.system().lower() != 'darwin':
     # Mac does not support sort style
     COMBO_BOX_STYLE |= wx.CB_SORT
 
-
 def open_folder(path):
     if platform.system().lower() == 'windows':
         subprocess.Popen('explorer /n,/e,"{}"'.format(path))
-    if platform.system().lower() == 'darwin':
+    elif platform.system().lower() == 'darwin':
         subprocess.call(['open', path])
+    elif 'wsl' in platform.platform().lower():
+        windows_path = subprocess.check_output([f'wslpath', '-w', path])
+        windows_path2 = windows_path.decode().strip()
+        subprocess.Popen(['explorer.exe', '/n,/e,', windows_path2])
 
 
 class ETAProgressGauge(wx.Gauge):
@@ -199,7 +202,7 @@ class vaUI(wx.Frame):
         self.action_button = None
 
         icon = os.path.join(config.basedir, 'res', 'favicon.ico')
-        self.SetIcon(wx.IconFromBitmap(wx.Bitmap(icon, wx.BITMAP_TYPE_ANY)))
+        self.SetIcon(wx.Icon(icon, wx.BITMAP_TYPE_ANY))
 
         self._init_menu_bar()
         self._init_ui()
@@ -224,21 +227,21 @@ class vaUI(wx.Frame):
 
         quit_menu_item = wx.MenuItem(file_menu, id=APP_QUIT, text='&Quit\tCtrl+Q')
         self.Bind(wx.EVT_MENU, handler=self.on_quit, id=quit_menu_item.GetId())
-        file_menu.AppendItem(quit_menu_item)
+        file_menu.Append(quit_menu_item)
 
         # Options Menu
         options_menu = wx.Menu()
         menu_bar.Append(options_menu, title='&Options')
 
-        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+        options_menu.Append(self.create_menu_item_check(options_menu,
                                                             OPT_HCE,
                                                             'Use &health care experience (HCE) variables',
                                                             'hce'))
-        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+        options_menu.Append(self.create_menu_item_check(options_menu,
                                                             OPT_FREE_TEXT,
                                                             'Use &free text variables',
                                                             'free_text'))
-        options_menu.AppendItem(self.create_menu_item_check(options_menu,
+        options_menu.Append(self.create_menu_item_check(options_menu,
                                                             OPT_FIGURES,
                                                             '&Generate figures',
                                                             'figures'))
@@ -249,11 +252,11 @@ class vaUI(wx.Frame):
 
         about_menu_item = wx.MenuItem(help_menu, id=APP_ABOUT, text='&About ' + APP_TITLE)
         self.Bind(wx.EVT_MENU, handler=self.on_about, id=about_menu_item.GetId())
-        help_menu.AppendItem(about_menu_item)
+        help_menu.Append(about_menu_item)
 
         docs_menu_item = wx.MenuItem(help_menu, id=APP_DOCS, text='&Documentation')
         self.Bind(wx.EVT_MENU, handler=self.on_docs, id=docs_menu_item.GetId())
-        help_menu.AppendItem(docs_menu_item)
+        help_menu.Append(docs_menu_item)
 
     def _init_ui(self):
         self.Bind(wx.EVT_CLOSE, self.on_quit)
@@ -350,7 +353,7 @@ class vaUI(wx.Frame):
         status_gauge_box_sizer.Add(self.status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         status_gauge_box_sizer.AddSpacer(5)
         status_gauge_box_sizer.Add(self.sub_status_gauge, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
-        status_box_sizer.AddSizer(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
+        status_box_sizer.Add(status_gauge_box_sizer, proportion=2, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
         status_box_sizer.Add(self.action_button, proportion=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=5)
 
         start_analysis_box_sizer.Add(status_text_ctrl, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
@@ -410,7 +413,7 @@ class vaUI(wx.Frame):
             self, message='Choose a file',
             defaultFile='',
             wildcard='*.*',
-            style=wx.OPEN | wx.CHANGE_DIR
+            style=wx.FD_OPEN | wx.FD_CHANGE_DIR
         )
         dlg.CentreOnParent()
         if dlg.ShowModal() == wx.ID_OK:
@@ -522,6 +525,8 @@ class vaUI(wx.Frame):
             if status == workerthread.CompletionStatus.ABORT:
                 status_message = 'Computation successfully aborted. '
             elif status == workerthread.CompletionStatus.DONE:
+                self._update_gauge(self.status_gauge, 1)
+                self._update_gauge(self.sub_status_gauge, 1)
                 open_folder(self.output_folder_path)
                 status_message = 'Processing complete. '
             elif status == workerthread.CompletionStatus.FAIL:
@@ -564,15 +569,15 @@ class vaUI(wx.Frame):
         :type progress: (list, set, tuple)
         """
         if progress is None:
-            gauge.SetRange(1)
+            gauge.SetRange(100)
             gauge.SetValue(0)
         elif isinstance(progress, int):
-            gauge.SetValue(gauge.GetValue() + progress)
+            gauge.SetValue(gauge.GetValue() + progress*100)
         elif isinstance(progress, (list, set, tuple)):
             if len(progress) > 1:
                 if progress[1]:
-                    gauge.SetRange(progress[1])
-            gauge.SetValue(progress[0])
+                    gauge.SetRange(int(progress[1]*100))
+            gauge.SetValue(int(progress[0]*100))
 
     @staticmethod
     def _show_message(parent, message_data):
