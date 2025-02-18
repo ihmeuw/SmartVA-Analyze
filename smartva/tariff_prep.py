@@ -1127,7 +1127,7 @@ class TariffPrep(DataPrep):
             csmf (dict): Map of causes to count.
         """
         filename = '{:s}-csmf.csv'.format(key)
-        with open(os.path.join(self.output_dir_path, filename), 'w') as f:
+        with open(os.path.join(self.output_dir_path, filename), 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['cause', 'CSMF'])
             writer.writerows(sorted(list(csmf.items()), key=lambda _: _[0]))
