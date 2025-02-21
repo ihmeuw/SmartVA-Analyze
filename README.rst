@@ -85,14 +85,18 @@ Example
 
 Test Instructions
 ~~~~~~~~~~~~~~~~~
-All tests are run using pytest:
+Fast tests run by default::
 
-``$ python -m pytest``
+    $ pytest
+
+Check all the data, too, with `--data-checks` flag::
+
+    $ pytest --data-checks
 
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
-::
-    $ cp pkg/smartva-win.spec .
+In Miniforge Prompt in Windows::
+    $ copy pkg\smartva-win.spec .
     $ pyinstaller smartva-win.spec --clean
 
 The results will be in the `dist` folder.
