@@ -94,3 +94,5 @@ Build Instructions
 ::
     $ cp pkg/smartva-win.spec .
     $ pyinstaller smartva-win.spec --clean
+
+The results will be in the `dist` folder.
