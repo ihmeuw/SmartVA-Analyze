@@ -102,7 +102,7 @@ class WorkerThread(threading.Thread):
 
         # and now there is something that uses slashes, too
         # I don't know what it is yet
-        header_wo_colon_or_slash = header.replace('/','-')
+        header_wo_colon_or_slash = header_wo_colon.replace('/','-')
 
         # SmartVA-Analyze only uses "name" from survey page of xls
         # file run through XLSForms
