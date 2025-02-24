@@ -98,11 +98,15 @@ class WorkerThread(threading.Thread):
     def _format_header(cls, header):
         # ODK aggregate uses colons as column delimiters, briefcase
         # uses dashes
-        header_wo_colon = header.replace(':','-')  
+        header_wo_colon = header.replace(':','-')
+
+        # and now there is something that uses slashes, too
+        # I don't know what it is yet
+        header_wo_colon_or_slash = header_wo_colon.replace('/','-')
 
         # SmartVA-Analyze only uses "name" from survey page of xls
         # file run through XLSForms
-        header_list = header_wo_colon.split('-')
+        header_list = header_wo_colon_or_slash.split('-')
         return header_list[-1]  
 
     @classmethod

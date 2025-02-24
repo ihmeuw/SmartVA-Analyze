@@ -41,23 +41,11 @@ Environment Instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 To create your python environment, either create a conda environment or use the Docker image.
 
-Windows::
+::
 
-    $ conda create -n smartva python=2.7.13 wxpython=4.*
-    $ conda activate smartva
-    $ pip install -r requirements.txt -r requirements-dev.txt -r requirements-win.txt
+    $ conda env create --file=smartva.yaml
+    $ conda activate smartva3
 
-macOS, Linux::
-
-    $ conda create -n smartva python=2.7.13 wxpython=4.*
-    $ conda activate smartva
-    $ pip install -r requirements.txt -r requirements-dev.txt
-
-    or
-
-    $ docker build -t smartva-build-linux -f ./pkg/docker/linux-build/Dockerfile ./pkg/docker
-    $ docker build -t smartva-dev -f pkg/docker/dev/Dockerfile .
-    $ docker run -it --rm -v `pwd`:/home/smartva/smartva smartva-dev
 
 Run Instructions
 ~~~~~~~~~~~~~~~~
@@ -97,6 +85,18 @@ Example
 
 Test Instructions
 ~~~~~~~~~~~~~~~~~
-All tests are run using pytest:
+Fast tests run by default::
 
-``$ python -m pytest``
+    $ pytest
+
+Check all the data, too, with `--data-checks` flag::
+
+    $ pytest --data-checks
+
+Build Instructions
+~~~~~~~~~~~~~~~~~~
+In Miniforge Prompt in Windows::
+    $ copy pkg\smartva-win.spec .
+    $ pyinstaller smartva-win.spec --clean
+
+The results will be in the `dist` folder.
