@@ -1,4 +1,4 @@
-name: smartva3
+name: smartva
 channels:
   - conda-forge
 dependencies:
