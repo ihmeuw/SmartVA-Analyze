@@ -49,7 +49,7 @@ jobs:
         run: |
           git describe --tags
           git version
-          pip install --no-deps .
+          pip install --no-deps -e .
 
       - name: Run Tests
         run: |
