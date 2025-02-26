@@ -8,6 +8,7 @@ from smartva.data.adult_pre_symptom_data import VAR_CONVERSION_MAP as ADULT_VARS
 from smartva.data.child_pre_symptom_data import VAR_CONVERSION_MAP as CHILD_VARS
 from smartva.data.neonate_pre_symptom_data import VAR_CONVERSION_MAP as NEONATE_VARS
 
+APP = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'app.py')
 
 def test_invalid_inputs(tmpdir):
     headers = set()
@@ -56,7 +57,7 @@ def test_invalid_inputs(tmpdir):
     out_dir = tmpdir.mkdir('out')
 
     subprocess.call([
-        'python', os.path.join(os.path.dirname(basedir), 'app.py'),
+        'python', APP,
         input_file.strpath, out_dir.strpath
     ])
     results_dir = out_dir.join('1-individual-cause-of-death')
