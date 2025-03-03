@@ -1,4 +1,4 @@
-name: PyInstaller packaging example
+name: package app with PyInstaller
 
 # on: workflow_dispatch
 on: push
@@ -23,7 +23,7 @@ jobs:
       with:
         miniforge-version: latest
         python-version: ${{ env.PYTHON }}
-        environment-file: ${{ env.ENV_NAME }}.yml
+        environment-file: ${{ env.ENV_NAME }}.yaml
         activate-environment: ${{ env.ENV_NAME }}
         conda-remove-defaults: true
     - name: Conda Info
