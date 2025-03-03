@@ -10,7 +10,7 @@ jobs:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      ENV_NAME: packaging-env
+      ENV_NAME: smartva
       PYTHON: "3.12"
     defaults:
       run:
