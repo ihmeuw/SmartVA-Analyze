@@ -60,11 +60,11 @@ jobs:
           ls
           cat coverage.xml
 
-      # - uses: codecov/codecov-action@v3
-      #   if: success()
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }} #required
-      #     files: ./coverage.xml #optional
+      - uses: codecov/codecov-action@v5
+        if: success()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} #required
+          files: ./coverage.xml #optional
 
   # min_deps:
   #   env:
