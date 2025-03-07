@@ -19,8 +19,7 @@ jobs:
     env:
       ENV_NAME: smartva
       PYTHON: "3.12"
-      # GEN_SPEC: ${{ inputs.generateSpecFiles }}
-      GEN_SPEC: "true"
+      GEN_SPEC: ${{ inputs.generateSpecFiles }}
 
     defaults:
       run:
