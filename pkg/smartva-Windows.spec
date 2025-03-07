@@ -1,10 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['app.py'],
-             hiddenimports=None,
-             pathex=["src/"],
-             hookspath=['pkg/hooks'],
-             runtime_hooks=None,
-             excludes=['PyQt4'])
+             pathex=["src/"])
 for d in a.datas:
   if 'pyconfig' in d[0]:
     a.datas.remove(d)

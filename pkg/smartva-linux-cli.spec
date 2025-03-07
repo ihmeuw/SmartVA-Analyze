@@ -5,7 +5,6 @@ block_cipher = None
 a = Analysis(
     ['src/smartva/va_cli.py'],
     pathex=["src/"],
-    hookspath=['pkg/hooks'],
     cipher=block_cipher,
 )
 pyz = PYZ(

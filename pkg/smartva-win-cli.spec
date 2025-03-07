@@ -1,9 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['smartva/va_cli.py'],
-             pathex=["src/"],
-             hiddenimports=None,
-             hookspath=['pkg/hooks'],
-             runtime_hooks=None)
+             pathex=["src/"])
 for d in a.datas:
   if 'pyconfig' in d[0]:
     a.datas.remove(d)

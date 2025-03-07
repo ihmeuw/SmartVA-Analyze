@@ -1,9 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['app.py'],
-             hiddenimports=['wx'],
-             pathex=["src/"],
-             hookspath=['pkg/hooks'],
-             runtime_hooks=None)
+             pathex=["src/"])
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
