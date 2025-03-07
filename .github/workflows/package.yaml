@@ -49,6 +49,7 @@ jobs:
       run: |
         if [[ $GEN_SPEC = "true" ]]; then
           cp pkg/run-pyinstaller.sh .
+          chmod +x run-pyinstaller.sh
           ./run-pyinstaller.sh
           cp ./*.spec dist/
         else
