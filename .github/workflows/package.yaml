@@ -1,7 +1,14 @@
 name: package app with PyInstaller
 
 # on: workflow_dispatch
-on: push
+on:
+  push: {}
+  workflow_dispatch:
+    inputs:
+      generateSpecFiles:
+        description: 'Run command in pkg/run-pyinstaller.sh and save the generated spec files as build artifacts'
+        required: false
+        type: boolean
 
 jobs:
   build:
@@ -12,6 +19,8 @@ jobs:
     env:
       ENV_NAME: smartva
       PYTHON: "3.12"
+      GEN_SPEC: ${{ inputs.generateSpecFiles }}
+
     defaults:
       run:
         # Adding -l {0} helps ensure conda can be found properly.
@@ -37,10 +46,15 @@ jobs:
 
     - name: Package
       run: |
-        echo $RUNNER_OS
-        cp pkg/smartva-$RUNNER_OS.spec .
-        pyinstaller --clean --noconfirm smartva-$RUNNER_OS.spec
-
+        if [[ $GEN_SPEC = "true" ]]; then
+          cp pkg/run-pyinstaller.sh .
+          chmod +x run-pyinstaller.sh
+          ./run-pyinstaller.sh
+          cp ./*.spec dist/
+        else
+          cp pkg/smartva-$RUNNER_OS.spec .
+          pyinstaller --clean --noconfirm smartva-$RUNNER_OS.spec
+        fi
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ runner.os }}-executable
