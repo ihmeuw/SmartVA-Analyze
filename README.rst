@@ -96,6 +96,7 @@ Check all the data, too, with `--data-checks` flag::
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
 In Miniforge Prompt in Windows::
+
     $ copy pkg\smartva-win.spec .
     $ pyinstaller smartva-win.spec --clean
 
