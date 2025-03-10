@@ -1,0 +1,61 @@
+name: package app with PyInstaller
+
+# on: workflow_dispatch
+on:
+  push: {}
+  workflow_dispatch:
+    inputs:
+      generateSpecFiles:
+        description: 'Run command in pkg/run-pyinstaller.sh and save the generated spec files as build artifacts'
+        required: false
+        type: boolean
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      ENV_NAME: smartva
+      PYTHON: "3.12"
+      GEN_SPEC: ${{ inputs.generateSpecFiles }}
+
+    defaults:
+      run:
+        # Adding -l {0} helps ensure conda can be found properly.
+        shell: bash -l {0}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        miniforge-version: latest
+        python-version: ${{ env.PYTHON }}
+        environment-file: ${{ env.ENV_NAME }}.yaml
+        activate-environment: ${{ env.ENV_NAME }}
+        conda-remove-defaults: true
+    - name: Conda Info
+      run: |
+        conda info -a
+        conda list
+        PYVER=`python -c "import sys; print('{:d}.{:d}'.format(sys.version_info.major, sys.version_info.minor))"`
+        if [[ $PYVER != ${{ env.PYTHON }} ]]; then
+          exit 1;
+        fi
+
+    - name: Package
+      run: |
+        if [[ $GEN_SPEC = "true" ]]; then
+          cp pkg/run-pyinstaller.sh .
+          chmod +x run-pyinstaller.sh
+          ./run-pyinstaller.sh
+          cp ./*.spec dist/
+        else
+          cp pkg/smartva-$RUNNER_OS.spec .
+          pyinstaller --clean --noconfirm smartva-$RUNNER_OS.spec
+        fi
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ runner.os }}-executable
+        path: ./dist
