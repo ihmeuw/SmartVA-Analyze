@@ -1,6 +1,6 @@
-.. image:: https://travis-ci.com/ihmeuw/SmartVA-Analyze.svg?branch=master
-    :target: https://travis-ci.com/ihmeuw/SmartVA-Analyze
-    
+.. image:: https://github.com/ihmeuw/SmartVA-Analyze/actions/workflows/testsuite.yaml/badge.svg
+    :target: https://github.com/ihmeuw/SmartVA-Analyze/actions/workflows/testsuite.yaml
+
 SmartVA-Analyze is an application that implements the `Tariff 2.0 Method <http://www.healthdata.org/research-article/improving-performance-tariff-method-assigning-causes-death-verbal-autopsies/>`_ for computer certification of verbal autopsies.
 
 More information and the SmartVA-Analyze application can be found here:
@@ -10,7 +10,7 @@ The latest development version of the SmartVA-Analyze application can be found i
 The application is available as a Windows graphical user interface (GUI), Windows command-line interface (CLI), and Linux binary.
 
 The latest stable version of the SmartVA-Analyze application can be found here:
-http://www.healthdata.org/verbal-autopsy/tools
+https://github.com/ihmeuw/SmartVA-Analyze/releases
 
 The SmartVA-Analyze application requires an input csv in the format of the `PHMRC Full Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
 `PHMRC Shortened (SmartVA) Questionnaire <http://www.healthdata.org/verbal-autopsy/tools/>`_,
@@ -22,29 +22,18 @@ via `ODK Aggregate <https://docs.opendatakit.org/aggregate-intro/>`_ or `ODK Bri
 
 Requirements
 ~~~~~~~~~~~~
-To compile the source code of SmartVA-Analyze, the following applications must be installed:
+To compile the source code of SmartVA-Analyze, one the following applications must be installed:
 
 * `Anaconda <https://www.anaconda.com/download/>`_
+* `Miniforge <https://conda-forge.org/miniforge/>`_​
 
-* `Docker <https://www.docker.com/get-started>`_
-
-
-Build Instructions
-~~~~~~~~~~~~~~~~~~
-To build the SmartVA-Analyze application as seen in `releases <https://github.com/ihmeuw/SmartVA-Analyze/releases>`_, run one of the following commands:
-
-Windows: ``build_script.bat``
-
-macOS, Linux: ``$ sh build_script.sh``
 
 Environment Instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-To create your python environment, either create a conda environment or use the Docker image.
-
-::
+To create your python environment, use conda::
 
     $ conda env create --file=smartva.yaml
-    $ conda activate smartva3
+    $ conda activate smartva
 
 
 Run Instructions
@@ -96,6 +85,7 @@ Check all the data, too, with `--data-checks` flag::
 Build Instructions
 ~~~~~~~~~~~~~~~~~~
 In Miniforge Prompt in Windows::
+
     $ copy pkg\smartva-win.spec .
     $ pyinstaller smartva-win.spec --clean
 
