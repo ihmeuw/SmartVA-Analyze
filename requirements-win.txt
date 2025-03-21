@@ -1,2 +1,0 @@
-pefile==2017.9.3
-pypiwin32==219 ; sys_platform == 'win32'
