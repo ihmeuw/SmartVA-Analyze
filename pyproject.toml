@@ -13,7 +13,7 @@ maintainers = [
 description = "SmartVA-Analyze Desktop Application"
 readme = "README.rst"
 # dynamic = ["version"]
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
 # put in things required to run the package from smartva.yaml, with versions
     "click",
